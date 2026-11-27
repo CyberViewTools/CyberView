@@ -106,5 +106,170 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "46f217c02a484ae652c43d874ab751e32bb2eaff": {
+    "sha1": "46f217c02a484ae652c43d874ab751e32bb2eaff",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:58:34Z",
+    "model": "haiku",
+    "summary": "Wiz reports on JINX-0164, a financially motivated actor active since at least mid-2025 that targets cryptocurrency-industry developers with fake recruiter and meeting lures. A two-week intrusion used a macOS infostealer, AUDIOFIX, to steal credentials, then injected it into internal code repositories. A trojanized npm SDK on April 7, 2026 delivered a second backdoor, MINIRAT. Wiz does not link the group to a sponsor. Similarities to North Korean groups are noted but not confirmed.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "JINX-0164",
+          "q": "The Wiz Research team has identified the actor behind these attacks as JINX-0164, a previously unreported actor",
+          "by": "Wiz Research (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cryptocurrency",
+          "q": "targeting cryptocurrency"
+        },
+        {
+          "v": "software developers",
+          "q": "a campaign targeting software developers by posing as recruiters"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-05-27",
+          "q": "Published: 2026-05-27",
+          "what": "Wiz published the report"
+        },
+        {
+          "v": "mid-2025",
+          "q": "This actor has been active since at least mid-2025",
+          "what": "JINX-0164 activity observed since at least this time"
+        },
+        {
+          "v": "early 2026",
+          "q": "Since early 2026, and possibly as early as mid-2025",
+          "what": "Developer-targeting campaign began"
+        },
+        {
+          "v": "April 7, 2026",
+          "q": "On April 7, 2026, JINX-0164 conducted a supply chain operation",
+          "what": "Trojanized npm SDK version 4.9.1 published"
+        },
+        {
+          "v": "May 8, 2026",
+          "q": "was uploaded to VirusTotal on May 8, 2026, indicating that it continues to be used",
+          "what": "Modified MINIRAT sample uploaded"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AUDIOFIX",
+          "q": "the victim received AUDIOFIX, a Python-based macOS infostealer"
+        },
+        {
+          "v": "MINIRAT",
+          "q": "downloads MINIRAT, a lightweight backdoor written in Go"
+        },
+        {
+          "v": "nord-stream",
+          "q": "The attackers leveraged nord-stream,"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "social engineering",
+          "q": "These campaigns leveraged sophisticated social engineering techniques"
+        },
+        {
+          "v": "fake technical error",
+          "q": "a meeting that has a fake technical error and a malicious"
+        },
+        {
+          "v": "Password phishing",
+          "q": "Password phishing: A macOS dialog box, mimicking"
+        },
+        {
+          "v": "Clickjacking",
+          "q": "Transparency, Consent, and Control (TCC) Clickjacking: The malware overlays"
+        },
+        {
+          "v": "Developer Impersonation",
+          "q": "Developer Impersonation: The code's true origin was concealed"
+        },
+        {
+          "v": "Direct to Main Commits",
+          "q": "Direct to Main Commits: In unprotected repositories, the malicious code was pushed directly to the"
+        },
+        {
+          "v": "credentials from password managers",
+          "q": "credentials from password managers and local stores"
+        },
+        {
+          "v": "continuously monitors the clipboard",
+          "q": "background thread is launched that continuously monitors the clipboard"
+        },
+        {
+          "v": "supply chain operation",
+          "q": "conducted a supply chain operation by trojanizing version 4.9.1"
+        },
+        {
+          "v": "Lateral movement",
+          "q": "Lateral movement: the stolen credentials were leveraged to access internal code distribution systems"
+        },
+        {
+          "v": "anti-analysis checks",
+          "q": "The malware includes anti-analysis checks for debuggers, virtual machines"
+        },
+        {
+          "v": "routing their connections through VPN services",
+          "q": "routing their connections through VPN services"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "26 cryptocurrency wallet extensions",
+          "q": "26 cryptocurrency wallet extensions information"
+        },
+        {
+          "v": "two desktop wallet applications",
+          "q": "and two desktop wallet applications"
+        },
+        {
+          "v": "51 wallet browser extensions",
+          "q": "51 wallet browser extensions, including MetaMask, Phantom, Coinbase Wallet"
+        },
+        {
+          "v": "seven browsers",
+          "q": "across seven browsers, including Chrome, Edge,"
+        },
+        {
+          "v": "two-week period",
+          "q": "The attack unfolded over a two-week period"
+        },
+        {
+          "v": "10-30 minutes",
+          "q": "a stealth mode with randomized intervals between 10-30 minutes to evade detection"
+        },
+        {
+          "v": "5 seconds",
+          "q": "a normal polling interval of 5 seconds"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "AUDIOFIX"
+    },
+    "hedges": [
+      "Wiz's research does not yet provide enough evidence to link this group to a sponsor.",
+      "JINX-0164 appears to be motivated by financial gain.",
+      "Similarities to North Korean groups are described as suggesting some association; no infrastructure overlap has been identified.",
+      "Cryptocurrency wallet theft is described as the most likely objective; a supply-chain attack is described as another potential objective.",
+      "Some actor-controlled infrastructure suggests the group may target Windows machines as well; this is not confirmed.",
+      "The GitHub source code was not modified, suggesting the attackers only had access to npm credentials.",
+      "At this time only the primary C2 domain has been identified as resolving.",
+      "The start in mid-2025 is described as possible: 'possibly as early as mid-2025'."
+    ]
   }
 }

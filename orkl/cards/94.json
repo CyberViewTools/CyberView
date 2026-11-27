@@ -1,0 +1,187 @@
+{
+  "9409799c158fa716806104bbd29b5c4cfca7d939": {
+    "sha1": "9409799c158fa716806104bbd29b5c4cfca7d939",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:57:37Z",
+    "model": "haiku",
+    "summary": "Report by Ireneusz Tarnowski on INC Ransom, a Ransomware-as-a-Service double-extortion group observed since mid-2023 and among the most active operators in 2025–2026. Analysis of an exposed server and a Rust-written sample (agent.exe) describes Active Directory Group Policy and Impacket being used to push a payload that disables Microsoft Defender and UAC, then encrypts files with a .INC extension. The group relies on LOLBins, RMM tools and Cobalt Strike, and the report includes Sigma detection rules. Initial access is not confirmed, and exfiltration is inferred rather than seen.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "INC Ransom",
+          "q": "INC Ransom is an active cybercriminal group operating under the Ransomware-as-a-Service (RaaS) model",
+          "by": "the report itself (Ireneusz Tarnowski)"
+        },
+        {
+          "v": "Gold Ionic",
+          "q": "Alternative names: Gold Ionic, Tarnished Scorpius, Water Anito",
+          "by": "the report itself"
+        },
+        {
+          "v": "G1032",
+          "q": "MITRE ATT&CK tracks the threat group as G1032",
+          "by": "MITRE ATT&CK"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "business services",
+          "q": "The most frequently targeted sectors include business services, healthcare, and manufacturing."
+        },
+        {
+          "v": "healthcare",
+          "q": "The most frequently targeted sectors include business services, healthcare, and manufacturing."
+        },
+        {
+          "v": "manufacturing",
+          "q": "The most frequently targeted sectors include business services, healthcare, and manufacturing."
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "primarily in the United States, while also conducting campaigns against entities in Europe, Asia, and other regions"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 2023",
+          "q": "operating since at least July 2023 and",
+          "what": "INC Ransom observed operating since at least this date"
+        },
+        {
+          "v": "2024",
+          "q": "Researchers from Unit 42 reported significant similarities between INC Ransom and Lynx ransomware samples in 2024.",
+          "what": "Unit 42 reported similarities between INC Ransom and Lynx ransomware samples"
+        },
+        {
+          "v": "2025",
+          "q": "INC Ransom was most active in 2025, as illustrated in the figure below.",
+          "what": "Year in which the group was most active by victim count"
+        },
+        {
+          "v": "2025–2026",
+          "q": "among the most active RaaS operators throughout 2025–2026, with the number of publicly disclosed victims",
+          "what": "Period in which the group was among the most active RaaS operators"
+        },
+        {
+          "v": "2025–08–14",
+          "q": "Compilation Timestamp: 2025–08–14 13:07:56 UTC",
+          "what": "Compilation timestamp of the analysed agent.exe sample"
+        },
+        {
+          "v": "2026-07-20",
+          "q": "Published: 2026-07-20 · Archived: 2026-07-23 02:01:36 UTC",
+          "what": "Date the report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Impacket",
+          "q": "Objects (GPOs), and the Impacket framework to propagate the ransomware across workstations and servers"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "post-exploitation frameworks such as Cobalt Strike, and custom scripts designed to automate ransomware propagation."
+        },
+        {
+          "v": "custom scripts",
+          "q": "post-exploitation frameworks such as Cobalt Strike, and custom scripts designed to automate ransomware propagation."
+        },
+        {
+          "v": "Remote Monitoring and Management (RMM) tools",
+          "q": "Living-off-the-Land Binaries (LOLBins[1]), Remote Monitoring and Management (RMM) tools,"
+        },
+        {
+          "v": "Rust",
+          "q": "The sample was developed in Rust, which has become one of the most widely adopted programming languages"
+        },
+        {
+          "v": "certutil",
+          "q": "After disabling the security controls, the script attempts to download the executable agent.exe using certutil,"
+        },
+        {
+          "v": "Service Control (sc) utility",
+          "q": "stops Microsoft Defender services using the Service Control (sc) utility and"
+        },
+        {
+          "v": "upload_gpo.py",
+          "q": "After obtaining initial access, the threat actors execute the upload_gpo.py script."
+        },
+        {
+          "v": "deploy.bat",
+          "q": "The purpose of the deploy.bat script is to disable security controls and download and execute the ransomware"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "double extortion",
+          "q": "The group primarily conducts double extortion attacks, combining data"
+        },
+        {
+          "v": "smash-and-grab",
+          "q": "favors a “smash-and-grab” operational model,"
+        },
+        {
+          "v": "Living-off-the-Land Binaries",
+          "q": "Living-off-the-Land Binaries (LOLBins[1]), Remote Monitoring and Management (RMM) tools,"
+        },
+        {
+          "v": "exploitation of vulnerable edge devices",
+          "q": "The most likely initial access vectors include the exploitation of vulnerable edge devices"
+        },
+        {
+          "v": "propagate the ransomware across workstations and servers",
+          "q": "Objects (GPOs), and the Impacket framework to propagate the ransomware across workstations and servers"
+        },
+        {
+          "v": "Windows Defender and User Account Control (UAC)",
+          "q": "Windows Defender and User Account Control (UAC) are systematically disabled"
+        },
+        {
+          "v": "stops Microsoft Defender services",
+          "q": "stops Microsoft Defender services using the Service Control (sc) utility and"
+        },
+        {
+          "v": "hybrid cryptographic scheme",
+          "q": "The sample implements a hybrid cryptographic scheme based on X25519 (ECDH) and AES-CTR."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "857",
+          "q": "the group has claimed 857[4] victims"
+        },
+        {
+          "v": "48%",
+          "q": "Using the BinDiff tool, they determined that nearly half (48%) of the functions identified in the analyzed"
+        },
+        {
+          "v": "72 hours",
+          "q": "the time between initial access and ransomware deployment frequently does not exceed 72 hours."
+        },
+        {
+          "v": "2,206,208 bytes",
+          "q": "including an identical file size of 2,206,208 bytes and a"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "INC Ransom"
+    },
+    "hedges": [
+      "The report says it is not possible to determine from the recovered files how initial access was achieved; the listed access vectors are the most likely ones, not confirmed.",
+      "Static analysis did not reveal conclusive evidence of command-and-control communication; networking during execution cannot be ruled out.",
+      "The exact use of the Windows Service Control Manager functions requires confirmation through dynamic analysis.",
+      "Data exfiltration most likely occurred at an earlier stage of the intrusion, since no exfiltration script was found among the recovered files.",
+      "The analysis does not cover the earlier stages of the compromise, including the initial intrusion or the infrastructure used to manage the operation.",
+      "Limited variation in TTPs may indicate either a small number of affiliates or a more selective affiliate program.",
+      "Similarity to LockBit and BlackCat should not be read as evidence of any direct organizational relationship between these groups.",
+      "The report assesses that the total number of victims by the end of the year may exceed the 2025 figure, unless operations are disrupted."
+    ]
+  }
+}

@@ -1,25 +1,196 @@
 {
   "276eef8e2d22f6e225440f49dfeb3de246f91df1": {
     "sha1": "276eef8e2d22f6e225440f49dfeb3de246f91df1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:31:48Z",
+    "read_at": "2026-11-27T00:49:45Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Rapid7 report (published 2025-06-10) on social engineering attacks that start with email bombing, then fake help desk calls via Microsoft Teams or phone, then remote access tools such as Quick Assist. It says BlackSuit affiliates appear to have adopted Black Basta's approach after Black Basta's internal conflict. It describes a Java RAT that uses Google cloud services for command and control, a QEMU virtual machine delivery method with the QDoor proxy, and a Rust loader. It assesses that some access may be sold to other groups.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Black Basta",
+          "q": "There has been a significant decrease in social engineering attacks linked to the Black Basta ransomware group",
+          "by": "Rapid7 (report author)"
+        },
+        {
+          "v": "BlackSuit",
+          "q": "Evidence now suggests that BlackSuit affiliates have either adopted Black Basta’s strategy or absorbed members",
+          "by": "Rapid7 (report author)"
+        },
+        {
+          "v": "FIN7",
+          "q": "attribute the malware to the FIN7 group.",
+          "by": "GData, as cited by Rapid7"
+        },
+        {
+          "v": "BlackSuit",
+          "q": "QDoor malware has been attributed to the BlackSuit ransomware group by ConnectWise.",
+          "by": "ConnectWise"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2025-06-10",
+          "q": "Published: 2025-06-10 · Archived: 2026-10-25 02:04:27 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "late December 2024",
+          "q": "since late December 2024. This lapse also included the leaked Black Basta chat logs in February 2025, indicating",
+          "what": "decrease in social engineering attacks began"
+        },
+        {
+          "v": "February 2025",
+          "q": "since late December 2024. This lapse also included the leaked Black Basta chat logs in February 2025, indicating",
+          "what": "Black Basta chat logs leaked"
+        },
+        {
+          "v": "October of 2024",
+          "q": "first observed by Rapid7 during October of 2024, and initially reported on in",
+          "what": "Java RAT tactic first observed"
+        },
+        {
+          "v": "May of 2025",
+          "q": "In cases as recent as May of 2025, Rapid7 has observed that the archives are",
+          "what": "archives still publicly hosted on possibly compromised SharePoint instances"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Java RAT",
+          "q": "A large volume of social engineering incidents handled by Rapid7 have resulted in a Java RAT being downloaded"
+        },
+        {
+          "v": "Quick Assist",
+          "q": "asset — and thereby the corporate network — via Quick Assist. Quick Assist is a built-in Windows utility that"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "popular remote access tools (e.g., AnyDesk, ScreenConnect), and if that still doesn’t work, they may simply hang"
+        },
+        {
+          "v": "ScreenConnect",
+          "q": "popular remote access tools (e.g., AnyDesk, ScreenConnect), and if that still doesn’t work, they may simply hang"
+        },
+        {
+          "v": "QEMU",
+          "q": "Drive link to download a zip archive containing QEMU (Quick Emulator) and its dependencies, including a"
+        },
+        {
+          "v": "QDoor",
+          "q": "QDoor malware has been attributed to the BlackSuit ransomware group by ConnectWise."
+        },
+        {
+          "v": "Anubis",
+          "q": "who refer to it as Anubis (likely based on the source code) and attribute the malware to the FIN7 group."
+        },
+        {
+          "v": "Microsoft Teams",
+          "q": "perform this step via Microsoft Teams using either a default Azure/Entra tenant (i.e., email account ends"
+        },
+        {
+          "v": "Google Drive",
+          "q": "and Google Sheets, and most recently, towards simply using Google Drive. The logic of the RAT is obfuscated"
+        },
+        {
+          "v": "python RAT",
+          "q": "The python RAT has also been previously analyzed by Gdata with similar findings,"
+        },
+        {
+          "v": "updater.exe",
+          "q": "Rapid7 observed at least one other Rust malware payload, updater.exe being used by the threat actor, which"
+        },
+        {
+          "v": "testapp.exe",
+          "q": "The Rust PE has an original filename of testapp.exe, a PDB named testapp.pdb, and was originally compiled on 2025-04-"
+        },
+        {
+          "v": "SSH",
+          "q": "As many of the compromises facilitated by the social engineering attacks have resulted in SSH reverse tunnels being"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "email bomb",
+          "q": "This technique is commonly known as an email bomb."
+        },
+        {
+          "v": "credential harvesting",
+          "q": "The credential harvesting window used by the Java RAT."
+        },
+        {
+          "v": "Kerberoasting",
+          "q": "The threat actors have performed Kerberoasting"
+        },
+        {
+          "v": "AS-REP roasting",
+          "q": "The threat actors have performed AS-REP roasting"
+        },
+        {
+          "v": "local PE injection",
+          "q": "The analyzed test shellcode payload would then perform local PE injection for an embedded Rust PE using"
+        },
+        {
+          "v": "control flow obfuscation",
+          "q": "using various types of junk code, control flow obfuscation, and string obfuscation in an attempt to impede"
+        },
+        {
+          "v": "SSH reverse tunnels",
+          "q": "As many of the compromises facilitated by the social engineering attacks have resulted in SSH reverse tunnels being"
+        },
+        {
+          "v": "system enumeration",
+          "q": "the operator who initiated the attack outputting system enumeration data to a"
+        },
+        {
+          "v": "Spearphishing Voice",
+          "q": "Spearphishing Voice"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "thousands per hour",
+          "q": "to the order of thousands per hour. This is often accomplished by signing the target user’s email up to many"
+        },
+        {
+          "v": "6+ months",
+          "q": "In the past 6+ months, development of the Java malware payload has continued to add/change numerous features."
+        },
+        {
+          "v": "around 4 to 12 days",
+          "q": "In some cases, Rapid7 has observed a command log gap ranging from around 4 to 12 days, beginning after the"
+        },
+        {
+          "v": "around a couple weeks",
+          "q": "related archive) to multiple targets for an extended period of time, often around a couple weeks."
+        },
+        {
+          "v": "64MB",
+          "q": "In more recent cases, Rapid7 has observed the BlackSuit affiliates distributing a much smaller (64MB vs."
+        },
+        {
+          "v": "Feb 12 through May 7",
+          "q": "Figure 1. Confirmed malicious chat requests, Feb 12 through May 7, as observed by Rapid7."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote, quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "BlackSuit social engineering attacks"
+    },
+    "hedges": [
+      "Evidence now suggests that BlackSuit affiliates have either adopted Black Basta's strategy or absorbed members of the group.",
+      "The developer(s) of the Java malware family are assessed as likely initial access brokers, potentially having provided access for Black Basta and/or FIN7 affiliates.",
+      "The threat actor may not be intending to use the access for themselves, but rather sell it to another group, according to the report's reading of the behaviour.",
+      "The test lab is most likely also the environment in which the threat actor compiled testapp.exe.",
+      "The report says the BlackSuit and Black Basta connection is shown by the chat leaks, and the adaptation of their spear phishing is unsurprising.",
+      "QDoor's attribution to the BlackSuit ransomware group is made by ConnectWise, as cited in the report.",
+      "The python RAT naming as Anubis is described as likely based on the source code; the FIN7 attribution is from GData, as cited in the report."
+    ]
   }
 }

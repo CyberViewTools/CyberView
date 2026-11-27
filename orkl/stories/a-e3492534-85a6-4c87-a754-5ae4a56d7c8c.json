@@ -4,22 +4,22 @@
     "key": "a-e3492534-85a6-4c87-a754-5ae4a56d7c8c",
     "kind": "actor",
     "name": "Threat Group-3390",
-    "headline": "Threat Group-3390: a China-linked group known under many names, with a thin public record in these reports",
-    "in_short": "Threat Group-3390 goes by many names, including Emissary Panda and Iron Tiger. The cards here are thin: one report names it among past Scanbox users, and another lists HyperBro and Rshell indicators.",
+    "headline": "Threat Group-3390: a China-linked group known by many names, with tools and a Mimi chat app report",
+    "in_short": "Threat Group-3390 goes by many names, including Emissary Panda and APT27. Cards tie it to a Mimi chat app compromise and to past use of Scanbox, though attribution there is low-confidence.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Threat Group-3390 is also tracked as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
+            "t": "Threat Group-3390 is also known as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The MITRE catalogue record lists many tools for the group, including PlugX, HyperBro, Cobalt Strike, Mimikatz, China Chopper and SysUpdate.",
+            "t": "Recorded Future's Insikt Group lists LuckyMouse (TG-3390, Emissary Panda, Bronze Union) among actors that have used the Scanbox framework in the past.",
             "cites": [
-              "catalogue"
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
             ]
           }
         ]
@@ -28,19 +28,19 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Recorded Future's Insikt Group describes Scanbox as a reconnaissance framework that lets attackers track website visitors.",
+            "t": "The catalogue lists many tools for the group, including PlugX, Cobalt Strike, Mimikatz, Impacket, China Chopper, HyperBro, gh0st RAT, ZxShell, SysUpdate and RCSession.",
+            "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Scanbox is a reconnaissance framework that lets attackers track website visitors. Insikt Group says it has features for keylogging and for delivering additional malware.",
             "cites": [
               "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
             ]
           },
           {
-            "t": "Insikt Group says LuckyMouse (TG-3390, Emissary Panda, Bronze Union) is among the groups that have used Scanbox in the past.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
-            ]
-          },
-          {
-            "t": "A report titled 'Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users' lists indicators for HyperBro on Windows and Rshell on Linux and Mac OS.",
+            "t": "The report on the Iron Tiger compromise of the chat application Mimi lists HyperBro samples for Windows and Rshell samples for Linux and Mac OS.",
             "cites": [
               "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
@@ -51,46 +51,37 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In early March 2019, Insikt Group identified two Scanbox campaigns: a compromised Pakistani government passport tracking page and a spoofed Central Tibetan Administration website.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
-            ]
-          },
-          {
-            "t": "Insikt Group assesses with low confidence that Chinese state-sponsored actors conducted these two campaigns. The report does not name Threat Group-3390 as the operator.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
-            ]
-          },
-          {
-            "t": "The Mimi chat application report is mainly a list of indicators. It gives no narrative on attribution, targets or dates of activity.",
+            "t": "A threat report is titled 'Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users'. It is mostly a list of indicators, such as file hashes and command-and-control addresses.",
             "cites": [
               "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
-          }
-        ]
-      },
-      {
-        "h": "takeaway",
-        "sentences": [
+          },
           {
-            "t": "Defenders should treat the public record in these cards as limited and check further sources before drawing conclusions about this group.",
-            "cites": []
+            "t": "In March 2019, Insikt Group found two Scanbox campaigns. One was a compromised Pakistani government passport tracking page. The other was a spoofed Central Tibetan Administration website.",
+            "cites": [
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+            ]
+          },
+          {
+            "t": "Insikt Group says the attackers likely meant to profile visitors' devices for follow-on intrusions. It assesses with low confidence that Chinese state-sponsored actors were behind them. The cards do not tie these two campaigns to TG-3390 itself.",
+            "cites": [
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+            ]
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "c0b32ed88799f29970f082c0f24b0dd4913da6da",
+    "based_on": "cb104a34efe60ca1c540c57712c6dc5915d010fa",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-26T23:18:19Z",
+    "written_at": "2026-11-27T00:46:20Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked",
       "bare-attribution",
       "missing-section"
     ],
-    "written_run": "161f390e"
+    "written_run": "b1d08f51"
   }
 }

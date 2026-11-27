@@ -1,26 +1,364 @@
 {
   "5b1a799740864196c7cc5093eed71ea42a28f52d": {
     "sha1": "5b1a799740864196c7cc5093eed71ea42a28f52d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:30:29Z",
+    "read_at": "2026-11-27T00:50:13Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Palo Alto Networks' Unit 42 analyses TuxBot v3 Evolution, a previously undocumented modular IoT botnet framework with Telnet brute-forcing, several C2 channels, a DDoS-for-hire panel and builds for 17 architectures. The developer relied on an LLM, which left reasoning comments in the code and hallucinated a password-hashing implementation. Many features are broken, but the report says fixed versions likely exist in the wild. Infrastructure links the framework to Keksec/Kaitori and AISURU tooling.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Keksec",
+          "q": "which we pivoted on to link TuxBot to Keksec/Kaitori",
+          "by": "Palo Alto Networks (the report)"
+        },
+        {
+          "v": "AISURU",
+          "q": "TuxBot includes features borrowed from the known botnet AISURU",
+          "by": "Palo Alto Networks (the report)"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "countries": [
+        {
+          "v": "Iran",
+          "q": "resolved to an IP address on Iran's Arvan Cloud content delivery network"
+        },
+        {
+          "v": "Singapore",
+          "q": "in Singapore. Connecting to TCP port 2222 on this server presents the banner"
+        },
+        {
+          "v": "Iceland",
+          "q": "FlokiNET, an Iceland-based provider known for bulletproof hosting"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-07-15",
+          "q": "Published: 2026-07-15 · Archived: 2026-11-05 02:01:20 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "Jan. 20, 2026",
+          "q": "This sample was submitted to VirusTotal on Jan. 20, 2026.",
+          "what": "Bot binary submitted to VirusTotal"
+        },
+        {
+          "v": "March 5, 2026",
+          "q": "first observed on Xpanse on March 5, 2026, and also visible",
+          "what": "C2 server first observed on Xpanse"
+        },
+        {
+          "v": "January 2026",
+          "q": "Binaries compiled from this framework have been appearing in the wild since January 2026.",
+          "what": "Binaries first appearing in the wild"
+        },
+        {
+          "v": "March 2026",
+          "q": "The C2 infrastructure has been active since at least March 2026.",
+          "what": "C2 infrastructure active since at least this date"
+        },
+        {
+          "v": "July 2025",
+          "q": "Kaitori v3.9 samples recovered from our internal telemetry in July 2025 (82 samples)",
+          "what": "82 Kaitori v3.9 samples recovered from internal telemetry"
+        },
+        {
+          "v": "April 2026",
+          "q": "six new samples in April 2026",
+          "what": "Six new TuxBot samples detected in internal telemetry"
+        },
+        {
+          "v": "May 2026",
+          "q": "flagged as malicious on VirusTotal in early May 2026",
+          "what": "Dropper IP address flagged as malicious on VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "MHDDoS",
+          "q": "It is also partially ported from the open-source MHDDoS Python DDoS toolkit."
+        },
+        {
+          "v": "Mirai",
+          "q": "30 from the traditional Mirai codebase"
+        },
+        {
+          "v": "MariaDB",
+          "q": "This is all backed by a MariaDB database that stores user accounts, attack logs and permissions."
+        },
+        {
+          "v": "libsodium",
+          "q": "It links against glibc and libsodium for X25519, ChaCha20, Poly1305, SHA512 and Ed25519 algorithms."
+        },
+        {
+          "v": "VirusTotal",
+          "q": "This sample was submitted to VirusTotal on Jan. 20, 2026."
+        },
+        {
+          "v": "Shodan",
+          "q": "and also visible through Shodan."
+        },
+        {
+          "v": "Kaitori v3.9",
+          "q": "Kaitori v3.9 samples recovered from our internal telemetry in July 2025 (82 samples)"
+        },
+        {
+          "v": "Go",
+          "q": "A Go-based command-and-control (C2) server with a DDoS-for-hire panel"
+        },
+        {
+          "v": "Docker",
+          "q": "Docker-based test infrastructure"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "brute-forces Telnet access",
+          "q": "The bot agent brute-forces Telnet access on targeted devices with 1,496 credential pairs"
+        },
+        {
+          "v": "SHA512 domain generation algorithm (DGA)",
+          "q": "A SHA512 domain generation algorithm (DGA)"
+        },
+        {
+          "v": "Peer-to-peer (P2P) gossip with Ed25519-signed commands",
+          "q": "Peer-to-peer (P2P) gossip with Ed25519-signed commands"
+        },
+        {
+          "v": "DNS TXT queries",
+          "q": "DNS TXT queries"
+        },
+        {
+          "v": "encrypted TCP channel",
+          "q": "communicates with a C2 server over an encrypted TCP channel"
+        },
+        {
+          "v": "XOR-encrypted table",
+          "q": "TuxBot stores sensitive strings (C2 addresses, scanner calls, exploit payloads) in an XOR-encrypted table that it"
+        },
+        {
+          "v": "Anti-VM module",
+          "q": "The Anti-VM module implements a weighted scoring system with a threshold of 30"
+        },
+        {
+          "v": "competitor killer",
+          "q": "A competitor killer feature"
+        },
+        {
+          "v": "seven persistence mechanisms",
+          "q": "TuxBot installs itself through seven persistence mechanisms:"
+        },
+        {
+          "v": "masquerades under one of 20 system daemon names",
+          "q": "This process masquerades under one of 20 system daemon names"
+        },
+        {
+          "v": "HTTP scanner",
+          "q": "The HTTP scanner operates as an isolated child process"
+        },
+        {
+          "v": "custom domain-specific language",
+          "q": "The developer built a custom domain-specific language for writing exploits as text files"
+        },
+        {
+          "v": "Hiding its process name",
+          "q": "Hiding its process name"
+        },
+        {
+          "v": "anti-debugging protections",
+          "q": "Setting up anti-debugging protections"
+        },
+        {
+          "v": "SOCKS5 proxy",
+          "q": "A SOCKS5 proxy"
+        },
+        {
+          "v": "DDoS-for-hire panel",
+          "q": "with a DDoS-for-hire panel"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2013-7471",
+          "q": "CVE-2013-7471"
+        },
+        {
+          "v": "CVE-2014-8361",
+          "q": "CVE-2014-8361"
+        },
+        {
+          "v": "CVE-2014-2321",
+          "q": "CVE-2014-2321"
+        },
+        {
+          "v": "CVE-2017-17215",
+          "q": "CVE-2017-17215"
+        },
+        {
+          "v": "CVE-2017-18377",
+          "q": "CVE-2017-18377"
+        },
+        {
+          "v": "CVE-2018-10561",
+          "q": "CVE-2018-10561"
+        },
+        {
+          "v": "CVE-2018-10562",
+          "q": "CVE-2018-10562"
+        },
+        {
+          "v": "CVE-2018-20062",
+          "q": "CVE-2018-20062"
+        },
+        {
+          "v": "CVE-2020-17456",
+          "q": "CVE-2020-17456"
+        },
+        {
+          "v": "CVE-2022-30525",
+          "q": "CVE-2022-30525"
+        },
+        {
+          "v": "CVE-2023-39780",
+          "q": "CVE-2023-39780"
+        },
+        {
+          "v": "CVE-2025-34037",
+          "q": "CVE-2025-34037"
+        },
+        {
+          "v": "CVE-2026-5815",
+          "q": "CVE-2026-5815"
+        },
+        {
+          "v": "CVE-2007-3010",
+          "q": "CVE-2007-3010"
+        },
+        {
+          "v": "CVE-2007-5693",
+          "q": "CVE-2007-5693"
+        },
+        {
+          "v": "CVE-2016-11021",
+          "q": "CVE-2016-11021"
+        },
+        {
+          "v": "CVE-2020-8515",
+          "q": "CVE-2020-8515"
+        },
+        {
+          "v": "CVE-2021-4045",
+          "q": "CVE-2021-4045"
+        },
+        {
+          "v": "CVE-2021-25646",
+          "q": "CVE-2021-25646"
+        },
+        {
+          "v": "CVE-2022-1388",
+          "q": "CVE-2022-1388"
+        }
+      ],
+      "figures": [
+        {
+          "v": "17 architectures",
+          "q": "compiled binaries for 17 architectures"
+        },
+        {
+          "v": "1,496 credential pairs",
+          "q": "The bot agent brute-forces Telnet access on targeted devices with 1,496 credential pairs"
+        },
+        {
+          "v": "approximately 70% functional",
+          "q": "The TuxBot framework we recovered and analyzed is approximately 70% functional."
+        },
+        {
+          "v": "more than 30 IoT device families",
+          "q": "contains exploit code targeting more than 30 IoT device families and communicates"
+        },
+        {
+          "v": "254 automated DDoS benchmark reports",
+          "q": "254 automated DDoS benchmark reports"
+        },
+        {
+          "v": "61 C++ source files",
+          "q": "61 C++ source files"
+        },
+        {
+          "v": "58 entries",
+          "q": "The table contains 58 entries."
+        },
+        {
+          "v": "Sixteen exploit functions",
+          "q": "Sixteen exploit functions are implemented as native C code, covering 13 CVEs across different vendors and"
+        },
+        {
+          "v": "27 .expl files",
+          "q": "We also observed 27 .expl files"
+        },
+        {
+          "v": "10,694-byte exploit package",
+          "q": "compiled into a single 10,694-byte exploit package"
+        },
+        {
+          "v": "78 attack vectors",
+          "q": "The attack dispatch system registers 78 attack vectors."
+        },
+        {
+          "v": "six actual handler functions",
+          "q": "These vectors map to only six actual handler functions"
+        },
+        {
+          "v": "12 attack methods",
+          "q": "It supports 12 attack methods"
+        },
+        {
+          "v": "20 candidate domains per day",
+          "q": "This produces 20 candidate domains per day."
+        },
+        {
+          "v": "up to 128 concurrent connections",
+          "q": "manages up to 128 concurrent connections"
+        },
+        {
+          "v": "five fall-back mechanisms",
+          "q": "TuxBot implements a layered C2 architecture with one primary channel and five fall-back mechanisms."
+        },
+        {
+          "v": "21 directories",
+          "q": "Periodic binary relocation across 21 directories with dot-prefixed filenames"
+        },
+        {
+          "v": "more than 10",
+          "q": "combining more than 10"
+        },
+        {
+          "v": "threshold of 30",
+          "q": "The Anti-VM module implements a weighted scoring system with a threshold of 30"
+        },
+        {
+          "v": "five bot replicas",
+          "q": "spins up a C2 server, five bot replicas and a target host"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "TuxBot v3 Evolution"
+    },
+    "hedges": [
+      "It is highly likely that corrected, more polished iterations exist.",
+      "We infer the Wuhan botnet lineage based on references in the TuxBot samples.",
+      "Because this information can be modified during the botnet setup process, the operator could have production builds with a real C2 IP address.",
+      "This discrepancy suggests that the production deployment uses a modified version of the source code.",
+      "The timing is consistent with a late-stage development push before deployment.",
+      "We can reasonably assume that a version with some or all of these fixes already exists in the wild.",
+      "TuxBot appears to be another variant in that portfolio."
+    ]
   },
   "5b958a4482f454dd88adb14e74a4d30fcdbee3ad": {
     "sha1": "5b958a4482f454dd88adb14e74a4d30fcdbee3ad",

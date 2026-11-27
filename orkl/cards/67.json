@@ -64,5 +64,197 @@
       "note": "summary: The text says the first Android Clipper was 'discovered' in those cases, which matches, but the summary describes the 'first Android Clipper' found on ",
       "by": "auditor"
     }
+  },
+  "67cf09802cdaf5f19447d7f8ddfac52ce688cd30": {
+    "sha1": "67cf09802cdaf5f19447d7f8ddfac52ce688cd30",
+    "status": "read",
+    "partial": true,
+    "read_at": "2026-11-27T00:52:46Z",
+    "model": "haiku",
+    "summary": "Check Point Research reports on The Gentlemen, a ransomware-as-a-service group that emerged around mid-2025 and publicly claims over 320 victims, most infected in 2026. During an incident response, an affiliate tried to deploy the SystemBC proxy malware; Check Point observed its C2 server reaching a botnet of over 1,570 victims, mostly in the United States. The intrusion used Cobalt Strike, credential harvesting, Defender tampering, RDP and AnyDesk, then Group Policy to deploy multi-OS lockers that encrypt files and delete shadow copies and logs. The initial access vector could not be…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "The Gentlemen",
+          "q": "The Gentlemen RaaS program has managed to attract a significant number of affiliates",
+          "by": "Check Point Research"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "companies and organizations",
+          "q": "It is likely that the majority of those victims are companies and organizations, given that SystemBC is"
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "There are over 1,570 victims, with the majority located in the United States, followed by the United Kingdom and Germany."
+        },
+        {
+          "v": "United Kingdom",
+          "q": "There are over 1,570 victims, with the majority located in the United States, followed by the United Kingdom and Germany."
+        },
+        {
+          "v": "Germany",
+          "q": "There are over 1,570 victims, with the majority located in the United States, followed by the United Kingdom and Germany."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025",
+          "q": "is a relatively new group that emerged around mid‑2025.",
+          "what": "The Gentlemen RaaS emerged around mid-2025"
+        },
+        {
+          "v": "2026-04-20",
+          "q": "Published: 2026-04-20 · Archived: 2026-10-14 02:01:16 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "2026",
+          "q": "with the majority of infections occurring in 2026.",
+          "what": "most publicly claimed infections occurred"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SystemBC",
+          "q": "SystemBC establishes SOCKS5 network tunnels within the victim’s environment"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Using this privileged position, the attacker deployed Cobalt Strike payloads to remote systems by writing executables to administrative shares such as"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Mimikatz output recovered from memory on one of the compromised endpoints showed access to credential material, including domain accounts"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "Later, the attacker installed and configured AnyDesk using:"
+        },
+        {
+          "v": "PsExec",
+          "q": "These credentials are then reused across all lateral movement operations: PsExec receives them via the"
+        },
+        {
+          "v": "Microsoft Defender",
+          "q": "The ransomware executes three PowerShell commands to disable Microsoft Defender protection and exclude both itself"
+        },
+        {
+          "v": "Tox",
+          "q": "Negotiations, however, are not conducted through this leak portal but via the individual affiliate’s Tox ID."
+        },
+        {
+          "v": "Group Policy",
+          "q": "The intrusion culminated in the deployment of The Gentlemen RaaS payload by an affiliate, using Group Policy as the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "systematic credential validation",
+          "q": "the attacker appears to have performed systematic credential validation and host accessibility testing across the"
+        },
+        {
+          "v": "writing executables to administrative shares",
+          "q": "Using this privileged position, the attacker deployed Cobalt Strike payloads to remote systems by writing executables to administrative shares such as"
+        },
+        {
+          "v": "Remote Desktop",
+          "q": "Remote Desktop was then enabled through commands such as:"
+        },
+        {
+          "v": "credential harvesting",
+          "q": "Compromised hosts were also used for credential harvesting."
+        },
+        {
+          "v": "Windows Defender",
+          "q": "This disabled Windows Defender real-time monitoring."
+        },
+        {
+          "v": "disable the firewall",
+          "q": "The ransomware tries to disable the firewall to allow unrestricted outbound and inbound traffic."
+        },
+        {
+          "v": "delete shadow copies",
+          "q": "During execution, the ransomware attempts to delete shadow copies, which are a primary mechanism for recovering"
+        },
+        {
+          "v": "deletes various log files",
+          "q": "In addition to shadow copies, the ransomware also deletes various log files."
+        },
+        {
+          "v": "establish persistence using multiple mechanisms",
+          "q": "During execution, the ransomware attempts to establish persistence using multiple mechanisms."
+        },
+        {
+          "v": "controlled shutdown of all virtual machines",
+          "q": "The locker performs a controlled shutdown of all virtual machines on a VMware ESXi host."
+        },
+        {
+          "v": "terminate running processes",
+          "q": "To terminate running processes, the malware repeatedly executes the following command in a loop for each targeted"
+        },
+        {
+          "v": "XChaCha20",
+          "q": "For small files (less than 1MB) the contents are encrypted using XChaCha20, a stream cipher, which XORs the plaintext"
+        },
+        {
+          "v": "only encrypts a small portion",
+          "q": "the algorithm only encrypts a small portion"
+        },
+        {
+          "v": "lateral movement",
+          "q": "These credentials are then reused across all lateral movement operations: PsExec receives them via the"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 320 victims",
+          "q": "attracting numerous affiliates and publicly claiming over 320 victims, with the majority of attacks (240) occurring in the first months of"
+        },
+        {
+          "v": "240",
+          "q": "attracting numerous affiliates and publicly claiming over 320 victims, with the majority of attacks (240) occurring in the first months of"
+        },
+        {
+          "v": "over 1,570 victims",
+          "q": "There are over 1,570 victims, with the majority located in the United States, followed by the United Kingdom and Germany."
+        },
+        {
+          "v": "9 percent",
+          "q": "In fast mode about 9 percent of the file is encrypted."
+        },
+        {
+          "v": "64 MB",
+          "q": "writes 64 MB chunks of data to it until all free"
+        },
+        {
+          "v": "239 HOURS",
+          "q": "WILL BE PUBLISHED IN OUR BLOG, WITH 239 HOURS REVEAL TIMER)"
+        },
+        {
+          "v": "six parallel execution channels",
+          "q": "deploying it through six parallel execution channels across PsExec, WMI,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "The Gentlemen ransomware"
+    },
+    "hedges": [
+      "The precise initial access vector could not be conclusively determined.",
+      "Whether SystemBC is directly integrated into The Gentlemen ransomware ecosystem or is only a tool used by one affiliate remains unclear.",
+      "It is likely that the majority of those victims are companies and organizations.",
+      "Initial entry not directly observed; context suggests possible compromise via exposed remote services (inferred).",
+      "The group also appears to maintain a Twitter/X account; the operators likely post about victims to increase pressure to pay.",
+      "The Gentlemen ransomware appears to be under active development.",
+      "Detection results for the ESXi variant are possibly affected by its password requirement; the report says this does not appear to affect Windows samples.",
+      "Several ATT&CK mappings are marked inferred, implied or partly inferred by the report."
+    ]
   }
 }

@@ -1,0 +1,133 @@
+{
+  "6c2bca93bc21d72933caa26452e3636b79096fc6": {
+    "sha1": "6c2bca93bc21d72933caa26452e3636b79096fc6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:52:30Z",
+    "model": "haiku",
+    "summary": "SOCRadar's Threat Research Unit describes DOUBLECUP, a Russian loader-as-a-service for ClickFix campaigns, active since early June 2026. Fake CRM login pages show a fake captcha prompt that gets victims to run a copied command. A hidden image carries the second stage, which decrypts the final payload using the victim's public IP address as a key. The payloads include an updated CountLoader for Windows and macOS and the new DeviceManager RAT, which finds its command server through Ethereum or Polygon smart contracts and talks over DNS or HTTP.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Rognar",
+          "q": "Rognar (@johnysilverhe), who was previously linked to creating now-defunct malicious VS Code extensions.",
+          "by": "SOCRadar"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "SOCRadar’s Threat Research Unit (STRU) identified and analyzed DOUBLECUP, a Russian Loader-as-a-Service"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-08-03",
+          "q": "Published: 2026-08-03 · Archived: 2026-10-08 02:01:00 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-10-08",
+          "q": "Archived: 2026-10-08 02:01:00 UTC",
+          "what": "Report archived"
+        },
+        {
+          "v": "early June 2026",
+          "q": "active since early June 2026.",
+          "what": "DOUBLECUP became active"
+        }
+      ],
+      "tools": [
+        {
+          "v": "DOUBLECUP",
+          "q": "SOCRadar’s Threat Research Unit (STRU) identified and analyzed DOUBLECUP, a Russian Loader-as-a-Service"
+        },
+        {
+          "v": "CountLoader",
+          "q": "Identified payloads loaded by DOUBLECUP include an updated version of CountLoader (with variants for both Windows and macOS) and"
+        },
+        {
+          "v": "DeviceManager",
+          "q": "DeviceManager, a new Remote Access Trojan (RAT) that utilizes EtherHiding to resolve its C2 infrastructure and"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Clipboard Hijacking via FakeCaptcha",
+          "q": "These commands are subsequently staged for Clipboard Hijacking via FakeCaptcha."
+        },
+        {
+          "v": "steganographic PNG image",
+          "q": "The first stage drops a steganographic PNG image into the browser’s cache, retrieves its hidden content, and executes the second stage. This"
+        },
+        {
+          "v": "environmental keying",
+          "q": "as environmental keying (T1480.001)."
+        },
+        {
+          "v": "EtherHiding",
+          "q": "technique known as EtherHiding."
+        },
+        {
+          "v": "DNS tunneling",
+          "q": "and communicate via HTTP or DNS tunneling."
+        },
+        {
+          "v": "scheduled tasks",
+          "q": "Persistence: Establishes scheduled tasks to pull updated payload binaries and re-execute automatically."
+        },
+        {
+          "v": "copying, renaming, and patching",
+          "q": "and conhost.exe, by copying, renaming, and patching their headers to bypass security controls."
+        },
+        {
+          "v": "Browser Extension Theft",
+          "q": "Browser Extension Theft: Audits installed browser extensions for cryptocurrency wallets."
+        },
+        {
+          "v": "Lateral Movement / USB Worming",
+          "q": "Lateral Movement / USB Worming: Scans for all connected logical and physical drives."
+        },
+        {
+          "v": "self-deletion routine",
+          "q": "If a target CIS language is detected, DeviceManager executes a self-deletion routine: it removes"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "25 minutes",
+          "q": "restrictions, and launch the Python environment to run App.py every 25 minutes."
+        },
+        {
+          "v": "48 extension IDs",
+          "q": "for a hardcoded list of 48 extension IDs (primarily targeting crypto"
+        },
+        {
+          "v": "45 different browsers",
+          "q": "Scans User Data directories of 45 different browsers"
+        },
+        {
+          "v": "4.5p",
+          "q": "compiled as PowerShell for Windows (version 4.5p) and Mach-O for macOS."
+        },
+        {
+          "v": "version 1.3",
+          "q": "Deobfuscating run.pyw reveals the core RAT framework (identified as version 1.3 in source comments)."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "DOUBLECUP"
+    },
+    "hedges": [
+      "The browser shortcut hijacking function is never invoked, indicating it may be an incomplete feature or dead code under development.",
+      "Persistence cleanup is likely used to clean up forensic evidence after an objective is met.",
+      "Actor Rognar was previously linked to creating now-defunct malicious VS Code extensions.",
+      "For other payload types, such as an executable, the final flow could be different."
+    ]
+  }
+}

@@ -52,5 +52,242 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "10efc9456f6091cedccf1852f2514a3f7392fb8d": {
+    "sha1": "10efc9456f6091cedccf1852f2514a3f7392fb8d",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T00:50:58Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1
+  },
+  "109b3ffe7f72186b7baae8d54f16c843ff40a964": {
+    "sha1": "109b3ffe7f72186b7baae8d54f16c843ff40a964",
+    "status": "unread",
+    "partial": false,
+    "read_at": "2026-11-27T00:57:12Z",
+    "model": "haiku",
+    "summary": "",
+    "kind": "",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text, value-not-in-quote",
+    "tries": 1
+  },
+  "1016ea444ad925f388c7bb7d3e7d16d2caa1c56b": {
+    "sha1": "1016ea444ad925f388c7bb7d3e7d16d2caa1c56b",
+    "status": "read",
+    "partial": true,
+    "read_at": "2026-11-27T00:58:56Z",
+    "model": "haiku",
+    "summary": "NadSec's technical teardown of Coruna, a multi-stage exploit chain against Apple Safari/WebKit and the XNU kernel on arm64e iOS and macOS devices. Delivery is by watering-hole compromise, with gambling and fake crypto-exchange lure pages. Google Threat Intelligence Group (GTIG) is cited for attributing the operation to UNC6691. The report describes XOR string obfuscation, a Mach-O parser, several WebKit exploit primitives, a PAC bypass, and a kernel vulnerability (CVE-2023-41974). The supplied text ends partway through the XSLT trigger section, so the kernel stage, kill chain and attribution…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC6691",
+          "q": "Operated by UNC6691 (GTIG, March 2026)",
+          "by": "Google Threat Intelligence Group (GTIG), as cited in the report"
+        },
+        {
+          "v": "UNC6691",
+          "q": "attribution to UNC6691.",
+          "by": "NadSec (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Hong Kong, China",
+          "q": "2025-06-01 Domain registered via Gname.com (Singapore). Registrant: Hong Kong, China"
+        },
+        {
+          "v": "US",
+          "q": "2026-03-06 WHOIS updated - registrant country changed to US (operational cover)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-03-06",
+          "q": "Published: 2026-03-06",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-05-09",
+          "q": "Archived: 2026-05-09 02:01:31 UTC",
+          "what": "Report archived"
+        },
+        {
+          "v": "March 2026",
+          "q": "Operated by UNC6691 (GTIG, March 2026)",
+          "what": "GTIG report documenting UNC6691 operation"
+        },
+        {
+          "v": "2025-06-01",
+          "q": "2025-06-01 Domain registered via Gname.com (Singapore). Registrant: Hong Kong, China",
+          "what": "Delivery infrastructure domain registered"
+        },
+        {
+          "v": "2025-12",
+          "q": "~2025-12 UNC6691 acquires Coruna framework (per GTIG)",
+          "what": "UNC6691 acquires Coruna framework, per GTIG"
+        },
+        {
+          "v": "2026-03-06",
+          "q": "2026-03-06 WHOIS updated - registrant country changed to US (operational cover)",
+          "what": "Registrant country changed to US"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Coruna",
+          "q": "Coruna is a multi-stage, multi-platform exploit chain targeting Apple's Safari/WebKit engine"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "watering-hole compromise",
+          "q": "Delivery is via watering-hole compromise: a legitimate website visited by the target is injected with a"
+        },
+        {
+          "v": "hidden iFrame delivery",
+          "q": "while the Coruna exploit chain loads via hidden iFrame"
+        },
+        {
+          "v": "bypassing Apple's Pointer Authentication Codes (PAC)",
+          "q": "bypassing Apple's Pointer Authentication Codes (PAC)"
+        },
+        {
+          "v": "scanning for ROP/JOP gadgets",
+          "q": "scanning system framework memory for ROP/JOP gadgets"
+        },
+        {
+          "v": "parsing Mach-O binaries from JavaScript",
+          "q": "parsing Mach-O binaries from JavaScript"
+        },
+        {
+          "v": "type confusion",
+          "q": "YGPUu7 exploits JavaScriptCore's NaN-boxing representation via a crafted type confusion"
+        },
+        {
+          "v": "JIT compiler optimization bug",
+          "q": "KRfmo6 exploits a JIT compiler optimization bug"
+        },
+        {
+          "v": "stack overflow",
+          "q": "uses a recursive try/catch stack overflow to achieve confusion"
+        },
+        {
+          "v": "remounting root filesystem read-write",
+          "q": "remounting the root filesystem read-write"
+        },
+        {
+          "v": "over HTTP",
+          "q": "Post-exploitation communication is handled entirely over HTTP"
+        },
+        {
+          "v": "hidden DOM element",
+          "q": "it is injected into the page using a hidden DOM element"
+        },
+        {
+          "v": "random query parameter",
+          "q": "Every GET request appends a random query parameter."
+        },
+        {
+          "v": "single-byte XOR",
+          "q": "The encoding is a single-byte XOR applied element-wise to an array of integers."
+        },
+        {
+          "v": "anti-forensics measure",
+          "q": "as a deliberate anti-forensics measure"
+        },
+        {
+          "v": "Lockdown Mode",
+          "q": "The exploit avoids execution if the device is in Lockdown Mode."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-41974",
+          "q": "triggering a kernel vulnerability in IOSurfaceRoot (CVE-2023-41974)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "16 JavaScript modules",
+          "q": "All 16 JavaScript modules are hosted on a single hardcoded domain"
+        },
+        {
+          "v": "13 payload URLs",
+          "q": "maps all 13 payload URLs to their functional roles"
+        },
+        {
+          "v": "~700KB of obfuscated source",
+          "q": "(15 unique JavaScript modules, 28 files, ~700KB of obfuscated source)"
+        },
+        {
+          "v": "~1.2MB framework",
+          "q": "The entire ~1.2MB framework (across 28 JavaScript files)"
+        },
+        {
+          "v": "1,250 XOR-encoded string instances",
+          "q": "Across all 28 files, there are 1,250 XOR-encoded string instances."
+        },
+        {
+          "v": "1,771 XOR-encoded numeric constant instances",
+          "q": "framework, 1,771 XOR-encoded numeric constant instances use the pattern"
+        },
+        {
+          "v": "64 unique keys",
+          "q": "drawn from a pool of 64 unique keys in the range 45-122"
+        },
+        {
+          "v": "649 functions",
+          "q": "a 2MB ARM64 DYLIB with 649 functions"
+        },
+        {
+          "v": "265 kernel exploit imports",
+          "q": "symbol/import categorization (265 kernel exploit imports)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Coruna"
+    },
+    "hedges": [
+      "Initial assessment that one delivery domain was in use rested only on the recovered IOC file; GTIG later documented several more.",
+      "The double-extension URL pattern is described as a possible CDN artifact.",
+      "Targeting of legitimate site JavaScript files is described as a suggestion, potentially replacing or augmenting them.",
+      "Minification is described as likely produced by a JavaScript bundler or minifier in the build pipeline.",
+      "Registrant country change to US is described as operational cover.",
+      "Attribution to UNC6691 is taken from the GTIG March 2026 report, as cited by the author.",
+      "One module hash is described as suggesting a polymorphic module."
+    ]
   }
 }

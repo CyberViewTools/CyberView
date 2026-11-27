@@ -151,5 +151,148 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "d550bcfc9e48736defc43baa88cd510cd28b1aba": {
+    "sha1": "d550bcfc9e48736defc43baa88cd510cd28b1aba",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:58:23Z",
+    "model": "haiku",
+    "summary": "FortiGuard Labs describes C0XMO, a new Gafgyt-derived botnet variant for Linux and IoT devices. It spreads by exploiting CVE-2021-27137 in the UPnP service of DD-WRT router firmware. A separate Python scanner brute-forces Telnet and SSH logins and runs HTTP exploits, including CVE-2015-2051, CVE-2022-35914, and CVE-2025-34054, to deploy bots. The malware sets up persistence with cron jobs and shell profiles, removes rival botnets, and supports 19 DDoS attack methods. The report says its design suggests more operational sophistication than typical Gafgyt malware.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actor",
+          "q": "The threat actor delivered the malware by exploiting CVE-2021-27137, a stack buffer overflow in the UPnP",
+          "by": "FortiGuard Labs (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "technology",
+          "q": "Although the attacker targeted a Japanese technology firm, the source IP address was traced to Germany."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Japan",
+          "q": "Although the attacker targeted a Japanese technology firm, the source IP address was traced to Germany."
+        },
+        {
+          "v": "Germany",
+          "q": "Although the attacker targeted a Japanese technology firm, the source IP address was traced to Germany."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-06-03",
+          "q": "Published: 2026-06-03 · Archived: 2026-06-09 02:01:57 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "2026-06-09",
+          "q": "Published: 2026-06-03 · Archived: 2026-06-09 02:01:57 UTC",
+          "what": "report archived"
+        },
+        {
+          "v": "March",
+          "q": "This past March, FortiGuard Labs discovered a new Gafgyt botnet variant, C0XMO, that spreads by exploiting",
+          "what": "FortiGuard Labs discovered the C0XMO variant"
+        }
+      ],
+      "tools": [
+        {
+          "v": "C0XMO",
+          "q": "This past March, FortiGuard Labs discovered a new Gafgyt botnet variant, C0XMO, that spreads by exploiting"
+        },
+        {
+          "v": "Gafgyt",
+          "q": "C0XMO exhibits many traits typical of Gafgyt variants, including weak-credential brute-force attacks targeting"
+        },
+        {
+          "v": "Python script",
+          "q": "Unlike traditional botnets, C0XMO isolates its scanning function into an independent Python script. The malware"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "weak-credential brute-force attacks",
+          "q": "C0XMO exhibits many traits typical of Gafgyt variants, including weak-credential brute-force attacks targeting"
+        },
+        {
+          "v": "DDoS attack techniques",
+          "q": "Telnet and SSH, embedded command-injection vulnerabilities, and various DDoS attack techniques."
+        },
+        {
+          "v": "cron jobs",
+          "q": "The malware then creates cron jobs to run C0XMO every 15 minutes."
+        },
+        {
+          "v": "eliminate competing botnets",
+          "q": "C0XMO attempts to eliminate competing botnets run by other threat actors."
+        },
+        {
+          "v": "custom handshake",
+          "q": "C0XMO performs a custom handshake after connecting."
+        },
+        {
+          "v": "SOAP Injection",
+          "q": "UPnP SOAP Injection (CVE-2021-27137)"
+        },
+        {
+          "v": "unauthorized access",
+          "q": "In addition, the scanner exploits unauthorized access vulnerabilities in the Android Debug Bridge (ADB) to"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-27137",
+          "q": "The threat actor delivered the malware by exploiting CVE-2021-27137, a stack buffer overflow in the UPnP"
+        },
+        {
+          "v": "CVE-2015-2051",
+          "q": "HNAP SOAP Injection (CVE-2015-2051)"
+        },
+        {
+          "v": "CVE-2022-35914",
+          "q": "GLPI htmLawed RCE (CVE-2022-35914)"
+        },
+        {
+          "v": "CVE-2016-15047",
+          "q": "AVTECH DVR Vulnerability (CVE-2025-34054, CVE-2016-15047)"
+        },
+        {
+          "v": "CVE-2025-34054",
+          "q": "AVTECH DVR Vulnerability (CVE-2025-34054, CVE-2016-15047)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "19",
+          "q": "C0XMO supports 19 different DDoS attack methods for various scenarios, as shown in the table below."
+        },
+        {
+          "v": "22",
+          "q": "The scanner has around 22 functions categorized into six groups"
+        },
+        {
+          "v": "15 minutes",
+          "q": "The malware then creates cron jobs to run C0XMO every 15 minutes."
+        },
+        {
+          "v": "High",
+          "q": "Severity Level: High"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "C0XMO"
+    },
+    "hedges": [
+      "This analysis is based on the bot.x86_64 sample.",
+      "Its modular exploitation features, multi-phase propagation methods, and overall design suggest a greater degree of operational sophistication than typical Gafgyt malware."
+    ]
   }
 }

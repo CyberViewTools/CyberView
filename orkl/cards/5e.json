@@ -129,5 +129,148 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5e48fa8ab017554c8a3407eaf6ae01823a4558ff": {
+    "sha1": "5e48fa8ab017554c8a3407eaf6ae01823a4558ff",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:54:09Z",
+    "model": "haiku",
+    "summary": "TrendAI Research analysed a supply chain compromise in which trojanized npm packages sold as date-math utilities contain a loader that starts a Linux binary when the module loads. The binary is the RedShell Linux implant of the RedC2 4.0 framework, which the report says is marketed on Hack Forums. Described capabilities include shell access, SSH key and browser credential collection, database discovery, plaintext HTTP exfiltration, fileless execution, persistence and SOCKS5 pivoting. RedC2 includes Red Agent, an LLM assistant that turns natural-language prompts into command sequences. The…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "Aug.23, 2025",
+          "q": "v2.0 (Aug.23, 2025): Introduced RedC2 EXT, the external CLI client",
+          "what": "RedC2 v2.0 released, adding the EXT client"
+        },
+        {
+          "v": "Jan. 7, 2026",
+          "q": "dates this release to Jan. 7, 2026.",
+          "what": "RedC2 update page's date for the v2.0 release"
+        },
+        {
+          "v": "Jan. 24, 2026",
+          "q": "v3.0 (Jan. 24, 2026): Added multi-operator terminals and improved server startup",
+          "what": "RedC2 v3.0 released"
+        },
+        {
+          "v": "June 1, 2026",
+          "q": "v4.0 (June 1, 2026): Introduced the native RedShell Linux implant",
+          "what": "RedC2 v4.0 introduced the native RedShell Linux implant"
+        },
+        {
+          "v": "July 19, 2026",
+          "q": "v4.1 (July 19, 2026): Added cross-network shell tunnelling",
+          "what": "RedC2 v4.1 released with cross-network shell tunnelling"
+        },
+        {
+          "v": "Aug. 5, 2026",
+          "q": "v4.1.3 (Aug. 5, 2026): Extended Linux coverage with Windows Subsystem for Linux (WSL) support",
+          "what": "RedC2 v4.1.3 released with Linux and WSL coverage"
+        }
+      ],
+      "tools": [
+        {
+          "v": "RedC2",
+          "q": "RedC2 extends its control layer with an AI-driven component called Red Agent"
+        },
+        {
+          "v": "RedShell",
+          "q": "the RedShell Linux implant for the RedC2 4.0"
+        },
+        {
+          "v": "Red Agent",
+          "q": "RedC2 ships with an AI assistant called Red Agent, an LLM-backed command execution layer"
+        },
+        {
+          "v": "Red Vert and Red Runner",
+          "q": "It also bundles utilities for converting standard PE files into evasive shellcode (Red Vert and Red Runner)"
+        },
+        {
+          "v": "RedC2 EXT",
+          "q": "Introduced RedC2 EXT, the external CLI client"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "trojanized npm packages",
+          "q": "A cluster of trojanized npm packages, published as dependency-free utilities for calendar and streak calculations,"
+        },
+        {
+          "v": "trojan loader",
+          "q": "which acts as a trojan loader."
+        },
+        {
+          "v": "module load",
+          "q": "as soon as the module loads"
+        },
+        {
+          "v": "in-memory ELF execution",
+          "q": "In-memory ELF execution through memfd."
+        },
+        {
+          "v": "cross-network shell tunnelling",
+          "q": "Added cross-network shell tunnelling, driven from the Network Map."
+        },
+        {
+          "v": "persistence",
+          "q": "Persistence through cron, .bashrc, systemd, or XDG autostart."
+        },
+        {
+          "v": "SOCKS5 proxying",
+          "q": "SOCKS5 proxying and TCP port forwarding."
+        },
+        {
+          "v": "browser credentials",
+          "q": "Collection of SSH keys and browser credentials."
+        },
+        {
+          "v": "databases",
+          "q": "Detection of databases present on the host."
+        },
+        {
+          "v": "plaintext HTTP",
+          "q": "Exfiltration uses plaintext HTTP over TCP with no TLS."
+        },
+        {
+          "v": "double-fork",
+          "q": "It then daemonizes itself using a double-fork technique"
+        },
+        {
+          "v": "AI-assisted task execution",
+          "q": "AI-assisted task execution through the framework’s Red Agent component."
+        },
+        {
+          "v": "certificate verification disabled",
+          "q": "certificate verification disabled."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "120-second timeout",
+          "q": "enforces a 120-second timeout."
+        },
+        {
+          "v": "three-second reconnect timer",
+          "q": "before the three-second reconnect timer fires."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "RedShell"
+    },
+    "hedges": [
+      "Several capability descriptions are attributed to the framework's documentation rather than observed directly, including Red Agent's behaviour and the Linux implant's build requirements.",
+      "The report says a step that changes file permissions may be absent in other variants.",
+      "The report says normal certificate verification applies to its curl uploads unless curl's behaviour has been changed externally.",
+      "The report notes a conflict: the v2.0 release is dated Aug. 23, 2025, but RedC2's update page dates it Jan. 7, 2026."
+    ]
   }
 }

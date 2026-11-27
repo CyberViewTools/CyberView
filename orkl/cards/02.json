@@ -1,25 +1,260 @@
 {
   "02a4df5f9777d66c5d1060a942e10e18684cf3f9": {
     "sha1": "02a4df5f9777d66c5d1060a942e10e18684cf3f9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:28:46Z",
+    "read_at": "2026-11-27T00:48:11Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Zscaler ThreatLabz analysed exploitation of CVE-2026-88771, a critical unauthenticated remote code execution flaw in Citrix NetScaler ADC and Gateway appliances, disclosed on September 27, 2026. Attackers staged a payload in access logs and forged an authentication-log entry, which a privileged maintenance script later executed. Observed follow-on activity included web shell deployment and a FreeBSD implant. The report notes an infrastructure overlap with StyleSmuggler (CVE-2026-75650), but says this does not establish threat actor attribution. It also lists indicators of compromise and…",
+    "kind": "vulnerability",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "September 27, 2026",
+          "q": "On September 27, 2026, Citrix disclosed CVE-2026-88771, a critical remote code execution (RCE) vulnerability",
+          "what": "Citrix disclosed CVE-2026-88771"
+        },
+        {
+          "v": "2026-10-16",
+          "q": "Published: 2026-10-16 · Archived: 2026-11-16 02:00:24 UTC",
+          "what": "Zscaler blog post published on the vulnerability"
+        }
+      ],
+      "tools": [
+        {
+          "v": "web shells",
+          "q": "execution before authentication, appliance fingerprinting, and attempts to deploy multiple web shells."
+        },
+        {
+          "v": "FreeBSD x64 implant",
+          "q": "ThreatLabz also observed delivery of a FreeBSD x64 implant from infrastructure that overlapped with activity we previously"
+        },
+        {
+          "v": "StyleSmuggler",
+          "q": "associated with exploitation of StyleSmuggler (CVE-2026-75650), a vulnerability affecting Adobe Commerce and"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "log-poisoning",
+          "q": "ThreatLabz discovered a staged log-poisoning chain."
+        },
+        {
+          "v": "unauthenticated remote command execution",
+          "q": "CVE-2026-88771 enables unauthenticated remote command execution on Citrix NetScaler by exploiting the"
+        },
+        {
+          "v": "Delayed execution by a privileged script",
+          "q": "Step 3: Delayed execution by a privileged script"
+        },
+        {
+          "v": "payload spraying across multiple URLs",
+          "q": "payload spraying across multiple URLs, directory creation, PHP enablement, and inline payload delivery."
+        },
+        {
+          "v": "appliance fingerprinting",
+          "q": "execution before authentication, appliance fingerprinting, and attempts to deploy multiple web shells."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2026-88771",
+          "q": "On September 27, 2026, Citrix disclosed CVE-2026-88771, a critical remote code execution (RCE) vulnerability"
+        },
+        {
+          "v": "CVE-2026-107406",
+          "q": "and NetScaler Gateway, CVE-2026-107406, which can lead to RCE or denial of service."
+        },
+        {
+          "v": "CVE-2026-75650",
+          "q": "associated with exploitation of StyleSmuggler (CVE-2026-75650), a vulnerability affecting Adobe Commerce and"
+        }
+      ],
+      "figures": [
+        {
+          "v": "CVSS v3.1 score of 9.8",
+          "q": "CVSS v3.1 score of 9.8 according to NVD and a CVSS v4.0 score of 9.5 according to the Citrix security bulletin"
+        },
+        {
+          "v": "CVSS v4.0 score of 9.5",
+          "q": "CVSS v3.1 score of 9.8 according to NVD and a CVSS v4.0 score of 9.5 according to the Citrix security bulletin"
+        },
+        {
+          "v": "at least 26 source IP addresses",
+          "q": "ThreatLabz also observed a burst of exploitation attempts from at least 26 source IP addresses over approximately"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2026-88771"
+    },
+    "hedges": [
+      "This overlap provides an investigative lead but does not establish threat actor attribution.",
+      "Shared hosting and compromised infrastructure, malware distribution services, or payload reuse by unrelated operators could explain the connection.",
+      "This overlap raises the possibility that one operator or malware-distribution service maintained payloads for different platforms and opportunistically deployed them.",
+      "This blog post is provided for informational purposes only, with no guarantee of accuracy, completeness or reliability."
+    ]
+  },
+  "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3": {
+    "sha1": "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T01:00:02Z",
+    "model": "haiku",
+    "summary": "Breakglass Intelligence reports on a Kimsuky command-and-control server with directory listing enabled, serving a three-stage kill chain that starts from a CHM help file disguised as API documentation. The stages cover system reconnaissance with scheduled-task persistence, a PowerShell bridge, and a keylogger with clipboard monitoring and timed exfiltration. The report maps about 79 domains across five IPs on Korean and US VPS providers and free dynamic DNS services, including Naver and tax-themed phishing lures aimed at South Korean users. It attributes the activity to Kimsuky (DPRK) with…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Kimsuky",
+          "q": "Kimsuky (APT43 / Velvet Chollima / Black Banshee) — DPRK — HIGH confidence",
+          "by": "the report itself (Breakglass Intelligence, Attribution section)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "Target: South Korean Naver users"
+        },
+        {
+          "v": "DPRK",
+          "q": "Kimsuky (APT43 / Velvet Chollima / Black Banshee) — DPRK — HIGH confidence"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-04-11",
+          "q": "Published: 2026-04-11",
+          "what": "report published"
+        },
+        {
+          "v": "April 11, 2026",
+          "q": "On April 11, 2026, researcher",
+          "what": "researcher submitted the CHM file to MalwareBazaar"
+        },
+        {
+          "v": "April 10, 2026",
+          "q": "On April 10, 2026,",
+          "what": "CHM file submitted to MalwareBazaar and flagged by antivirus vendors"
+        },
+        {
+          "v": "February 26, 2026",
+          "q": "was registered on February 26, 2026 via Namecheap",
+          "what": "C2 apex domain registered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "hh.exe",
+          "q": "hh.exe renders the compiled"
+        },
+        {
+          "v": "PowerShell",
+          "q": "Command and Scripting: PowerShell"
+        },
+        {
+          "v": "VBScript",
+          "q": "Command and Scripting: VBScript"
+        },
+        {
+          "v": "GetAsyncKeyState",
+          "q": "Win32 API: GetAsyncKeyState"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Spearphishing Attachment",
+          "q": "Phishing: Spearphishing Attachment"
+        },
+        {
+          "v": "User Execution: Malicious File",
+          "q": "User Execution: Malicious File"
+        },
+        {
+          "v": "Masquerading",
+          "q": "T1036.005 Masquerading"
+        },
+        {
+          "v": "Security Software Discovery",
+          "q": "T1518.001 Security Software Discovery"
+        },
+        {
+          "v": "Scheduled Task",
+          "q": "Scheduled Task"
+        },
+        {
+          "v": "Deobfuscate/Decode Files",
+          "q": "Deobfuscate/Decode Files"
+        },
+        {
+          "v": "Keylogging",
+          "q": "Input Capture: Keylogging"
+        },
+        {
+          "v": "Clipboard Data",
+          "q": "T1115 Clipboard Data"
+        },
+        {
+          "v": "Data Encoding: Base64",
+          "q": "Data Encoding: Base64"
+        },
+        {
+          "v": "Exfiltration Over C2",
+          "q": "T1041 Exfiltration Over C2"
+        },
+        {
+          "v": "No file touches disk",
+          "q": "No file touches disk for the second-stage payload"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "6,338 bytes",
+          "q": "Stage 1: Reconnaissance + Persistence (6,338 bytes VBScript)"
+        },
+        {
+          "v": "449 bytes",
+          "q": "Stage 2: PowerShell Bridge (449 bytes VBScript)"
+        },
+        {
+          "v": "6,234 bytes",
+          "q": "Stage 3: Full Keylogger (6,234 bytes PowerShell)"
+        },
+        {
+          "v": "79 Domains",
+          "q": "Infrastructure: 79 Domains Across 5 IPs"
+        },
+        {
+          "v": "5 IPs in 9 days",
+          "q": "The domain rotated through 5 IPs in 9 days:"
+        },
+        {
+          "v": "7 free DDNS providers",
+          "q": "using 7 free DDNS providers"
+        },
+        {
+          "v": "100–140 minutes",
+          "q": "Randomized 100–140 minutes"
+        },
+        {
+          "v": "Forty domains",
+          "q": "Forty domains with randomized 5-character subdomain prefixes"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "likely for credential exfiltration via Google services",
+      "appears to be a XAMPP-style deployment",
+      "(likely geo-IP)",
+      "likely the exfiltration routine",
+      "Kimsuky (APT43 / Velvet Chollima / Black Banshee) — DPRK — HIGH confidence"
+    ]
   }
 }

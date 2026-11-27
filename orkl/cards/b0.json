@@ -71,25 +71,91 @@
   },
   "b0f478f447f65c4f77c981a3f5f3ce85274aa352": {
     "sha1": "b0f478f447f65c4f77c981a3f5f3ce85274aa352",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:22:26Z",
+    "read_at": "2026-11-27T00:46:46Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Netresec blog post by Erik Hjelmvik (published 28 April 2025) on decoding njRAT remote access trojan traffic with the NetworkMiner tool, using a Triage sandbox run. It lists the artefacts NetworkMiner can extract from njRAT command-and-control traffic: victim screenshots, transferred files, C2 commands, bot replies, stolen credentials and keylog data. The text says njRAT has been in use since 2013 and that antivirus vendors call it Bladabindi. The post is a tutorial rather than a campaign report and names no threat actor.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2025-04-28",
+          "q": "Published: 2025-04-28 · Archived: 2026-11-25 02:12:11 UTC",
+          "what": "Blog post and video published"
+        },
+        {
+          "v": "2013",
+          "q": "2013, but despite being over 10 years old it still remains",
+          "what": "njRAT has been around since this year"
+        }
+      ],
+      "tools": [
+        {
+          "v": "njRAT",
+          "q": "njRAT is a Remote Access Trojan (RAT) that can be used to remotely control a hacked computer."
+        },
+        {
+          "v": "Bladabindi",
+          "q": "Anti virus vendors usually refer to njRAT as Bladabindi."
+        },
+        {
+          "v": "NetworkMiner",
+          "q": "NetworkMiner has a built-in parser for the njRAT Command-and-Control (C2) protocol."
+        },
+        {
+          "v": "Triage sandbox",
+          "q": "I investigate network traffic from a Triage sandbox execution of njRAT in this video."
+        },
+        {
+          "v": "REMnux",
+          "q": "NetworkMiner in Linux (REMnux to be specific)."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Screen Capture",
+          "q": "CAP = Screen Capture"
+        },
+        {
+          "v": "Get Passwords",
+          "q": "ret = Get Passwords"
+        },
+        {
+          "v": "Key Logger",
+          "q": "kl = Key Logger"
+        },
+        {
+          "v": "Plugin Delivery",
+          "q": "PLG = Plugin Delivery"
+        },
+        {
+          "v": "Process List",
+          "q": "Ex proc = Process List"
+        },
+        {
+          "v": "Stolen credentials/passwords",
+          "q": "Stolen credentials/passwords"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "over 10 years old",
+          "q": "2013, but despite being over 10 years old it still remains"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "njRAT"
+    },
+    "hedges": [
+      "Analysis covers one Triage sandbox execution of njRAT shown in the video.",
+      "Protocol decoding covers well-known njRAT ports and a few extra ports; other ports need NetworkMiner Professional."
+    ]
   }
 }

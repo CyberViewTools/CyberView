@@ -1,0 +1,101 @@
+{
+  "f7a77efce9d6b108f075d048f0885132df9d1ea5": {
+    "sha1": "f7a77efce9d6b108f075d048f0885132df9d1ea5",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:53:46Z",
+    "model": "haiku",
+    "summary": "Analysis by Zyad Waleed Elzyat of the Auto-Color Linux backdoor, first documented by Palo Alto Networks Unit 42 in February 2025. Without root, the sample runs in the background, keeps state in a temporary directory and repeatedly tries to reach a remote server. As root, it installs an embedded 35,160-byte library and registers it in the preload configuration file, creating a user-space rootkit that hides the implant's files and filters network socket listings. Earliest samples date from November to December 2024; observed targets were universities and government offices in North America and…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "Government offices",
+          "q": "government offices in North America and Asia being the main observed targets"
+        },
+        {
+          "v": "Universities",
+          "q": "with universities and"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "February 2025",
+          "q": "first documented by Palo Alto Networks Unit 42 in February 2025.",
+          "what": "Auto-Color first documented by Palo Alto Networks Unit 42"
+        },
+        {
+          "v": "November and December 2024",
+          "q": "The earliest known samples were collected between November and December 2024",
+          "what": "earliest known samples collected"
+        },
+        {
+          "v": "2026-08-30",
+          "q": "Published: 2026-08-30 · Archived: 2026-09-01 02:01:13 UTC",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Auto-Color",
+          "q": "Auto-Color is an emerging Linux backdoor first documented by Palo Alto Networks Unit 42 in February 2025."
+        },
+        {
+          "v": "libcext.so.2",
+          "q": "libcext.so.2 appeared in the process dependency output even though it was not a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "double fork",
+          "q": "It uses a double fork to continue running in the background."
+        },
+        {
+          "v": "user-space preload rootkit",
+          "q": "It is a user-space preload rootkit that hides Auto-Color's files and selected network entries."
+        },
+        {
+          "v": "disable SELinux enforcement",
+          "q": "attempts to disable SELinux enforcement"
+        },
+        {
+          "v": "hooks common libc functions",
+          "q": "The library hooks common libc functions, attempts to disable SELinux enforcement, hides implant-related"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "35,160-byte",
+          "q": "In a root context, it installs an embedded 35,160-byte library and registers it through"
+        },
+        {
+          "v": "229,160 bytes",
+          "q": "Size 229,160 bytes"
+        },
+        {
+          "v": "36 of 63 engines",
+          "q": "VirusTotal at capture time 36 of 63 engines detected the file"
+        },
+        {
+          "v": "75 seconds",
+          "q": "for 75 seconds, followed its child processes"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Auto-Color"
+    },
+    "hedges": [
+      "Its initial delivery method is still unknown",
+      "I did not see a successful setsid() call, so I would not describe it as a complete textbook daemonization sequence.",
+      "I was not able to decode the eight-byte value, so there is not enough evidence to call it a key or an encrypted configuration.",
+      "Because the connection never completed, I could not determine whether this value is a victim identifier, handshake data, or something else.",
+      "the purpose of these local ports remains unclear.",
+      "I did not find any evidence of a kernel module or a kernel-level hook."
+    ]
+  }
+}

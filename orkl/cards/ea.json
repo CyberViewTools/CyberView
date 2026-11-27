@@ -63,5 +63,132 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "eaec34789efaff36c406a8ae812679016743e56a": {
+    "sha1": "eaec34789efaff36c406a8ae812679016743e56a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:58:22Z",
+    "model": "haiku",
+    "summary": "Cisco Talos reports an ongoing campaign since at least December 2025 by a actor it tracks as UAT-10027, delivering a previously undisclosed backdoor named Dohdoor. Targets were in education and health care, mainly in the United States. Initial access is likely phishing. A batch script and DLL sideloading lead to Dohdoor, which resolves C2 over DNS-over-HTTPS via Cloudflare, uses process hollowing, and unhooks calls monitored by EDR. Talos saw evidence pointing to a likely Cobalt Strike payload, though no payload was recovered. Talos assesses with low confidence a North Korea nexus, citing…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "UAT-10027",
+          "q": "by a threat actor we track as “UAT-10027,” delivering a previously undisclosed backdoor dubbed “Dohdoor.”",
+          "by": "Cisco Talos"
+        },
+        {
+          "v": "Lazarus",
+          "q": "were observed in the tradecraft of the North Korean APT actor Lazarus.",
+          "by": "Cisco Talos"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "education",
+          "q": "targeted victims in the education and health care sectors in the United States through a multi-"
+        },
+        {
+          "v": "health care",
+          "q": "targeted victims in the education and health care sectors in the United States through a multi-"
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "targeted victims in the education and health care sectors in the United States through a multi-"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 2025",
+          "q": "Cisco Talos discovered an ongoing malicious campaign since at least as early as December 2025 by a",
+          "what": "campaign observed since at least this date"
+        },
+        {
+          "v": "2026-02-26",
+          "q": "Published: 2026-02-26 · Archived: 2026-05-12 02:01:07 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "Nov. 25, 2025",
+          "q": "Dohdoor is a 64-bit DLL that was compiled on Nov. 25, 2025, containing the debug",
+          "what": "Dohdoor DLL compiled"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Dohdoor",
+          "q": "previously undisclosed backdoor dubbed “Dohdoor.”"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "execute the potential Cobalt Strike Beacon payload, reflectively within legitimate Windows"
+        },
+        {
+          "v": "Lazarloader",
+          "q": "We observed similarities in the technical characteristics of Dohdoor with Lazarloader, a tool belonging to the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DNS-over-HTTPS",
+          "q": "Dohdoor utilizes the DNS-over-HTTPS (DoH) technique for command-and-control (C2) communications"
+        },
+        {
+          "v": "DLL sideloading",
+          "q": "The batch script then executes the malicious DLL dubbed as Dohdoor, by sideloading it to a legitimate"
+        },
+        {
+          "v": "process hollowing",
+          "q": "process utilizing process hollowing technique."
+        },
+        {
+          "v": "phishing",
+          "q": "initial access is likely achieved through social engineering phishing techniques."
+        },
+        {
+          "v": "anti-forensic cleanup",
+          "q": "DLL sideloading technique to execute the malicious DLL while simultaneously conducting anti-forensic cleanup."
+        },
+        {
+          "v": "unhooking system calls to bypass EDR",
+          "q": "implements an EDR bypass technique by unhooking system calls (syscalls) to"
+        },
+        {
+          "v": "hash-based API resolution",
+          "q": "dynamically resolving Windows API functions using hash-based lookups rather than using static imports,"
+        },
+        {
+          "v": "encrypted C2 communications",
+          "q": "obfuscation and encrypted C2 communications, and bypasses endpoint detection and response (EDR) detections."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "64-bit",
+          "q": "Dohdoor is a 64-bit DLL that was compiled on Nov. 25, 2025, containing the debug"
+        },
+        {
+          "v": "4:1",
+          "q": "The encrypted data maintains a 4:1 expansion ratio where the"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Dohdoor"
+    },
+    "hedges": [
+      "Talos assesses with low confidence that UAT-10027 is North Korea-nexus",
+      "While the initial infection vector remains unknown",
+      "The threat actor appeared to have executed the download command via a PowerShell script that was potentially delivered",
+      "we were unable to find a payload that was downloaded and implanted by the Dohdoor",
+      "indicating that the threat actor was potentially using the Cobalt Strike beacon as the payload",
+      "the campaign’s focus on the education and health care sectors deviates from Lazarus’ typical profile"
+    ]
   }
 }

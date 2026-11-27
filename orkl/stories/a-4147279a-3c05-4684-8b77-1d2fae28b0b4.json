@@ -36,7 +36,7 @@
         ]
       }
     ],
-    "status": "published",
+    "status": "stale",
     "based_on": "36b89fd97fe5074c8d6d742617dfa69eb3020c8f",
     "tries": 0,
     "by": "CyberView AI (a Claude model)",
@@ -44,7 +44,152 @@
     "writer_model": "sonnet",
     "reviewed_at": "2026-11-26T22:24:20Z",
     "reviewer_model": "sonnet",
-    "written_run": "04815591"
+    "written_run": "04815591",
+    "stale_reason": "new-report"
   },
-  "next": null
+  "next": {
+    "key": "a-4147279a-3c05-4684-8b77-1d2fae28b0b4",
+    "kind": "actor",
+    "name": "NICKEL FOXCROFT",
+    "headline": "NICKEL FOXCROFT (APT37, ScarCruft): a long-running espionage group focused on South Korea",
+    "in_short": "NICKEL FOXCROFT, also tracked as APT37 and ScarCruft, is described by vendors as a North Korea-linked espionage actor. Reports cover Android spyware and an air-gap USB campaign.",
+    "sections": [
+      {
+        "h": "who",
+        "sentences": [
+          {
+            "t": "NICKEL FOXCROFT is tracked by Secureworks. Its catalogue aliases include APT37, ScarCruft, Group 123, InkySquid, Moldy Pisces, Reaper, RICOCHET CHOLLIMA and Venus 121.",
+            "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "CrowdStrike calls RICOCHET CHOLLIMA a DPRK-nexus targeted intrusion adversary. It says the group has been involved in espionage since at least 2016.",
+            "cites": [
+              "d05f74add08e022ef631c1d55dac87636f641e08"
+            ]
+          },
+          {
+            "t": "Lookout describes ScarCruft as a North Korean state-sponsored cyber espionage group active since 2012.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
+          {
+            "t": "CrowdStrike says the group's observed operations have almost exclusively targeted the Republic of Korea.",
+            "cites": [
+              "d05f74add08e022ef631c1d55dac87636f641e08"
+            ]
+          },
+          {
+            "t": "CrowdStrike assesses the focus is on South Korean government officials, NGOs, academics and journalists. Its page text is truncated, so the profile is incomplete.",
+            "cites": [
+              "d05f74add08e022ef631c1d55dac87636f641e08"
+            ]
+          },
+          {
+            "t": "Lookout says the group has also operated in Japan, Vietnam, Russia, Nepal, China, India and Romania, among other countries.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "methods",
+        "sentences": [
+          {
+            "t": "Zscaler ThreatLabz says APT37 has abused malicious shortcut (LNK) files as an initial vector for years.",
+            "cites": [
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+            ]
+          },
+          {
+            "t": "Lookout describes KoSpy as Android spyware that uses fake utility app lures. It records keystrokes by abusing accessibility services.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          },
+          {
+            "t": "Lookout says KoSpy uses a two-stage approach to managing its command servers. It says this gives the operator flexibility and resilience.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          },
+          {
+            "t": "Zscaler says the Ruby Jumper toolkit uses removable media to reach air-gapped networks. It includes a backdoor called THUMBSBD and a tool called VIRUSTASK.",
+            "cites": [
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "operations",
+        "sentences": [
+          {
+            "t": "Lookout reports KoSpy samples dated from March 2022 to March 2024. They posed as five different apps, distributed via Google Play and Firebase Firestore.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          },
+          {
+            "t": "Lookout attributes KoSpy to APT37 with medium confidence. It also notes ties to infrastructure used by APT43, another North Korean group.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          },
+          {
+            "t": "Lookout says the apps were removed from Google Play and the Firebase projects were deactivated.",
+            "cites": [
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          },
+          {
+            "t": "Zscaler ThreatLabz published a report on 2026-02-26 about APT37's Ruby Jumper campaign. The chain starts with an LNK file and delivers RESTLEAF, then SNAKEDROPPER, which installs a backdoored Ruby runtime.",
+            "cites": [
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+            ]
+          },
+          {
+            "t": "Zscaler says that, to its knowledge, this is the first time APT37 has abused Zoho WorkDrive. RESTLEAF uses it for command and control.",
+            "cites": [
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+            ]
+          },
+          {
+            "t": "Zscaler says THUMBSBD also delivers BLUELIGHT, a previously documented backdoor.",
+            "cites": [
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "takeaway",
+        "sentences": [
+          {
+            "t": "Treat unexpected shortcut files and USB media with caution, and install apps only from sources you trust.",
+            "cites": []
+          }
+        ]
+      }
+    ],
+    "status": "rejected",
+    "based_on": "f49945ac2a88b52a8d4627337e827697998dda08",
+    "tries": 1,
+    "by": "CyberView AI (a Claude model)",
+    "written_at": "2026-11-27T00:46:06Z",
+    "writer_model": "sonnet",
+    "reasons": [
+      "unbacked",
+      "bare-attribution"
+    ],
+    "written_run": "e0e6841f"
+  }
 }

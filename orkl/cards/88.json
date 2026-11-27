@@ -174,25 +174,247 @@
   },
   "88f5a8bd8832f5d326afca713c918e1c856afd18": {
     "sha1": "88f5a8bd8832f5d326afca713c918e1c856afd18",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:26:04Z",
+    "read_at": "2026-11-27T00:46:50Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "SentinelLABS report, published 3 November 2022, on Black Basta ransomware attacks that deploy custom EDR evasion tools the report ties to the FIN7 threat actor. The supplied text is only the title page and table of contents. Its section list covers initial access, privilege escalation, remote admin tools, lateral movement, defence impairment, a custom defense impairment tool, and attribution to FIN7. No body detail is available, so no sectors, countries, CVEs or figures are recorded.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "Tools Tied to FIN7 Threat Actor",
+          "by": "SentinelLABS (SentinelOne), the report's authors"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2022-11-03",
+          "q": "Published: 2022-11-03",
+          "what": "Report published"
+        },
+        {
+          "v": "November 2022",
+          "q": "November 2022",
+          "what": "Report dated"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Custom EDR Evasion Tools",
+          "q": "Attacks Deploy Custom EDR Evasion Tools Tied to FIN7 Threat Actor"
+        },
+        {
+          "v": "REMOTE ADMIN TOOLS",
+          "q": "9 REMOTE ADMIN TOOLS"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "IMPAIR DEFENSES",
+          "q": "13 IMPAIR DEFENSES"
+        },
+        {
+          "v": "LATERAL MOVEMENT",
+          "q": "LATERAL MOVEMENT"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Black Basta"
+    },
+    "hedges": [
+      "The title says the tools are 'Tied to' FIN7, which describes a link rather than a flat identity."
+    ]
+  },
+  "887d14eb9b6003a351bc78943379f932851a316d": {
+    "sha1": "887d14eb9b6003a351bc78943379f932851a316d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:57:19Z",
+    "model": "haiku",
+    "summary": "Malware analysis of Jackskid, a Mirai-derived DDoS botnet, by Nokia Deepfield ERT and Comcast Threat Research Lab. Covers builds from a November 2025 x86 prototype to ARM builds with three encryption layers, DNS-over-HTTPS C2 resolution, and ADB-based delivery to Android TV boxes from January 2026. Reports links to Aisuru and the CatDDoS derivative ecosystem. Law enforcement disrupted the operation on March 19, 2026, after which C2 capacity fell sharply and a smaller Ethereum Name Service fallback appeared.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Sorrow",
+          "q": "The article attributes the botnet to an individual operating under the handle Sorrow",
+          "by": "Kirk on Security (satirical blog), as reported in the research"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "gaming infrastructure",
+          "q": "The bot specifically targets gaming infrastructure:"
+        },
+        {
+          "v": "IoT",
+          "q": "targeting IoT cameras, routers, and ONTs"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-03-24",
+          "q": "First published: 2026-03-24",
+          "what": "Report first published"
+        },
+        {
+          "v": "November 2025",
+          "q": "bare-bones x86 prototype in November 2025 to a dual-vector",
+          "what": "Earliest tracked prototype build"
+        },
+        {
+          "v": "January 23, 2026",
+          "q": "ADB exploitation of Android TV set-top boxes, first observed on January 23, 2026.",
+          "what": "First observed ADB delivery to Android TV boxes"
+        },
+        {
+          "v": "March 17–18",
+          "q": "Honeypot captures from March 17–18 confirmed the delivery mechanism",
+          "what": "Honeypot captures confirmed the ADB infection chain"
+        },
+        {
+          "v": "March 19",
+          "q": "Following the law enforcement disruption on March 19, multiple C2 domains went NXDOMAIN",
+          "what": "Law enforcement disruption of Jackskid and related botnets"
+        },
+        {
+          "v": "March 23",
+          "q": "Within days, a new build tier — ENS C2 — appeared on March 23 from",
+          "what": "ENS C2 builds appeared after the disruption"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ghidra",
+          "q": "The Ghidra-based reverse engineering, config decryption, DDoS handler verification"
+        },
+        {
+          "v": "mbedTLS",
+          "q": "The statically linked mbedTLS stack produces a distinctive TLS fingerprint."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "telnet brute-forcing",
+          "q": "Classic Mirai-derivative propagation via telnet brute-forcing with 140–200+ credential pairs"
+        },
+        {
+          "v": "ADB exploitation",
+          "q": "the operator added ADB exploitation of Android TV devices"
+        },
+        {
+          "v": "DNS over HTTPS",
+          "q": "Jackskid resolves C2 domains via DNS over HTTPS, which bypasses on-path plaintext DNS monitoring"
+        },
+        {
+          "v": "fast-flux DNS",
+          "q": "redundant C2 resolution, fast-flux DNS with 40–50 IP addresses per domain"
+        },
+        {
+          "v": "Ethereum Name Service",
+          "q": "builds that resolve C2 via Ethereum Name Service"
+        },
+        {
+          "v": "residential proxy services",
+          "q": "ADB sessions routed via HTTP CONNECT through residential proxy services"
+        },
+        {
+          "v": "HTTP GET flood",
+          "q": "and a new HTTP GET flood with a"
+        },
+        {
+          "v": "GRE tunnel",
+          "q": "Wraps UDP in GRE tunnel, evades UDP filters"
+        },
+        {
+          "v": "SYN cookies",
+          "q": "Bypasses SYN cookies and stateful firewalls"
+        },
+        {
+          "v": "XXTEA encryption",
+          "q": "The bot negotiates per-session ChaCha20 keys using XXTEA encryption with the shared passphrase"
+        },
+        {
+          "v": "ChaCha20",
+          "q": "All C2 command and response traffic is encrypted with ChaCha20 (RFC 8439)."
+        },
+        {
+          "v": "custom RC4",
+          "q": "Embedded strings (C2 domains, ports, dropper commands, firewall rules) are encrypted with a custom RC4"
+        },
+        {
+          "v": "rival botnet packages",
+          "q": "uninstall 6 rival botnet packages by name"
+        },
+        {
+          "v": "Detects sandboxes",
+          "q": "Detects sandboxes: virustotal, cuckoo, joebox, anubis, norman, threattrack, fireeye"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "80+ samples",
+          "q": "We reverse-engineered 80+ samples across 13 build generations"
+        },
+        {
+          "v": "13 build generations",
+          "q": "We reverse-engineered 80+ samples across 13 build generations"
+        },
+        {
+          "v": "100K",
+          "q": "XLab QAX subsequently noted over 100K daily source IP addresses spreading samples"
+        },
+        {
+          "v": "16–17 DDoS attack types",
+          "q": "16–17 DDoS attack types in the latest builds (up from 6 in the earliest)."
+        },
+        {
+          "v": "300,000",
+          "q": "claims approximately 300,000 compromised residential devices"
+        },
+        {
+          "v": "23 of 28 samples",
+          "q": "23 of 28 samples from a March 2026 wave combine the Jackskid cipher key with the"
+        },
+        {
+          "v": "98",
+          "q": "The following 98 unique IP addresses were resolved from the 6 active C2 domains on 2026-03-07"
+        },
+        {
+          "v": "415+",
+          "q": "teams observed 415+ unique fast-flux addresses for the same domains over the January–March period"
+        },
+        {
+          "v": "25+ countries",
+          "q": "The infrastructure is distributed across 25+ countries and 30+ autonomous systems"
+        },
+        {
+          "v": "84-port",
+          "q": "expanded 84-port pool. No telnet scanner or credential table"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Jackskid"
+    },
+    "hedges": [
+      "Shared Aisuru crossover builds could reflect active infrastructure convergence, or parallel builds from a privately shared or leaked codebase; the report says the latter cannot be excluded.",
+      "SecrSS says Jackskid and Aisuru may have operational correlation, inheritance, or share the same technical source, but calls Jackskid a newly constructed family without large-scale module reuse.",
+      "The Kirk on Security write-up is satirical and likely from a rival botnet ecosystem; its claims should be treated as adversarial intelligence, potentially accurate on technical detail.",
+      "The 'kieran ellison' string in the ENS record could be the operator's real name, a pseudonym, or a deliberate plant naming a rival; the report does not settle which.",
+      "The link between the C2 domain name and the BADBOX 2.0 indicator is unresolved: a deliberate reference, shared infrastructure, or coincidence.",
+      "The newly constructed architecture may reflect a ground-up reimplementation using CatDDoS design patterns rather than direct code forking."
+    ]
   }
 }

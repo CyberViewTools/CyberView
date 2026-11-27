@@ -1,0 +1,112 @@
+{
+  "d7c96daab35e1af99f4abf39fac256296487b4b8": {
+    "sha1": "d7c96daab35e1af99f4abf39fac256296487b4b8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T00:52:19Z",
+    "model": "haiku",
+    "summary": "Jamf Threat Labs describes 14 trojanized macOS disk images and installer packages impersonating known Mac apps. The samples are unsigned and run a multi-stage download chain ending in OtterCookie, a malware family the report links to the Contagious Interview campaign. The report says Contagious Interview is attributed to the DPRK and that the chain reuses earlier fake job-interview delivery methods such as Git hooks and VS Code tasks. The samples do not execute by default, which the report suggests may mean active testing or early development.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "DPRK",
+          "q": "Contagious Interview is a long-running campaign attributed to the DPRK in which attackers use a fake job",
+          "by": "the report (attribution as stated in the report; original source not named)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "DPRK",
+          "q": "Contagious Interview is a long-running campaign attributed to the DPRK in which attackers use a fake job"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 3 2026",
+          "q": "September 3 2026 by",
+          "what": "Jamf Threat Labs blog post published"
+        },
+        {
+          "v": "July 2026",
+          "q": "chain documented by CITIZENDOT in a July 2026 writeup of a fake take-home assignment",
+          "what": "CITIZENDOT writeup of a fake take-home assignment"
+        },
+        {
+          "v": "June 2026",
+          "q": "was published in June 2026, every commit landing in a three-day window",
+          "what": "a related GitHub project was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Bunster",
+          "q": "compiled as a standalone Go executable via the open-source project, Bunster."
+        },
+        {
+          "v": "OtterCookie",
+          "q": "It's OtterCookie, a malware family tied to this same Contagious Interview activity in a recent Elastic Security Labs writeup."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "trojanized installers",
+          "q": "The samples described below package these same techniques into a series of trojanized installers."
+        },
+        {
+          "v": "fake job interview as a pretext",
+          "q": "attackers use a fake job interview as a pretext to convince victims to run malicious code."
+        },
+        {
+          "v": "Git hook",
+          "q": "tied to the same infrastructure behind past Git hook and VS"
+        },
+        {
+          "v": "fetch and run the next stage",
+          "q": "The server returns a short bash script whose only job is to fetch and run the next stage:"
+        },
+        {
+          "v": "remote access trojan",
+          "q": "Socket.IO-based remote access trojan"
+        },
+        {
+          "v": "credential stealer",
+          "q": "Browser/crypto wallet credential stealer"
+        },
+        {
+          "v": "clipboard clipper",
+          "q": "In-memory clipboard clipper that regularly runs"
+        },
+        {
+          "v": "filesystem scanner",
+          "q": "In-memory filesystem scanner that looks for various file extensions and sensitive files"
+        },
+        {
+          "v": "virtual machine check",
+          "q": "An additional virtual machine check is now included in the script"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "14 trojanized samples",
+          "q": "In total, 14 trojanized samples have been surfaced,"
+        },
+        {
+          "v": "three-day window",
+          "q": "every commit landing in a three-day window with no"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Contagious Interview"
+    },
+    "hedges": [
+      "The samples do not execute by default, suggesting either active testing or early development.",
+      "This campaign shows signs that attackers may be testing different delivery mechanisms.",
+      "The report says the purpose of one added call in the script is unclear."
+    ]
+  }
+}

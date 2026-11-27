@@ -84,5 +84,128 @@
       "note": "summary: Drops two hedges the report keeps. The report says the malware was 'reportedly found' in POS systems of hotels and other businesses, but the summary st",
       "by": "auditor"
     }
+  },
+  "86e496f986f55f6c0b0191ce30111a6769ca7696": {
+    "sha1": "86e496f986f55f6c0b0191ce30111a6769ca7696",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T01:00:23Z",
+    "model": "haiku",
+    "summary": "S2W analysis of a 2020 watering-hole attack on a North Korea-related website, visited by users of an older Internet Explorer. Multi-stage Ruby and PE loaders decrypt a final payload, a variant of ROKRAT that steals files, browser and mail data, takes screenshots and logs keys. It uses legitimate cloud services (pCloud, Yandex, Box, Dropbox, Backblaze B2) for command and control. The report judges the activity to be related to Scarcruft (APT37, Group123), which it describes as linked to North Korea and active since 2012.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Scarcruft",
+          "q": "공격 방식 및 대상, 악성코드 등을 포함한 TTP 분석 결과, Scarcruft(APT37, Group123) 위협 그룹과",
+          "by": "S2W"
+        },
+        {
+          "v": "APT37",
+          "q": "Scarcruft(a.k.a APT37, Group123)는 북한 배후로 알려진 위협그룹으로 2012년부터 현재까지 지속",
+          "by": "S2W"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-07-13",
+          "q": "Published: 2021-07-13 · Archived: 2026-05-05 02:14:44 UTC",
+          "what": "Report published by S2W"
+        },
+        {
+          "v": "2020",
+          "q": "2020년 12월, 특정 웹사이트가 워터링홀 공격에 악용된 사례가 발견되었으며",
+          "what": "Watering hole attack via a website discovered"
+        },
+        {
+          "v": "2020",
+          "q": "Compilation time: Thu Nov 19 00:24:48 2020",
+          "what": "Compile time of the PE loader sample (Stage03)"
+        },
+        {
+          "v": "2020",
+          "q": "Compilation time: Fri Dec 11 22:56:38 2020",
+          "what": "Compile time of the final ROKRAT variant sample"
+        },
+        {
+          "v": "2012",
+          "q": "Scarcruft(a.k.a APT37, Group123)는 북한 배후로 알려진 위협그룹으로 2012년부터 현재까지 지속",
+          "what": "Scarcruft activity reported as continuing since 2012"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ROKRAT",
+          "q": "최종 실행되는 악성코드는 과거 ROKRAT으로 알려진 악성코드의 발전된 버전"
+        },
+        {
+          "v": "Ruby",
+          "q": "워터링홀 공격으로 다운로드 및 실행되는 악성코드 유형으로 Ruby 실행 파일 및 Ruby 스크립트, PE"
+        },
+        {
+          "v": "Powershell",
+          "q": "Internet Explorer 취약점(추정)으로 인한 Powershell 스크립트 동작"
+        },
+        {
+          "v": "OneDrive",
+          "q": "OneDrive 에서 추가 파일 다운로드: 루비 실행 파일, 악성 루비 스크립트, 인코딩 된 쉘코드"
+        },
+        {
+          "v": "PCLOUD",
+          "q": "1) 악성코드에 명시된 클라우드 서비스 API 목록 : PCLOUD, YANDEX, BOX, DROPBOX,"
+        },
+        {
+          "v": "YANDEX",
+          "q": "1) 악성코드에 명시된 클라우드 서비스 API 목록 : PCLOUD, YANDEX, BOX, DROPBOX,"
+        },
+        {
+          "v": "BOX",
+          "q": "1) 악성코드에 명시된 클라우드 서비스 API 목록 : PCLOUD, YANDEX, BOX, DROPBOX,"
+        },
+        {
+          "v": "DROPBOX",
+          "q": "1) 악성코드에 명시된 클라우드 서비스 API 목록 : PCLOUD, YANDEX, BOX, DROPBOX,"
+        },
+        {
+          "v": "Blackblaze",
+          "q": "* 과거 ROKRAT 계열과 다르게 추가된 신규 클라우드 서비스 : Blackblaze → B2 클라우드 스토리지"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "C&C",
+          "q": "정상 클라우드 서비스를 C&C 통신에 악용"
+        },
+        {
+          "v": "AES-128-CBC + XOR",
+          "q": "주요 복호화 알고리즘: AES-128-CBC + XOR (Stage03과 동일)"
+        },
+        {
+          "v": "WMI",
+          "q": "윈도우 보안 센터(SecurityCenter)에 등록된 안티 바이러스 프로그램 정보를 WMI 쿼리로 확인"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "AES-128",
+          "q": "주요 복호화 알고리즘: AES-128-CBC + XOR (Stage03과 동일)"
+        },
+        {
+          "v": "2",
+          "q": "(실제 악성코드 동작 시 2개 클라우드 서비스 활용)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Matryoshka"
+    },
+    "hedges": [
+      "The report judges, from TTP analysis, that the attacks relate to Scarcruft. It is a judgement, not a confirmed attribution.",
+      "The Internet Explorer vulnerability behind the initial script execution is presumed by the report, not confirmed."
+    ]
   }
 }

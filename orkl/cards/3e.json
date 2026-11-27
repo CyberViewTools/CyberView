@@ -105,55 +105,52 @@
   },
   "3e53cdc803f0b6ddc2d294d20ce39c53a914e6f9": {
     "sha1": "3e53cdc803f0b6ddc2d294d20ce39c53a914e6f9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:42:55Z",
+    "read_at": "2026-11-27T11:26:03Z",
     "model": "haiku",
-    "summary": "News article reporting Trend Micro's finding that the Cyclops Blink malware has infected ASUS routers, apparently to turn them into command-and-control servers for future attacks. A joint FBI, CISA, US DOJ and UK NCSC advisory said Cyclops Blink looked to be Sandworm's replacement for VPNFilter. WatchGuard Firebox devices are also affected. How devices are infected is unclear. Unrelated stories on the page were ignored.",
+    "summary": "The Register reports Trend Micro's warning that the Cyclops Blink malware has infected ASUS routers, possibly to turn them into command-and-control servers for future attacks. A joint advisory from US and UK agencies said Cyclops Blink looked to be Sandworm's replacement for VPNFilter. The botnet also affects WatchGuard Firebox devices. Trend Micro believes its main purpose may be building infrastructure for attacks on high-value targets. How the malware gets onto devices is not clear; a default admin password is suspected.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Sandworm",
           "q": "Cyclops Blink has ties to Kremlin-backed Sandworm, the criminal gang behind the nasty",
-          "by": "The Register (article author), citing the joint FBI, CISA, US DOJ and UK NCSC advisory"
-        }
-      ],
-      "sectors": [
+          "by": "The Register (article background)"
+        },
         {
-          "v": "electrical grid",
-          "q": "electrical grid, NotPetya in 2017, and the French presidential campaign email leak that same"
+          "v": "Sandworm",
+          "q": "Cyclops Blink, which the agencies said looked to be Sandworm's replacement for VPNFilter.",
+          "by": "FBI, CISA, US Department of Justice and UK National Cyber Security Centre (joint advisory, as reported by The Register)"
         }
       ],
+      "sectors": [],
       "countries": [
         {
           "v": "Ukraine",
           "q": "the 2015 and 2016 cyber-assaults on Ukraine's"
-        },
-        {
-          "v": "US",
-          "q": "the US Department of Justice, and the UK National Cyber Security Centre"
-        },
-        {
-          "v": "UK",
-          "q": "the UK National Cyber Security Centre about"
         }
       ],
       "dates": [
         {
           "v": "18 Mar 2022",
-          "q": "Jessica Lyons Hardcastle Fri 18 Mar 2022 // 19:02 UTC",
-          "what": "Article published on Cyclops Blink router infections"
+          "q": "Fri 18 Mar 2022 // 19:02 UTC",
+          "what": "Register article reporting Cyclops Blink infections of ASUS routers"
         },
         {
           "v": "2015",
-          "q": "several high-profile attacks including the 2015 and 2016 cyber-assaults on Ukraine's",
-          "what": "Cyber-assaults on Ukraine's electrical grid"
+          "q": "the 2015 and 2016 cyber-assaults on Ukraine's",
+          "what": "Cyber-assaults on Ukraine's electrical grid, attributed to Sandworm in the report"
+        },
+        {
+          "v": "2016",
+          "q": "the 2015 and 2016 cyber-assaults on Ukraine's",
+          "what": "Cyber-assaults on Ukraine's electrical grid, attributed to Sandworm in the report"
         },
         {
           "v": "2017",
           "q": "electrical grid, NotPetya in 2017, and the French presidential campaign email leak that same",
-          "what": "NotPetya attack"
+          "what": "NotPetya attack and French presidential campaign email leak"
         },
         {
           "v": "2018",
@@ -173,12 +170,20 @@
       ],
       "techniques": [
         {
-          "v": "exploiting a default admin password",
-          "q": "probably involves exploiting a default admin password to gain access via an enabled remote"
+          "v": "Suspected exploitation of a default admin password",
+          "q": "though it probably involves exploiting a default admin password to gain access via an enabled remote"
         },
         {
-          "v": "OpenSSL-encrypted channel",
+          "v": "Renaming the process to look like a kernel thread",
+          "q": "presumably to appear as a Linux kernel thread."
+        },
+        {
+          "v": "Encrypted command-and-control channel",
           "q": "communicating with its C2 server using an OpenSSL-encrypted channel to join the Cyclops"
+        },
+        {
+          "v": "Downloading further malware onto compromised routers",
+          "q": "more malware to run, allowing the botnet's controllers to do whatever they like on the"
         }
       ],
       "cves": [],
@@ -189,19 +194,20 @@
       "name": "Cyclops Blink"
     },
     "hedges": [
-      "Trend Micro says it looks like an attempt to turn these compromised devices into command-and-control servers for future attacks.",
-      "It's not clear exactly right now how the malware gets onto a device, though it probably involves exploiting a default admin password",
-      "Trend Micro believes it is possible that the botnet's main purpose is to build infrastructure for further attacks on high-value targets.",
-      "Trend Micro has evidence that routers from at least one other vendor connect to the C&C servers, but it has not collected samples for that brand.",
-      "The agencies said Cyclops Blink looked to be Sandworm's replacement for VPNFilter."
+      "Trend Micro says it looks like an attempt to turn compromised devices into command-and-control servers for future attacks.",
+      "It's not clear exactly right now how the malware gets onto a device; it probably involves exploiting a default admin password.",
+      "The agencies said Cyclops Blink looked to be Sandworm's replacement for VPNFilter.",
+      "Trend Micro says it is possible the botnet's main purpose is to build infrastructure for further attacks on high-value targets.",
+      "Trend Micro has evidence that routers of at least one other vendor connect to Cyclops Blink C&Cs but has not collected samples for that brand.",
+      "Process renaming is presumably meant to make the process appear as a Linux kernel thread."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:22Z",
-      "ok": false,
-      "note": "actors[0].by: The text states Sandworm's ties to Cyclops Blink in the article's own voice, with no source attached. The joint advisory is only mentioned later, ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:22Z",
+        "ok": false,
+        "note": "actors[0].by: The text states Sandworm's ties to Cyclops Blink in the article's own voice, with no source attached. The joint advisory is only mentioned later, ",
+        "by": "auditor"
+      }
+    ]
   }
 }

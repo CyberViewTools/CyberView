@@ -84,23 +84,23 @@
   },
   "d21d80f8069cbea69621a907c594ab572b487c04": {
     "sha1": "d21d80f8069cbea69621a907c594ab572b487c04",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:43:06Z",
+    "read_at": "2026-11-27T11:26:05Z",
     "model": "haiku",
-    "summary": "Deep Instinct researchers describe Arid Gopher, a Go-written malware variant that they link to the Arid Viper group, based on code and functionality similarities. Arid Gopher is a Go version of Micropsia, emailed to targets in archive files, with a backdoor and a decoy document. Arid Viper is described as an APT group believed to be based in Gaza, with use focused on Palestinian targets in the Middle East. The researchers say a link to Hamas is past reporting, and that the switch to Go was likely meant to evade detection. The article also notes wider shifts by threat groups toward newer…",
+    "summary": "Deep Instinct, a security vendor, analysed a Go-written variant of Micropsia, a malware used only by the Arid Viper group, which it believes is based in Gaza and calls APT-C-23. It named the new family Arid Gopher. The malware targets Windows PCs, mainly in the Middle East, and is emailed to targets in archives with a decoy document and a backdoor to a command-and-control server. Deep Instinct says Go may have been chosen to evade detection. The rest of the page is unrelated news.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Arid Viper",
-          "q": "is used exclusively by Arid Viper, an advanced persistent threat (APT)",
-          "by": "the report (citing Deep Instinct)"
+          "q": "the Arid Viper cyber-crime ring.",
+          "by": "Deep Instinct"
         },
         {
           "v": "APT-C-23",
-          "q": "group believed to be based in Gaza and known as APT-C-23.",
-          "by": "the report (citing Deep Instinct)"
+          "q": "known as APT-C-23.",
+          "by": "Deep Instinct, as relayed in the article"
         },
         {
           "v": "Hamas",
@@ -111,69 +111,73 @@
       "sectors": [],
       "countries": [
         {
-          "v": "Gaza",
-          "q": "group believed to be based in Gaza and known as APT-C-23."
-        },
-        {
           "v": "Middle East",
-          "q": "Windows, and has been used primarily in the Middle East, with a specific focus on"
+          "q": "has been used primarily in the Middle East, with a specific focus on"
         },
         {
-          "v": "Israel",
-          "q": "There also is an Android strain apparently used against Israeli targets, and last year"
+          "v": "Gaza",
+          "q": "believed to be based in Gaza and known as APT-C-23."
         }
       ],
       "dates": [
         {
-          "v": "22 Mar 2022",
-          "q": "Jeff Burt Tue 22 Mar 2022 // 03:53 UTC",
-          "what": "Article published by The Register"
-        },
-        {
           "v": "2017",
           "q": "identified in 2017 and is used exclusively by Arid Viper, an advanced persistent threat (APT)",
-          "what": "Micropsia malware identified"
+          "what": "Micropsia malware was first identified"
         },
         {
           "v": "2021",
-          "q": "in 2021 it saw a shift by gangs away from older languages like C and C++",
-          "what": "Shift by gangs from C and C++ toward newer languages such as Go, reported by Deep Instinct"
+          "q": "Instinct said that in 2021 it saw a shift by gangs away from older languages like C and C++",
+          "what": "Gangs shifted away from older languages toward newer ones such as Python and Go"
+        },
+        {
+          "v": "2022",
+          "q": "In its 2022 Cyber Threat Landscape Report released in February, Deep",
+          "what": "Deep Instinct released its 2022 Cyber Threat Landscape Report"
         }
       ],
       "tools": [
         {
-          "v": "Arid Gopher",
-          "q": "Essentially, Arid Gopher has the same functionality of Arid Viper; it is simply written in the Go"
-        },
-        {
           "v": "Micropsia",
-          "q": "it became clear the team were looking at a variant of Micropsia. This malware was"
+          "q": "it became clear the team were looking at a variant of Micropsia."
         },
         {
-          "v": "Android strain",
-          "q": "There also is an Android strain apparently used against Israeli targets, and last year"
+          "v": "Arid Gopher",
+          "q": "written malware Arid Gopher."
         }
       ],
       "techniques": [
         {
-          "v": "emailed",
-          "q": "The variants are emailed"
+          "v": "Emailed archive attachments to targets",
+          "q": "to targets in .xz RAR archives, and unpack with a long filename to hopefully push their .exe"
         },
         {
-          "v": "long filename",
-          "q": "unpack with a long filename to hopefully push their"
+          "v": "Hiding executable extension with a long filename",
+          "q": "to targets in .xz RAR archives, and unpack with a long filename to hopefully push their .exe"
         },
         {
-          "v": "backdoor",
+          "v": "Backdoor to command-and-control server for further instructions",
           "q": "backdoor to a command-and-control server to receive further instructions, and drop a decoy"
         },
         {
-          "v": "decoy",
-          "q": "backdoor to a command-and-control server to receive further instructions, and drop a decoy"
+          "v": "Decoy document shown to victim",
+          "q": "document on the desktop and display it so that the victim thinks they've simply saved and"
         },
         {
-          "v": "Go",
-          "q": "writing the code in Go was likely a way to bypass detection"
+          "v": "Second-stage malware downloaded from C2 server",
+          "q": "stage malware which was downloaded from the C2 [command-and-control] server."
+        },
+        {
+          "v": "Reuse of public GitHub libraries",
+          "q": "includes code from libraries available from GitHub, which the researchers"
+        },
+        {
+          "v": "Switching programming language to evade detection",
+          "q": "writing the code in Go was likely a way to bypass detection."
+        },
+        {
+          "v": "TV character names in domain names",
+          "q": "use of names of characters in popular TV shows in"
         }
       ],
       "cves": [],
@@ -183,12 +187,12 @@
           "q": "found only six security vendors had the binary"
         },
         {
-          "v": "two similar Go-written binaries",
-          "q": "Further investigation uncovered two similar Go-written binaries."
+          "v": "three files",
+          "q": "all the three files share a common baseline"
         },
         {
-          "v": "three files",
-          "q": "all the three files share a common baseline, but"
+          "v": "two versions",
+          "q": "There are two versions of the Arid Gopher V2 variant"
         }
       ]
     },
@@ -197,20 +201,19 @@
       "name": "Arid Gopher"
     },
     "hedges": [
-      "It has been linked in the past to Hamas, according to the researchers.",
-      "APT group believed to be based in Gaza, per the report.",
-      "Kenin told The Register that writing the code in Go was likely a way to bypass detection.",
-      "It could also be cyber-crooks are just keeping up with software development trends, tools, and libraries.",
-      "This new variant is still being developed; all the three files share a common baseline.",
-      "Attribution of Arid Gopher to Arid Viper rests on code and functionality similarities, per Deep Instinct."
+      "The researchers say the variant is still being developed and the three files share a common baseline.",
+      "Deep Instinct says the group is believed to be based in Gaza and has been linked in the past to Hamas, according to the researchers.",
+      "Writing the code in Go is described as likely a way to bypass detection, and the report notes it could also be that the authors are keeping up with software development trends.",
+      "Deep Instinct's claims about its deep learning giving an edge over rival vendors are the vendor's own claims.",
+      "The report says the Arid Gopher variant uses public GitHub libraries, which it says adds legitimacy because the libraries are not malicious."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:46Z",
-      "ok": false,
-      "note": "summary: The claim 'a link to Hamas is past reporting' garbles the text. The text says Arid Viper 'has been linked in the past to Hamas, according to the resear",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:46Z",
+        "ok": false,
+        "note": "summary: The claim 'a link to Hamas is past reporting' garbles the text. The text says Arid Viper 'has been linked in the past to Hamas, according to the resear",
+        "by": "auditor"
+      }
+    ]
   }
 }

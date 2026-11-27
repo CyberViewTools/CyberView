@@ -83,16 +83,21 @@
   },
   "17d3d0b4c787d59bcdc0a051c4f0fbe2e3d248e0": {
     "sha1": "17d3d0b4c787d59bcdc0a051c4f0fbe2e3d248e0",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:39:28Z",
+    "read_at": "2026-11-27T11:25:32Z",
     "model": "haiku",
-    "summary": "Symantec's Threat Hunter Team reports on Noberus ransomware (aka BlackCat, ALPHV). It describes Noberus as a successor to Darkside and BlackMatter, run by the group Symantec tracks as Coreid under a ransomware-as-a-service model. The report covers a new version of the Exmatter exfiltration tool, Eamfo credential theft from Veeam backups, and Noberus feature and affiliate-program changes from late 2021 through 2022.",
+    "summary": "Symantec reports on the Noberus ransomware, widely believed to succeed the Darkside and BlackMatter families from the Coreid group (FIN7). Noberus, first seen in November 2021 and written in Rust, is run as ransomware-as-a-service and is claimed to encrypt files on Windows, EXSI, Debian, ReadyNAS and Synology. The report covers 2022 updates, a new Exmatter data-theft tool, and the Eamfo infostealer that steals credentials stored by Veeam backup software. The FBI counted at least 60 compromised organisations between November 2021 and March 2022.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Coreid",
+          "q": "tracks as Coreid (aka FIN7, Carbon Spider)",
+          "by": "Symantec"
+        },
+        {
+          "v": "FIN7",
           "q": "tracks as Coreid (aka FIN7, Carbon Spider)",
           "by": "Symantec"
         },
@@ -108,28 +113,28 @@
           "q": "Organizations in or related to the healthcare sector"
         },
         {
-          "v": "non-profit organizations",
+          "v": "charitable or non-profit organizations",
           "q": "Charitable or non-profit organizations"
         },
         {
           "v": "education",
-          "q": "avoid attacking the education and government sectors"
+          "q": "avoid attacking the education and government sectors."
         },
         {
           "v": "government",
-          "q": "avoid attacking the education and government sectors"
+          "q": "avoid attacking the education and government sectors."
         },
         {
           "v": "banking",
-          "q": "the banking, hospitality and retail sectors among its preferred targets"
+          "q": "with the banking, hospitality and retail sectors among its preferred targets"
         },
         {
           "v": "hospitality",
-          "q": "the banking, hospitality and retail sectors among its preferred targets"
+          "q": "with the banking, hospitality and retail sectors among its preferred targets"
         },
         {
           "v": "retail",
-          "q": "the banking, hospitality and retail sectors among its preferred targets"
+          "q": "with the banking, hospitality and retail sectors among its preferred targets"
         }
       ],
       "countries": [
@@ -141,28 +146,23 @@
       "dates": [
         {
           "v": "November 2021",
-          "q": "first seen in November 2021",
+          "q": "Noberus sparked interest when it was first seen in November 2021 because it was coded in",
           "what": "Noberus first seen"
         },
         {
           "v": "May 2021",
-          "q": "ransomware attack in May 2021",
-          "what": "Darkside used in the Colonial Pipeline ransomware attack"
-        },
-        {
-          "v": "December 2021",
-          "q": "In December 2021, the ransomware added a new",
-          "what": "Plus role added for affiliates bringing in over $1.5 million"
+          "q": "ransomware attack in May 2021. The extreme amount of public and law enforcement",
+          "what": "Colonial Pipeline ransomware attack, linked to Darkside"
         },
         {
           "v": "April 2022",
-          "q": "The FBI issued a warning in April 2022",
-          "what": "FBI warning that Noberus had compromised organizations worldwide"
+          "q": "issued a warning in April 2022 saying that between November 2021 and March 2022 at least",
+          "what": "FBI warning about Noberus compromises"
         },
         {
           "v": "June 2022",
-          "q": "Coreid made a major update to Noberus in June 2022",
-          "what": "Major Noberus update (ARM build and safe mode encryption)"
+          "q": "Coreid made a major update to Noberus in June 2022, which included:",
+          "what": "Major Noberus update"
         },
         {
           "v": "July 2022",
@@ -172,130 +172,110 @@
         {
           "v": "August 2022",
           "q": "In August 2022, a heavily updated version of the Exmatter",
-          "what": "Updated Exmatter observed used alongside Noberus"
+          "what": "Updated Exmatter observed alongside Noberus"
         },
         {
           "v": "August 2021",
-          "q": "Eamfo appears to have been in existence since at least August 2021",
+          "q": "Eamfo appears to have been in existence since at least August 2021 and there is evidence",
           "what": "Earliest evidence of Eamfo"
         },
         {
           "v": "2012",
-          "q": "The group has been around since 2012",
-          "what": "Coreid group active since"
+          "q": "The group has been around since 2012, and became",
+          "what": "Coreid active since"
         },
         {
           "v": "2018",
-          "q": "Three members of the group were arrested in 2018",
-          "what": "Three Coreid members arrested"
+          "q": "Three members of the group were arrested in 2018, and in 2020 the group changed its tactics and launched its",
+          "what": "Three group members arrested"
         },
         {
           "v": "2020",
-          "q": "in 2020 the group changed its tactics",
-          "what": "Coreid launched its ransomware-as-a-service operation"
+          "q": "in 2020 the group changed its tactics and launched its",
+          "what": "Group launched ransomware-as-a-service operation"
         }
       ],
       "tools": [
         {
           "v": "Noberus",
-          "q": "Attackers deploying the Noberus (aka BlackCat, ALPHV) ransomware"
-        },
-        {
-          "v": "Darkside",
-          "q": "successor payload to the Darkside and BlackMatter"
-        },
-        {
-          "v": "BlackMatter",
-          "q": "successor payload to the Darkside and BlackMatter"
+          "q": "Attackers deploying the Noberus (aka BlackCat, ALPHV) ransomware have been using new"
         },
         {
           "v": "Exmatter",
-          "q": "the Exmatter (Trojan.Exmatter) data exfiltration"
+          "q": "Exmatter data exfiltration tool, and the use of Eamfo, information-stealing malware that is"
         },
         {
           "v": "Eamfo",
-          "q": "The malware (Infostealer.Eamfo) is designed to connect"
+          "q": "the use of Eamfo, information-stealing malware that is"
         },
         {
           "v": "GMER",
-          "q": "also utilized GMER, a relatively old"
+          "q": "Noberus attacks involving Eamfo seen by Symantec also utilized GMER, a relatively old"
         },
         {
-          "v": "Monti",
-          "q": "a new ransomware strain it dubbed Monti"
+          "v": "Darkside",
+          "q": "Darkside was used in the Colonial Pipeline"
         },
         {
-          "v": "Conti",
-          "q": "the leaked source code of the Conti ransomware"
-        },
-        {
-          "v": "LockBit",
-          "q": "used by attackers using the Yanluowang and LockBit ransomware"
-        },
-        {
-          "v": "Yanluowang",
-          "q": "used by attackers using the Yanluowang and LockBit ransomware"
-        },
-        {
-          "v": "Black Basta",
-          "q": "certain ransomware operators, including Noberus, Black Basta, and more."
+          "v": "BlackMatter",
+          "q": "Noberus is widely believed to be a successor payload to the Darkside and BlackMatter"
         },
         {
           "v": "Carbanak",
-          "q": "using its Carbanak malware to steal money"
+          "q": "using its Carbanak malware to steal money from organizations worldwide"
+        },
+        {
+          "v": "Monti",
+          "q": "a new ransomware strain it dubbed Monti, which appears to be based on the leaked source code of"
+        },
+        {
+          "v": "Yanluowang",
+          "q": "that it has previously been used by attackers using the Yanluowang and LockBit ransomware"
         }
       ],
       "techniques": [
         {
           "v": "intermittent encryption",
-          "q": "kind of encryption as “intermittent encryption”"
+          "q": "kind of encryption as “intermittent encryption” and mentioned how it had been adopted by"
         },
         {
-          "v": "credential theft from Veeam",
-          "q": "Stealing credentials from Veeam is a known attack technique"
+          "v": "data exfiltration",
+          "q": "Exmatter data exfiltration tool, and the use of Eamfo, information-stealing malware that is"
         },
         {
-          "v": "lateral movement",
-          "q": "escalation and lateral movement, providing the attackers"
+          "v": "stealing credentials",
+          "q": "Stealing credentials from Veeam is a known attack technique that can facilitate privilege"
+        },
+        {
+          "v": "brute force",
+          "q": "Brute - making it possible to brute force NTDS, Kerberos tickets and other hashes for"
+        },
+        {
+          "v": "encrypting files",
+          "q": "capable of encrypting files on Windows, EXSI,"
         },
         {
           "v": "data theft and extortion",
-          "q": "focus of the group on data theft and extortion"
-        },
-        {
-          "v": "kill processes",
-          "q": "to kill processes"
-        },
-        {
-          "v": "GPO",
-          "q": "the tool was deployed via GPO"
-        },
-        {
-          "v": "ransomware-as-a-service",
-          "q": "runs a ransomware-as-a-service (RaaS) operation"
+          "q": "the focus of the group on data theft and extortion"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "60 organizations",
-          "q": "60 organizations worldwide had been compromised"
+          "q": "at least 60 organizations worldwide had been compromised with the Noberus ransomware"
         },
         {
           "v": "$1.5 million",
           "q": "$1.5 million. It gave access to:"
         },
         {
-          "v": "10 megabytes",
-          "q": "a strip of 10 megabytes every 10 percent of the file"
+          "v": "two encryption algorithms",
+          "q": "The ransomware also offered two encryption algorithms (ChaCha20 and AES), as well as"
         },
         {
           "v": "four encryption modes",
           "q": "four encryption modes - Full, Fast, DotPattern and SmartPattern"
-        },
-        {
-          "v": "two encryption algorithms",
-          "q": "offered two encryption algorithms (ChaCha20 and AES)"
         }
       ]
     },
@@ -305,20 +285,21 @@
     },
     "hedges": [
       "Noberus is widely believed to be a successor payload to the Darkside and BlackMatter ransomware families.",
-      "Whether Exmatter is the creation of Coreid or a skilled affiliate of the group is not clear.",
+      "Coreid claims that Noberus is capable of encrypting files on Windows, EXSI, Debian, ReadyNAS, and Synology operating systems.",
+      "The ransomware being deployed by different affiliates can sometimes explain the different TTPs and attack chains used in Noberus attacks.",
       "This was possibly a bid to avoid detection.",
-      "The ransomware being deployed by different affiliates can sometimes explain the different TTPs and attack chains.",
+      "Whether Exmatter is the creation of Coreid or a skilled affiliate of the group is not clear.",
       "Eamfo appears to have been in existence since at least August 2021.",
-      "The number of victims now is likely to be many multiples of that.",
-      "suggesting those behind Monti may be former affiliates of that group"
+      "Suggesting those behind Monti may be former affiliates of that group.",
+      "The number of victims now is likely to be many multiples of the FBI figure."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:04Z",
-      "ok": false,
-      "note": "summary: The text says Noberus is 'widely believed to be' a successor payload to Darkside and BlackMatter. The summary states the succession as plain fact and d",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:04Z",
+        "ok": false,
+        "note": "summary: The text says Noberus is 'widely believed to be' a successor payload to Darkside and BlackMatter. The summary states the succession as plain fact and d",
+        "by": "auditor"
+      }
+    ]
   }
 }

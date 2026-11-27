@@ -333,17 +333,17 @@
   },
   "0f7301a21c25468fd41c4eff0880dbf825b2664f": {
     "sha1": "0f7301a21c25468fd41c4eff0880dbf825b2664f",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:39:54Z",
+    "read_at": "2026-11-27T11:25:02Z",
     "model": "haiku",
-    "summary": "Mandiant report (May 2017) on FIN7, a financially motivated threat group. In 2017 Mandiant responded to incidents it attributes to FIN7. FIN7 used the CARBANAK backdoor and application shim databases to persist, patching services.exe in memory to launch it. The report covers the shim registration method, the payload's staging, and Mandiant's detection recommendations. No CVEs are named.",
+    "summary": "Mandiant's May 2017 report attributes several 2017 incidents to FIN7, a financially motivated group active since 2015. FIN7 used application compatibility shim databases for persistence, patching services.exe to launch the CARBANAK backdoor, and also installed a payment card harvesting utility this way. The report describes the mechanism, names the sdbinst.exe tool, and gives detection recommendations.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "FIN7",
-          "q": "In 2017, Mandiant responded to multiple incidents we attribute to FIN7, a financially",
+          "q": "we attribute to FIN7, a financially",
           "by": "Mandiant"
         }
       ],
@@ -351,51 +351,55 @@
       "countries": [],
       "dates": [
         {
-          "v": "2017",
-          "q": "In 2017, Mandiant responded to multiple incidents we attribute to FIN7, a financially",
-          "what": "Mandiant responded to multiple incidents it attributes to FIN7."
+          "v": "2015",
+          "q": "malicious operations dating back to 2015",
+          "what": "FIN7 malicious operations date back to this year"
         },
         {
-          "v": "2015",
-          "q": "motivated threat group associated with malicious operations dating back to 2015.",
-          "what": "FIN7 malicious operations are described as dating back to 2015."
+          "v": "2017",
+          "q": "In 2017, Mandiant responded to multiple incidents we attribute to FIN7",
+          "what": "Mandiant responded to multiple incidents attributed to FIN7"
         },
         {
           "v": "May 03, 2017",
           "q": "May 03, 2017",
-          "what": "Date the Mandiant threat research post was published."
+          "what": "Date the Mandiant report was published"
         }
       ],
       "tools": [
         {
           "v": "CARBANAK",
-          "q": "FIN7 leveraged the CARBANAK backdoor, which this"
+          "q": "FIN7 leveraged the CARBANAK backdoor"
         },
         {
           "v": "sdbinst.exe",
-          "q": "the built-in “sdbinst.exe” command line tool."
+          "q": "the built-in “sdbinst.exe” command line tool"
         },
         {
-          "v": "PowerShell",
-          "q": "Base64 encoded PowerShell script, which ran the “sdbinst.exe” utility to register a custom"
+          "v": "payment card harvesting utility",
+          "q": "to install a payment card harvesting utility for persistent access"
         }
       ],
       "techniques": [
         {
-          "v": "application shim database",
-          "q": "Mandiant identified that the group leveraged an application shim database"
+          "v": "application shim database persistence",
+          "q": "leveraged an application shim database"
         },
         {
-          "v": "in-memory patch",
-          "q": "in-memory patch into the Services Control Manager (“services.exe”) process, and then"
+          "v": "in-memory patch of services.exe",
+          "q": "injected a malicious in-memory patch into the Services Control Manager"
         },
         {
           "v": "process injection",
-          "q": "a malicious Windows service for process injection and persistent access."
+          "q": "a malicious Windows service for process injection and persistent access"
         },
         {
-          "v": "shellcode",
-          "q": "contained shellcode for a first stage loader that obtained an additional shellcode payload"
+          "v": "PowerShell script installation",
+          "q": "Base64 encoded PowerShell script, which ran the"
+        },
+        {
+          "v": "shellcode in shim database",
+          "q": "contained shellcode for a first stage loader"
         }
       ],
       "cves": [],
@@ -406,15 +410,15 @@
       "name": "CARBANAK"
     },
     "hedges": [
-      "Mandiant states it attributes the incidents to FIN7; the report makes no other explicit hedges on attribution."
+      "The report states its FIN7 attribution is Mandiant's own (\"we attribute to FIN7\")."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:04Z",
-      "ok": false,
-      "note": "techniques[2]: The quote describes FIN7's previous approach (a malicious Windows service for process injection), which the text says the shim technique departed",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:04Z",
+        "ok": false,
+        "note": "techniques[2]: The quote describes FIN7's previous approach (a malicious Windows service for process injection), which the text says the shim technique departed",
+        "by": "auditor"
+      }
+    ]
   }
 }

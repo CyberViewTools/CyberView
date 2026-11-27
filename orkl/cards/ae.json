@@ -206,23 +206,18 @@
   },
   "ae3c675344b1fce1024af5af4390c5a11e42abcb": {
     "sha1": "ae3c675344b1fce1024af5af4390c5a11e42abcb",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:44:16Z",
+    "read_at": "2026-11-27T11:27:01Z",
     "model": "haiku",
-    "summary": "Fortinet describes BIOLOAD, a loader it links to the FIN7 group. It runs through a legitimate Windows executable, FaceFodUninstaller.exe, abused via DLL search order hijacking and a scheduled task. It decrypts and runs an embedded payload in memory, the Carbanak backdoor. The report links it to FIN7 through shared code with BOOSTWRITE and suggests BIOLOAD is an earlier iteration of BOOSTWRITE. Samples were compiled in 2019. Deployment needs administrator rights, which the report says suggests the group gathers information about target networks. FortiEDR and FortiClient detections are…",
+    "summary": "Fortinet's December 2019 blog describes BIOLOAD, a loader that uses DLL search order hijacking through the FaceFodUninstaller.exe host process, started by a scheduled task. It carries an embedded Carbanak backdoor, decrypted with a key derived from each victim's machine name. The report attributes the loader to FIN7, based on shared code and techniques with BOOSTWRITE. Samples were compiled in 2019, and the report calls this the first public case of this host process being abused.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "FIN7",
-          "q": "The shared codebase with recent tools attributed to FIN7, together with the same techniques and backdoor, allows to attribute this new loader",
+          "q": "Introducing BIOLOAD: FIN7 BOOSTWRITE’s Lost Twin",
           "by": "Fortinet (report author)"
-        },
-        {
-          "v": "FIN7",
-          "q": "a recent publication by FireEye about FIN7’s new tools and techniques, specifically BOOSTWRITE.",
-          "by": "FireEye, as cited by the report"
         }
       ],
       "sectors": [],
@@ -236,7 +231,7 @@
         {
           "v": "March and July of 2019",
           "q": "The samples target a 64-bit OS and were compiled in March and July of 2019.",
-          "what": "BIOLOAD samples compiled"
+          "what": "Loader samples compiled"
         },
         {
           "v": "May 2019",
@@ -245,67 +240,75 @@
         },
         {
           "v": "January and April of 2019",
-          "q": "The samples we extracted from BIOLOAD are newer builds of the backdoor, dated January and April of 2019,",
-          "what": "Carbanak backdoor builds timestamped"
+          "q": "newer builds of the backdoor, dated January and April of 2019,",
+          "what": "Timestamps of newer Carbanak backdoor builds extracted from BIOLOAD"
         }
       ],
       "tools": [
         {
           "v": "BIOLOAD",
-          "q": "Instead, BIOLOAD is tailor-made for every machine it infects as it relies on the machine"
-        },
-        {
-          "v": "BOOSTWRITE",
-          "q": "a recent publication by FireEye about FIN7’s new tools and techniques, specifically BOOSTWRITE."
+          "q": "BIOLOAD also has the encrypted payload DLL embedded in it."
         },
         {
           "v": "Carbanak backdoor",
           "q": "As mentioned, the payload this loader carries is the Carbanak backdoor."
         },
         {
-          "v": "FaceFodUninstaller.exe",
-          "q": "The abused application in this case is FaceFodUninstaller.exe."
+          "v": "BOOSTWRITE",
+          "q": "Introducing BIOLOAD: FIN7 BOOSTWRITE’s Lost Twin"
         },
         {
-          "v": "WinBio.dll",
-          "q": "The loader file name is WinBio.dll (note the uppercase characters) and is placed by the"
+          "v": "FaceFodUninstaller.exe",
+          "q": "The abused application in this case is FaceFodUninstaller.exe."
         }
       ],
       "techniques": [
         {
           "v": "DLL search order hijacking",
-          "q": "a technique known as DLL search order hijacking (or binary planting)."
+          "q": "technique known as DLL search order hijacking (or binary planting)."
         },
         {
-          "v": "persistency",
+          "v": "scheduled task execution",
+          "q": "is started from a built-in scheduled task named FODCleanupTask,"
+        },
+        {
+          "v": "persistency via the task scheduler",
           "q": "Establishes persistency by using COM objects to access the task scheduler."
         },
         {
-          "v": "XOR decryption",
-          "q": "it uses a simple XOR decryption rather than a ChaCha cipher"
+          "v": "XOR decryption of embedded payload",
+          "q": "to decrypt the payload it uses a simple XOR decryption rather than a ChaCha cipher"
         },
         {
-          "v": "in-memory",
+          "v": "per-machine decryption key derived from machine name",
+          "q": "tailor-made for every machine it infects"
+        },
+        {
+          "v": "in-memory payload loading",
           "q": "The worker process loads and executes the payload DLL in-memory."
         },
         {
-          "v": "Anti-Virus (AV)",
-          "q": "One notable addition is that it checks to see if another Anti-Virus (AV) is running on the"
+          "v": "key derivation to hinder sandbox analysis",
+          "q": "This hinders detection by sandboxes and obstruct researchers from analyzing the payload when the relevant context is missing."
         }
       ],
       "cves": [],
       "figures": [
+        {
+          "v": "64-bit",
+          "q": "The samples target a 64-bit OS and were compiled in March and July of 2019."
+        },
+        {
+          "v": "32-bit",
+          "q": "BOOSTWRITE targets 32-bit machines and was compiled (and signed) in May 2019."
+        },
         {
           "v": "16 bytes",
           "q": "The length of the key is 16 bytes and is also embedded in the loader."
         },
         {
           "v": "30 seconds",
-          "q": "adds a trigger to start it 30 seconds after"
-        },
-        {
-          "v": "32",
-          "q": "Starts itself again as a child process with one command line argument comprised of 32"
+          "q": "The malware makes sure the task is enabled, adds a trigger to start it 30 seconds after"
         }
       ]
     },
@@ -314,18 +317,17 @@
       "name": "BIOLOAD"
     },
     "hedges": [
-      "The timestamps, together with simpler functionality, suggest BIOLOAD is a preceding iteration of BOOSTWRITE.",
-      "Since the loader is specifically built for each targeted machine and requires administrative permissions to deploy, it suggests the group gathers information about its targets’ networks.",
-      "According to previous reports on the group, they do not falsify compilation timestamps of the binaries.",
-      "The shared codebase with recent tools attributed to FIN7, together with the same techniques and backdoor, allows the report to attribute this new loader to the cybercrime group."
+      "Attribution to FIN7 rests on shared codebase, techniques and backdoor with recent FIN7 tools; the report says this 'allows to attribute' the loader to the cybercrime group.",
+      "The report says timestamps and simpler functionality suggest BIOLOAD is a preceding iteration of BOOSTWRITE, which is a suggestion rather than a confirmed sequence.",
+      "The report suggests the group gathers information about its targets' networks, inferred from per-machine loaders that need administrative permissions to deploy."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:38Z",
-      "ok": false,
-      "note": "summary: The report says the inference that the group gathers information about target networks rests on two things together: the loader is built specifically f",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:38Z",
+        "ok": false,
+        "note": "summary: The report says the inference that the group gathers information about target networks rests on two things together: the loader is built specifically f",
+        "by": "auditor"
+      }
+    ]
   }
 }

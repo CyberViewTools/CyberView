@@ -644,33 +644,28 @@
   },
   "dde5cac30e0f5eccf4f67e6d07246e0bc21f9e8a": {
     "sha1": "dde5cac30e0f5eccf4f67e6d07246e0bc21f9e8a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:40:50Z",
+    "read_at": "2026-11-27T11:25:13Z",
     "model": "haiku",
-    "summary": "The report describes Operation Buhtrap, where the Ammyy website's free remote-admin download was compromised for about a week in late October 2015. Visitors received an installer bundling Ammyy Admin with malware. Droppers delivered lurk downloader, Corebot, Buhtrap, Ranbyus and the Netwire RAT. Buhtrap is described as targeting Russian businesses mostly through spear-phishing and as using DLL sideloading and keystroke logging. The authors could not reach Ammyy's developers.",
+    "summary": "Describes how, from late October 2015, the free download of Ammyy's remote administrator software was served as a bundle with malware installers. Several families were distributed this way between October 26 and November 2: lurk, Corebot, Buhtrap, Ranbyus and Netwire RAT. The report attributes the Buhtrap activity to the gang behind Operation Buhtrap, which it says targets Russian businesses mostly through spear-phishing and has now added strategic web compromises. The report says the families are not linked, but the website hackers may have sold access to different groups. Ammyy's…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
-          "v": "Buhtrap gang",
-          "q": "install the tools used by the Buhtrap gang",
-          "by": "the report itself"
-        },
-        {
-          "v": "cybercriminals responsible for the website hack",
-          "q": "the cybercriminals responsible for the website hack sold access to different groups",
+          "v": "Buhtrap",
+          "q": "contained an NSIS installer used by the gang behind Operation Buhtrap.",
           "by": "the report itself"
         }
       ],
       "sectors": [
         {
-          "v": "Russian businesses",
-          "q": "this gang has been actively targeting Russian businesses, mostly through spear-phishing."
+          "v": "Russian banks",
+          "q": "companies as well as Russian banks."
         },
         {
-          "v": "Russian banks",
-          "q": "clients that include the top 500 Fortune companies as well as Russian banks"
+          "v": "businesses",
+          "q": "businesses, mostly through spear-phishing."
         }
       ],
       "countries": [
@@ -682,39 +677,34 @@
       "dates": [
         {
           "v": "late October",
-          "q": "We noticed in late October that users visiting the Ammyy website",
-          "what": "the report authors noticed the Ammyy website serving the bundle"
+          "q": "We noticed in late October that users visiting the Ammyy website to download the free",
+          "what": "Users were first seen being served the bundle from the Ammyy website"
         },
         {
           "v": "October 26th",
           "q": "The first malware we saw was the lurk downloader, which was distributed on October 26th.",
-          "what": "lurk downloader first distributed"
+          "what": "Lurk downloader distributed via the Ammyy website"
         },
         {
           "v": "29th",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd.",
-          "what": "Corebot first seen"
+          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire",
+          "what": "Corebot seen in the bundle"
         },
         {
           "v": "30th",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd.",
-          "what": "Buhtrap first seen"
+          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire",
+          "what": "Buhtrap seen in the bundle"
         },
         {
           "v": "November 2nd",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd.",
-          "what": "Ranbyus and Netwire RAT first seen"
-        },
-        {
-          "v": "November 11, 2015",
-          "q": "November 11, 2015",
-          "what": "report published"
+          "q": "RAT on November 2nd.",
+          "what": "Ranbyus and Netwire RAT seen in the bundle"
         }
       ],
       "tools": [
         {
           "v": "Ammyy Admin",
-          "q": "the legitimate Remote Desktop Software Ammyy Admin, but also an NSIS (Nullsoft Scriptable"
+          "q": "While Ammyy Admin is legitimate software, it has a long history of being used by fraudsters."
         },
         {
           "v": "lurk downloader",
@@ -722,60 +712,48 @@
         },
         {
           "v": "Corebot",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd."
-        },
-        {
-          "v": "Buhtrap",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd."
+          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire"
         },
         {
           "v": "Ranbyus",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd."
+          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire"
         },
         {
-          "v": "Netwire RAT",
-          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire RAT on November 2nd."
+          "v": "Netwire",
+          "q": "We then saw Corebot on the 29th, Buhtrap on the 30th, and finally, Ranbyus and the Netwire"
         },
         {
           "v": "The Guide",
-          "q": "a program called The Guide, a two-pane extrinsic"
+          "q": "sideloading is no longer Yandex Punto, but a program called The Guide, a two-pane extrinsic"
         }
       ],
       "techniques": [
         {
-          "v": "website-served installer bundle with malware",
-          "q": "visitors were downloading an installer that contained both malware and the Ammyy product"
-        },
-        {
-          "v": "system fingerprinting",
-          "q": "It first fingerprints the system by looking at software installed on the computer"
-        },
-        {
-          "v": "DLL sideloading",
-          "q": "is loaded in memory through a DLL sideloading technique"
-        },
-        {
-          "v": "keystroke logging",
-          "q": "run code to log all keystrokes, enumerate smart cards and communicate with C&C servers"
+          "v": "spear-phishing",
+          "q": "businesses, mostly through spear-phishing."
         },
         {
           "v": "strategic web compromises",
           "q": "strategic web compromises is another sign of the closing gap between techniques used by"
         },
         {
-          "v": "spear-phishing",
-          "q": "this gang has been actively targeting Russian businesses, mostly through spear-phishing."
+          "v": "DLL sideloading",
+          "q": "loaded in memory through a DLL sideloading technique."
+        },
+        {
+          "v": "log all keystrokes",
+          "q": "used to spy on the system and ultimately run code to log all keystrokes, enumerate smart"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "about a week",
-          "q": "for about a week, visitors were downloading an installer that"
+          "v": "top 500",
+          "q": "lists clients that include the top 500 Fortune"
         },
         {
-          "v": "top 500 Fortune companies",
-          "q": "clients that include the top 500 Fortune companies as well as Russian banks"
+          "v": "about a week",
+          "q": "administrator package, but for about a week, visitors were downloading an installer that"
         }
       ]
     },
@@ -784,18 +762,18 @@
       "name": "Operation Buhtrap"
     },
     "hedges": [
-      "Ammyy Admin is legitimate software, but it has a long history of being used by fraudsters.",
-      "The report does not know exactly when the attack started or whether the site is still compromised, so it recommends precautionary measures.",
-      "Although the malware families are not linked together, it is quite possible the website hackers sold access to different groups."
+      "The report says the malware families are not linked together, though the droppers were the same in every case.",
+      "The report says it is quite possible the website hackers sold access to different groups.",
+      "The report says it does not know exactly when the attack started or whether the site is still compromised."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:46Z",
-      "ok": false,
-      "note": "sectors[1]: The text only says Ammyy's website lists Russian banks among its clients. It does not say Russian banks were targeted. The only targeting statement ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:46Z",
+        "ok": false,
+        "note": "sectors[1]: The text only says Ammyy's website lists Russian banks among its clients. It does not say Russian banks were targeted. The only targeting statement ",
+        "by": "auditor"
+      }
+    ]
   },
   "dd63b37297a3bd6f4fdb35add6b5147ac52c0585": {
     "sha1": "dd63b37297a3bd6f4fdb35add6b5147ac52c0585",

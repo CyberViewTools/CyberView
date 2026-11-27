@@ -454,7 +454,7 @@
   },
   "115eca945977d9d9d80821777d878d70fdf9556a": {
     "sha1": "115eca945977d9d9d80821777d878d70fdf9556a",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T11:05:37Z",
     "model": "haiku",
@@ -539,6 +539,14 @@
       "The report says CARBON SPIDER's use of SQL injection as an initial access method is likely, and it is a new development for the actor.",
       "The report says it is likely the actor will continue to use both spam and server exploitation to achieve initial access in the near-term.",
       "The rapid-response timings are as reported by the vendor's own teams."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T11:23:50Z",
+      "ok": false,
+      "note": "summary: Says the actor ran the Demux loader, but the text says Falcon blocked the download of the Demux stager script. The actor's later attempt to echo the De",
+      "by": "auditor"
+    }
   }
 }

@@ -118,7 +118,7 @@
   },
   "180e190a6e08372a2688b571644dadb584a364e2": {
     "sha1": "180e190a6e08372a2688b571644dadb584a364e2",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T11:03:12Z",
     "model": "haiku",
@@ -305,47 +305,55 @@
       "The report says some FIN7 campaigns are attributed with varying degrees of confidence.",
       "The report marks BATELEUR as a suspected FIN7 subgroup.",
       "The report marks some listed VPS addresses as possibly carrying legitimate traffic."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T11:23:50Z",
+      "ok": false,
+      "note": "sectors[3]: The quote is about phishing sender addresses impersonating government entities. It does not say government organizations were targeted as victims, s",
+      "by": "auditor"
+    }
   },
   "1893329c4ced716898038e57e624618a6b4f9857": {
     "sha1": "1893329c4ced716898038e57e624618a6b4f9857",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:42:57Z",
+    "read_at": "2026-11-27T11:26:01Z",
     "model": "haiku",
-    "summary": "FireEye's Advanced Practices team describes SCANdalous, an automated external detection system that uses third-party internet scan data to find adversary command-and-control servers. The post recounts earlier manual case studies on APT39, APT34 and APT33, and automated examples involving FIN6, FIN7 and UNC1878. It reports over five thousand signatures, over two million hits, and 21.7% of analyst-observed IP addresses also found by SCANdalous, with an average lead time of 47 days.",
+    "summary": "Blog post from FireEye's Advanced Practices team introducing SCANdalous, an automated system that uses third-party network scan data to find threat actor command-and-control infrastructure before it is used against clients. It recounts case studies on APT39, APT34, APT33, FIN6, FIN7 and UNC1878, and reports metrics: over five thousand signatures, over two million hits, and 21.7% of analyst-marked IP addresses found earlier by the system.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "APT39",
           "q": "After observing APT39 in a series of intrusions, we determined they frequently created",
-          "by": "Mandiant (FireEye), per the report"
+          "by": "the report (FireEye Advanced Practices)"
         },
         {
           "v": "APT34",
-          "q": "that was targeted via the same C2. This activity was later attributed to APT34. During the",
-          "by": "Mandiant (FireEye), per the report"
+          "q": "This activity was later attributed to APT34.",
+          "by": "the report (FireEye Advanced Practices)"
         },
         {
           "v": "APT33",
           "q": "This activity was later attributed to APT33 and was documented in",
-          "by": "Mandiant (FireEye), per the report"
+          "by": "the report (FireEye Advanced Practices)"
         },
         {
           "v": "FIN6",
-          "q": "associate with FIN6. Four hours later, the server was used to target a Managed Defense",
-          "by": "FireEye Advanced Practices (report author)"
+          "q": "associate with FIN6",
+          "by": "the report (FireEye Advanced Practices)"
         },
         {
           "v": "FIN7",
-          "q": "keying material that was later used to decrypt files found in a FIN7 intrusion worked by",
-          "by": "FireEye Advanced Practices (report author)"
+          "q": "a FIN7 intrusion worked by",
+          "by": "the report (FireEye Advanced Practices)"
         },
         {
           "v": "UNC1878",
-          "q": "Some of you may also remember our recent blog post on UNC1878. It serves as a great",
-          "by": "FireEye Advanced Practices (report author)"
+          "q": "UNC1878 (financially motivated)",
+          "by": "the report (FireEye Advanced Practices)"
         }
       ],
       "sectors": [],
@@ -354,103 +362,94 @@
         {
           "v": "Jul 13, 2020",
           "q": "Jul 13, 2020",
-          "what": "Blog post published introducing the SCANdalous project"
+          "what": "Blog post on SCANdalous published"
         },
         {
           "v": "October 2019",
-          "q": "In October 2019, Aaron Stephens gave his “Scan’t Touch This” talk at the annual FireEye",
+          "q": "In October 2019, Aaron Stephens gave his",
           "what": "Talk on using network scan data for external detection at the FireEye Cyber Defense Summit"
         },
         {
           "v": "February 2018",
           "q": "In February 2018, an independent researcher shared a sample of what would later be named",
-          "what": "An independent researcher shared a sample later named QUADAGENT"
-        },
-        {
-          "v": "February and November of 2018",
-          "q": "Figure 2 shows a timeline of QUADAGENT C2 servers discovered between February and November of 2018.",
-          "what": "QUADAGENT C2 servers were discovered over this period"
+          "what": "Independent researcher shared a sample later named QUADAGENT"
         },
         {
           "v": "early 2019",
           "q": "In early 2019, SCANdalous identified a Cobalt Strike C2 server that we were able to",
-          "what": "SCANdalous identified a Cobalt Strike C2 server associated with FIN6"
+          "what": "SCANdalous identified a server later associated with FIN6"
         },
         {
           "v": "late 2019",
           "q": "In late 2019, SCANdalous identified a BOOSTWRITE C2 server and automatically acquired",
-          "what": "SCANdalous identified a BOOSTWRITE C2 server and acquired keying material used in a FIN7 intrusion"
+          "what": "SCANdalous identified a BOOSTWRITE C2 server and acquired keying material later used in a FIN7 intrusion"
         }
       ],
       "tools": [
         {
-          "v": "QUADAGENT",
-          "q": "Figure 1: QUADAGENT C2 servers in the Shodan user interface"
-        },
-        {
-          "v": "RULER.HOMEPAGE",
-          "q": "During the investigation, Mandiant uncovered APT34 using RULER.HOMEPAGE. This was the first time"
-        },
-        {
-          "v": "POSHC2",
-          "q": "using RULER.HOMEPAGE to download and execute POSHC2. All the RULER.HOMEPAGE"
-        },
-        {
-          "v": "POWERTON",
-          "q": "PowerShell backdoor, POWERTON. Our team repeated our workflow and began illuminating"
-        },
-        {
-          "v": "BOOSTWRITE",
-          "q": "In late 2019, SCANdalous identified a BOOSTWRITE C2 server and automatically acquired"
-        },
-        {
           "v": "Cobalt Strike",
-          "q": "In early 2019, SCANdalous identified a Cobalt Strike C2 server that we were able to"
+          "q": "identified a Cobalt Strike C2 server that we were able to"
         },
         {
           "v": "PuTTY Link",
-          "q": "Secure Shell (SSH) tunnels with PuTTY Link to forward Remote Desktop Protocol"
+          "q": "tunnels with PuTTY Link to forward Remote Desktop Protocol"
         },
         {
-          "v": "BitVise SSH server",
-          "q": "BitVise SSH servers listening on port 443."
+          "v": "BitVise SSH servers",
+          "q": "BitVise SSH servers listening on port 443"
+        },
+        {
+          "v": "RULER.HOMEPAGE",
+          "q": "uncovered APT34 using RULER.HOMEPAGE."
+        },
+        {
+          "v": "POSHC2",
+          "q": "to download and execute POSHC2"
+        },
+        {
+          "v": "POWERTON",
+          "q": "PowerShell backdoor, POWERTON."
+        },
+        {
+          "v": "BOOSTWRITE",
+          "q": "identified a BOOSTWRITE C2 server and automatically acquired"
         },
         {
           "v": "Shodan",
-          "q": "The following are example Shodan queries; however, any source of scan data can be used."
+          "q": "QUADAGENT C2 servers in the Shodan user interface"
         }
       ],
       "techniques": [
         {
-          "v": "SSH tunnels",
+          "v": "Secure Shell (SSH) tunnels",
           "q": "Secure Shell (SSH) tunnels with PuTTY Link to forward Remote Desktop Protocol"
         },
         {
-          "v": "broad signatures",
-          "q": "We deploy weak signals (or broad signatures) for software that isn’t inherently bad,"
+          "v": "traditional profiling methodologies",
+          "q": "Prior to any sort of system or automation, our team used traditional profiling methodologies"
         },
         {
-          "v": "follow-on actions",
-          "q": "executed by SCANdalous upon a discovery—we call them follow-on actions."
+          "v": "automating additional collection tasks",
+          "q": "automating additional collection tasks,"
         },
         {
-          "v": "keying material",
-          "q": "keying material that was later used to decrypt files found in a FIN7 intrusion worked by"
+          "v": "weak signals (or broad signatures)",
+          "q": "We deploy weak signals (or broad signatures) for software that isn't inherently bad,"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "over five thousand signatures",
-          "q": "SCANdalous holds over five thousand signatures across"
+          "q": "SCANdalous holds over five thousand signatures across multiple sources"
         },
         {
           "v": "over two million hits",
-          "q": "inception, SCANdalous has produced over two million hits."
+          "q": "has produced over two million hits."
         },
         {
           "v": "21.7%",
-          "q": "21.7% (more than one in five) were also found by SCANdalous. Of that fifth,"
+          "q": "find that 21.7% (more than one in five) were also found by SCANdalous."
         },
         {
           "v": "47 days",
@@ -461,23 +460,27 @@
           "q": "the average lead time jumps to 106 days."
         },
         {
-          "v": "dozens of named malware families and threat groups",
-          "q": "covering dozens of named malware families and threat groups."
+          "v": "Five days",
+          "q": "Five days after the QUADAGENT dropper was identified"
+        },
+        {
+          "v": "Four hours",
+          "q": "Four hours later, the server was used to target a Managed Defense"
         }
       ]
     },
     "subject": null,
     "hedges": [
       "While the time at which this observation occurs does not always correlate with when it was used in an intrusion, knowing when we became aware of that use is still valuable.",
-      "We deploy weak signals (or broad signatures) for software that isn’t inherently bad, but is often used by threat actors."
+      "We deploy weak signals (or broad signatures) for software that isn't inherently bad, but is often used by threat actors."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:04Z",
-      "ok": false,
-      "note": "actors[0].by: The text says \"we determined\", meaning the Advanced Practices authors. It does not name Mandiant as the source of the APT39 attribution.; actors[1",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:04Z",
+        "ok": false,
+        "note": "actors[0].by: The text says \"we determined\", meaning the Advanced Practices authors. It does not name Mandiant as the source of the APT39 attribution.; actors[1",
+        "by": "auditor"
+      }
+    ]
   }
 }

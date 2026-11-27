@@ -403,56 +403,51 @@
   },
   "67ef55e2831de87d26032fe2c0cccdf953316efd": {
     "sha1": "67ef55e2831de87d26032fe2c0cccdf953316efd",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:42:02Z",
+    "read_at": "2026-11-27T11:25:53Z",
     "model": "haiku",
-    "summary": "CrowdStrike blog on DarkSide ransomware-as-a-service, linked to the eCrime group it tracks as CARBON SPIDER, which emerged in 2013. DarkSide launched in 2020. Operators focused on Windows, then expanded to Linux, targeting unpatched VMware ESXi hypervisors or stolen vCenter credentials to encrypt virtual machines. The post cites a major US fuel pipeline attack and the group's claimed ban on medical, educational and government targets. It also promotes the vendor's Falcon platform.",
-    "kind": "malware-analysis",
+    "summary": "Vendor blog by CrowdStrike on the DarkSide ransomware-as-a-service, which it links to the eCrime group CARBON SPIDER. It says DarkSide began as a 2020 ransomware operation, expanded from Windows to Linux, and encrypts virtual machines via VMware ESXi and vCenter. It cites the 2021 fuel pipeline attack and describes how CrowdStrike Falcon detects and blocks the ransomware. Much of the text promotes the Falcon product.",
+    "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "CARBON SPIDER",
           "q": "CARBON SPIDER first emerged in 2013 and is known to conduct several different financially",
           "by": "CrowdStrike"
-        },
-        {
-          "v": "DarkSide ransomware operators",
-          "q": "DarkSide ransomware operators to whom this incident was attributed issued a statement",
-          "by": "CrowdStrike (the report), which says the incident was attributed to them"
         }
       ],
       "sectors": [
         {
-          "v": "fuel pipeline",
-          "q": "Ransomware incidents such as the DarkSide attack that disrupted a major fuel pipeline —"
+          "v": "critical infrastructure",
+          "q": "underscore the fragility of our critical infrastructure"
         },
         {
           "v": "medical, educational or government institutions",
-          "q": "claimed in the past that it will not target medical, educational or government institutions, it is"
+          "q": "claimed in the past that it will not target medical, educational or government institutions"
         }
       ],
       "countries": [
         {
           "v": "United States",
-          "q": "one that transports almost half of all fuel consumed on the East Coast of the United States"
+          "q": "on the East Coast of the United States"
         }
       ],
       "dates": [
+        {
+          "v": "2020",
+          "q": "In the summer of 2020, it began using ransomware",
+          "what": "CARBON SPIDER began using ransomware"
+        },
         {
           "v": "2013",
           "q": "CARBON SPIDER first emerged in 2013 and is known to conduct several different financially",
           "what": "CARBON SPIDER first emerged"
         },
         {
-          "v": "summer of 2020",
-          "q": "In the summer of 2020, it began using ransomware and ultimately built",
-          "what": "The group began using ransomware and later built and marketed its own RaaS, DarkSide"
-        },
-        {
-          "v": "May 18, 2021",
+          "v": "2021",
           "q": "Karan Sood - Shaun Hurley - Adrian-Liviu Arsene May 18, 2021",
-          "what": "Date of the CrowdStrike blog post byline"
+          "what": "Date of the CrowdStrike blog post"
         }
       ],
       "tools": [
@@ -463,20 +458,24 @@
       ],
       "techniques": [
         {
-          "v": "ransomware as a service",
-          "q": "DarkSide is a ransomware as a service (RaaS) associated with an eCrime group"
-        },
-        {
-          "v": "unpatched VMware ESXi hypervisors",
-          "q": "targeting enterprise environments running unpatched VMware ESXi hypervisors or"
+          "v": "encrypting virtual machine files",
+          "q": "to encrypt virtual machine files"
         },
         {
           "v": "stealing vCenter credentials",
-          "q": "or stealing vCenter credentials to log in to management consoles directly,"
+          "q": "or stealing vCenter credentials to log in to management consoles directly"
         },
         {
-          "v": "encrypt virtual machine files",
-          "q": "to encrypt virtual machine files. This tactic further increases the scope of affected systems,"
+          "v": "targeting Linux systems",
+          "q": "have recently expanded to Linux"
+        },
+        {
+          "v": "vetting affiliates",
+          "q": "DarkSide operators seemed to pride themselves on their ability to vet affiliates"
+        },
+        {
+          "v": "extortion pressure on victims",
+          "q": "placing additional pressure on victims to give in to ransom demands"
         }
       ],
       "cves": [],
@@ -487,11 +486,11 @@
         },
         {
           "v": "almost half of all fuel consumed on the East Coast",
-          "q": "one that transports almost half of all fuel consumed on the East Coast of the United States"
+          "q": "transports almost half of all fuel consumed on the East Coast of the United States"
         },
         {
           "v": "1-10-60",
-          "q": "By deploying the Falcon platform and following the recommended “1-10-60” benchmark time"
+          "q": "recommended “1-10-60” benchmark time"
         }
       ]
     },
@@ -500,17 +499,18 @@
       "name": "DarkSide ransomware"
     },
     "hedges": [
-      "The report says the operators' claim of purely financial motives is their own statement, not something it verified.",
-      "The report says it is 'clear' that vetting is not strict or that some affiliates do not share the group's stated beliefs, which it presents as its own reading.",
-      "The account of the affiliate program closing is attributed to Krebs on Security, not to the report itself."
+      "The report says it is 'clear that either its vetting process is not strict or some affiliates may not share their beliefs'.",
+      "The report says DarkSide operators 'seemed to pride themselves' on vetting affiliates, a tentative description.",
+      "The operators' statement that their goals are strictly financially motivated is presented as their claim.",
+      "The later closure of the affiliate program is attributed to Krebs on Security ('According to Krebs on Security')."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:30Z",
-      "ok": false,
-      "note": "summary: \"DarkSide launched in 2020\" is stronger than the text. It says CARBON SPIDER began using ransomware in summer 2020 and \"ultimately built and marketed\" ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:30Z",
+        "ok": false,
+        "note": "summary: \"DarkSide launched in 2020\" is stronger than the text. It says CARBON SPIDER began using ransomware in summer 2020 and \"ultimately built and marketed\" ",
+        "by": "auditor"
+      }
+    ]
   }
 }

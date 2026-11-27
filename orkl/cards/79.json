@@ -36,41 +36,50 @@
   },
   "798de1d888a708ba10b2739e34a9f7ca980bb2cd": {
     "sha1": "798de1d888a708ba10b2739e34a9f7ca980bb2cd",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:39:05Z",
+    "read_at": "2026-11-27T11:25:03Z",
     "model": "haiku",
-    "summary": "Article on Trojan.Mebromi, a rootkit found in the wild that reflashes Award BIOS ROMs to add instructions that run early at boot, then alters the master boot record so infections survive antivirus removal. Per the report, it can attack only Award BIOS, and Qihoo 360 first documented it; it primarily infects computers in China. The page also carries unrelated 2022 news stories, which are not part of the threat analysis.",
+    "summary": "News report from The Register dated 14 Sep 2011 on Trojan.Mebromi, a rootkit that reflashes a computer's BIOS chip to add malicious code. The code alters the master boot record and checks the BIOS on each boot, so it survives antivirus removal. Per Webroot's researcher, it only targets Award BIOS ROMs and was first documented by Qihoo 360, mainly infecting machines in China. The report also mentions earlier BIOS-modifying malware (CIH/Chernobyl in the late 1990s, IceLord in 2007). Much of the page is unrelated news teasers.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "the Chinese security company Qihoo 360, and primarily infects computers in"
+        }
+      ],
       "dates": [
         {
-          "v": "2011-09-14",
+          "v": "14 Sep 2011",
           "q": "Dan Goodin Wed 14 Sep 2011 // 04:53 UTC",
-          "what": "Article published reporting the Mebromi discovery"
+          "what": "Article published describing the Mebromi BIOS rootkit"
         },
         {
           "v": "late 1990s",
           "q": "In the late 1990s, malware known as CIH/Chernobyl did",
-          "what": "CIH/Chernobyl modified BIOS on Windows 9x machines"
+          "what": "CIH/Chernobyl malware modified BIOS on Windows 9x machines"
         },
         {
           "v": "2007",
           "q": "In 2007, proof-of-concept software known as IceLord",
-          "what": "IceLord proof-of-concept reportedly changed BIOS of infected machines"
+          "what": "IceLord proof-of-concept reportedly changed BIOS; no reports of real attacks"
         }
       ],
       "tools": [
         {
           "v": "Trojan.Mebromi",
-          "q": "Known as Trojan.Mebromi, the rootkit reflashes the BIOS of computers it attacks"
+          "q": "Known as Trojan.Mebromi, the rootkit reflashes the BIOS of computers it attacks to add"
+        },
+        {
+          "v": "Mebroot",
+          "q": "In addition to posing a threat to end users, Mebroot could create serious obstacles to"
         },
         {
           "v": "CIH/Chernobyl",
-          "q": "malware known as CIH/Chernobyl did"
+          "q": "malware known as CIH/Chernobyl did much the same thing on machines running Windows 9x"
         },
         {
           "v": "IceLord",
@@ -79,16 +88,16 @@
       ],
       "techniques": [
         {
-          "v": "reflashes the BIOS",
-          "q": "the rootkit reflashes the BIOS of computers it attacks"
+          "v": "BIOS reflashing to add malicious code",
+          "q": "the rootkit reflashes the BIOS of computers it attacks to add"
         },
         {
-          "v": "alter a computer's MBR",
-          "q": "The instructions, in turn, alter a computer's MBR, or master boot record"
+          "v": "master boot record alteration",
+          "q": "alter a computer's MBR, or master boot record"
         },
         {
-          "v": "checks the BIOS ROM",
-          "q": "The malware checks the BIOS ROM each time the PC boots up"
+          "v": "BIOS check on each boot and reflash if infected",
+          "q": "If it's made by Award and the malicious instructions aren't found, Mebromi adds"
         }
       ],
       "cves": [],
@@ -96,19 +105,20 @@
     },
     "subject": {
       "type": "malware",
-      "name": "Trojan.Mebromi"
+      "name": "Mebromi"
     },
     "hedges": [
       "IceLord reportedly made changes to the BIOS of infected machines, but there are no reports it has ever been used in actual attacks.",
-      "The discovery represents one of the few times researchers have documented malware used in the wild that modifies the BIOS."
+      "Developing an antivirus utility able to clean BIOS code is described as a challenge that must be totally error-proof.",
+      "Mebromi is described as primarily infecting computers in China, according to Webroot researcher Marco Giuliani."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:57:30Z",
-      "ok": false,
-      "note": "summary: The summary drops two hedges from the text. The text says the MBR alteration only gives the malware 'a better chance of surviving' antivirus removal, b",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:57:30Z",
+        "ok": false,
+        "note": "summary: The summary drops two hedges from the text. The text says the MBR alteration only gives the malware 'a better chance of surviving' antivirus removal, b",
+        "by": "auditor"
+      }
+    ]
   }
 }

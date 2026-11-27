@@ -205,18 +205,18 @@
   },
   "060e3314734e8774569db473b0b7bcde28a110e4": {
     "sha1": "060e3314734e8774569db473b0b7bcde28a110e4",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:41:43Z",
+    "read_at": "2026-11-27T15:31:50Z",
     "model": "haiku",
-    "summary": "Cado Security's January 2022 blog post links the Abcbot botnet to Xanthe, a cryptojacking malware family that Cisco Talos reported in late 2020. The report cites shared infrastructure, identical code and function names, reused user-agent strings and backdoor usernames, and it believes one threat actor is behind both. It suggests the actor has moved from mining Monero toward botnet activity such as DDoS attacks, and it notes that the Abcbot sample lacks the mining and Docker-targeting features of Xanthe.",
+    "summary": "Cado Security reports that the Abcbot botnet is linked to Xanthe, a Monero cryptojacking campaign first reported by Cisco Talos in late 2020. The report believes one threat actor runs both and has shifted from cryptomining toward botnet activity such as DDoS. Its evidence includes shared infrastructure, reused strings, similar shell script functions and common persistence and propagation methods. The report says the style-based links alone would be tenuous.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
-          "v": "the same threat actor",
-          "q": "we believe that the same threat actor is responsible for both Xanthe and Abcbot",
-          "by": "Cado Security (report author)"
+          "v": "same threat actor",
+          "q": "we believe that the same threat actor is responsible for both Xanthe",
+          "by": "Cado Security (the report)"
         }
       ],
       "sectors": [],
@@ -225,71 +225,83 @@
         {
           "v": "January 10, 2022",
           "q": "January 10, 2022",
-          "what": "Blog post on the link between Abcbot and Xanthe published"
+          "what": "Date the report was published"
         },
         {
           "v": "late 2020",
-          "q": "cryptojacking campaign discovered by Cisco’s Talos security research team in late 2020",
-          "what": "Xanthe campaign discovered by Cisco Talos"
+          "q": "discovered by Cisco’s Talos security research team in late 2020.",
+          "what": "Talos discovered the Xanthe cryptojacking campaign"
         }
       ],
       "tools": [
         {
-          "v": "Xanthe",
-          "q": "The malware was named Xanthe and its main purpose is to hijack the resources"
+          "v": "Abcbot",
+          "q": "Abcbot, the emerging botnet that we recently analyzed and reported on, has a longer history"
         },
         {
-          "v": "Abcbot",
-          "q": "Abcbot, the emerging botnet that we recently analyzed and reported on"
+          "v": "Xanthe",
+          "q": "The malware was named Xanthe and its main purpose is to hijack the resources of a compromised host to mine cryptocurrency."
         },
         {
           "v": "XMRig",
-          "q": "Xanthe utilizes XMRig for its mining capabilities"
+          "q": "Xanthe utilizes XMRig for its mining capabilities."
         },
         {
           "v": "libprocesshider.so",
-          "q": "an open source process hiding library named libprocesshider.so"
+          "q": "a malicious library for hiding processes (libprocesshider.so)"
         }
       ],
       "techniques": [
         {
           "v": "exposed Docker API endpoints",
-          "q": "Xanthe spreads through the discovery of exposed Docker API endpoints"
+          "q": "Xanthe spreads through the discovery of exposed Docker API endpoints."
         },
         {
-          "v": "known_hosts file",
-          "q": "the method of propagation utilized by Xanthe was via enumeration of the known_hosts file"
+          "v": "enumeration of the known_hosts file",
+          "q": "enumeration of the known_hosts file, allowing the malware to spread to new hosts"
         },
         {
-          "v": "cron",
-          "q": "responsible for achieving persistence via the cron scheduling utility"
+          "v": "cron scheduling utility",
+          "q": "cron scheduling utility common to most Linux distributions."
         },
         {
-          "v": "rc.local",
+          "v": "rc.local file persistence",
           "q": "persistence is achieved by writing shell commands to the rc.local file"
         },
         {
-          "v": "disable security services",
+          "v": "process hiding via ld.so.preload",
+          "q": "hide the process created by the XMRig miner by inserting the path to the library into the"
+        },
+        {
+          "v": "disabling security services",
           "q": "a script to disable security services and remove miners from competing campaigns"
         },
         {
-          "v": "process hiding",
-          "q": "the use of an open source process hiding library"
+          "v": "adding malicious user accounts",
+          "q": "code used to add four malicious users to the"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "four additional payloads",
-          "q": "the downloading of four additional payloads"
-        },
-        {
-          "v": "four malicious users",
-          "q": "code used to add four malicious users to the compromised host"
+          "v": "four main hosts",
+          "q": "there were four main hosts comprising what we thought was the infrastructure behind"
         },
         {
           "v": "over a year",
           "q": "The Xanthe sample we analyzed is older than the Abcbot sample by over a year"
+        },
+        {
+          "v": "four additional payloads",
+          "q": "downloading of four additional payloads"
+        },
+        {
+          "v": "four malicious users",
+          "q": "code used to add four malicious users to the"
+        },
+        {
+          "v": "2375 and 2376",
+          "q": "2375 and 2376."
         }
       ]
     },
@@ -298,19 +310,21 @@
       "name": "Abcbot"
     },
     "hedges": [
-      "Based on this analysis, we believe that the same threat actor is responsible for both Xanthe and Abcbot",
-      "Linking these two samples based on code style similarities alone would be tenuous, at best.",
-      "This is a common technique used by other cloud-focused malware campaigns so can't be relied upon solely for attribution.",
-      "Whilst it’s common to see cryptojacking malware authors simply copy code from each other",
-      "We suspect this won’t be the last malware campaign we analyze from this actor."
+      "Linking the two samples based on code style similarities alone would be tenuous, at best.",
+      "Code reuse and like-for-like copying is often seen between malware families and specific samples.",
+      "This could indicate that the remote server is no longer in use or that the payloads or C2 infrastructure hosted at this address is no longer relevant.",
+      "This could indicate a desire to check whether this host was successfully compromised by an earlier campaign, such as Xanthe.",
+      "The author may have iterated on the Abcbot function, but the report does not confirm this.",
+      "The use of a chattr-style attribute change is a common technique in cloud malware, so it cannot be relied on solely for attribution.",
+      "The report suspects this will not be the last malware campaign analysed from this actor."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:15Z",
-      "ok": false,
-      "note": "summary: The claim that the Abcbot sample lacks Xanthe's Docker-targeting features is stronger than the text. The report only says the commented-out Docker ipta",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:15Z",
+        "ok": false,
+        "note": "summary: The claim that the Abcbot sample lacks Xanthe's Docker-targeting features is stronger than the text. The report only says the commented-out Docker ipta",
+        "by": "auditor"
+      }
+    ]
   }
 }

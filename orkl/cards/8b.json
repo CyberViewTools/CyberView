@@ -1090,17 +1090,17 @@
   },
   "8b1e8d3cdcd1dd87dd0224aca0205cf8adba0c20": {
     "sha1": "8b1e8d3cdcd1dd87dd0224aca0205cf8adba0c20",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:42:59Z",
+    "read_at": "2026-11-27T15:33:19Z",
     "model": "haiku",
-    "summary": "FortiGuard Labs reports on the Rocke cryptomining campaign, a Linux coin-mining operation whose malware added a Jenkins exploitation function, an extra loader stage, and redundant scripts hosted on Pastebin. It spreads through SSH known-hosts lateral movement and brute-forcing of SSH and Redis, persists via cron jobs and a service, hides its processes with a preloaded hooking library, and mines with the open-source XMRig miner using an embedded proxy configuration. The report says Fortinet products detect and block the samples.",
+    "summary": "FortiGuard Labs describes a Linux cryptomining campaign attributed to the Rocke threat group. Its Stage1 and Stage2 bash scripts are hosted on Pastebin. The group spreads through SSH and Redis credential brute-forcing and, for about a month before the report, through exploitation of Jenkins CVEs. It adds cron persistence, hides its processes with a preloaded hook library, and mines with XMRig through a proxy. The report is dated May 28, 2019.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Rocke",
-          "q": "FortiGuard Labs has been monitoring a Linux coin mining campaign from “Rocke”",
+          "q": "monitoring a Linux coin mining campaign from “Rocke”",
           "by": "FortiGuard Labs"
         }
       ],
@@ -1110,12 +1110,12 @@
         {
           "v": "May 28, 2019",
           "q": "May 28, 2019",
-          "what": "Date of the FortiGuard Labs threat research post"
+          "what": "Report published by FortiGuard Labs"
         },
         {
-          "v": "March",
+          "v": "March of this year",
           "q": "in March of this year, they switched to a “custom” UPX compression",
-          "what": "Malware switched to custom UPX packing"
+          "what": "Switched to custom UPX compression of the main payload"
         }
       ],
       "tools": [
@@ -1125,77 +1125,69 @@
         },
         {
           "v": "UPX",
-          "q": "at first had been packed with a simple UPX."
-        },
-        {
-          "v": "Pastebin",
-          "q": "The malicious bash script components of the malware are hosted in Pastebin, with the profile"
-        },
-        {
-          "v": "wget",
-          "q": "The sole purpose of the Stage1 script is simply to download the Stage2 script via either wget"
+          "q": "at first had been packed with a simple UPX"
         }
       ],
       "techniques": [
         {
-          "v": "credential brute-force",
+          "v": "credential brute-force of SSH and Redis",
           "q": "credential brute-force method targeting SSH (port 22) and Redis (port 6379) services."
         },
         {
-          "v": "CRON job",
-          "q": "Adds a CRON job that downloads and executes the Stage1 script periodically."
+          "v": "exploiting Jenkins vulnerabilities",
+          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000"
         },
         {
-          "v": "spread laterally",
-          "q": "The malware is spread laterally by executing the Stage1 script and accessing the SSH"
+          "v": "scheduled cron job persistence",
+          "q": "Adds a CRON job that downloads and executes the Stage1 script periodically"
         },
         {
-          "v": "hooking library",
-          "q": "To hide its mining operation, a hooking library"
+          "v": "lateral movement via SSH known_hosts",
+          "q": "Figure 8: Propagating Through SSH known_hosts"
         },
         {
-          "v": "exploits",
-          "q": "they have added a function that exploits systems running the software development"
+          "v": "function hooking to hide files and processes",
+          "q": "the malware hooks the fopen API"
         },
         {
-          "v": "loader stage",
-          "q": "they decided to add a new loader stage before the actual execution of"
+          "v": "custom UPX packing with renamed sections",
+          "q": "simply by changing the packed binaries’ section names to “LSD!”"
         },
         {
-          "v": "cryptomining",
-          "q": "malware threat group specializing in cryptomining"
+          "v": "script hosting on a paste site",
+          "q": "The malicious bash script components of the malware are hosted in Pastebin"
+        },
+        {
+          "v": "terminating existing miners",
+          "q": "Figure 5: Terminating Existing Miners"
         }
       ],
       "cves": [
         {
           "v": "CVE-2018-1000861",
-          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000."
+          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000"
         },
         {
           "v": "CVE-2019-1003000",
-          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000."
+          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000"
         }
       ],
       "figures": [
-        {
-          "v": "port 22",
-          "q": "credential brute-force method targeting SSH (port 22) and Redis (port 6379) services."
-        },
-        {
-          "v": "port 6379",
-          "q": "credential brute-force method targeting SSH (port 22) and Redis (port 6379) services."
-        },
         {
           "v": "every minute",
           "q": "means the script will execute every minute."
         },
         {
-          "v": "0% CPU usage",
-          "q": "0% CPU usage"
+          "v": "0%",
+          "q": "0% CPU usage."
         },
         {
-          "v": "Two different download URLs",
+          "v": "Two",
           "q": "Two different download URLs are assigned to each architecture just in case either of"
+        },
+        {
+          "v": "6379",
+          "q": "Redis (port 6379) services"
         }
       ]
     },
@@ -1206,16 +1198,15 @@
     "hedges": [
       "Presumably, the redundancy is for operational continuity in case, for some reason, other links are removed.",
       "most probably running an xmrig-proxy service",
-      "it’s likely that they will be adding more of these in the near future.",
-      "Note that the port may change depending on the variant."
+      "it’s likely that they will be adding more of these in the near future"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:55Z",
-      "ok": false,
-      "note": "summary: The claim that Fortinet products 'detect and block the samples' is stronger than the text. The report says all malicious samples are detected (Linux/Ag",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:55Z",
+        "ok": false,
+        "note": "summary: The claim that Fortinet products 'detect and block the samples' is stronger than the text. The report says all malicious samples are detected (Linux/Ag",
+        "by": "auditor"
+      }
+    ]
   }
 }

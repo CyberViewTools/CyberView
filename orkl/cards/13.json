@@ -798,44 +798,48 @@
   },
   "1391f10eb893f4c3853f113bf29fe8ea7aba8e77": {
     "sha1": "1391f10eb893f4c3853f113bf29fe8ea7aba8e77",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:35:44Z",
+    "read_at": "2026-11-27T15:29:54Z",
     "model": "haiku",
-    "summary": "SEQRITE Labs reports multiple SideCopy campaigns in 2023 targeting Indian government and defence entities. The group exploited the WinRAR flaw CVE-2023-38831 to deploy AllaKore RAT and DRat, and also used a Linux variant of the open-source Ares RAT, whose stager shares code with Transparent Tribe (APT36). The report attributes these campaigns to SideCopy with high confidence and notes shared code and infrastructure between SideCopy and APT36.",
+    "summary": "SEQRITE Labs reports on SideCopy, a Pakistan-linked APT group targeting Indian defense and government entities. Its campaigns used phishing archives and the WinRAR vulnerability CVE-2023-38831 to deploy AllaKore RAT, DRat, Key RAT and Ares RAT, including a Linux variant. The report links SideCopy to APT36 (Transparent Tribe) through shared infrastructure and code, and attributes the campaigns with high confidence.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "SideCopy",
-          "q": "SideCopy is a Pakistan-linked Advanced Persistent Threat group",
-          "by": "SEQRITE Labs (the report)"
+          "q": "campaigns are attributed to SideCopy with high confidence",
+          "by": "SEQRITE Labs APT-Team (the report)"
         },
         {
           "v": "SideCopy",
-          "q": "these campaigns are attributed to SideCopy with high confidence",
-          "by": "SEQRITE Labs (the report)"
+          "q": "SideCopy is a Pakistan-linked Advanced Persistent Threat group",
+          "by": "SEQRITE Labs APT-Team (the report)"
         },
         {
           "v": "Transparent Tribe (APT36)",
           "q": "This group is associated as a sub-division of Transparent Tribe (APT36)",
-          "by": "the report"
+          "by": "SEQRITE Labs APT-Team (the report)"
         }
       ],
       "sectors": [
         {
           "v": "Government",
-          "q": "targeting Indian government"
+          "q": "primarily the Indian Defense and Afghanistan government entities"
         },
         {
-          "v": "Defense",
-          "q": "primarily the Indian Defense and Afghanistan government entities"
+          "v": "defense",
+          "q": "and defense entities in the past few months."
+        },
+        {
+          "v": "Military",
+          "q": "Indian Military and is continuing to target university students aggressively this year"
         }
       ],
       "countries": [
         {
           "v": "India",
-          "q": "both SideCopy and APT36 share infrastructure and code to aggressively target India"
+          "q": "share infrastructure and code to aggressively target India."
         },
         {
           "v": "Pakistan",
@@ -848,33 +852,42 @@
         {
           "v": "Germany",
           "q": "All the C2 servers are registered in Germany to Contabo GmbH"
+        },
+        {
+          "v": "Israel",
+          "q": "but also other groups against Israel are"
         }
       ],
       "dates": [
         {
-          "v": "2019",
-          "q": "since at least 2019",
-          "what": "Report says SideCopy has targeted South Asian countries since at least this year"
-        },
-        {
-          "v": "2021",
-          "q": "Back in 2021, SideCopy was linked to the same RAT by QiAnXin",
-          "what": "Ares-related RAT was linked to SideCopy by QiAnXin's Red Raindrop Team, per the report"
-        },
-        {
           "v": "2023-11-06",
           "q": "Published: 2023-11-06",
           "what": "Report published"
+        },
+        {
+          "v": "2019",
+          "q": "since at least 2019",
+          "what": "SideCopy described as targeting South Asian countries since at least 2019"
+        },
+        {
+          "v": "2013",
+          "q": "Active since 2013",
+          "what": "Group described as active since 2013"
+        },
+        {
+          "v": "2021",
+          "q": "Back in 2021, SideCopy was linked to the same RAT",
+          "what": "SideCopy linked to the same RAT, per an earlier researcher finding recounted in the report"
         }
       ],
       "tools": [
         {
           "v": "AllaKore RAT",
-          "q": "to deploy AllaKore RAT, DRat and additional payloads"
+          "q": "to deploy AllaKore RAT, DRat and additional payloads."
         },
         {
           "v": "DRat",
-          "q": "The final payload DRat connects with the IP"
+          "q": "to deploy AllaKore RAT, DRat and additional payloads."
         },
         {
           "v": "Ares RAT",
@@ -882,63 +895,91 @@
         },
         {
           "v": "Action RAT",
-          "q": "Its arsenal includes Action RAT"
+          "q": "Its arsenal includes Action RAT, AllaKore RAT, Reverse RAT, Margulas RAT and more."
         },
         {
           "v": "Key RAT",
-          "q": "A new payload for Windows, named Key RAT, is deployed in this case"
+          "q": "A new payload for Windows, named Key RAT, is deployed in this case along Ares RAT."
         },
         {
-          "v": "Poseidon",
-          "q": "updated its Linux malware arsenal this year with Poseidon"
+          "v": "Double Action RAT",
+          "q": "additional stages with Double Action RAT, new .NET-based RAT"
         },
         {
           "v": "Crimson RAT",
-          "q": "continuously used payloads such as Crimson RAT"
+          "q": "such as Crimson RAT, Capra RAT, and Oblique"
+        },
+        {
+          "v": "Capra RAT",
+          "q": "such as Crimson RAT, Capra RAT, and Oblique"
+        },
+        {
+          "v": "Poseidon",
+          "q": "It has updated its Linux malware arsenal this year with Poseidon and other"
+        },
+        {
+          "v": "BackNet",
+          "q": "a forked version called BackNet by Telsy later"
         }
       ],
       "techniques": [
         {
-          "v": "Exploiting a WinRAR vulnerability",
-          "q": "exploiting the recent WinRAR vulnerability"
+          "v": "phishing link",
+          "q": "spread via a phishing link that downloads an archive file"
         },
         {
-          "v": "Phishing link delivering archive",
-          "q": "The first campaign of SideCopy observed is spread via a phishing link"
+          "v": "Exploitation",
+          "q": "Exploitation of the recent WinRAR vulnerability CVE-2023-38831 is done via"
         },
         {
-          "v": "Shortcut file launching a remote HTA",
-          "q": "that triggers a remote HTA file as:"
+          "v": "malicious shortcut file",
+          "q": "This contains a malicious shortcut file in a double extension format named"
         },
         {
-          "v": "DLL side-loading",
-          "q": "beside the target to sideload the DLL"
+          "v": "HTA",
+          "q": "Only minor changes were observed in the HTA"
         },
         {
-          "v": "Registry run key persistence",
-          "q": "Persistence is maintained via Startup (or) Run registry key"
+          "v": "sideload the DLL",
+          "q": "beside the target to sideload the DLL."
         },
         {
-          "v": "Cron-based persistence on Linux",
-          "q": "Create a crontab to maintain persistence through system reboot"
+          "v": "Run registry key",
+          "q": "Persistence is maintained via Startup (or) Run registry key to load the final"
         },
         {
-          "v": "Keylogging and screen capture",
-          "q": "keylogging, take screenshots, upload & download files"
+          "v": "crontab",
+          "q": "Create a crontab to maintain persistence through system reboot under the current username."
         },
         {
-          "v": "PowerShell remote execution",
-          "q": "TTPs where PowerShell remote execution has been uncovered"
+          "v": "keylogging",
+          "q": "information, keylogging, take screenshots, upload & download files"
         },
         {
-          "v": "Honey-trap lures against defence personnel",
+          "v": "base64 encoded",
+          "q": "It contains two embedded files that are base64 encoded; one is the decoy PDF"
+        },
+        {
+          "v": "in-memory",
+          "q": "fetch the AV installed, decode, and run the DLL in-memory."
+        },
+        {
+          "v": "honey traps",
           "q": "Pakistani agents have used honey traps to lure defense personnel"
+        },
+        {
+          "v": "compromised domains",
+          "q": "The compromised domains, used to host payloads by SideCopy, are reused multiple times"
+        },
+        {
+          "v": "decoy document",
+          "q": "The decoy document is related to NSRO and is called"
         }
       ],
       "cves": [
         {
           "v": "CVE-2023-38831",
-          "q": "Exploitation of the recent WinRAR vulnerability CVE-2023-38831 is done via"
+          "q": "CVE-2023-38831 (See our advisory for more details) to deploy AllaKore RAT, DRat and additional payloads."
         }
       ],
       "figures": [
@@ -947,31 +988,27 @@
           "q": "It supports the following 13 commands for C2"
         },
         {
-          "v": "two embedded files",
-          "q": "It contains two embedded files that are base64 encoded"
-        },
-        {
-          "v": "Almost every month",
-          "q": "Almost every month, a new attack campaign has been observed this year"
+          "v": "13 commands",
+          "q": "The 13 commands supported have the following functionality:"
         }
       ]
     },
     "subject": {
       "type": "campaign",
-      "name": "SideCopy multi-platform campaigns"
+      "name": "SideCopy multi-platform campaigns (WinRAR zero-day and Linux Ares RAT)"
     },
     "hedges": [
       "these campaigns are attributed to SideCopy with high confidence",
       "possibly with terrorist groups for recruitment",
-      "expect them to continue as the Israel-Hamas conflict intensifies"
+      "we expect them to continue as the Israel-Hamas conflict intensifies"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:15Z",
-      "ok": false,
-      "note": "hedges[1]: The 'possibly with terrorist groups for recruitment' hedge belongs to Transparent Tribe (APT36) sharing student data. The text does not say it about ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:15Z",
+        "ok": false,
+        "note": "hedges[1]: The 'possibly with terrorist groups for recruitment' hedge belongs to Transparent Tribe (APT36) sharing student data. The text does not say it about ",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -652,24 +652,28 @@
   },
   "1fd0393ff8a786d5f2fbc8a4a51f890f6b410993": {
     "sha1": "1fd0393ff8a786d5f2fbc8a4a51f890f6b410993",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:36:14Z",
+    "read_at": "2026-11-27T15:29:46Z",
     "model": "haiku",
-    "summary": "CERT-UA reports that the group it tracks as UAC-0165 breached at least 11 Ukrainian telecommunications providers between 11 May and 27 September 2023, causing service disruptions. Intrusions began with broad port scanning, password guessing on exposed management interfaces and exploitation of vulnerabilities, often routed through compromised relay servers. The group kept access through backdoors, VPN accounts lacking multi-factor authentication and jump-host targeting, removed traces, stole data and account credentials, and destroyed network equipment. CERT-UA urges providers to review their…",
+    "summary": "CERT-UA reports that a group it tracks as UAC-0165 interfered with at least 11 Ukrainian telecommunications providers between 11 May and 27 September 2023, causing service disruptions. The report describes reconnaissance by port scanning, password guessing and exploitation of vulnerabilities, staging from pre-compromised servers, backdoors including POEMGATE, POSEIDON and Weevely, VPN abuse without multi-factor authentication, data theft for publicity, and final-stage destruction of network equipment. It publishes indicators and urges providers to review their attack surfaces and report…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "UAC-0165",
-          "q": "відстежується за ідентифікатором UAC-0165, здійснено втручання в інформаційно-комунікаційні системи",
+          "q": "відстежується за ідентифікатором UAC-0165",
           "by": "CERT-UA"
         }
       ],
       "sectors": [
         {
-          "v": "telecommunications",
+          "v": "telecommunications providers",
           "q": "не менше ніж 11 провайдерів телекомунікацій України"
+        },
+        {
+          "v": "hosting services",
+          "q": "У випадку надання провайдером послуг хостингу"
         }
       ],
       "countries": [
@@ -681,13 +685,13 @@
       "dates": [
         {
           "v": "11.05.2023",
-          "q": "за період з 11.05.2023 по 27.09.2023 організованою групою зловмисників",
-          "what": "Start of the period covered by the report, during which the group intruded into telecom providers"
+          "q": "За даними публічних джерел за період з 11.05.2023 по 27.09.2023 організованою групою зловмисників, що",
+          "what": "start of the period in which the telecommunications providers were interfered with"
         },
         {
           "v": "27.09.2023",
-          "q": "за період з 11.05.2023 по 27.09.2023 організованою групою зловмисників",
-          "what": "End of the period covered by the report"
+          "q": "За даними публічних джерел за період з 11.05.2023 по 27.09.2023 організованою групою зловмисників, що",
+          "what": "end of the period covered by the report"
         }
       ],
       "tools": [
@@ -713,15 +717,15 @@
         },
         {
           "v": "dante",
-          "q": "такі вузли застосовуються проксі-сервери dante, socks5 та інші."
+          "q": "проксі-сервери dante, socks5 та інші."
         },
         {
           "v": "socks5",
-          "q": "такі вузли застосовуються проксі-сервери dante, socks5 та інші."
+          "q": "проксі-сервери dante, socks5 та інші."
         },
         {
           "v": "POEMGATE",
-          "q": "модуль (відстежується як POEMGATE), що надає можливість автентифікуватися із статично визначеним"
+          "q": "модуль (відстежується як POEMGATE), що надає можливість автентифікуватися"
         },
         {
           "v": "WHITECAT",
@@ -733,53 +737,65 @@
         },
         {
           "v": "Weevely",
-          "q": "завантажуватися бекдор Weevely. Якщо сервер знаходиться в межах ІКС провайдера"
+          "q": "завантажуватися бекдор Weevely."
         }
       ],
       "techniques": [
         {
-          "v": "broad port scanning of provider network ranges",
-          "q": "(автономної системи) провайдера за типовим набором мережевих портів із застосуванням, зокрема,"
+          "v": "reconnaissance by broad port scanning of provider network ranges",
+          "q": "Як правило першим етапом кібератаки є розвідка"
         },
         {
-          "v": "password guessing against exposed management interfaces",
-          "q": "ініціюється підбір автентифікаційних даних. У разі виявлення ознак вразливостей"
+          "v": "password guessing against management interfaces such as SSH and RDP",
+          "q": "ініціюється підбір автентифікаційних даних."
         },
         {
-          "v": "exploitation of discovered vulnerabilities",
-          "q": "здійснюється їхня експлуатація. Публічно доступні сервіси (вебдодатки), такі як білінг"
+          "v": "exploiting vulnerabilities when signs of them are found",
+          "q": "здійснюється їхня експлуатація."
         },
         {
-          "v": "VPN accounts without one-time-code multi-factor authentication",
-          "q": "штатних облікових записів VPN (зазначеному сприяє відсутність"
+          "v": "using pre-compromised servers as staging points for reconnaissance and exploitation",
+          "q": "Зауважимо (!), що активність по розвідці та експлуатації проводиться із заздалегідь скомпрометованих"
         },
         {
-          "v": "malicious PAM module capturing entered logins",
-          "q": "модуль (відстежується як POEMGATE), що надає можливість автентифікуватися із статично визначеним"
+          "v": "backdoor PAM module allowing static-password login and harvesting entered credentials",
+          "q": "модуль (відстежується як POEMGATE), що надає можливість автентифікуватися"
         },
         {
-          "v": "removing signs of unauthorized access",
+          "v": "replacing restricted login shells to obtain an interactive shell",
+          "q": "З метою обходу налаштувань, пов'язаних з обмеженням можливості використання командної оболонки"
+        },
+        {
+          "v": "removing traces of unauthorised access",
           "q": "Видалення ознак несанкціонованого доступу досягається, серед іншого, запуском утиліти WHITECAT."
         },
         {
-          "v": "persistence by modifying a system binary",
+          "v": "modifying a legitimate system binary for persistence",
           "q": "персистентність POSEIDON забезпечується шляхом підміни (модифікації) легітимного бінарного файлу"
         },
         {
-          "v": "targeting jump hosts and administrator computers",
+          "v": "persistent access through legitimate VPN accounts without one-time-code multi-factor authentication",
+          "q": "реалізується за допомогою штатних облікових записів VPN"
+        },
+        {
+          "v": "identifying jump hosts and sysadmin computers after intrusion",
           "q": "основні зусилля зосереджуються на ідентифікації так званих джамп-хостів та"
         },
         {
-          "v": "exfiltration of documents and drawings to publicize attacks",
+          "v": "exfiltrating documents, drawings, schemes and contracts for publicity",
           "q": "присвячується ексфільтрації документів, креслень, схем, договорів."
         },
         {
-          "v": "theft of social media and SMS-service account credentials",
-          "q": "викрадення паролів від офіційних облікових записів в Telegram, Facebook, а також токенів для розсилання SMS, тощо."
+          "v": "stealing passwords for official social media accounts and SMS tokens",
+          "q": "записів в Telegram, Facebook, а також токенів для розсилання SMS, тощо."
         },
         {
-          "v": "destruction of active network and server equipment and storage",
-          "q": "На заключному етапі кібератаки здійснюється виведення з ладу активного мережевого та серверного"
+          "v": "disabling active network equipment, server equipment and data storage in the final stage",
+          "q": "здійснюється виведення з ладу активного мережевого та серверного"
+        },
+        {
+          "v": "scripts and scheduled tasks to disrupt Mikrotik equipment",
+          "q": "для порушення штатного режиму функціонування обладнання Mikrotik може застосовуватися"
         }
       ],
       "cves": [],
@@ -790,23 +806,20 @@
         }
       ]
     },
-    "subject": {
-      "type": "campaign",
-      "name": "UAC-0165"
-    },
+    "subject": null,
     "hedges": [
-      "The report says the figures and period come from public sources, and that its technical information is a summary and not exhaustive.",
-      "The report says the group is tracked under the identifier UAC-0165; this identification is the report's own.",
-      "The report says the staging servers were compromised in advance, a conclusion it states was confirmed by detailed analysis."
+      "The report describes its information as a summary that is not exhaustive.",
+      "The figure of at least 11 providers is attributed to public sources.",
+      "Configuration files, scripts and screenshots in the report are presented as examples only."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:23Z",
-      "ok": false,
-      "note": "summary: The text gives the 11+ providers and the 11 May–27 September 2023 period as 'according to public sources' (За даними публічних джерел). The summary sta",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:23Z",
+        "ok": false,
+        "note": "summary: The text gives the 11+ providers and the 11 May–27 September 2023 period as 'according to public sources' (За даними публічних джерел). The summary sta",
+        "by": "auditor"
+      }
+    ]
   },
   "1f7487abb5b7f175e96b43fdd08d2d151e16bc4e": {
     "sha1": "1f7487abb5b7f175e96b43fdd08d2d151e16bc4e",
@@ -887,109 +900,31 @@
     "sha1": "1fa5348b18acafb16216f2b891b00066ddc8e5fd",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:43:58Z",
+    "read_at": "2026-11-27T15:32:45Z",
     "model": "haiku",
-    "summary": "Intezer researchers describe SysJoker, a C++ backdoor that targets Windows, Linux and macOS and is undetected on VirusTotal at the time of writing. The Windows variant uses a DLL dropper and PowerShell. All variants fetch C2 server addresses from a hardcoded Google Drive file, collect system data, and persist via a Run registry key, a cron job or a LaunchAgent. The malware was first seen in December 2021 and the article was published January 11, 2022.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "January 11, 2022",
-          "q": "January 11, 2022",
-          "what": "Article published"
-        },
-        {
-          "v": "December 2021",
-          "q": "first saw signs of its activity in December 2021",
-          "what": "Researchers first saw signs of SysJoker activity"
-        },
-        {
-          "v": "H2 2021",
-          "q": "The first uploads of the malware sample on VirusTotal occurred in H2 2021",
-          "what": "First malware sample uploads to VirusTotal"
-        }
-      ],
-      "tools": [
-        {
-          "v": "SysJoker",
-          "q": "named 'SysJoker' has emerged in the wild,"
-        },
-        {
-          "v": "PowerShell",
-          "q": "uses PowerShell commands to do the following:"
-        },
-        {
-          "v": "Google Drive",
-          "q": "it uses a hardcoded Google Drive link."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Living off the Land",
-          "q": "gather information about the machine using Living off the Land (LOtL)"
-        },
-        {
-          "v": "evade detection",
-          "q": "with the ability to evade detection on all three"
-        },
-        {
-          "v": "persistence",
-          "q": "will create persistence by adding a new registry key"
-        },
-        {
-          "v": "cron job",
-          "q": "persistence is established by creating the following cron job"
-        },
-        {
-          "v": "LaunchAgent",
-          "q": "LaunchAgent under the path"
-        },
-        {
-          "v": "first-stage dropper",
-          "q": "SysJoker employs a first-stage dropper in the form of a DLL"
-        },
-        {
-          "v": "constantly changes",
-          "q": "This list constantly changes to avoid detection and blocking."
-        },
-        {
-          "v": "install additional malware",
-          "q": "the C2 may instruct the backdoor to install additional malware, run commands"
-        },
-        {
-          "v": "Random sleep times",
-          "q": "Random sleep times are interposed between all functions leading to this point."
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "57",
-          "q": "an online malware scanning site that uses 57"
-        },
-        {
-          "v": "two minutes",
-          "q": "sleeps for up to two minutes before creating a new directory"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "SysJoker"
-    },
-    "hedges": [
-      "Those last two instructions haven't been implemented yet, though."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:15Z",
-      "ok": false,
-      "note": "summary: It says the malware was 'first seen in December 2021'. The text says only that researchers first saw signs of activity in December 2021, and that the f",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:15Z",
+        "ok": false,
+        "note": "summary: It says the malware was 'first seen in December 2021'. The text says only that researchers first saw signs of activity in December 2021, and that the f",
+        "by": "auditor"
+      }
+    ]
   }
 }

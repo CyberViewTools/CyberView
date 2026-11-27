@@ -598,24 +598,24 @@
   },
   "6be938a17ffc04b412ca94eeaedd85c7d246b557": {
     "sha1": "6be938a17ffc04b412ca94eeaedd85c7d246b557",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:44:03Z",
+    "read_at": "2026-11-27T15:32:50Z",
     "model": "haiku",
-    "summary": "Trend Micro research on how attackers abuse native Linux utilities (such as curl, wget, chmod, crontab, pkill and base64) after gaining initial access to Linux and container environments. Observations come from honeypots and telemetry. Examples include cryptomining, Mirai delivery after Log4Shell, and discovery steps. The report recommends distroless container images and application control to limit the attack surface.",
+    "summary": "Trend Micro blog, dated September 8, 2022, on how attackers abuse native Linux utilities during intrusions into Linux and container environments, based on honeypots and telemetry. The utilities named include curl, wget, chmod, chattr, ssh, base64, chroot, crontab, ps and pkill. Observed uses include cryptocurrency mining, Mirai delivery after Log4Shell exploitation, and activity linked to TeamTNT. The report recommends distroless container images and application control as defences.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "TeamTNT",
-          "q": "This utility has previously been observed to be abused by TeamTNT, as discussed in our white paper, Tracking the Activities of TeamTNT.",
-          "by": "Trend Micro report"
+          "q": "This utility has previously been observed to be abused by TeamTNT, as discussed in our white paper, Tracking the Activities",
+          "by": "Trend Micro (the report)"
         }
       ],
       "sectors": [
         {
-          "v": "Cloud",
-          "q": "Cloud security is further complicated by the fact that patch management can"
+          "v": "cloud environments",
+          "q": "slowing down attackers targeting cloud environments."
         }
       ],
       "countries": [],
@@ -623,18 +623,18 @@
         {
           "v": "September 8, 2022",
           "q": "September 8, 2022",
-          "what": "Publication date of the report"
+          "what": "Blog entry published"
         },
         {
           "v": "2020",
           "q": "We have been observing cryptocurrency miners named kdevtmpfsi as early as 2020.",
-          "what": "Earliest observation of kdevtmpfsi cryptocurrency miners"
+          "what": "Cryptocurrency miners named kdevtmpfsi first observed by the vendor"
         }
       ],
       "tools": [
         {
           "v": "curl",
-          "q": "The curl, or cURL, utility is used to transfer data across different protocols, such as HTTP,"
+          "q": "Figure 8. Using “curl” to exfiltrate system information to the attacker"
         },
         {
           "v": "wget",
@@ -658,11 +658,11 @@
         },
         {
           "v": "chroot",
-          "q": "Note that chroot is used to change the root to the directory supplied (in this case,"
+          "q": "Using the Vision One workbench, we see the chroot and base64 utilities being used by an"
         },
         {
           "v": "crontab",
-          "q": "Attackers have been known to abuse cron jobs and modify the ‘crontab’ to perform execution, persistence, and"
+          "q": "Figure 7. Using “crontab” to remove all existing cron jobs"
         },
         {
           "v": "ps",
@@ -670,23 +670,7 @@
         },
         {
           "v": "pkill",
-          "q": "Using “pkill” to kill competing processes/coinminers"
-        },
-        {
-          "v": "XMRig",
-          "q": "In this case, curl is used to download binaries of the XMRig miner from Github."
-        },
-        {
-          "v": "Mirai",
-          "q": "The executable named “runnable” is a Mirai sample delivered after the exploitation of the Log4shell vulnerability tracked under CVE-2021-44228."
-        },
-        {
-          "v": "kdevtmpfsi",
-          "q": "We have been observing cryptocurrency miners named kdevtmpfsi as early as 2020."
-        },
-        {
-          "v": "Kinsing",
-          "q": "Analysis of Kinsing Malware's Use of Rootkit, shows another example of a competing miner"
+          "q": "Figure 10. Using “pkill” to kill competing processes/coinminers"
         }
       ],
       "techniques": [
@@ -695,34 +679,46 @@
           "q": "Attackers often obfuscate their payloads and commands using base64 encoding to evade detection"
         },
         {
-          "v": "/etc/passwd file",
+          "v": "accessing the user account file",
           "q": "As a part of the enumeration step, the attacker accesses the /etc/passwd file, which contains"
         },
         {
-          "v": "cron jobs",
-          "q": "Attackers have been known to abuse cron jobs and modify the ‘crontab’ to perform execution, persistence, and"
+          "v": "abuse cron jobs",
+          "q": "Attackers have been known to abuse cron jobs and modify the ‘crontab’ to perform execution, persistence, and,"
         },
         {
-          "v": "hidden directories to evade detection",
-          "q": "Attackers can create hidden directories to evade detection by adding “.” before the file or folder name"
+          "v": "killing competing processes",
+          "q": "Figure 10. Using “pkill” to kill competing processes/coinminers"
         },
         {
-          "v": "Process Discovery",
-          "q": "This information can aid attackers in performing discovery-related techniques (T1057 – Process Discovery)"
+          "v": "process discovery",
+          "q": "performing discovery-related techniques (T1057 – Process Discovery) and gaining"
         },
         {
-          "v": "Mining cryptocurrency by downloading miners",
+          "v": "hidden directories",
+          "q": "Attackers can create hidden directories to evade detection by adding “.”"
+        },
+        {
+          "v": "accessing systems over Secure Shell",
+          "q": "The ssh utility is the remote client used for accessing systems over Secure Shell (SSH) in a"
+        },
+        {
+          "v": "mount the underlying host",
+          "q": "Once attackers mount the underlying host’s file system due to unsecure configuration (for"
+        },
+        {
+          "v": "cryptocurrency mining",
           "q": "4. Mining cryptocurrency by downloading miners (Impact)"
         },
         {
-          "v": "denial-of-service attack by removing the application",
-          "q": "Performing a denial-of-service attack by removing the application (Impact)"
+          "v": "exfiltrate system information",
+          "q": "Figure 8. Using “curl” to exfiltrate system information to the attacker"
         }
       ],
       "cves": [
         {
           "v": "CVE-2021-44228",
-          "q": "The executable named “runnable” is a Mirai sample delivered after the exploitation of the Log4shell vulnerability tracked under CVE-2021-44228."
+          "q": "tracked under CVE-2021-44228."
         }
       ],
       "figures": [
@@ -734,17 +730,17 @@
     },
     "subject": null,
     "hedges": [
-      "Attackers 'have been known to' abuse cron jobs and legitimate platforms such as GitHub and Netlify to serve crypto-mining tools.",
-      "Attackers can, 'at times', move from cryptomining to deploying ransomware after exploitation.",
-      "Attackers 'at times' perform privilege escalation, persistence or credential access; the report describes these as possible paths, not confirmed in every case."
+      "The report says the chattr abuse by TeamTNT was previously observed, citing the vendor's own white paper.",
+      "Several abuse patterns are described as ones attackers have been known to use, not as confirmed in every case.",
+      "The report says the presence of these utilities should at least be considered as an avenue for attackers."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:43Z",
-      "ok": false,
-      "note": "hedges[2]: The text puts 'at times' only on privilege escalation, in the crontab sentence ('execution, persistence, and, at times, privilege escalation'). It do",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:43Z",
+        "ok": false,
+        "note": "hedges[2]: The text puts 'at times' only on privilege escalation, in the crontab sentence ('execution, persistence, and, at times, privilege escalation'). It do",
+        "by": "auditor"
+      }
+    ]
   }
 }

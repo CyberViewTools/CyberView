@@ -1037,75 +1037,89 @@
   },
   "5353f24b1d7ba9fdb5adcc729787b397e0d709bd": {
     "sha1": "5353f24b1d7ba9fdb5adcc729787b397e0d709bd",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:43:31Z",
+    "read_at": "2026-11-27T15:33:21Z",
     "model": "haiku",
-    "summary": "CUJO AI's deep dive into the Sysrv botnet: a Go-written worm and Monero cryptocurrency miner for Linux and Windows servers, first mentioned in December 2020 and still active at writing. The report sorts 61 Linux binaries into eight groups and covers the loader scripts, 20 CVE-numbered exploits and other exploits, and the mining setups and wallets, with reported payouts in the thousands of USD. It names the #keksec group only as a reference. Indicator lists are not recorded here.",
+    "summary": "Malware analysis of Sysrv, a Golang botnet that spreads as a worm, using exploits and password guessing against Linux and Windows servers, and mines Monero cryptocurrency. The report covers 61 Linux binaries grouped into eight families, their loader scripts, a list of CVE-numbered and other exploits, and Monero wallet earnings. It says the botnet was first mentioned in December 2020 and was still active at the time of writing in September 2021. The vendor CUJO AI says its product blocks Sysrv on over 40 million networks.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
-          "v": "#keksec",
+          "v": "keksec",
           "q": "Newer versions also include a reference to the IoT botnet operator group #keksec.",
           "by": "the report (CUJO AI)"
         }
       ],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "Linux and Windows servers",
+          "q": "Sysrv is primarily targeting Linux and Windows servers, not IoT devices."
+        }
+      ],
       "countries": [],
       "dates": [
         {
           "v": "December 2020",
           "q": "The Sysrv botnet was first mentioned in a blog post by Intezer at the end of December 2020.",
-          "what": "first public mention of Sysrv, in a blog post by Intezer"
+          "what": "Sysrv first mentioned in a blog post by Intezer"
         },
         {
           "v": "November 2020",
           "q": "This Monero mining operation started in November 2020 and is still active today.",
-          "what": "start of the Monero mining operation for the main wallet"
+          "what": "Monero mining operation for the first wallet started"
         },
         {
-          "v": "October 2020",
-          "q": "happened in October 2020. It is still active as of September 2021.",
-          "what": "first payment for the second (WatchDog-linked) wallet"
+          "v": "28 February",
+          "q": "The first payment happened on 28 February, just a few days after the release of the first malware sample",
+          "what": "First payment from the Nanopool account"
         },
         {
-          "v": "January 2021",
-          "q": "published in January 2021 and was already used by Sysrv at the beginning of March.",
-          "what": "Ignition exploit published; Sysrv used it from early March"
+          "v": "2 July",
+          "q": "The last payment occurred on 2 July.",
+          "what": "Last payment from the same account"
         },
         {
           "v": "April 2021",
           "q": "The first obfuscated sample appeared in April 2021, the only one that belongs to",
-          "what": "first obfuscated Sysrv sample"
+          "what": "First obfuscated sample appeared"
+        },
+        {
+          "v": "January 2021",
+          "q": "it was published in January 2021 and was already used by Sysrv at the beginning of March.",
+          "what": "Ignition RCE exploit published"
         },
         {
           "v": "20th September",
           "q": "the latest ELF binary appeared on 20th September.",
-          "what": "latest ELF binary sample seen"
+          "what": "Latest ELF binary sample appeared"
         },
         {
-          "v": "2021-09-14",
-          "q": "Snapshot of the wallet’s balance on 2021-09-14",
-          "what": "wallet balance snapshot taken"
+          "v": "September 22, 2021",
+          "q": "September 22, 2021",
+          "what": "Report published"
         }
       ],
       "tools": [
         {
+          "v": "Golang",
+          "q": "It stood out due to its use of Golang (Go) – a relatively new programming language that a"
+        },
+        {
           "v": "Redress",
-          "q": "To examine the package structures, we used Redress, a tool for analyzing stripped Go binaries compiled with the Go compiler."
+          "q": "To examine the package structures, we used Redress, a tool for analyzing stripped Go"
         },
         {
           "v": "Ghidra",
           "q": "used Ghidra for static analysis and several Ghidra scripts that our research team wrote to aid"
         },
         {
-          "v": "XMRig",
-          "q": "Even though Sysrv uses the open-source XMRig project to mine Monero, each group for"
-        },
-        {
           "v": "gobfuscate",
           "q": "The obfuscation tool used is gobfuscate, a known utility for Go binaries:"
+        },
+        {
+          "v": "XMRig",
+          "q": "Even though Sysrv uses the open-source XMRig project to mine Monero, each group for"
         },
         {
           "v": "go-bindata",
@@ -1114,60 +1128,56 @@
         {
           "v": "UPX",
           "q": "Most malicious samples were packed with vanilla UPX, and during our analysis, we have not"
-        },
-        {
-          "v": "Mirai",
-          "q": "Mirai and Gafgyt forks. Nevertheless, new breeds do surface and spread through poorly"
-        },
-        {
-          "v": "Gafgyt",
-          "q": "Mirai and Gafgyt forks. Nevertheless, new breeds do surface and spread through poorly"
         }
       ],
       "techniques": [
         {
-          "v": "worm module",
+          "v": "port scans against random IPs",
           "q": "The worm module simply initiates port scans against random IPs to find vulnerable Tomcat,"
         },
         {
-          "v": "port scans",
-          "q": "The worm module simply initiates port scans against random IPs to find vulnerable Tomcat,"
+          "v": "password dictionary attack",
+          "q": "tries to infiltrate the servers with a hardcoded password dictionary attack."
         },
         {
-          "v": "SSH brute-force",
-          "q": "SSH brute-force"
+          "v": "mine Monero cryptocurrency",
+          "q": "The main goal of the Sysrv botnet is to mine the Monero cryptocurrency."
         },
         {
-          "v": "WordPress brute-force",
-          "q": "WordPress brute-force"
-        },
-        {
-          "v": "persistence",
+          "v": "Edit crontab file to achieve persistence",
           "q": "Edit crontab file to achieve persistence"
         },
         {
-          "v": "Hardcoded SSH key",
-          "q": "Hardcoded SSH key for persistence"
-        },
-        {
-          "v": "history cleanup",
-          "q": "Bash history cleanup"
-        },
-        {
-          "v": "obfuscated",
-          "q": "The first obfuscated sample appeared in April 2021, the only one that belongs to"
+          "v": "see whether a hardcoded TCP port is open",
+          "q": "a check is implemented to see whether a hardcoded TCP port is open"
         },
         {
           "v": "cross-compilation",
-          "q": "Most importantly, Go has cross-compilation capabilities that make it a popular choice. It"
+          "q": "Most importantly, Go has cross-compilation capabilities that make it a popular choice."
         },
         {
-          "v": "proxy",
-          "q": "From July, all the samples connect to the mining pool through a proxy."
+          "v": "packed with vanilla UPX",
+          "q": "Most malicious samples were packed with vanilla UPX, and during our analysis, we have not"
         },
         {
-          "v": "cryptocurrency miner",
-          "q": "At its core, Sysrv is a worm and a cryptocurrency miner."
+          "v": "obfuscated Go packages",
+          "q": "This sample also had obfuscated Go packages and some function names."
+        },
+        {
+          "v": "proxy the traffic to the appropriate mining pools",
+          "q": "probably they use this specific port to proxy the traffic to the appropriate mining pools."
+        },
+        {
+          "v": "Aliyun AV software uninstaller",
+          "q": "Aliyun AV software uninstaller"
+        },
+        {
+          "v": "Removing and renaming the iptables binary",
+          "q": "Removing and renaming the iptables binary"
+        },
+        {
+          "v": "Bash history cleanup",
+          "q": "Bash history cleanup"
         }
       ],
       "cves": [
@@ -1262,44 +1272,48 @@
           "q": "Based on this, we grouped Sysrv samples into eight groups."
         },
         {
-          "v": "every two days",
+          "v": "almost every two days",
           "q": "were released almost every two days."
         },
         {
-          "v": "40 million end-user networks",
-          "q": "prevents devices on over 40 million end-user networks from participating in the Sysrv botnet."
+          "v": "over 76 XMR",
+          "q": "The total amount paid from the account was over 76 XMR, which is around 20,000 USD. The"
+        },
+        {
+          "v": "around 20,000 USD",
+          "q": "The total amount paid from the account was over 76 XMR, which is around 20,000 USD. The"
+        },
+        {
+          "v": "over 15 XMR",
+          "q": "The total amount paid is over 15 XMR, which is over 4,000 USD. The first payment"
         },
         {
           "v": "4,060 USD",
-          "q": "At the current exchange rate of XMR-USD, the total XMR amount equals 4,060 USD. At a"
+          "q": "At the current exchange rate of XMR-USD, the total XMR amount equals 4,060 USD."
         },
         {
-          "v": "four workers",
-          "q": "as many as four workers were mining cryptocurrency for this specific wallet at"
+          "v": "10,187 USD",
+          "q": "At the current exchange rate of XMR-USD, the total XMR amount equals 10,187 USD."
         },
         {
           "v": "30.31 KH/s",
           "q": "the rate of 30.31 KH/s."
         },
         {
-          "v": "76 XMR",
-          "q": "The total amount paid from the account was over 76 XMR, which is around 20,000 USD."
-        },
-        {
-          "v": "10,187 USD",
-          "q": "At the current exchange rate of XMR-USD, the total XMR amount equals 10,187 USD. At a"
-        },
-        {
           "v": "225.93 KH/s",
           "q": "the rate of 225.93 KH/s."
         },
         {
-          "v": "15 XMR",
-          "q": "The total amount paid is over 15 XMR, which is over 4,000 USD. The first payment"
+          "v": "four workers",
+          "q": "At a certain time, as many as four workers were mining cryptocurrency for this specific wallet at"
         },
         {
-          "v": "three different mining binaries",
-          "q": "In total, three different mining binaries were used in these cases."
+          "v": "five workers",
+          "q": "At a certain time, as many as five workers were mining cryptocurrency for this specific wallet at"
+        },
+        {
+          "v": "over 40 million end-user networks",
+          "q": "prevents devices on over 40 million end-user networks from participating in the Sysrv botnet."
         }
       ]
     },
@@ -1308,19 +1322,18 @@
       "name": "Sysrv"
     },
     "hedges": [
-      "Newer versions only reference the #keksec IoT botnet operator group; the report does not attribute the botnet to it.",
-      "Samples within the same group may differ slightly, though their main functionality and structure are the same.",
-      "The analysis covers the Linux ELF binaries only, not the Windows executables.",
-      "The report says Sysrv is still active 'as of the time of writing'.",
-      "The report poses the mining-pool proxy setup as a question ('Proxying traffic to mining pools?') and says probably the port proxies traffic."
+      "Note: This research analyses ELF binaries, not Windows executables.",
+      "There can be minor differences between samples in the same group, but their main functionalities and structure are the same.",
+      "probably they use this specific port to proxy the traffic to the appropriate mining pools.",
+      "As of the time of writing, Sysrv is still active and has gone through several iterations"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:34Z",
-      "ok": false,
-      "note": "tools[6]: Mirai appears only as part of the general Linux IoT threat landscape ('mainly Mirai and Gafgyt forks'). Sysrv is not said to use it, and the report di",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:34Z",
+        "ok": false,
+        "note": "tools[6]: Mirai appears only as part of the general Linux IoT threat landscape ('mainly Mirai and Gafgyt forks'). Sysrv is not said to use it, and the report di",
+        "by": "auditor"
+      }
+    ]
   }
 }

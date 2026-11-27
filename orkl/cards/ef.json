@@ -494,97 +494,105 @@
   },
   "ef7db37bc011fea9853410fdc8938b9a0b789300": {
     "sha1": "ef7db37bc011fea9853410fdc8938b9a0b789300",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:35:36Z",
+    "read_at": "2026-11-27T15:29:36Z",
     "model": "haiku",
-    "summary": "Jamf Threat Labs reports social-engineering attacks on individuals in the crypto industry, in line with an FBI public service announcement of September 3, 2024. Jamf attributes the activity to DPRK (North Korea). Lures use fake recruiter profiles on professional networking platforms and a zipped C# coding challenge whose project build runs hidden scripts. These fetch a second-stage backdoor and infostealer that Jamf tracks as Thiefbucket, also known as Rustdoor. The malware can persist via cron, zshrc and LaunchAgent, and can show a password prompt styled as Visual Studio.",
+    "summary": "Jamf Threat Labs reports DPRK-linked social engineering against crypto-industry individuals, after an FBI warning. Attacks start with a fake recruiter on a professional networking platform, then a zipped coding challenge that runs commands on build and drops Thiefbucket (also called Rustdoor), a backdoor and infostealer. Variants persist via cron or the zshrc file, and one prompts for a password styled as Visual Studio. Jamf ties the malware to DPRK activity via its delivery methods.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "DPRK",
-          "q": "Democratic People's Republic of Korea (\"DPRK\" aka North Korea)",
-          "by": "FBI public service announcement"
+          "q": "the Democratic People's Republic of Korea (\"DPRK\" aka North Korea) has",
+          "by": "FBI public service announcement, as relayed by Jamf Threat Labs"
         },
         {
           "v": "DPRK",
-          "q": "Jamf Threat Labs has always attributed this malware to the ongoing DPRK activity",
+          "q": "Jamf Threat Labs has always attributed this malware to the ongoing DPRK activity due to the stage one techniques",
           "by": "Jamf Threat Labs"
         }
       ],
       "sectors": [
         {
           "v": "Crypto Industry",
-          "q": "warn those in the Crypto Industry that the Democratic"
+          "q": "warn those in the Crypto Industry that the Democratic People's Republic of Korea"
         },
         {
           "v": "decentralized finance",
-          "q": "a tech company that specializes in decentralized finance."
+          "q": "be a recruiter on the HR team at a tech company that specializes in decentralized finance."
         }
       ],
       "countries": [
         {
           "v": "North Korea",
-          "q": "Democratic People's Republic of Korea (\"DPRK\" aka North Korea)"
+          "q": "the Democratic People's Republic of Korea (\"DPRK\" aka North Korea) has"
         }
       ],
       "dates": [
         {
           "v": "September 3, 2024",
-          "q": "On September 3, 2024 the Federal Bureau of Investigations (FBI) released a public service announcement set to",
-          "what": "FBI released a public service announcement warning the crypto industry about DPRK targeting"
+          "q": "On September 3, 2024 the Federal Bureau of Investigations (FBI) released a public service announcement",
+          "what": "FBI released a public service announcement warning crypto-industry individuals about DPRK social engineering"
         }
       ],
       "tools": [
         {
           "v": "Thiefbucket",
-          "q": "tracked by Jamf Threat Labs under the name Thiefbucket but is known to some as"
+          "q": "Thiefbucket but is known to some as “Rustdoor.”"
         },
         {
           "v": "Rustdoor",
-          "q": "known to some as “Rustdoor.”"
-        },
-        {
-          "v": "zsh_env",
-          "q": "The other stage two malware that is downloaded (zsh_env) simply sets up persistence via the .zshrc configuration."
+          "q": "Thiefbucket but is known to some as “Rustdoor.”"
         }
       ],
       "techniques": [
         {
-          "v": "fake recruiter contact via social media",
-          "q": "The majority of attacks begin with an individual reaching out over a social media platform"
+          "v": "professional networking platforms",
+          "q": "target individuals through professional networking platforms"
         },
         {
-          "v": "malicious coding challenge sent as a pre-employment test",
+          "v": "recruiter",
+          "q": "be a recruiter on the HR team at a tech company that specializes in decentralized finance."
+        },
+        {
+          "v": "coding challenge",
           "q": "the recruiter sent a zipped coding challenge to the target"
         },
         {
-          "v": "hidden build-time scripts in project files",
-          "q": "buried within two separate csproj files are malicious bash commands"
+          "v": "building the project",
+          "q": "will execute upon building the project:"
         },
         {
-          "v": "infostealer file grabbing",
-          "q": "This setting will cause the malware to act as an infostealer by grabbing a number of different files"
+          "v": "persist via cron",
+          "q": "VisualStudioHelper will persist via cron while zsh_env will persist via the zshrc file."
         },
         {
-          "v": "fake Visual Studio password prompt",
+          "v": "persist via the zshrc file",
+          "q": "zsh_env will persist via the zshrc file"
+        },
+        {
+          "v": "prompt the user for their password",
           "q": "prompt the user for their password using a prompt window that is tailored to look as though it"
         },
         {
-          "v": "persistence via LaunchAgent, cron, dock and zshrc profiles",
-          "q": "Ability to persist via LaunchAgent, cron, dock, and zshrc profiles."
+          "v": "act as an infostealer",
+          "q": "This setting will cause the malware to act as an infostealer by grabbing a number of different files"
+        },
+        {
+          "v": "self delete",
+          "q": "Ability to self delete"
+        },
+        {
+          "v": "run shell commands",
+          "q": "Ability to run shell commands"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "0 followers",
-          "q": "Note at the bottom of the image that this profile has 0 followers"
-        },
-        {
-          "v": "two executables",
-          "q": "two executables were downloaded and executed by the fake coding challenge"
+          "q": "this profile has 0 followers which can be a good indicator"
         }
       ]
     },
@@ -593,19 +601,20 @@
       "name": "Thiefbucket"
     },
     "hedges": [
-      "Jamf is unfamiliar with a website named in the recruiter's profile and cannot speak to its legitimacy.",
-      "Jamf continues to investigate the differences in features, but at a first glance they appear to be minor.",
-      "Jamf says the zsh persistence technique likely ends up being reliable, given the target probably uses a Terminal.",
-      "Attribution to DPRK is based on the stage one techniques and the manner in which the malware is delivered to targets."
+      "Jamf Threat Labs continues to investigate the differences in features, but at a first glance they appear to be minor.",
+      "Jamf says it is unfamiliar with a website named in the recruiter claim and cannot speak to its legitimacy.",
+      "The report says the malware seems to have been re-created in Objective-C.",
+      "The report says the stage-one technique likely ends up being reliable for targeting developers.",
+      "The report says a 0-follower profile can be a good indicator that the account was created recently."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:30Z",
-      "ok": false,
-      "note": "sectors[1]: The text gives decentralized finance as the specialty of the tech company the fake recruiter claims to work for. It does not name it as a targeted s",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:30Z",
+        "ok": false,
+        "note": "sectors[1]: The text gives decentralized finance as the specialty of the tech company the fake recruiter claims to work for. It does not name it as a targeted s",
+        "by": "auditor"
+      }
+    ]
   },
   "ef1a1866916d19c941f558a4426fdc1d3f56a30a": {
     "sha1": "ef1a1866916d19c941f558a4426fdc1d3f56a30a",

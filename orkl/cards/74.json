@@ -360,18 +360,18 @@
   },
   "74c43661a5187d2e63034b20f3437b8942fd99ee": {
     "sha1": "74c43661a5187d2e63034b20f3437b8942fd99ee",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:40:19Z",
+    "read_at": "2026-11-27T15:31:48Z",
     "model": "haiku",
-    "summary": "Avast reported on Parrot, a traffic direction system (TDS) that sends visitors matching a victim profile to malware or phishing pages. It runs through servers hosting about 16,500 websites, including universities, local governments, adult content platforms and personal blogs. Its main use is the FakeUpdate campaign, which uses fake browser update notices to deliver NetSupport Client RAT. Avast also found phishing pages imitating a Microsoft login. The campaign appears to have started in February 2022, with Parrot activity traced back to October 2021.",
+    "summary": "A malicious traffic direction service called Parrot, found by Avast, runs on servers hosting about 16,500 websites (universities, local governments, blogs and others) and redirects selected visitors to phishing and malware sites. Its main use is the FakeUpdate campaign, which uses fake browser update notices to deliver the NetSupport Client RAT. The campaign appears to have started in February 2022, with Parrot activity traced back to October 2021. Avast says it protected over 600,000 of its clients from the infected sites in March 2022, mostly users in Brazil, India, the United States,…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Threat actors",
-          "q": "Threat actors have planted a malicious web shell on compromised servers",
-          "by": "Avast, as reported by BleepingComputer"
+          "q": "Threat actors running malicious campaigns buy TDS services to filter incoming traffic and",
+          "by": "BleepingComputer article, citing Avast"
         }
       ],
       "sectors": [
@@ -382,39 +382,35 @@
         {
           "v": "local governments",
           "q": "websites of universities, local governments, adult content platforms, and personal blogs."
-        },
-        {
-          "v": "adult content platforms",
-          "q": "websites of universities, local governments, adult content platforms, and personal blogs."
-        },
-        {
-          "v": "personal blogs",
-          "q": "websites of universities, local governments, adult content platforms, and personal blogs."
         }
       ],
       "countries": [
         {
           "v": "Brazil",
-          "q": "Most of the users targeted by these malicious redirections were in Brazil, India, the United"
+          "q": "were in Brazil, India, the United States, Singapore, and Indonesia."
         },
         {
           "v": "India",
-          "q": "Most of the users targeted by these malicious redirections were in Brazil, India, the United"
+          "q": "were in Brazil, India, the United States, Singapore, and Indonesia."
+        },
+        {
+          "v": "United States",
+          "q": "were in Brazil, India, the United States, Singapore, and Indonesia."
         },
         {
           "v": "Singapore",
-          "q": "States, Singapore, and Indonesia."
+          "q": "were in Brazil, India, the United States, Singapore, and Indonesia."
         },
         {
           "v": "Indonesia",
-          "q": "States, Singapore, and Indonesia."
+          "q": "were in Brazil, India, the United States, Singapore, and Indonesia."
         }
       ],
       "dates": [
         {
-          "v": "October 2021",
-          "q": "been traced as far back as October 2021.",
-          "what": "earliest traced Parrot activity"
+          "v": "2022-04-07",
+          "q": "April 7, 2022",
+          "what": "Article published"
         },
         {
           "v": "February 2022",
@@ -422,46 +418,46 @@
           "what": "FakeUpdate campaign appears to have started"
         },
         {
-          "v": "March 2022",
-          "q": "in March 2022 alone its services protected more than 600,000 of its clients",
-          "what": "Avast services protected clients from visiting infected sites"
+          "v": "October 2021",
+          "q": "been traced as far back as October 2021.",
+          "what": "Earliest signs of Parrot activity traced"
         },
         {
-          "v": "April 7, 2022",
-          "q": "April 7, 2022",
-          "what": "article published"
+          "v": "March 2022",
+          "q": "Avast says that in March 2022 alone its services protected more than 600,000 of its clients",
+          "what": "Avast protected clients from the infected sites"
         }
       ],
       "tools": [
         {
-          "v": "Parrot TDS",
-          "q": "Parrot TDS was discovered by threat analysts at Avast, who report that it’s currently used for"
+          "v": "Parrot",
+          "q": "A new traffic direction system (TDS) called Parrot is relying on servers that host 16,500"
         },
         {
           "v": "NetSupport Client RAT",
           "q": "The payload dropped on the targets' systems is the NetSupport Client RAT set to run in silent"
-        },
-        {
-          "v": "PHP backdoor script",
-          "q": "Moreover, the adversaries use a PHP backdoor script that extracts client information and"
         }
       ],
       "techniques": [
         {
-          "v": "redirect potential victims",
-          "q": "Parrot's use is for malicious campaigns to redirect potential victims matching a specific"
+          "v": "fake browser update warning",
+          "q": "Site displaying the fake browser update warning (Avast)"
         },
         {
-          "v": "hardware, software, and network profiling",
-          "q": "hardware, software, and network profiling."
+          "v": "filter incoming traffic",
+          "q": "Threat actors running malicious campaigns buy TDS services to filter incoming traffic and"
         },
         {
-          "v": "Phishing Microsoft credentials",
-          "q": "Phishing Microsoft credentials"
+          "v": "web shell",
+          "q": "Threat actors have planted a malicious web shell on compromised servers and copied it to"
         },
         {
-          "v": "poorly secured CMS sites",
-          "q": "apart from servers hosting poorly secured CMS sites, like WordPress sites."
+          "v": "phishing sites",
+          "q": "Avast analysts have also noticed several infected servers hosting phishing sites."
+        },
+        {
+          "v": "profile-based targeting",
+          "q": "profile (location, language, operating system, browser) to online resources such as phishing"
         }
       ],
       "cves": [],
@@ -472,7 +468,7 @@
         },
         {
           "v": "600,000",
-          "q": "in March 2022 alone its services protected more than 600,000 of its clients"
+          "q": "Avast says that in March 2022 alone its services protected more than 600,000 of its clients"
         }
       ]
     },
@@ -482,15 +478,16 @@
     },
     "hedges": [
       "The campaign appears to have started in February 2022 but signs of Parrot activity have been traced as far back as October 2021.",
-      "The compromised websites we found appear to have nothing in common apart from servers hosting poorly secured CMS sites, like WordPress sites."
+      "Avast: 'The compromised websites we found appear to have nothing in common apart from servers hosting poorly secured CMS sites'.",
+      "TDS are also legitimately used by advertisers and marketers, and some of these services were exploited in the past to facilitate malspam campaigns."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:43Z",
-      "ok": false,
-      "note": "actors[0].by: The text states the web shell sentence in the article's own voice and does not attribute it to Avast. Naming Avast as the source goes beyond what ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:43Z",
+        "ok": false,
+        "note": "actors[0].by: The text states the web shell sentence in the article's own voice and does not attribute it to Avast. Naming Avast as the source goes beyond what ",
+        "by": "auditor"
+      }
+    ]
   }
 }

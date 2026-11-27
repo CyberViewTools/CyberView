@@ -98,161 +98,31 @@
     "sha1": "6688de90f2f4a42dab64bd0cad8eadce99c3b62d",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:45:45Z",
+    "read_at": "2026-11-27T15:33:51Z",
     "model": "haiku",
-    "summary": "Palo Alto Networks Unit 42 reports Black-T, a new cryptojacking malware variant authored by the TeamTNT group. Black-T targets exposed Docker daemon APIs in cloud systems and removes rival miners such as Kinsing. It uses three network scanners to find more exposed Docker APIs and scrapes memory passwords with mimipy and mimipenguin, then exfiltrates them to a TeamTNT C2 node. It also targets AWS credential files. The mining wallet had gathered only roughly US$10 by late September 2020.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "TeamTNT",
-          "q": "TeamTNT is a cloud-focused cryptojacking group which targets exposed Docker daemon APIs.",
-          "by": "Unit 42 researchers (Palo Alto Networks), in the report"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "October 5, 2020",
-          "q": "October 5, 2020 at 6:00 AM",
-          "what": "Unit 42 blog post on Black-T published"
-        },
-        {
-          "v": "September 26, 2020",
-          "q": "down from a maximum of 25.05 KH/s on September 26, 2020.",
-          "what": "Peak reported hashrate of the Black-T mining wallet"
-        },
-        {
-          "v": "September 29, 2020",
-          "q": "roughly US$10 as of September 29, 2020, likely due to the fact that this is a very new variant",
-          "what": "Wallet had gathered roughly US$10 as of this date"
-        }
-      ],
-      "tools": [
-        {
-          "v": "Black-T",
-          "q": "discovered a new variant of cryptojacking malware named Black-T, authored by TeamTNT, a"
-        },
-        {
-          "v": "masscan",
-          "q": "Both masscan and pnscan have been used before by"
-        },
-        {
-          "v": "pnscan",
-          "q": "Both masscan and pnscan have been used before by"
-        },
-        {
-          "v": "zgrab",
-          "q": "the addition of zgrab, a GoLang network scanner, marks the first time"
-        },
-        {
-          "v": "zmap",
-          "q": "TeamTNT been known to use the network scanner software zmap."
-        },
-        {
-          "v": "mimipy",
-          "q": "via mimipy and mimipenguins, which are *NIX equivalents to the commonly used"
-        },
-        {
-          "v": "mimipenguin",
-          "q": "via mimipy and mimipenguins, which are *NIX equivalents to the commonly used"
-        },
-        {
-          "v": "sbin_u",
-          "q": "downloads the known XMR miner software sbin_u,"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "targets exposed Docker daemon APIs",
-          "q": "TeamTNT is a cloud-focused cryptojacking group which targets exposed Docker daemon APIs."
-        },
-        {
-          "v": "memory scraping",
-          "q": "Black-T will also perform memory scraping operations following the"
-        },
-        {
-          "v": "targeting AWS credential and configuration files",
-          "q": "TeamTNT actors are still targeting AWS credential and configuration files located on"
-        },
-        {
-          "v": "mine for Monero (XMR)",
-          "q": "and mine for Monero (XMR)."
-        },
-        {
-          "v": "targets Kinsing malware",
-          "q": "Black-T specifically targets Kinsing malware, a competing cryptojacking process"
-        },
-        {
-          "v": "scanning operations on a random CIDR 8 network range",
-          "q": "performs scanning operations on a random CIDR 8 network range as it searches for exposed"
-        },
-        {
-          "v": "removal and evasion of Aliyun and Tencent cloud security software",
-          "q": "allows for the removal and evasion of Aliyun and Tencent cloud security software, and adds AWS"
-        },
-        {
-          "v": "worm-like techniques",
-          "q": "TeamTNT has long maintained its usage of worm-like techniques"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "25.05 KH/s",
-          "q": "down from a maximum of 25.05 KH/s on September 26, 2020."
-        },
-        {
-          "v": "8.2 KH/s",
-          "q": "only five workers were reported producing 8.2 KH/s"
-        },
-        {
-          "v": "five workers",
-          "q": "only five workers were reported producing 8.2 KH/s"
-        },
-        {
-          "v": "US$10",
-          "q": "roughly US$10 as of September 29, 2020,"
-        },
-        {
-          "v": "version 1",
-          "q": "declaring that this variant is version 1 (see Figure 1)."
-        },
-        {
-          "v": "three different scanners",
-          "q": "there are currently three different scanners built into this tool"
-        },
-        {
-          "v": "TCP 5555",
-          "q": "scanning port, TCP 5555 (see Figure 9)."
-        },
-        {
-          "v": "8/62",
-          "q": "VirusTotal currently only lists the malware as an 8/62"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "Black-T"
-    },
-    "hedges": [
-      "The exact purpose of adding TCP port 5555 to the scanner is unknown; there is little evidence to support TeamTNT targeting Android devices.",
-      "It is currently unclear how TeamTNT actors will use the zgrab data, but it is highly likely the actors are testing the scanner.",
-      "Unit 42 believe TeamTNT actors are planning more sophisticated features for identifying vulnerable cloud systems.",
-      "No information supports whether the Crux worm uses the cruxpool mining pool; it may be a naming convention.",
-      "The wallet earned only about US$10, likely because the variant is very new and has not had much time to spread.",
-      "It would appear that several cryptojacking processes are currently unknown to defense teams.",
-      "The AWS credentials captured are likely to be used for additional operations against the organisation running the compromised Docker API."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:43Z",
-      "ok": false,
-      "note": "hedges[6]: The text says the exfiltrated passwords (\"these credentials\") are likely to be used against the organisation, \"similar to\" the stolen AWS credentials",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:43Z",
+        "ok": false,
+        "note": "hedges[6]: The text says the exfiltrated passwords (\"these credentials\") are likely to be used against the organisation, \"similar to\" the stolen AWS credentials",
+        "by": "auditor"
+      }
+    ]
   }
 }

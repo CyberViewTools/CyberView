@@ -245,100 +245,117 @@
   },
   "c59a9712231310a14b27efe4a03041ca31f67049": {
     "sha1": "c59a9712231310a14b27efe4a03041ca31f67049",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:42:47Z",
+    "read_at": "2026-11-27T15:31:49Z",
     "model": "haiku",
-    "summary": "Sysdig blog analysis of the Kinsing malware, which targets misconfigured cloud native environments such as exposed Docker engines. Kinsing acts as a loader: it downloads and runs a Monero crypto miner (kdevtmpfsi), disables security tools, kills rival miners, sets up cronjob persistence, reads SSH keys to move laterally, and contacts command and control servers. Detection advice uses Falco.",
+    "summary": "Vendor blog post by Sysdig analysing the Kinsing malware, which targets misconfigured cloud-native environments and exposed Docker engines. A honeypot container's entrypoint downloads a shell script that disables security tools, kills rival miners and installs Kinsing. Kinsing runs a Monero crypto miner (kdevtmpfsi), keeps it running, contacts C2 servers, downloads further scripts and spreads laterally using SSH keys. The post recommends Falco rules for detection.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
+      "countries": [
+        {
+          "v": "Eastern European country",
+          "q": "A whois lookup located the IP in a Eastern European country."
+        }
+      ],
       "dates": [
         {
           "v": "November 23, 2020",
           "q": "By Kaizhe Huang November 23, 2020",
-          "what": "Sysdig blog post on the Kinsing attack published"
+          "what": "Blog post on the Kinsing attack published by Sysdig"
         }
       ],
       "tools": [
         {
+          "v": "Kinsing",
+          "q": "In summary, Kinsing serves as a convoy to a crypto miner."
+        },
+        {
           "v": "kdevtmpfsi",
-          "q": "Kdevtmpfsi is the crypto miner that will be created and run by Kinsing in the /tmp directory"
+          "q": "Kdevtmpfsi is the crypto miner that will be created and run by Kinsing in the /tmp directory."
+        },
+        {
+          "v": "Falco",
+          "q": "Falco, a CNCF incubating project, can help detect any anomalous activities in cloud native"
+        },
+        {
+          "v": "Sysdig open source",
+          "q": "I used Sysdig open source to analyze the syscalls that executed from"
         },
         {
           "v": "Shodan",
           "q": "According to Shodan, a search engine for internet-connected devices, more than 2,000"
         },
         {
-          "v": "Sysdig",
-          "q": "I used Sysdig open source to analyze the syscalls that executed from"
-        },
-        {
-          "v": "Falco",
-          "q": "Falco, a CNCF incubating project, can help detect any anomalous activities in cloud native"
+          "v": "redress",
+          "q": "It is also reflected in the source code, that you can reverse engineer with redress:"
         }
       ],
       "techniques": [
         {
-          "v": "misconfigured hosts or clusters",
-          "q": "A misconfigured host or cluster could be exploited to run any container desired by the"
+          "v": "defense evasion",
+          "q": "as well as defense evasion schemes."
         },
         {
           "v": "lateral movement",
           "q": "be used to perform lateral movement"
         },
         {
-          "v": "defense evasion",
-          "q": "attack patterns, as well as defense evasion schemes"
+          "v": "crypto-mining",
+          "q": "A crypto-mining attack is just like free riding on Wi-Fi."
         },
         {
-          "v": "disable security services",
-          "q": "Turn off security services"
+          "v": "Turn off security services",
+          "q": "2) Turn off security services (comments were added to explain the commands):"
         },
         {
-          "v": "crypto miner",
-          "q": "Kinsing serves as a convoy to a crypto miner"
+          "v": "Kill other crypto mining processes",
+          "q": "3) Kill other crypto mining processes and their cronjobs:"
         },
         {
-          "v": "cronjob to download the malicious script",
-          "q": "Create a cronjob to download the malicious script"
-        },
-        {
-          "v": "killing rival mining processes",
-          "q": "Kill other crypto mining processes and their cronjobs"
+          "v": "cronjob",
+          "q": "Enable a cronjob service inside a container."
         },
         {
           "v": "SSH keys",
-          "q": "reading the SSH keys on"
+          "q": "through reading the SSH keys on"
         },
         {
-          "v": "Command and Control (C2) servers",
-          "q": "Kinsing did contact Command and Control (C2) servers"
+          "v": "Command and Control (C2)",
+          "q": "Like some other malwares, Kinsing did contact Command and Control (C2) servers. The"
         },
         {
-          "v": "restart the miner program",
-          "q": "if kdevtmpfsi is killed, Kinsing will restart the miner program"
+          "v": "download shell scripts",
+          "q": "started to download shell scripts from another server."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "more than 2,000",
+          "v": "2,000",
           "q": "According to Shodan, a search engine for internet-connected devices, more than 2,000"
+        },
+        {
+          "v": "three scripts",
+          "q": "Below are the three scripts that were downloaded via HTTP requests:"
         },
         {
           "v": "Go 1.13.6",
           "q": "compiled with Go 1.13.6, which is a"
         },
         {
-          "v": "Monero(XMR)",
-          "q": "From the login request, we know that the miner actually mines for Monero(XMR)"
+          "v": "almost half",
+          "q": "As you can see, kdevtmpfsi occupied almost half of the computing power of the node."
         },
         {
-          "v": "about every minute",
+          "v": "every minute",
           "q": "The heartbeat message was sent about every minute."
+        },
+        {
+          "v": "3.7M",
+          "q": "3.7M Oct 20 22:13 kdevtmpfsi"
         }
       ]
     },
@@ -347,19 +364,19 @@
       "name": "Kinsing"
     },
     "hedges": [
-      "It looks like the downloaded script is the malicious script that kicks off the Kinsing attacks.",
-      "Given their sizes, it looks like that the crypto miner is baked into Kinsing.",
-      "As a security researcher reported, Kinsing is written in Golang.",
-      "It still doesn't suggest every CPU hike is caused by crypto miners.",
-      "Although we can't rely on a single individual suspicious event to unveil the Kinsing attack completely."
+      "The report says it looks like the downloaded d.sh script is the malicious script that starts the Kinsing attacks.",
+      "The report says it looks like the crypto miner is baked into Kinsing, based on file sizes.",
+      "The report says high CPU use does not always mean a crypto miner is running.",
+      "The report says a single suspicious event cannot fully reveal the Kinsing attack, so events must be correlated.",
+      "The report says a security researcher reported that Kinsing is written in Golang."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:11Z",
-      "ok": false,
-      "note": "summary: The text does not say Kinsing downloads the miner. It says Kinsing creates and runs kdevtmpfsi in /tmp, and that the miner looks baked into Kinsing giv",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:11Z",
+        "ok": false,
+        "note": "summary: The text does not say Kinsing downloads the miner. It says Kinsing creates and runs kdevtmpfsi in /tmp, and that the miner looks baked into Kinsing giv",
+        "by": "auditor"
+      }
+    ]
   }
 }

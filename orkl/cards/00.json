@@ -287,21 +287,26 @@
   },
   "00e4140ee83e4a98fd9cf2f4df2a4ee1082fadb7": {
     "sha1": "00e4140ee83e4a98fd9cf2f4df2a4ee1082fadb7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:45:29Z",
+    "read_at": "2026-11-27T15:33:45Z",
     "model": "haiku",
-    "summary": "Trend Micro reports a Linux cryptojacking attack, intercepted in November 2022, that added the CHAOS RAT, a remote access trojan based on an open source project, to a routine that kills competing malware and installs a Monero miner. Persistence uses cron, and payloads are fetched from a paste site. The download server appears to be in Russia, and the RAT's command-and-control server is likely in Hong Kong. The RAT offers functions such as reverse shell, file transfer, screenshots and system shutdown. The report links the cryptojacking routine to earlier activity by TeamTNT.",
+    "summary": "A vendor research report describes a November 2022 Linux cryptojacking attack that added the CHAOS Remote Administrative Tool, a remote access trojan based on an open source project. The original routine killed competing malware and security products, set persistence through cron, and downloaded an XMRig Monero miner. The RAT offers reverse shell, file transfer, screenshot and shutdown functions. It connects to a command-and-control server the report says is likely in Hong Kong, while the payload server appears to be in Russia. The report links the campaign to the wider cloud cryptomining…",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "TeamTNT",
-          "q": "threat actors active in this space such as TeamTNT",
-          "by": "the report (Trend Micro)"
+          "q": "being targeted by threat actors active in this space such as TeamTNT",
+          "by": "the report"
         }
       ],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "cloud computing",
+          "q": "specific cloud computing instances being targeted"
+        }
+      ],
       "countries": [
         {
           "v": "Russia",
@@ -309,19 +314,19 @@
         },
         {
           "v": "Hong Kong",
-          "q": "another C&C server, likely located in Hong Kong (which we determined through IP geolocation)"
+          "q": "likely located in Hong Kong"
         }
       ],
       "dates": [
         {
           "v": "December 12, 2022",
           "q": "December 12, 2022",
-          "what": "report published"
+          "what": "publication date of the research report"
         },
         {
           "v": "November 2022",
-          "q": "In November 2022, we intercepted a threat that had a slightly different routine",
-          "what": "Trend Micro intercepted a cryptojacking attack incorporating CHAOS RAT"
+          "q": "In November 2022, we intercepted a threat",
+          "what": "the report's authors intercepted the attack"
         }
       ],
       "tools": [
@@ -331,41 +336,45 @@
         },
         {
           "v": "Trojan.Linux.CHAOSRAT",
-          "q": "(Trojan.Linux.CHAOSRAT), which is based on an open source project"
-        },
-        {
-          "v": "Kinsing",
-          "q": "termination of competing malware such as Kinsing and the killing of"
+          "q": "(Trojan.Linux.CHAOSRAT)"
         },
         {
           "v": "XMRig",
-          "q": "This is followed by downloading additional payloads: an XMRig miner, its configuration file"
+          "q": "downloading additional payloads: an XMRig miner"
+        },
+        {
+          "v": "Kinsing",
+          "q": "termination of competing malware such as Kinsing"
         }
       ],
       "techniques": [
         {
-          "v": "persistence via scheduled tasks (cron)",
-          "q": "This was followed by routines for persistence and payload execution"
-        },
-        {
-          "v": "killing competing malware and security products",
-          "q": "the initial phase saw attackers trying to kill off competing malware, security products, and other cloud middleware"
+          "v": "persistence",
+          "q": "achieves its persistence by altering /etc/crontab file"
         },
         {
           "v": "reverse shell",
           "q": "Perform reverse shell"
         },
         {
-          "v": "use of bulletproof hosting",
-          "q": "also used for cloud bulletproof hosting (a modus operandi"
+          "v": "download files",
+          "q": "Download files"
         },
         {
-          "v": "JSON Web Token authorization",
-          "q": "using a JSON Web Token (JTW) for authorization"
+          "v": "upload files",
+          "q": "Upload files"
         },
         {
-          "v": "payload download from paste site",
-          "q": "downloads itself every 10 minutes from Pastebin"
+          "v": "screenshots",
+          "q": "Take screenshots"
+        },
+        {
+          "v": "shutdown",
+          "q": "Shutdown the PC"
+        },
+        {
+          "v": "competing malware",
+          "q": "termination of competing malware such as Kinsing"
         }
       ],
       "cves": [],
@@ -381,16 +390,16 @@
       "name": "CHAOS Remote Administrative Tool"
     },
     "hedges": [
-      "the main server appears to be located in Russia",
-      "the command-and-control server is likely located in Hong Kong, determined through IP geolocation"
+      "The main payload server appears to be located in Russia, based on the scripts and historical whois data.",
+      "The RAT's command-and-control server is likely located in Hong Kong, determined through IP geolocation."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:15Z",
-      "ok": false,
-      "note": "summary: The claim that the report links the cryptojacking routine to earlier activity by TeamTNT is stronger than the text. The report only cites TeamTNT as an",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:15Z",
+        "ok": false,
+        "note": "summary: The claim that the report links the cryptojacking routine to earlier activity by TeamTNT is stronger than the text. The report only cites TeamTNT as an",
+        "by": "auditor"
+      }
+    ]
   }
 }

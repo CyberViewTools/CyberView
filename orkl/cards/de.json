@@ -151,57 +151,53 @@
   },
   "dea766dd933827008dbafa083e0e49353ca752bf": {
     "sha1": "dea766dd933827008dbafa083e0e49353ca752bf",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:44:35Z",
+    "read_at": "2026-11-27T15:32:55Z",
     "model": "haiku",
-    "summary": "Juniper Threat Labs report (April 2021) on the Sysrv botnet. It spread across Windows and Linux systems by exploiting multiple known vulnerabilities, with the goal of installing a Monero cryptominer (XMRig). Activity surged on March 4, 2021. The worm and miner were merged into one binary, and the loader script was seen adding SSH keys to infected systems for persistence. Exploited software named in the report includes Mongo-Express, XXL-Job, Supervisor, Saltstack, ThinkPHP and Drupal. The report also lists IP, hash and download indicators, which are not recorded here.",
+    "summary": "Juniper Threat Labs describes the Sysrv botnet, which spreads by exploiting known vulnerabilities in web and enterprise software and installs a Monero cryptominer based on XMRig. In March 2021 it merged its worm and miner into one binary, added a new mining pool, and began adding SSH keys to infected systems for persistence. The report lists the bundled exploits, the mining pools and wallet earnings, and indicators of compromise.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "threat actor",
           "q": "The threat actor’s objective is to install a Monero cryptominer.",
-          "by": "Juniper Threat Labs (the report)"
+          "by": "Juniper Threat Labs"
         }
       ],
       "sectors": [],
       "countries": [
         {
           "v": "China",
-          "q": "From Shodan, we’ve enumerated 35 public IPs with this service, almost all of them in China."
+          "q": "almost all of them in China"
         }
       ],
       "dates": [
         {
           "v": "April 8, 2021",
           "q": "April 8, 2021",
-          "what": "Date the report was published"
+          "what": "report published"
         },
         {
           "v": "December of 2020",
           "q": "Juniper Threat Labs monitored the Sysrv botnet since December of 2020.",
-          "what": "Juniper began monitoring the Sysrv botnet"
-        },
-        {
-          "v": "February 2021",
-          "q": "In February 2021, we saw the botnet remove the minexmr mining pool and only use f2pool.",
-          "what": "Botnet dropped one mining pool and used only f2pool"
+          "what": "Juniper Threat Labs began monitoring the Sysrv botnet"
         },
         {
           "v": "March 4, 2021",
           "q": "On March 4, 2021, Juniper Threat Labs identified a surge of activity of the Sysrv botnet.",
-          "what": "Juniper identified a surge of Sysrv activity"
+          "what": "surge in Sysrv botnet activity identified"
+        },
+        {
+          "v": "February 2021",
+          "q": "In February 2021, we saw the botnet remove the minexmr mining pool and only use f2pool.",
+          "what": "botnet stopped using the minexmr mining pool"
         }
       ],
       "tools": [
         {
           "v": "sysrv",
-          "q": "It also used multi-component malware wherein the worm binary is installed as sysrv"
-        },
-        {
-          "v": "network01",
-          "q": "the miner binary as network01"
+          "q": "the worm binary is installed as sysrv (sysrv.exe on Windows)"
         },
         {
           "v": "XMRig",
@@ -214,20 +210,24 @@
       ],
       "techniques": [
         {
-          "v": "scanning vulnerable systems",
+          "v": "exploiting multiple vulnerabilities",
+          "q": "exploiting multiple vulnerabilities, which we will cover in this blog"
+        },
+        {
+          "v": "scanning for vulnerable systems",
           "q": "The cryptomining worm spreads by scanning vulnerable systems on the internet."
         },
         {
-          "v": "add ssh keys to infected system",
-          "q": "We also identified new development in the loader script where it tries to add ssh keys to infected system."
-        },
-        {
-          "v": "brute force",
-          "q": "Brute force Jenkins"
-        },
-        {
-          "v": "cryptomining",
+          "v": "mines Monero",
           "q": "The second component of the payload is a cryptominer that mines Monero."
+        },
+        {
+          "v": "add ssh keys to infected system",
+          "q": "identified new development in the loader script where it tries to add ssh keys to infected system."
+        },
+        {
+          "v": "Brute force Jenkins",
+          "q": "Brute force Jenkins"
         }
       ],
       "cves": [
@@ -283,7 +283,7 @@
         },
         {
           "v": "847 public IPs",
-          "q": "there are 847 public IPs in"
+          "q": "As of this writing, there are 847 public IPs"
         },
         {
           "v": "35 public IPs",
@@ -294,16 +294,20 @@
           "q": "there are more than 35,000 public IPs"
         },
         {
-          "v": "port 8081",
-          "q": "The attack we’ve seen so far specifically targets port 8081"
-        },
-        {
-          "v": "8 XMR (~1,700 USD)",
-          "q": "this wallet gained 8 XMR (~1,700 USD)"
+          "v": "8 XMR",
+          "q": "this wallet gained 8 XMR (~1,700 USD) from March 1 to March 28."
         },
         {
           "v": "10XMR",
-          "q": "this wallet gained 10XMR from December 2020 to March 2021 (2,000 USD)"
+          "q": "this wallet gained 10XMR from December 2020 to March 2021 (2,000 USD)."
+        },
+        {
+          "v": "50%",
+          "q": "Combined together, they almost have 50% of the network hash"
+        },
+        {
+          "v": "three of the top four Monero mining pools",
+          "q": "these pools are three of the top four Monero mining pools"
         }
       ]
     },
@@ -317,13 +321,13 @@
       "The threat actor’s criteria appears to be top mining pools with high reward rates.",
       "It appears to be ramping up recently at a pace of 1 XMR per 2 days."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:21Z",
-      "ok": false,
-      "note": "summary: It says the loader script \"was seen adding SSH keys ... for persistence\". The text only says the script \"tries to add ssh keys\", and that the researche",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:21Z",
+        "ok": false,
+        "note": "summary: It says the loader script \"was seen adding SSH keys ... for persistence\". The text only says the script \"tries to add ssh keys\", and that the researche",
+        "by": "auditor"
+      }
+    ]
   }
 }

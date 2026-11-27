@@ -546,143 +546,31 @@
     "sha1": "9163da1f8455cab8a3a64453c6b473bcc423f7c3",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:47:51Z",
+    "read_at": "2026-11-27T15:33:44Z",
     "model": "haiku",
-    "summary": "Cisco Talos reports a backdoor called GoMet, a slightly modified version of an open-source Go remote-access tool, used against a Ukrainian software development company whose software is used by state organizations. Talos says the campaign is likely Russian state-sponsored, with moderate to high confidence. Samples were first observed on March 28, 2022. The report notes two earlier public cases of GoMet after exploitation of F5 BIG-IP (CVE-2020-5902) and Sophos Firewall (CVE-2022-1040). Notable tradecraft includes a frequently re-run cron job, replacing existing autorun executables for…",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Russian state-sponsored actors",
-          "q": "We assess with moderate to high confidence that these actions are being conducted by Russian state-sponsored actors or those acting in their interests.",
-          "by": "Cisco Talos"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "software development",
-          "q": "As this firm is involved in software development, we"
-        },
-        {
-          "v": "state organizations",
-          "q": "large software development company whose software is used in various state organizations"
-        }
-      ],
-      "countries": [
-        {
-          "v": "Ukraine",
-          "q": "Attackers target Ukraine using GoMet backdoor"
-        }
-      ],
-      "dates": [
-        {
-          "v": "March 28, 2022",
-          "q": "The malware was first observed on March 28, 2022.",
-          "what": "Malware first observed"
-        },
-        {
-          "v": "March 31, 2019",
-          "q": "The original GoMet author posted the code on GitHub on March 31, 2019 and had commits",
-          "what": "Original GoMet code posted publicly"
-        },
-        {
-          "v": "2020",
-          "q": "in 2020, attackers were deploying this malware after the",
-          "what": "GoMet deployed after exploitation of CVE-2020-5902"
-        },
-        {
-          "v": "April 4, 2021",
-          "q": "The certificate on this server was issued on April 4, 2021 as a self-signed certificate, with the",
-          "what": "Self-signed certificate on the C2 server issued"
-        },
-        {
-          "v": "Jan. 23, 2021",
-          "q": "the last time there was a domain associated with it was on Jan. 23, 2021, which is outside the known attack time frame.",
-          "what": "Last date a domain was associated with the C2 address"
-        }
-      ],
-      "tools": [
-        {
-          "v": "GoMet",
-          "q": "open-source backdoor named \"GoMet.\""
-        }
-      ],
-      "techniques": [
-        {
-          "v": "fake Windows update scheduled tasks",
-          "q": "The malicious activity we detected included a fake Windows update scheduled tasks created"
-        },
-        {
-          "v": "autorun values",
-          "q": "It enumerated the autorun values and, instead of creating a new one, replaced"
-        },
-        {
-          "v": "daisy chain",
-          "q": "An additional notable feature of GoMet lies in its ability to daisy chain"
-        },
-        {
-          "v": "cronjob",
-          "q": "In our samples, the cronjob is configured to run"
-        },
-        {
-          "v": "obfuscating samples",
-          "q": "detection of their tooling by obfuscating samples and utilizing novel persistence techniques."
-        },
-        {
-          "v": "HTTPS",
-          "q": "Communication occurs via HTTPS on the default port."
-        }
-      ],
-      "cves": [
-        {
-          "v": "CVE-2020-5902",
-          "q": "exploitation of CVE-2020-5902, a vulnerability in F5 BIG-IP so severe that"
-        },
-        {
-          "v": "CVE-2022-1040",
-          "q": "successful exploitation of CVE-2022-1040, a remote code execution"
-        }
-      ],
-      "figures": [
-        {
-          "v": "two documented cases",
-          "q": "there are two documented cases of its usage"
-        },
-        {
-          "v": "two samples",
-          "q": "Talos found two samples of this version of the backdoor:"
-        },
-        {
-          "v": "once every hour on the hour",
-          "q": "to be executed once every hour on the hour."
-        },
-        {
-          "v": "five and 10 minutes",
-          "q": "sample will sleep for a random amount of time between five and 10 minutes."
-        },
-        {
-          "v": "60 seconds",
-          "q": "about 60 seconds before the schtask query is executed, a blank CMD"
-        }
-      ]
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "GoMet"
-    },
-    "hedges": [
-      "We believe that this campaign is likely sourced by Russian state-sponsored actors or those acting in their interests.",
-      "We assess with moderate to high confidence that these actions are being conducted by Russian state-sponsored actors or those acting in their interests.",
-      "Though at this time we do not have any evidence that they were successful, a supply chain-style attack is possible.",
-      "As of publishing time, Cisco Talos has no reason to believe these cases are related to the usage of this backdoor in Ukraine."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:03Z",
-      "ok": false,
-      "note": "hedges[2]: The text says Talos cannot ignore the possibility that the actor's intent was to gain access for a supply chain-style attack, and that it has no evid",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote, code",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:03Z",
+        "ok": false,
+        "note": "hedges[2]: The text says Talos cannot ignore the possibility that the actor's intent was to gain access for a supply chain-style attack, and that it has no evid",
+        "by": "auditor"
+      }
+    ]
   }
 }

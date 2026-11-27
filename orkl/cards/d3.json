@@ -30,210 +30,31 @@
     "sha1": "d31f936891e81a39a63f398c91051dfef9791782",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:42:20Z",
+    "read_at": "2026-11-27T15:32:23Z",
     "model": "haiku",
-    "summary": "Unit 42 (Palo Alto Networks) describes WatchDog, a Monero cryptojacking campaign it says has run since January 2019 and has collected at least 209 XMR. The miner uses UPX-compressed Go binaries that can run on Windows and Linux. Its scanning component targets applications with built-in exploits, and it mines with XMRig. Researchers estimate at least 476 compromised systems mine at any one time. The report counts 18 IP addresses, seven domains and at least 125 URLs in its infrastructure. It compares the campaign with Graboid, a 2019 Docker Hub miner.",
-    "kind": "actor-campaign",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "WatchDog operators",
-          "q": "It is clear that the WatchDog operators are skilled coders",
-          "by": "Unit 42 researchers (Palo Alto Networks)"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "cloud environments",
-          "q": "estimated to affect 23% of cloud environments"
-        }
-      ],
-      "countries": [
-        {
-          "v": "China",
-          "q": "operating outside of the China IP address space, specifically within the United States and Europe"
-        },
-        {
-          "v": "United States",
-          "q": "specifically within the United States and Europe"
-        }
-      ],
-      "dates": [
-        {
-          "v": "Jan. 27, 2019",
-          "q": "The WatchDog miner has been active since at least Jan. 27, 2019, as witnessed from the public mining pool data.",
-          "what": "WatchDog mining operation first seen, per public mining pool data"
-        },
-        {
-          "v": "May 19, 2019",
-          "q": "within a May 19, 2019, blog post from the forum",
-          "what": "A third-party blog post described similar activity"
-        },
-        {
-          "v": "October 2019",
-          "q": "Unit 42 reported on Graboid, a wormable Monero mining operation on Docker Hub, in October 2019.",
-          "what": "Unit 42 reported on the Graboid mining operation"
-        },
-        {
-          "v": "February 17, 2021",
-          "q": "February 17, 2021 at 6:00 AM",
-          "what": "Unit 42 published this report"
-        }
-      ],
-      "tools": [
-        {
-          "v": "XMRig",
-          "q": "The phpupdate process is the XMRig mining software used by the WatchDog miner"
-        },
-        {
-          "v": "networkmanager",
-          "q": "The networkmanager binary is a UPX-compressed Go language binary designed to scan networks"
-        },
-        {
-          "v": "Phpguard",
-          "q": "Phpguard is a UPX-compressed Go language binary"
-        },
-        {
-          "v": "phpupdate",
-          "q": "The phpupdate process is the XMRig mining software used by the WatchDog miner"
-        },
-        {
-          "v": "Go language binaries",
-          "q": "UPX-compressed Go language binaries, ensuring they are able"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Cryptojacking",
-          "q": "Cryptojacking is the process of performing cryptomining operations on systems which are not owned"
-        },
-        {
-          "v": "removal of cloud security tools",
-          "q": "namely the removal of cloud security tools, the removal of previously installed and known malicious cryptomining software"
-        },
-        {
-          "v": "scan networks",
-          "q": "designed to scan networks and, when a vulnerable target is identified, attempt to compromise"
-        },
-        {
-          "v": "hardcodes a primary and secondary URL address",
-          "q": "the WatchDog bash script miner also hardcodes a primary and secondary URL address"
-        },
-        {
-          "v": "scheduled tasks",
-          "q": "embeds the mining software within the relevant OS through scheduled tasks"
-        },
-        {
-          "v": "monitoring system processes",
-          "q": "monitoring system processes and scheduled tasks or CronJobs to ensure the mining software is running"
-        }
-      ],
-      "cves": [
-        {
-          "v": "CVE-2015-1427",
-          "q": "CVE-2015-1427 (Elasticsearch sandbox evasion – version before 1.3.8 and 1.4.x before 1.4.3)"
-        },
-        {
-          "v": "CVE-2014-3120",
-          "q": "CVE-2014-3120 (Elasticsearch before 1.2)"
-        },
-        {
-          "v": "CVE-2018-1273",
-          "q": "CVE-2018-1273, versions prior to 1.13-1.13.10, 2.0-2.0.5"
-        },
-        {
-          "v": "CVE-2017-10271",
-          "q": "CVE-2017-10271 – versions 10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and 12.2.1.2.0"
-        }
-      ],
-      "figures": [
-        {
-          "v": "209 Monero (XMR)",
-          "q": "has collected at least 209 Monero (XMR)"
-        },
-        {
-          "v": "$32,056 USD",
-          "q": "valued to be around $32,056 USD"
-        },
-        {
-          "v": "476 compromised systems",
-          "q": "at least 476 compromised systems"
-        },
-        {
-          "v": "18 root IP endpoints",
-          "q": "They have identified 18 root IP endpoints and seven malicious domains"
-        },
-        {
-          "v": "seven malicious domains",
-          "q": "They have identified 18 root IP endpoints and seven malicious domains"
-        },
-        {
-          "v": "125 malicious URL addresses",
-          "q": "which serve at least 125 malicious URL addresses used to download its toolset"
-        },
-        {
-          "v": "60,634 individual Chinese IP net ranges",
-          "q": "The WatchDog scanning binary uses a file composed of 60,634 individual Chinese IP net ranges"
-        },
-        {
-          "v": "33 unique exploits",
-          "q": "is loaded with 33 unique exploits, including 32 RCE functions"
-        },
-        {
-          "v": "32 RCE functions",
-          "q": "is loaded with 33 unique exploits, including 32 RCE functions"
-        },
-        {
-          "v": "65% of the time",
-          "q": "Each Graboid miner was operational 65% of the time"
-        },
-        {
-          "v": "1,300 compromised Docker containers",
-          "q": "around 1,300 compromised Docker containers were mining at any one time"
-        },
-        {
-          "v": "2,000 exposed and compromised Docker Daemon APIs systems",
-          "q": "it consisted of at least 2,000 exposed and compromised Docker Daemon APIs systems"
-        },
-        {
-          "v": "1,037KH/s",
-          "q": "calculated an average of 1,037KH/s"
-        },
-        {
-          "v": "23% of cloud environments",
-          "q": "estimated to affect 23% of cloud environments"
-        },
-        {
-          "v": "nearly 900 systems",
-          "q": "nearly 900 systems, could be operating at any one time"
-        },
-        {
-          "v": "three XMR wallet addresses",
-          "q": "Unit 42 researchers have identified three XMR wallet addresses within WatchDog configuration files"
-        }
-      ]
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "WatchDog"
-    },
-    "hedges": [
-      "It is currently unknown if the target is a CCTV appliance",
-      "While there is currently no indication of additional cloud compromising activity at present",
-      "there could be potential for further cloud account compromise",
-      "Researchers conservatively estimate that an average of 476 systems are actively involved within the WatchDog mining operation at any one time",
-      "The number of systems would depend upon the VM instance type that was compromised and used.",
-      "It is possible that double this estimated number, nearly 900 systems, could be operating at any one time.",
-      "It is likely the actors behind WatchDog are able to update the binaries to include any number of IP address network ranges they wish to target.",
-      "At the time of their download for this blog, these two files only appear to contain Chinese-related IP addresses."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:21Z",
-      "ok": false,
-      "note": "summary: It says the UPX-compressed Go binaries 'can run on Windows and Linux' but drops the report's condition that this holds only if the Go platform is insta",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:21Z",
+        "ok": false,
+        "note": "summary: It says the UPX-compressed Go binaries 'can run on Windows and Linux' but drops the report's condition that this holds only if the Go platform is insta",
+        "by": "auditor"
+      }
+    ]
   }
 }

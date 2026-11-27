@@ -200,11 +200,11 @@
   },
   "d9a01c14a3faa157447874fbe0170d84e8427641": {
     "sha1": "d9a01c14a3faa157447874fbe0170d84e8427641",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:43:57Z",
+    "read_at": "2026-11-27T15:33:14Z",
     "model": "haiku",
-    "summary": "A Russian-language blog post (2014) analyses a Linux botnet called BillGates, found on a CentOS home server. The author describes cron and init-script persistence, a 'Gates' control module, a 'Bill' DDoS module, and reporting binaries such as ksapdd. Cleanup removed the infection, and no rootkit was seen. The author says the command servers stopped issuing commands to the samples.",
+    "summary": "Russian-language Habr post by ValdikSS (February 2014) describing a Linux botnet called BillGates found on a CentOS server. It ran from cron and init entries and had a 'Gates' module that fetched configuration, a 'Bill' module able to run DDoS attacks (TCP, UDP, ICMP and DNS amplification), and reporting binaries that sent system data to command servers. The author stopped the processes, cleaned cron and rc.local, found no changed system files in package verification, and reported that the command servers would not send commands to his copies.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -214,17 +214,13 @@
         {
           "v": "26 February 2014",
           "q": "ValdikSS 26 February 2014 at 17:51",
-          "what": "Analysis post published by ValdikSS"
+          "what": "Blog post by ValdikSS published on Habr"
         }
       ],
       "tools": [
         {
-          "v": "BillGates",
-          "q": "Исследуем Linux Botnet «BillGates»"
-        },
-        {
           "v": "Gates",
-          "q": "Итак, cupsdd — модуль «Gates»."
+          "q": "модуль «Gates»"
         },
         {
           "v": "Bill",
@@ -233,31 +229,71 @@
         {
           "v": "ksapdd",
           "q": "Файл ksapdd — какой-то модуль, который отправляет статистику и информацию на"
+        },
+        {
+          "v": "IDA Pro",
+          "q": "Ну, на это нам ответит IDA Pro, например."
+        },
+        {
+          "v": "strace",
+          "q": "Натравил на них strace:"
+        },
+        {
+          "v": "UPX",
+          "q": "Запакован UPX."
         }
       ],
       "techniques": [
         {
-          "v": "DDoS attacks over TCP, UDP, ICMP and DNS amplification",
+          "v": "TCP, UDP, ICMP and DNS-amplification attacks",
           "q": "Умеет атаковать хосты по TCP, UDP, ICMP и методом DNS-амплификации."
         },
         {
-          "v": "autostart via sysvinit init script",
+          "v": "persistence via sysvinit init script",
           "q": "Добавляет распакованный модуль «Bill» в автозагрузку sysvinit путем создания"
         },
         {
-          "v": "host reconnaissance of system information",
-          "q": "Читает основную информацию о системе, процессоре, оперативной памяти,"
+          "v": "root crontab jobs that re-download and clean up files",
+          "q": "Полез в root'овский crontab:"
+        },
+        {
+          "v": "SUID-бит on dropped binaries",
+          "q": "они все имели SUID-бит"
+        },
+        {
+          "v": "reporting data to command servers",
+          "q": "Файл ksapdd — какой-то модуль, который отправляет статистику и информацию на"
+        },
+        {
+          "v": "reading system, CPU, memory and network details",
+          "q": "Читает основную информацию о системе, процессоре, оперативной памяти, сетевых"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "183КБ",
-          "q": "Ох. Размером он был 183КБ, 4036 строчек."
+          "q": "Размером он был 183КБ, 4036 строчек."
         },
         {
-          "v": "7 часов",
-          "q": "Что означает, что ботнет был на компьютере примерно 7 часов. Не так много, но и не"
+          "v": "4036",
+          "q": "Размером он был 183КБ, 4036 строчек."
+        },
+        {
+          "v": "422",
+          "q": "почистил /etc/profile от 422 строчек:"
+        },
+        {
+          "v": "7",
+          "q": "был на компьютере примерно 7 часов."
+        },
+        {
+          "v": "603170ad361f6e098c8681ed264155eb",
+          "q": "md5 603170ad361f6e098c8681ed264155eb"
+        },
+        {
+          "v": "7fb3dce23d290166c7e52644b16faae6",
+          "q": "md5 7fb3dce23d290166c7e52644b16faae6, sha1"
         }
       ]
     },
@@ -266,18 +302,19 @@
       "name": "BillGates"
     },
     "hedges": [
-      "The author describes the write-up as somewhat superficial.",
-      "The author assumed no rootkit was used because the processes were not hidden, so the system was judged clean with some confidence.",
-      "Module details are described as 'in my case', so they reflect one infected machine.",
-      "The author says the control servers refused to send commands to the author's copies, so the botnet's tasking was not observed."
+      "The author calls the analysis somewhat superficial.",
+      "The author assumed no rootkit was used because the processes were not hidden.",
+      "The author says the system can be considered clean with some confidence.",
+      "The author says the command servers refused to send commands to his copies, so nothing happened during his analysis.",
+      "The author estimates the botnet ran on the machine for about 7 hours."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:21Z",
-      "ok": false,
-      "note": "summary: The text says the command servers 'в упор не хотят отдавать команды' (flatly refuse to give commands) to the author's copies. The summary says they 'st",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:21Z",
+        "ok": false,
+        "note": "summary: The text says the command servers 'в упор не хотят отдавать команды' (flatly refuse to give commands) to the author's copies. The summary says they 'st",
+        "by": "auditor"
+      }
+    ]
   }
 }

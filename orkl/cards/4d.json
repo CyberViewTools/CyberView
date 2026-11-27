@@ -155,82 +155,32 @@
     "sha1": "4d5765efd2db5031b0ba3ccb3eb5ab127d4b1185",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T14:40:16Z",
+    "read_at": "2026-11-27T15:31:50Z",
     "model": "haiku",
-    "summary": "Patrick Wardle's Objective-See blog post (3 November 2020) analyses the macOS variant of GravityRAT, cross-platform spyware first described by Kaspersky as targeting the Indian armed forces. The analysed sample, named Enigma, is a PyInstaller-packaged Mach-O binary that masquerades as a secure file-sharing app. It prompts the user for elevated privileges through an AppleScript authorization prompt, gathers basic host information and contacts a server, and persists a downloaded payload with a cron job every two minutes. The second-stage payload was not available, so that part is not analysed.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
-      "sectors": [
-        {
-          "v": "Indian armed forces",
-          "q": "used to target the Indian armed forces”"
-        }
-      ],
+      "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "November 3, 2020",
-          "q": "by: Patrick Wardle / November 3, 2020",
-          "what": "Blog post on the macOS variant of GravityRAT published"
-        }
-      ],
-      "tools": [
-        {
-          "v": "PyInstaller",
-          "q": "packaged using … PyInstaller ”."
-        },
-        {
-          "v": "pyinstxtractor",
-          "q": "One easy was to extract the compiled python code is via the pyinstxtractor. This open-source"
-        },
-        {
-          "v": "BlockBlock",
-          "q": "payload, BlockBlock will readily detect"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "masquerade as such an application",
-          "q": "The macOS version also appears to masquerade as such an application:"
-        },
-        {
-          "v": "prompt the user to authorize",
-          "q": "thus the AppleScript will prompt the user to authorize the (re)launching of the malware"
-        },
-        {
-          "v": "adds a cron job",
-          "q": "The Mac version …adds a cron job”"
-        },
-        {
-          "v": "gathers some basic information",
-          "q": "This function gathers some basic information about its host (product name, board id, &"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "086b22075d464b327a2bcbf8b66736560a215347",
-          "q": "The Enigma file ( sha1: 086b22075d464b327a2bcbf8b66736560a215347 ) is an unsigned"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "GravityRAT"
-    },
-    "hedges": [
-      "The second-stage payload was not available for analysis, so its behaviour is not covered.",
-      "The report says the link between the AppleScript and the main binary is only likely (it 'seems' related, 'perhaps' executing an AppleScript)."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:23Z",
-      "ok": false,
-      "note": "summary: Two problems. (1) 'first described by Kaspersky' is stronger than the text, which only says Kaspersky published a new report on GravityRAT. (2) 'masque",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:23Z",
+        "ok": false,
+        "note": "summary: Two problems. (1) 'first described by Kaspersky' is stronger than the text, which only says Kaspersky published a new report on GravityRAT. (2) 'masque",
+        "by": "auditor"
+      }
+    ]
   },
   "4da1acf23e710c9275069409ac1c8491dd16837e": {
     "sha1": "4da1acf23e710c9275069409ac1c8491dd16837e",

@@ -303,42 +303,32 @@
   },
   "798281d4a0716e29d71f447aaf819f6b222ae8ea": {
     "sha1": "798281d4a0716e29d71f447aaf819f6b222ae8ea",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:44:41Z",
+    "read_at": "2026-11-27T15:32:46Z",
     "model": "haiku",
-    "summary": "A CrowdStrike Falcon OverWatch blog post dated 17 September 2021 describes four defense evasion techniques seen in 2021 intrusions: signed binary proxy execution via Rundll32, DLL search order hijacking, DLL injection, and BITS jobs. It links two intrusions to the eCrime actor WIZARD SPIDER, which used Cobalt Strike and attempted Ryuk ransomware deployment. It also describes a likely China-nexus adversary that tried to install PlugX. The post says OverWatch identified more than 60 defense evasion techniques and subtechniques in interactive intrusions during 2021.",
+    "summary": "Falcon OverWatch team blog (CrowdStrike, September 17, 2021) on four defense evasion techniques seen in 2021 intrusions: signed binary proxy execution via rundll32, DLL search order hijacking, DLL injection and BITS jobs. Its examples link the activity to WIZARD SPIDER, which used Cobalt Strike, Ryuk and BITSadmin, and to a likely China-nexus adversary installing PlugX. It says OverWatch identified more than 60 defense evasion techniques and subtechniques in 2021 interactive intrusions.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "WIZARD SPIDER",
-          "q": "WIZARD SPIDER performed host reconnaissance activity under the",
-          "by": "CrowdStrike Falcon OverWatch team (report author)"
+          "q": "linked it to the prolific eCrime adversary WIZARD SPIDER.",
+          "by": "the report (CrowdStrike Falcon OverWatch team)"
         },
         {
           "v": "China-nexus adversary",
-          "q": "OverWatch exposed the use of this technique by a likely China-nexus adversary. The",
-          "by": "CrowdStrike Falcon OverWatch team (report author)"
+          "q": "OverWatch exposed the use of this technique by a likely China-nexus adversary.",
+          "by": "the report (CrowdStrike Falcon OverWatch team)"
         }
       ],
       "sectors": [],
-      "countries": [
-        {
-          "v": "China",
-          "q": "by a likely China-nexus adversary. The"
-        }
-      ],
+      "countries": [],
       "dates": [
         {
-          "v": "2021-09-17",
+          "v": "September 17, 2021",
           "q": "Falcon OverWatch Team September 17, 2021",
-          "what": "Blog post published"
-        },
-        {
-          "v": "2021",
-          "q": "team has seen in use by adversaries in 2021.",
-          "what": "Techniques described were observed in use by adversaries during this year"
+          "what": "Publication date of the blog post"
         }
       ],
       "tools": [
@@ -348,7 +338,7 @@
         },
         {
           "v": "Cobalt Strike",
-          "q": "being used to write a Cobalt Strike DLL to disk, allowing"
+          "q": "being used to write a Cobalt Strike DLL to disk"
         },
         {
           "v": "PlugX",
@@ -356,23 +346,15 @@
         },
         {
           "v": "Ryuk",
-          "q": "OverWatch observed WIZARD SPIDER using BITS jobs during an attempted Ryuk"
-        },
-        {
-          "v": "Certutil",
-          "q": "The adversary used Certutil commands to"
+          "q": "during an attempted Ryuk ransomware deployment."
         },
         {
           "v": "BITSadmin",
           "q": "WIZARD SPIDER scheduled the operation using BITSadmin, the tool"
         },
         {
-          "v": "WMI",
-          "q": "WMI is often seen during hunting operations as a way"
-        },
-        {
-          "v": "WMIC",
-          "q": "anomalous administrative tool usage, one of which was WMIC."
+          "v": "Certutil",
+          "q": "The adversary used Certutil commands"
         },
         {
           "v": "Process Monitor",
@@ -381,52 +363,51 @@
       ],
       "techniques": [
         {
-          "v": "signed binary proxy execution",
-          "q": "Signed binary proxy execution leverages legitimate built-in utilities to execute malicious"
+          "v": "Signed Binary Proxy Execution",
+          "q": "1. Signed Binary Proxy Execution: Rundll32"
         },
         {
-          "v": "DLL search order hijacking",
-          "q": "DLL Search Order Hijacking takes advantage of how Windows handles DLLs and the search"
+          "v": "DLL Search Order Hijacking",
+          "q": "2. Hijack Execution Flow: DLL Search Order Hijacking"
         },
         {
-          "v": "DLL injection",
-          "q": "The DLL injection technique enables adversaries to inject code from a malicious DLL and"
+          "v": "DLL Injection",
+          "q": "3. Process Injection: DLL Injection"
         },
         {
-          "v": "BITS jobs",
-          "q": "BITS jobs are used to schedule these file transfers and can be used by adversaries to"
+          "v": "BITS Jobs",
+          "q": "4. BITS Jobs"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "four popular defense evasion techniques",
-          "q": "This blog explores four popular defense evasion techniques that the Falcon OverWatch"
+          "v": "four",
+          "q": "This blog explores four popular defense evasion techniques"
         },
         {
-          "v": "more than 60 defense evasion techniques",
-          "q": "So far this year, OverWatch has identified more than 60 defense evasion techniques"
+          "v": "more than 60",
+          "q": "OverWatch has identified more than 60 defense evasion techniques"
         },
         {
           "v": "up to 90 days",
-          "q": "Hunt regularly, as BITS jobs can be scheduled for up to 90 days, and adversaries"
+          "q": "BITS jobs can be scheduled for up to 90 days"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The China-nexus adversary is described as 'likely', so the attribution is hedged.",
-      "The report says it is likely that WIZARD SPIDER intended to infect the domain controllers.",
-      "The report notes that any one of the DLL injection indicators on its own may have been dismissed.",
-      "The report says it appeared WIZARD SPIDER focused on a distinct set of objectives in the BITS intrusion."
+      "a likely China-nexus adversary",
+      "it is likely that WIZARD SPIDER intended to infect the domain controllers to improve their chances of extracting payment",
+      "WIZARD SPIDER appeared to focus on a distinct set of objectives"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:55Z",
-      "ok": false,
-      "note": "summary: The summary says the post links two intrusions to WIZARD SPIDER, but the text ties three examples to that actor. The Rundll32 and BITS intrusions are a",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:55Z",
+        "ok": false,
+        "note": "summary: The summary says the post links two intrusions to WIZARD SPIDER, but the text ties three examples to that actor. The Rundll32 and BITS intrusions are a",
+        "by": "auditor"
+      }
+    ]
   }
 }

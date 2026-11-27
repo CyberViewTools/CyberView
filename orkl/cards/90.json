@@ -55,11 +55,11 @@
   },
   "90b8e4b988602558099b66a5ec8bfd4f4767f745": {
     "sha1": "90b8e4b988602558099b66a5ec8bfd4f4767f745",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:42:41Z",
+    "read_at": "2026-11-27T15:31:44Z",
     "model": "haiku",
-    "summary": "Analysis of the rootkit component of Kinsing, a Golang-based Linux malware that targets misconfigured Docker Daemon API ports to drop cryptocurrency miners. Shell scripts install a backdoor, a miner and a rootkit, which uses library preloading to hook system functions and hide the malware's files, processes and TCP connections. The report says the threat actor reuses the public beurk rootkit with custom changes, and that Kinsing remains highly active and keeps evolving. Dated 24 November 2020.",
+    "summary": "Analysis of the Kinsing Linux malware's rootkit component, published 24 November 2020. The installer script uses library preloading via /etc/ld.so.preload to hide the malware's files and network connections, sets up service and cron persistence, and the rootkit reuses the public beurk rootkit with custom changes. The report also lists command-and-control IP addresses and file hashes as indicators of compromise.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
@@ -75,36 +75,60 @@
         {
           "v": "November 24, 2020",
           "q": "November 24, 2020",
-          "what": "Date the report was published"
+          "what": "Report published"
         },
         {
           "v": "April 2020",
-          "q": "We last discussed the Kinsing malware in April 2020, when we analyzed the Golang-based Linux agent",
-          "what": "Earlier analysis of the Kinsing malware was published"
+          "q": "We last discussed the Kinsing malware in April 2020",
+          "what": "Earlier Kinsing analysis of the Golang-based Linux agent that targets misconfigured Docker Daemon API ports"
         }
       ],
       "tools": [
         {
           "v": "Kinsing",
-          "q": "We last discussed the Kinsing malware in April 2020, when we analyzed the Golang-based Linux agent"
+          "q": "We last discussed the Kinsing malware in April 2020"
         },
         {
-          "v": "beurk",
-          "q": "Further searching revealed that the threat actor reuses the publicly available beurk rootkit"
+          "v": "Trident malware",
+          "q": "Similar to how the Trident malware uses a rootkit to hide the cryptocurrency mining payload"
         },
         {
-          "v": "Trident",
-          "q": "Similar to how the Trident malware uses a rootkit to hide the"
+          "v": "beurk rootkit",
+          "q": "reuses the publicly available beurk rootkit, but with several custom modifications."
+        },
+        {
+          "v": "kdevtmpfsi",
+          "q": "kdevtmpfsi (cryptomining process)"
         }
       ],
       "techniques": [
         {
-          "v": "library preloading",
-          "q": "Kinsing also adapted the method integrating user-mode rootkits that use library preloading."
+          "v": "user-mode rootkits that use library preloading",
+          "q": "Kinsing also adapted the method integrating user-mode rootkits that use library preloading"
+        },
+        {
+          "v": "remove the immutable file flag",
+          "q": "The first step of the process involves the deployment of the shell script trying to remove the immutable file flag from"
+        },
+        {
+          "v": "system service",
+          "q": "registering it as the system service called “bot.”"
         },
         {
           "v": "cron",
           "q": "Another level of persistence is achieved via cron, where the installation script is repeatedly downloaded and executed."
+        },
+        {
+          "v": "hooked by the rootkit",
+          "q": "The functions hooked by the rootkit are as follows:"
+        },
+        {
+          "v": "single-byte XOR",
+          "q": "These lists are encrypted by a single-byte XOR."
+        },
+        {
+          "v": "TCP connection is hidden",
+          "q": "information about the TCP connection is hidden"
         }
       ],
       "cves": [],
@@ -114,16 +138,14 @@
       "type": "malware",
       "name": "Kinsing"
     },
-    "hedges": [
-      "This blog post will focus on the rootkit component; the shell scripts and other parts are covered only briefly."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:55Z",
-      "ok": false,
-      "note": "hedges[0]: The text says only that the post will focus on the rootkit component. It does not say the shell scripts and other parts are covered only briefly, so ",
-      "by": "auditor"
-    }
+    "hedges": [],
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:55Z",
+        "ok": false,
+        "note": "hedges[0]: The text says only that the post will focus on the rootkit component. It does not say the shell scripts and other parts are covered only briefly, so ",
+        "by": "auditor"
+      }
+    ]
   }
 }

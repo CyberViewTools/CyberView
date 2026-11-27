@@ -390,18 +390,18 @@
   },
   "cfd45384f984c7dc7316e7c683888e81a31eb1dd": {
     "sha1": "cfd45384f984c7dc7316e7c683888e81a31eb1dd",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:46:50Z",
+    "read_at": "2026-11-27T15:33:50Z",
     "model": "haiku",
-    "summary": "Unit 42 (Palo Alto Networks) analyses Pro-Ocean, a revised cryptojacking malware used by the Rocke Group to mine Monero. It is written in Go, packs an XMRig miner and uses four modules. Its rootkit hides files and processes, and it spreads by exploiting known flaws in ActiveMQ, WebLogic and Redis. It removes rival miners and cloud monitoring agents and mainly targets cloud providers in China.",
+    "summary": "Palo Alto Networks Unit 42 analyses Pro-Ocean, a revised cloud-targeted cryptojacking malware that the report links to the Rocke Group. It packs an XMRig miner to mine Monero, hides itself with a preloaded library, and spreads by exploiting known flaws in Apache ActiveMQ, Oracle WebLogic and unsecured Redis. The report says it targets cloud providers, with an emphasis on Alibaba Cloud and Tencent Cloud.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Rocke Group",
           "q": "In 2019, Unit 42 researchers documented cloud-targeted malware used by the Rocke Group to conduct",
-          "by": "Unit 42 (Palo Alto Networks), the report's authors"
+          "by": "Palo Alto Networks Unit 42 (the report)"
         }
       ],
       "sectors": [
@@ -420,92 +420,60 @@
         {
           "v": "2019",
           "q": "In 2019, Unit 42 researchers documented cloud-targeted malware used by the Rocke Group to conduct",
-          "what": "Unit 42 first documented the Rocke Group's cloud-targeted cryptojacking malware"
+          "what": "Unit 42 documented the earlier version of this cloud cryptojacking malware used by the Rocke Group"
         },
         {
           "v": "January 28, 2021",
-          "q": "Aviv Sasson January 28, 2021",
-          "what": "Report on the revised Pro-Ocean malware published"
+          "q": "January 28, 2021 at 6:00 AM",
+          "what": "Unit 42 published this analysis of the Pro-Ocean malware"
         }
       ],
       "tools": [
         {
           "v": "Pro-Ocean",
-          "q": "Pro-Ocean targets several typical cloud applications including Apache ActiveMQ, Oracle Weblogic and"
+          "q": "We’ve named the malware Pro-Ocean after the name the attacker chose for the installation"
         },
         {
           "v": "XMRig",
-          "q": "Although Pro-Ocean attempts to disguise itself as benign, it packs an XMRig miner, which is notorious for"
-        },
-        {
-          "v": "Libprocesshider",
-          "q": "As in the previous version of the malware, the code uses Libprocesshider, a library for hiding processes."
+          "q": "it packs an XMRig miner, which is notorious for"
         },
         {
           "v": "UPX",
           "q": "The binary is packed using UPX. This means that the actual malware is compressed inside the"
         },
         {
-          "v": "Luoxk",
-          "q": "attempts to remove other malware and miners including Luoxk, BillGates, XMRig and Hashfish before"
-        },
-        {
-          "v": "iptables",
-          "q": "Disable the iptables firewall so that the malware will have full access to the internet."
+          "v": "Libprocesshider",
+          "q": "As in the previous version of the malware, the code uses Libprocesshider, a library for hiding processes."
         }
       ],
       "techniques": [
         {
-          "v": "packed using UPX",
-          "q": "The binary is packed using UPX. This means that the actual malware is compressed inside the"
+          "v": "cryptojacking to mine Monero",
+          "q": "Its goal is to mine Monero into the attacker’s wallet, and it does so by deploying an XMRig miner 5.11.1"
         },
         {
-          "v": "LD_PRELOAD",
-          "q": "LD_PRELOAD forces binaries to load specific libraries before others, allowing"
+          "v": "hiding malicious files and processes",
+          "q": "The hiding module is responsible for concealing Pro-Ocean’s malicious activity."
         },
         {
-          "v": "hiding module",
-          "q": "The hiding module is responsible for concealing"
+          "v": "exploiting known vulnerabilities to spread",
+          "q": "Pro-Ocean uses known vulnerabilities to target cloud applications . In our analysis, we found Pro-Ocean"
         },
         {
-          "v": "cron jobs",
-          "q": "add several cron jobs that will do the same thing periodically."
+          "v": "persistence",
+          "q": "Pro-Ocean will try to gain persistence"
         },
         {
-          "v": "known vulnerabilities",
-          "q": "Pro-Ocean uses known vulnerabilities to target cloud applications ."
-        },
-        {
-          "v": "worm capabilities",
-          "q": "includes new and improved rootkit and worm capabilities. We also detail the hiding techniques used by"
-        },
-        {
-          "v": "kills any process that uses the CPU heavily",
-          "q": "to use 100% of the CPU and mine Monero efficiently, so it kills any process that uses the CPU heavily."
-        },
-        {
-          "v": "uninstall monitoring agents to avoid detection",
-          "q": "use the exact code of the previous malware to uninstall monitoring agents to avoid detection."
-        },
-        {
-          "v": "remove other malware and miners",
+          "v": "removing other miners and malware",
           "q": "attempts to remove other malware and miners including Luoxk, BillGates, XMRig and Hashfish before"
         },
         {
-          "v": "malicious service",
-          "q": "create a new malicious service that will execute the malware in case it is not running and add"
-        },
-        {
-          "v": "Disable the iptables firewall",
+          "v": "disabling the firewall",
           "q": "Disable the iptables firewall so that the malware will have full access to the internet."
         },
         {
-          "v": "Look for SSH keys",
-          "q": "Look for SSH keys and attempt to use them in order to infect new machines."
-        },
-        {
-          "v": "mine Monero",
-          "q": "The mining module is the reason Pro-Ocean exists in the first place. Its goal is to mine Monero into the"
+          "v": "killing CPU-heavy processes",
+          "q": "Once installed, the malware kills any process that uses the CPU heavily, so that it’s able to"
         }
       ],
       "cves": [
@@ -515,25 +483,21 @@
         },
         {
           "v": "CVE-2017-10271",
-          "q": "Oracle WebLogic (CVE-2017-10271) and Redis"
+          "q": "Oracle WebLogic (CVE-2017-10271)"
         }
       ],
       "figures": [
         {
-          "v": "30%",
-          "q": "searches for processes that utilize more than 30%"
-        },
-        {
-          "v": "100%",
-          "q": "use 100% of the CPU and mine Monero efficiently"
-        },
-        {
-          "v": "5.11.1",
-          "q": "deploying an XMRig miner 5.11.1 and a JSON configuration"
-        },
-        {
           "v": "four modules",
           "q": "It contains four modules that deploy during"
+        },
+        {
+          "v": "XMRig miner 5.11.1",
+          "q": "deploying an XMRig miner 5.11.1"
+        },
+        {
+          "v": "30%",
+          "q": "searches for processes that utilize more than 30%"
         }
       ]
     },
@@ -542,19 +506,17 @@
       "name": "Pro-Ocean"
     },
     "hedges": [
-      "It looks like the developer of this code gathered several code snippets from the internet and added them in order to gain more rootkit capabilities.",
-      "This list is not finite (meaning Pro-Ocean targets all cloud applications) since the malware is downloaded to the victim from a remote server during the infection.",
-      "In the case that the malware runs in Tencent Cloud or Alibaba Cloud, it will use the exact code of the previous malware to uninstall monitoring agents to avoid detection.",
-      "By observing it, we can conclude that two of the malware’s targets are Alibaba Cloud and Tencent Cloud.",
+      "it looks like the developer of this code gathered several code snippets from the internet and added them in order to gain more rootkit capabilities",
+      "This list is not finite (meaning Pro-Ocean targets all cloud applications)",
       "We can assume that the growing trend of sophisticated attacks on the cloud will continue."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:11Z",
-      "ok": false,
-      "note": "summary: It says the malware removes cloud monitoring agents without the text's condition. The text says it uninstalls them only when it runs in Tencent Cloud o",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:11Z",
+        "ok": false,
+        "note": "summary: It says the malware removes cloud monitoring agents without the text's condition. The text says it uninstalls them only when it runs in Tencent Cloud o",
+        "by": "auditor"
+      }
+    ]
   }
 }

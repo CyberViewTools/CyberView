@@ -457,11 +457,11 @@
   },
   "e5f00b962f311586280d3781653203e7de381979": {
     "sha1": "e5f00b962f311586280d3781653203e7de381979",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:39:11Z",
+    "read_at": "2026-11-27T15:29:12Z",
     "model": "haiku",
-    "summary": "A February 2022 Linux security research blog post demonstrating how data in a running process's memory can be changed while the user sees no visible difference. It uses a text editor as the demo target. It names no threat actor, campaign, malware family, CVE or victim. The author presents the technique as an option after gaining low-privilege SSH access, and says it could disable security controls without leaving forensic artifacts.",
+    "summary": "A personal security research blog post dated 20 February 2022. It demonstrates targeted process injection on Linux: changing a string in the live memory of a running text-editor process so the change shows when the file is saved. The author says the example is deliberately simple, and the post names the nano editor and the gdb debugger as the tools used.",
     "kind": "overview",
     "facts": {
       "actors": [],
@@ -471,7 +471,7 @@
         {
           "v": "20 February 2022",
           "q": "20 February 2022",
-          "what": "Blog post published, covering runtime process memory modification on Linux"
+          "what": "Blog post dated (published)"
         }
       ],
       "tools": [
@@ -486,12 +486,8 @@
       ],
       "techniques": [
         {
-          "v": "process injection",
+          "v": "Targeted process injection",
           "q": "Targeted process injection – Linux"
-        },
-        {
-          "v": "privilege escalation",
-          "q": "For privilege escalation traditional methods such as"
         }
       ],
       "cves": [],
@@ -499,16 +495,15 @@
     },
     "subject": null,
     "hedges": [
-      "The example chosen for this demonstration is simple.",
-      "The main purpose is to show the approach rather than make it look sophisticated."
+      "The example chosen for this demonstration is simple. The main purpose is to show the approach rather than make it look sophisticated."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:14:21Z",
-      "ok": false,
-      "note": "summary: The text keeps two ideas apart. Changing one byte 'to disable security controls' is an 'Imagine what would happen' scenario. Executing code 'without le",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:14:21Z",
+        "ok": false,
+        "note": "summary: The text keeps two ideas apart. Changing one byte 'to disable security controls' is an 'Imagine what would happen' scenario. Executing code 'without le",
+        "by": "auditor"
+      }
+    ]
   }
 }

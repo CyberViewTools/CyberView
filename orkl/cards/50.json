@@ -405,27 +405,21 @@
   },
   "508e860c1d92ba3cc84f075ec204b8be1f8d67de": {
     "sha1": "508e860c1d92ba3cc84f075ec204b8be1f8d67de",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T14:45:49Z",
+    "read_at": "2026-11-27T15:32:58Z",
     "model": "haiku",
-    "summary": "A March 24, 2021 blog post by a security assessor describing an incident found during a client assessment. Malware on a cluster of reverse gateways collected personal data (PII) from decoded HTTPS traffic. It was split across a modified NFS-ganesha server, a patched kernel and a hooked Go application. It used NFS-based covert channels for command and control, a self-destruct command and a process watchdog. The author says there is probably a Windows component with an EDR bypass. The attackers remain unidentified, the initial access vector is withheld, and further posts are promised.",
+    "summary": "Blog post by a security assessor describing an incident response at a client's reverse gateway cluster of 100+ machines. The author found a modified NFS-ganesha server and kernel-injected malware that hooks Go gateway apps to collect decoded HTTPS PII. It exfiltrates the data through NFS-based covert channels and includes a self-destruct and a watchdog. The kernel build was tampered with, and the attackers regained access after about three months. The report does not identify the attackers or the initial access vector, and it states that no similar publication was found.",
     "kind": "incident",
     "facts": {
-      "actors": [
-        {
-          "v": "obnoxious attacker",
-          "q": "this is just an obnoxious attacker doing what obnoxious attacker do",
-          "by": "the report author"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "March 24, 2021",
           "q": "March 24, 2021",
-          "what": "Blog post describing the incident was published"
+          "what": "blog post published"
         }
       ],
       "tools": [
@@ -440,35 +434,31 @@
           "q": "The second covert channel is used for command and control, and is implemented in the VFS"
         },
         {
-          "v": "self-destruct",
-          "q": "Lets go back to that awful Saturday I triggered the self-destruct."
+          "v": "hook",
+          "q": "The kernel was modified to inject this buffer into the GOlang application and hook it."
         },
         {
           "v": "watchdog",
           "q": "It appears the malware has a watchdog that iterates over all"
         },
         {
+          "v": "self destruct",
+          "q": "The self destruct command (0x1701) is very interesting - it sends a UDP broadcast on port"
+        },
+        {
           "v": "EDR bypass",
           "q": "Definitly, including what we believe is an EDR bypass. Still working on it."
-        },
-        {
-          "v": "obfuscate string",
-          "q": "Reversing malware you always find some feeble attempt to obfuscate string using XOR or"
-        },
-        {
-          "v": "kernel got patched",
-          "q": "How the kernel got patched? and why not the golang app?"
-        },
-        {
-          "v": "hook random GO binaries",
-          "q": "Before this case I did not think there was any nice way to hook random GO binaries, this"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "10 minutes",
-          "q": "Thet restarted daily, staggered one by one, with about 10 minutes"
+          "v": "100+ machines",
+          "q": "The 100+ machines"
+        },
+        {
+          "v": "8192 bytes",
+          "q": "What's more, the actual data was 77685 bytes, exactly 8192 bytes more then the ‘Read"
         },
         {
           "v": "3 month gap",
@@ -479,28 +469,28 @@
           "q": "It looks as if it took the attackers three months to gain access back into"
         },
         {
-          "v": "2 stages",
-          "q": "It had 2 stages: the first"
+          "v": "10 minutes",
+          "q": "restarted daily, staggered one by one, with about 10 minutes"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The author has 'a pretty good idea' of the initial access vector but cannot publish it yet.",
-      "The author suggests the attackers probably have no zero-day for this platform, but says 'Maybe' when asked about zero-days.",
-      "The author says there is no clue who the attackers are and will not make anything beyond unsubstantiated guesses.",
-      "The author thinks the self-destruct signal probably reached the attackers through a different piece of malware.",
-      "The author says the EDR bypass is what they believe it is, and the Windows malware analysis is still in progress.",
-      "The binaries were reconstructed from memory dumps, so they are not in their original form.",
-      "The three-month gap is described as something that looks as if the attackers took that long to regain access."
+      "Initial access vector: the author says 'We have a pretty good idea' but cannot publish it yet.",
+      "Attacker identity: the author has 'No clue' and will not make more than unsubstantiated guesses.",
+      "Zero-day question answered 'Maybe'.",
+      "Author thinks the self destruct signal probably reached the attackers through a different malware piece that was only partially recovered.",
+      "Binaries were reconstructed from memory dumps and are not in original form; some strings are withheld for client confidentiality.",
+      "The EDR bypass is what the author 'believe[s]' it to be; Windows malware analysis is still in progress.",
+      "Author dismisses vulnerabilities in Go or the kernel and says attackers probably lack a zero-day for this platform ('I might even say')."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T15:13:34Z",
-      "ok": false,
-      "note": "summary: The summary says the author says there is 'probably' a Windows component with an EDR bypass. The text answers 'Any Windows malware?' with 'Definitly', ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T15:13:34Z",
+        "ok": false,
+        "note": "summary: The summary says the author says there is 'probably' a Windows component with an EDR bypass. The text answers 'Any Windows malware?' with 'Definitly', ",
+        "by": "auditor"
+      }
+    ]
   }
 }

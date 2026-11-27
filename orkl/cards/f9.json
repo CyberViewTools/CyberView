@@ -83,26 +83,247 @@
   },
   "f9015ec340e025c16963e9b7cef4cbc3f4101ca7": {
     "sha1": "f9015ec340e025c16963e9b7cef4cbc3f4101ca7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:48:14Z",
+    "read_at": "2026-11-27T03:10:47Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Group-IB describes JadeProx, a China-nexus operation found through an exposed staging server and active against targets in Vietnam, Malaysia, Hong Kong, Honduras and Venezuela. It centres on the TriBack Loader, which uses DLL sideloading with signed binaries to deliver AdaptixC2 or Beagle. Lures include Claude-themed software, a fake Honduran beverage-company statement and a fake Venezuelan municipal tax portal that collects credentials. Post-exploitation tooling includes iox, suo5, Neo-reGeorg, nuclei and fscan. The report says no single group matches the full picture, so it tracks the…",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "JadeProx",
+          "q": "We track this cluster as JadeProx with TTPs overlapping with multiple China-nexus groups.",
+          "by": "Group-IB (report author)"
+        },
+        {
+          "v": "Mustang Panda",
+          "q": "The trident DLL sideloading with signed binaries overlaps with Mustang Panda’s documented PlugX delivery",
+          "by": "Group-IB (report author)"
+        },
+        {
+          "v": "Tropic Trooper",
+          "q": "Recently, Tropic Trooper weaponized AdaptixC2 with a customer beacon listener.",
+          "by": "Group-IB (report author)"
+        },
+        {
+          "v": "APT27 (Emissary Panda)",
+          "q": "An open directory with similar Chinese-origin toolset was linked to APT27 (Emissary Panda)",
+          "by": "Group-IB (report author)"
+        },
+        {
+          "v": "Earth Lusca",
+          "q": "consistent with Earth Lusca and UAT-5918 operations",
+          "by": "Group-IB (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "public hospital",
+          "q": "simultaneous intrusions against a Vietnamese public hospital’s medical"
+        },
+        {
+          "v": "government",
+          "q": "The Honduran government is another observed target in the LATAM region."
+        },
+        {
+          "v": "educational institutions",
+          "q": "the Malaysian Ministry of Foreign Affairs, and multiple Hong Kong educational institutions"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Vietnam",
+          "q": "Vietnam, Malaysia, and Hong Kong are consistent targets across multiple documented China-nexus operations"
+        },
+        {
+          "v": "Malaysia",
+          "q": "Vietnam, Malaysia, and Hong Kong are consistent targets across multiple documented China-nexus operations"
+        },
+        {
+          "v": "Hong Kong",
+          "q": "Vietnam, Malaysia, and Hong Kong are consistent targets across multiple documented China-nexus operations"
+        },
+        {
+          "v": "Honduras",
+          "q": "Honduras was targeted through a lure impersonating a major local beverage company addressed to its"
+        },
+        {
+          "v": "Venezuela",
+          "q": "A live phishing portal impersonating a municipal tax system of Venezuela was also found running"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-01-18",
+          "q": "2026-01-18 10:14:11 UTC avk.dll",
+          "what": "Earliest artifact (avk.dll) timestamp"
+        },
+        {
+          "v": "mid-April 2026",
+          "q": "In mid-April 2026, an exposed directory on an operator-owned Alibaba Cloud server gave us a complete view",
+          "what": "Exposed operator server gave investigators a view of an active operation"
+        },
+        {
+          "v": "2026-02-13",
+          "q": "Named “DeviceSync.zip” and modification date 2026-02-13, it contains only an EXE and DLL.",
+          "what": "DeviceSync.zip archive modification date (fourth variant)"
+        },
+        {
+          "v": "2026-03-13",
+          "q": "Recent whois records indicate the C2 was created on 2026-03-13 during the same time when the malware was created.",
+          "what": "Command-and-control infrastructure created"
+        },
+        {
+          "v": "2026-03-18",
+          "q": "archive file “Estado de Cuenta.zip” is identified with 2026-03-18 as modification date and was uploaded from Honduras on",
+          "what": "Honduras-themed archive modification date"
+        },
+        {
+          "v": "2026-07-23",
+          "q": "Published: 2026-07-23 · Archived: 2026-07-25 02:01:06 UTC",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "iox",
+          "q": "Downloads iox directly from github."
+        },
+        {
+          "v": "suo5",
+          "q": "suo5 v2.1.0 downloaded directly from github."
+        },
+        {
+          "v": "Neo-reGeorg",
+          "q": "Downloads Neo-reGeorg tunnel directly from github again."
+        },
+        {
+          "v": "nuclei",
+          "q": "Install nuclei from github via golang and symlink creation"
+        },
+        {
+          "v": "fscan",
+          "q": "fscan binary is renamed to sys.log."
+        },
+        {
+          "v": "AdaptixC2",
+          "q": "Debugging the final payload leads us to AdaptixC2 beacon, an open-source post-exploitation framework."
+        },
+        {
+          "v": "Beagle",
+          "q": "a third variant delivers Beagle, a backdoor documented recently with the domains being registered under"
+        },
+        {
+          "v": "TriBack Loader",
+          "q": "A new loader, TriBack Loader, was identified by Group-IB and was seen across all infection chains"
+        },
+        {
+          "v": "XMRig",
+          "q": "The operator’s infrastructure hosts both offensive and proxy tools, along with XMRig and socks5 server proxy"
+        },
+        {
+          "v": "NPS",
+          "q": "A garbled version of NPS, another Chinese-origin intranet penetration proxy server"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DLL sideloading",
+          "q": "At the centre of all these campaigns is a loader Group-IB tracks as TriBack Loader, triggered via DLL sideloading that"
+        },
+        {
+          "v": "phishing",
+          "q": "JadeProx operates by conducting phishing campaigns delivering Windows loaders for initial access"
+        },
+        {
+          "v": "Win32 callback APIs",
+          "q": "decrypts and executes shellcode payloads using Win32 callback APIs to avoid detection"
+        },
+        {
+          "v": "vulnerability scanning",
+          "q": "Using nuclei to scan targets"
+        },
+        {
+          "v": "SQL injection",
+          "q": "CVE-2018-11511 – SQL injection in the tree list in the photo gallery application in ASUSTOR ADM"
+        },
+        {
+          "v": "web shells",
+          "q": "used to pivot through web shells planted on victim servers"
+        },
+        {
+          "v": "self-delete batch script",
+          "q": "a self-delete batch script with double extension"
+        },
+        {
+          "v": "persistence via startup directory",
+          "q": "drops all the payloads into the startup directory for persistence"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-11511",
+          "q": "CVE-2018-11511 – SQL injection in the tree list in the photo gallery application in ASUSTOR ADM"
+        },
+        {
+          "v": "CVE-2021-24139",
+          "q": "CVE-2021-24139 – SQL injection in the Photo Gallery (10Web Photo Gallery) WordPress plugin"
+        },
+        {
+          "v": "CVE-2021-31755",
+          "q": "CVE-2021-31755 – A stack buffer overflow vulnerability on Tenda AC11 devices"
+        },
+        {
+          "v": "CVE-2021-32305",
+          "q": "CVE-2021-32305 – WebSVN arbitrary command execution"
+        }
+      ],
+      "figures": [
+        {
+          "v": "14,653 URLs",
+          "q": "Observed HK education sector list contains 14,653 URLs under targets.txt file."
+        },
+        {
+          "v": "13 unique vulnerabilities",
+          "q": "The output.txt file points to 13 unique vulnerabilities present on these education domains."
+        },
+        {
+          "v": "117 different service ports",
+          "q": "117 different service ports including RDP, SSH, FTP, MySQL beyond standard"
+        },
+        {
+          "v": "~57,000 HNL",
+          "q": "statement for ~57,000 HNL, which looks like a payment notice from July 2025."
+        },
+        {
+          "v": "four loader variants",
+          "q": "The same builder produced four loader variants across two months"
+        },
+        {
+          "v": "CVSS 9.8",
+          "q": "CVE-2021-32305 – WebSVN arbitrary command execution – [CVSS 9.8]"
+        },
+        {
+          "v": "1023 bytes",
+          "q": "the shellcode stub which is 1023 bytes followed by MZ header"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "TriBack Loader"
+    },
+    "hedges": [
+      "However, no single group accounts for the full picture.",
+      "In the China-nexus ecosystem, tooling is routinely shared across groups and the presence of the same tools does not mean the same operator.",
+      "We track this activity as JadeProx to avoid misattribution and to maintain a clean record of this cluster’s specific artifacts as new activity emerges.",
+      "The trident DLL sideloading with signed binaries overlaps with Mustang Panda’s documented PlugX delivery.",
+      "Upload regions do not necessarily indicate it as a targeted country.",
+      "This was being served to compromised Windows hosts likely delivered via the SOCKS tunnels into internal networks.",
+      "Based on the repeated API sequence in all the four variants of TriBack loader, this is likely generated by a custom builder.",
+      "The report suggests deliberate selection of the Venezuelan jurisdiction rather than opportunistic deployment."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T02:31:53Z",

@@ -78,30 +78,88 @@
         "note": "summary: The text mentions the named groups and malware (APT37, Sandworm, MyDoom, ROKRAT, NOKKI) as having employed this trick, not merely in passing. The summa",
         "by": "auditor"
       }
-    ]
+    ],
+    "audit": {
+      "at": "2026-11-27T03:09:13Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   },
   "3f780cfb0f5b50f46b0ab544610e6279810af77c": {
     "sha1": "3f780cfb0f5b50f46b0ab544610e6279810af77c",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T02:48:37Z",
+    "read_at": "2026-11-27T03:10:13Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Intego's blog post (published 2024-09-05) describes HZ RAT, a macOS remote access Trojan that gives attackers full remote control of infected Macs. The earliest known version was observed in 2022 targeting Windows PCs. The Mac version lists installed apps, collects user information from WeChat and DingTalk, and gathers username and site pairs from Google Password Manager. How victims are infected is not yet known; one known trojanized installer is a modified OpenVPN Connect. The report lists SHA-256 hashes and command-and-control IP addresses, most of which it says appear to be in China.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "be located in China"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2022",
+          "q": "The earliest known version of this RAT was observed in 2022 targeting Windows PCs",
+          "what": "Earliest known version of HZ RAT observed, targeting Windows PCs"
+        },
+        {
+          "v": "2024-09-05",
+          "q": "Published: 2024-09-05 · Archived: 2026-04-10 03:02:09 UTC",
+          "what": "Blog post about the macOS version of HZ RAT published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "HZ RAT",
+          "q": "HZ RAT is a remote access Trojan (RAT)—a tool that gives an attacker full remote administration privileges."
+        },
+        {
+          "v": "OpenVPN Connect",
+          "q": "a maliciously modified version of OpenVPN Connect, a common VPN app."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote control of infected Mac",
+          "q": "malware that gives remote attackers complete control of an infected Mac."
+        },
+        {
+          "v": "collecting user information from WeChat and DingTalk",
+          "q": "collects user information from WeChat and DingTalk"
+        },
+        {
+          "v": "collecting username and site pairs from Google Password Manager",
+          "q": "It also gathers the username and site combinations from Google Password Manager."
+        },
+        {
+          "v": "malicious Google Ads",
+          "q": "malicious Google Ads that appear"
+        },
+        {
+          "v": "watering-hole style attacks",
+          "q": "targeted, watering-hole style attacks"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "HZ RAT"
+    },
+    "hedges": [
+      "It isn't yet known how victims may have encountered HZ RAT installers in the first place.",
+      "It's possible that this Trojan horse might be distributed through means such as malicious Google Ads that appear at the top of search results.",
+      "Most of the command-and-control IP addresses appear to be located in China.",
+      "While the collected Google Password Manager data doesn't include passwords, the username-and-site pairs could potentially be used along with leaked passwords from past data breaches."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T02:30:34Z",

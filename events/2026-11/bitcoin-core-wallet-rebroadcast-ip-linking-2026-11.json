@@ -14,7 +14,7 @@
   "status": "developing",
   "source_tier": "established",
   "summary": "Bitcoin Core contributor ismaelsadeeq posted research on 25 November showing that wallet rebroadcast of unconfirmed payments can link a Bitcoin address to the IP address of a node whose wallet tracks it. Cyber Security News says it does not allow theft of funds or key recovery. The post says a workaround is -walletbroadcast=0; a proposed change in PR #36482 is unreleased.",
-  "plain": "A researcher showed that Bitcoin Core's wallet re-announcing of unpaid transactions can let an observer tie a Bitcoin address to the IP address of a node that tracks it. It does not expose funds or keys, per Cyber Security News.",
+  "plain": "A researcher showed that Bitcoin Core's wallet re-announcing of unconfirmed transactions can let an observer tie a Bitcoin address to the IP address of a node that tracks it. It does not expose funds or keys, per Cyber Security News.",
   "exec": "A Bitcoin Core wallet privacy leak could tie addresses to node IP addresses; the research post lists a workaround and an unreleased fix proposal.",
   "action": "The researcher's post advises setting -walletbroadcast=0 and relaying your own transactions with sendrawtransaction; this also disables wallet-initiated relay generally.",
   "actor": "",
@@ -57,5 +57,16 @@
     "note": "The researcher's own post and Cyber Security News, which relays it; one original report. No Bitcoin Core release or advisory was read."
   },
   "first_seen": "2026-11-27T04:02:00Z",
-  "updated_at": "2026-11-27T04:02:00Z"
+  "updated_at": "2026-11-27T04:09:40Z",
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-27T04:09:47Z",
+    "first_at": "2026-11-27T04:09:47Z",
+    "note": "plain said unpaid transactions; sources say unconfirmed (wording). Rest matches Delving Bitcoin and Cyber Security News",
+    "flags": [],
+    "categories": [
+      "misstated"
+    ]
+  },
+  "qa_checked_at": "2026-11-27T04:09:47Z"
 }

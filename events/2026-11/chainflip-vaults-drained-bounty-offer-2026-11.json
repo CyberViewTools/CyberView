@@ -26,11 +26,11 @@
   "pin_type": "none",
   "geo_basis": "No page read states where Chainflip is based or where the affected systems are.",
   "actor": "",
-  "summary": "Chainflip Labs said in a message to the attacker that on 21 November 2026 they took 122.86137042 BTC, 520.2243399 ETH, 3,249,631.41 USDC and 758,141.33 USDT from its vaults, and offered a 10% bounty. Its incident report says a further 10.48288011 BTC was taken afterwards, and that investigators believe the attacker exploited a memory-safety flaw in a third-party networking library used by validator software; some steps are not yet fully confirmed.",
+  "summary": "Chainflip Labs said in a message to the attacker that on 21 November 2026 they took 122.86137042 BTC, 520.2243399 ETH, 3,249,631.41 USDC and 758,141.33 USDT from its vaults, and offered a 10% bounty. Its Part 2 incident report (27 November) says the attacker exploited a use-after-free flaw in libzmq to run code inside validator processes, and that the protocol remains paused.",
   "plain": "The crypto service Chainflip says an attacker took bitcoin, ether and stablecoins from its vaults on 21 November. It offers to let the attacker keep 10% if 90% is returned by 23 November.",
-  "exec": "Chainflip says funds were taken from its vaults and that governance put the protocol into safe mode, per its incident report; investigators believe a third-party library bug was exploited.",
+  "exec": "Chainflip says funds were taken from its vaults; its Part 2 report says a libzmq flaw in validator software was exploited and the protocol remains paused.",
   "action": "No action needed; for awareness.",
-  "impact": "Funds taken from Chainflip vaults; swaps, deposits and withdrawals paused in safe mode according to Chainflip incident report. CryptoSlate reports the report says Chainflip began precautionary returns of free liquidity-provider balances on Solana, Arbitrum, Tron, BNB Chain and Polkadot Asset Hub, without a compensation timetable.",
+  "impact": "Funds taken from Chainflip vaults; swaps, deposits and withdrawals paused in safe mode according to Chainflip incident report. CryptoSlate reports the report says Chainflip began precautionary returns of free liquidity-provider balances on Solana, Arbitrum, Tron, BNB Chain and Polkadot Asset Hub, without a compensation timetable. Part 2 report says a protocol-managed user recovery fund can be implemented once accounting is on-chain.",
   "products": [
     "Chainflip"
   ],
@@ -49,6 +49,11 @@
       "name": "Chainflip Labs: Message from Chainflip Labs",
       "url": "https://chainflip.io/return",
       "published": "2026-11-23"
+    },
+    {
+      "name": "Chainflip: Incident Report: Bitcoin and Ethereum Vault Exploit (Part 2)",
+      "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-2",
+      "published": "2026-11-27"
     },
     {
       "name": "CryptoTicker",
@@ -101,6 +106,10 @@
     {
       "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-1",
       "quote": "10.48288011 BTC remaining in the vault, still accessible via the stolen key, was taken."
+    },
+    {
+      "url": "https://chainflip.io/blog/incident-report-vault-exploit-21-november-2026-part-2",
+      "quote": "exploited a use-after-free flaw in libzmq to run code inside validator processes"
     }
   ],
   "source_tier": "primary",
@@ -124,7 +133,7 @@
     "url": "https://chainflip.io/return"
   },
   "first_seen": "2026-11-22T11:55:17Z",
-  "updated_at": "2026-11-25T13:40:30Z",
+  "updated_at": "2026-11-27T22:00:10Z",
   "qa_checked_at": "2026-11-25T13:40:45Z",
   "review": {
     "state": "corrected",

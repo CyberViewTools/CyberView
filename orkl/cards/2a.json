@@ -64,26 +64,160 @@
   },
   "2abc6b757313f2b4c868fa2c960b7a06d7cab880": {
     "sha1": "2abc6b757313f2b4c868fa2c960b7a06d7cab880",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T01:19:32Z",
+    "read_at": "2026-11-27T01:44:55Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "KSI Digital analysed 'Ancient', a Linux IoT botnet with a custom ANCT C2 protocol, captured in a Telnet/SSH honeypot in October 2026. Devices are infected via Telnet logins and fetch a shell dropper in three versions that adds cron and init persistence. The C2 lookup is hidden inside DNS-over-TLS, and the bot stays idle while traced. A 10-minute controlled contact confirmed the C2 live. The report also covers a Mirai kit delivered from the same loader routine, and publishes indicators and detection rules.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "DE",
+          "q": "myLoc / WIIT AG, DE"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2026-10-04",
+          "q": "On 2026-10-04 at 15:37:39 UTC an infected device",
+          "what": "Infected device logged in to the honeypot over Telnet and ran a download of the dropper"
+        },
+        {
+          "v": "2026-10-05",
+          "q": "A fourth version, uploaded to MalwareBazaar on 2026-10-05 23:14 UTC by another researcher, sits between v2",
+          "what": "A fourth dropper version was uploaded to MalwareBazaar by another researcher"
+        },
+        {
+          "v": "2026-10-05",
+          "q": "With the C2 port additionally allowed for 10 minutes (2026-10-05 02:01-02:11 UTC",
+          "what": "Controlled 10-minute contact in which the ANCT handshake completed and the C2 was confirmed live"
+        },
+        {
+          "v": "2026-06-09",
+          "q": "RIPE registered that AS on 2026-06-09.",
+          "what": "RIPE registered the AS219502 network"
+        },
+        {
+          "v": "2026-10-01",
+          "q": "on ThreatFox since 2026-10-01",
+          "what": "Mirai kit payload server and C2 listed on ThreatFox"
+        },
+        {
+          "v": "2026-10-05",
+          "q": "KSI Digital threat research | first published 2026-10-05",
+          "what": "Report first published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cowrie",
+          "q": "Samples were captured by a Cowrie honeypot and analysed in an isolated Hyper-V lab."
+        },
+        {
+          "v": "Hyper-V",
+          "q": "Samples were captured by a Cowrie honeypot and analysed in an isolated Hyper-V lab."
+        },
+        {
+          "v": "strace",
+          "q": "Traced runs (strace, 10-25 min): no network activity until the tracer detached"
+        },
+        {
+          "v": "WireGuard",
+          "q": "closed through a WireGuard tunnel"
+        },
+        {
+          "v": "wget",
+          "q": "then wget of a shell dropper"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "root with an empty password",
+          "q": "logs in as root with an empty password"
+        },
+        {
+          "v": "generic loader routine",
+          "q": "It looks like a generic loader routine whose first line was changed to"
+        },
+        {
+          "v": "custom ANCT C2 protocol",
+          "q": "\"Ancient\": a Linux IoT botnet with a custom ANCT C2 protocol"
+        },
+        {
+          "v": "DNS-over-TLS",
+          "q": "Resolving the C2 name over DNS-over-TLS hides it from network monitoring that relies on port-53 DNS logs."
+        },
+        {
+          "v": "C2 lookup hidden inside TLS",
+          "q": "C2 lookup hidden inside TLS"
+        },
+        {
+          "v": "stay idle while being ptraced",
+          "q": "The bot appears to stay idle while being ptraced."
+        },
+        {
+          "v": "cron",
+          "q": "cron every 5 min, rc.local"
+        },
+        {
+          "v": "rc.local",
+          "q": "cron every 5 min, rc.local"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "1.79 MB",
+          "q": "1.79 MB in 2,785 packets (mostly 734-byte segments)"
+        },
+        {
+          "v": "33 connection attempts",
+          "q": "made 33 connection attempts to"
+        },
+        {
+          "v": "34 commands and downloads",
+          "q": "Over the next four hours we logged 34 commands and downloads from that same device."
+        },
+        {
+          "v": "three dropper versions",
+          "q": "The three dropper versions are in dropper/"
+        },
+        {
+          "v": "13 builds",
+          "q": "one of 13 builds"
+        },
+        {
+          "v": "100 KB",
+          "q": "accepts it only if larger than 100 KB"
+        },
+        {
+          "v": "163 addresses",
+          "q": "163 addresses that logged in over Telnet"
+        },
+        {
+          "v": "nine bot builds",
+          "q": "dropper versions and nine bot builds"
+        },
+        {
+          "v": "10-minute",
+          "q": "Controlled 10-minute contact"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Ancient"
+    },
+    "hedges": [
+      "Several feeds currently tag its binaries as generic \"Mirai\", but its C2 protocol is not Mirai's.",
+      "It looks like a generic loader routine whose first line was changed for this campaign.",
+      "That fits one operator running both, or a shared loader service with several customers. We can't tell which from our data.",
+      "Either the server kept handing out an older build or the operator rolled back.",
+      "ANCT reads as an abbreviation of \"ANCienT\", matching the dropper's naming."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T01:09:14Z",

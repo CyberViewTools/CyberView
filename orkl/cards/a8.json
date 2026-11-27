@@ -681,25 +681,99 @@
   },
   "a8621f55d0056c799196bb6df4ba0273555b3d17": {
     "sha1": "a8621f55d0056c799196bb6df4ba0273555b3d17",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:57:59Z",
+    "read_at": "2026-11-27T16:15:37Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Blog article (17 February 2021) by Avigayil Mechtinger of Intezer, part 3 of an ELF Linux malware series on dynamic analysis: processes, system calls, persistence, network sniffing and sandboxes. It walks through a stripped, statically linked sample that Intezer Analyze classifies as Reekoobe, based on code reused from earlier Rekoobe samples. The sample creates a service named likemae, copies itself to /usr/bin/likemae, and repeatedly tries to reach a command-and-control host that refuses the connection, a dead end for the analysis. It gains persistence only when run as a privileged user.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "17 February 2021",
+          "q": "Written by Avigayil Mechtinger - 17 February 2021",
+          "what": "blog article published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "strace",
+          "q": "strace is a powerful tool to trace a file’s system calls."
+        },
+        {
+          "v": "Wireshark",
+          "q": "Wireshark has similar functionalities to tcpdump and provides a"
+        },
+        {
+          "v": "tcpdump",
+          "q": "tcpdump is a CLI tool that should be preinstalled on commonly used"
+        },
+        {
+          "v": "pstree",
+          "q": "that by using the pstree command to view the running processes as a tree."
+        },
+        {
+          "v": "Intezer Analyze",
+          "q": "Uploading this file to Intezer Analyze classifies it as Reekoobe, based on"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "cron job persistence",
+          "q": "Malware will create scheduled tasks to run periodically on a system using cron"
+        },
+        {
+          "v": "service creation for persistence",
+          "q": "a service which will run by the init program on boot."
+        },
+        {
+          "v": "shell startup file persistence",
+          "q": "Linux Rabbit is a malware that uses the .bashrc to set up"
+        },
+        {
+          "v": "desktop autostart entry",
+          "q": "ElectroRAT’s Linux version gains persistence by creating a desktop entry under"
+        },
+        {
+          "v": "loadable kernel module persistence",
+          "q": "Loadable Kernel Modules (LKM) – The Linux kernel is designed to allow loading of"
+        },
+        {
+          "v": "LD_PRELOAD library hijack",
+          "q": "HiddenWasp is a malware that uses LD_PRELOAD"
+        },
+        {
+          "v": "killing rival miners",
+          "q": "machine and attempt to kill them, to be the only CoinMiner running on the system and"
+        },
+        {
+          "v": "privilege-dependent persistence",
+          "q": "will not gain persistence if it runs as an unprivileged"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "30 seconds",
+          "q": "sleeps for 30 seconds (see nanosleep syscall)."
+        },
+        {
+          "v": "PID 15083",
+          "q": "Figure 18: likemae process is running with PID 15083"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Reekoobe"
+    },
+    "hedges": [
+      "The Reekoobe classification is based on code reused from previous Rekoobe samples.",
+      "The C&C could be down, the malware runs on a particular environment or time zone, and more.",
+      "The malware we analyzed will not gain persistence if it runs as an unprivileged user."
+    ]
   }
 }

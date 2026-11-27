@@ -303,7 +303,7 @@
   },
   "398a6fe21e83f09c3d32e8655c319efc4fd75bb0": {
     "sha1": "398a6fe21e83f09c3d32e8655c319efc4fd75bb0",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T16:01:36Z",
     "model": "haiku",
@@ -374,13 +374,21 @@
       "A malicious actor enabling continued access will likely require modification to legitimate binaries.",
       "While these files have not been discovered in all environments, their presence may be indicative of actor activity if discovered.",
       "The attribution to APT5 is stated as 'has been attributed'; the report does not say which party made the attribution."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T16:12:42Z",
+      "ok": false,
+      "note": "hedges[4]: This is not a hedge stated in the text; it is a meta-comment about the report. Moreover, the card's actors[].by says 'the report itself (NSA)', which",
+      "by": "auditor"
+    }
   },
   "3935d58c55bf257dff7b3c263f60e35ea2ab736c": {
     "sha1": "3935d58c55bf257dff7b3c263f60e35ea2ab736c",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:02:51Z",
+    "read_at": "2026-11-27T16:19:02Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -396,7 +404,121 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "reason": "quote-not-in-text, value-not-in-quote",
+    "tries": 2
+  },
+  "399029c5e4a863d4ccc22aa1fc1d4504c800c3ff": {
+    "sha1": "399029c5e4a863d4ccc22aa1fc1d4504c800c3ff",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:25:27Z",
+    "model": "haiku",
+    "summary": "Cyble Research & Intelligence Labs analysed Embargo, a Rust-based ransomware family that uses double extortion, ChaCha20 and Curve25519 encryption, and appends .564ba1 to encrypted files. The group initially demanded $1 million and has disclosed four victims. Cyble notes its leak site resembles ALPHV's and suspects Embargo may be a rewritten ALPHV. Suspected Linux and ESXi variants are also discussed, with uncertain origin.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Embargo",
+          "q": "Embargo, to date, has disclosed details of four victims globally.",
+          "by": "Cyble Research & Intelligence Labs (CRIL)"
+        },
+        {
+          "v": "ALPHV",
+          "q": "Embargo might be a rewritten version of ALPHV.",
+          "by": "Cyble Research & Intelligence Labs (CRIL)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-05-24",
+          "q": "Published: 2024-05-24 · Archived: 2026-04-05 22:37:41 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "March 2024",
+          "q": "The leak site of ALPHV ransomware was taken down by law enforcement in March 2024.",
+          "what": "ALPHV leak site taken down by law enforcement"
+        },
+        {
+          "v": "2022",
+          "q": "The Rust binary of ALPHV ransomware surfaced in 2022.",
+          "what": "ALPHV Rust binary first surfaced"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Embargo ransomware",
+          "q": "identified a sample of Embargo ransomware, developed in"
+        },
+        {
+          "v": "ALPHV ransomware",
+          "q": "The Rust binary of ALPHV ransomware surfaced in 2022."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "double extortion",
+          "q": "The Threat Actors behind this ransomware are using double extortion tactics."
+        },
+        {
+          "v": "self-delete",
+          "q": "disable self-delete"
+        },
+        {
+          "v": "ChaCha20 and Curve25519",
+          "q": "This ransomware uses ChaCha20 and Curve25519 to encrypt files, as shown in the figure below."
+        },
+        {
+          "v": "Network Share Discovery",
+          "q": "T1135 (Network Share Discovery)"
+        },
+        {
+          "v": "Inhibit System Recovery",
+          "q": "T1490 (Inhibit System Recovery)"
+        },
+        {
+          "v": "User Execution",
+          "q": "T1204.002 (User Execution)"
+        },
+        {
+          "v": "Deobfuscate/Decode Files",
+          "q": "T1140 (Deobfuscate/Decode Files"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "$1 million",
+          "q": "We observed an instance where the ransomware group Initially demanded a $1 million ransom payment,"
+        },
+        {
+          "v": "four victims",
+          "q": "Embargo, to date, has disclosed details of four victims globally."
+        },
+        {
+          "v": "4 threads",
+          "q": "By default, these variants utilize 4 threads, whereas the Windows variant employs 8 threads for execution."
+        },
+        {
+          "v": "8 threads",
+          "q": "By default, these variants utilize 4 threads, whereas the Windows variant employs 8 threads for execution."
+        },
+        {
+          "v": ".564ba1",
+          "q": "appends “.564ba1” extension to encrypted files."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Embargo ransomware"
+    },
+    "hedges": [
+      "Cyble suspects Embargo might be a rewritten version of ALPHV, though the ALPHV binary has more capabilities.",
+      "Linux and ESXi variants are suspected to be Embargo, but their true origin is uncertain.",
+      "The suspected Linux and ESXi files are thought to be test files, as they lack configuration data and cannot encrypt files."
+    ]
   }
 }

@@ -229,25 +229,158 @@
   },
   "ec7d70f1abbdff4227a39b98306a490085cb5bf6": {
     "sha1": "ec7d70f1abbdff4227a39b98306a490085cb5bf6",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T16:01:37Z",
+    "read_at": "2026-11-27T16:17:35Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "F5 Labs reports a new Perl-based IRC botnet, Tuyul, that exploits unpatched PHPUnit systems (CVE-2017-9841) and also uses PHP web shells. Its peak size was about 366 victim systems, most hosted on cloud services, with U.S. and U.K. servers making up almost half. F5 judged the operator probably located in Indonesia, based on a time zone setting, admin nicknames, Indonesian phrases and the botnet name. It did not attribute the botnet to a state actor and could not say whether it is linked to organised crime. Only maintenance activity was seen, with no mass activation.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "threat actor running the Tuyul botnet",
+          "q": "we concluded that the threat actor running the Tuyul botnet was probably in Indonesia.",
+          "by": "F5 Labs (report authors)"
+        },
+        {
+          "v": "Preman",
+          "q": "Preman, one of the monikers used, is a word for an Indonesian gangster and, according to",
+          "by": "F5 Labs (report authors)"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "countries": [
+        {
+          "v": "Indonesia",
+          "q": "we concluded that the threat actor running the Tuyul botnet was probably in Indonesia."
+        },
+        {
+          "v": "U.S. and U.K.",
+          "q": "U.S. and U.K. servers accounted for almost half of the bots."
+        }
+      ],
+      "dates": [
+        {
+          "v": "January 15, 2020",
+          "q": "On January 15, 2020, F5 threat researchers detected a new campaign targeting",
+          "what": "F5 detected a new campaign targeting vulnerable PHPUnit systems."
+        },
+        {
+          "v": "March 03, 2020",
+          "q": "March 03, 2020",
+          "what": "Publication date of the article."
+        },
+        {
+          "v": "mid-February",
+          "q": "At the last check in mid-February, it was composed of around",
+          "what": "Last check of botnet size, around 350 target systems."
+        },
+        {
+          "v": "January 2020",
+          "q": "In January 2020, Indonesia conducted the first arrests of three men on suspicion of being part of the Magecart attacks.",
+          "what": "Indonesia made the first arrests of three men suspected of Magecart attacks."
+        }
+      ],
+      "tools": [
+        {
+          "v": "Perl",
+          "q": "Tuyul is written in Perl."
+        },
+        {
+          "v": "Tiny File Manager",
+          "q": "Figure 4. Tiny File Manager serves as a back door."
+        },
+        {
+          "v": "PHP web shells",
+          "q": "The attacker uses a number of different PHP web shells to gain access to the server."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "unpatched instances of PHPUnit",
+          "q": "The malware specifically searches for unpatched instances of PHPUnit, a"
+        },
+        {
+          "v": "injecting a web shell",
+          "q": "victims: injecting a web shell or connecting the server to an IRC server and"
+        },
+        {
+          "v": "IRC botnet infection",
+          "q": "The second infection method connects the victim’s server to an IRC botnet."
+        },
+        {
+          "v": "staying persistent on the system",
+          "q": "To stay persistent on the system, the malware periodically downloads a bash"
+        },
+        {
+          "v": "detects and kills rival processes",
+          "q": "It also detects and kills rival processes of other malware infections (see Figure"
+        },
+        {
+          "v": "went undetected by antivirus software",
+          "q": "the binary version of this malware went undetected by antivirus software."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-9841",
+          "q": "vulnerable PHPUnit systems (CVE-2017-9841) that tries to install an Internet Relay"
+        }
+      ],
+      "figures": [
+        {
+          "v": "366",
+          "q": "The peak size we observed had 366 victim systems"
+        },
+        {
+          "v": "350",
+          "q": "During our research, the botnet peaked at around 350 bots, which is a relatively"
+        },
+        {
+          "v": "1,400",
+          "q": "from around 1,400 infected systems to upwards of 40,000 active systems in use"
+        },
+        {
+          "v": "40,000",
+          "q": "from around 1,400 infected systems to upwards of 40,000 active systems in use"
+        },
+        {
+          "v": "179",
+          "q": "Figure 16. Tuyul botnet showing 179 bots connected"
+        },
+        {
+          "v": "four different versions",
+          "q": "While monitoring the campaign, we collected four different versions of the"
+        },
+        {
+          "v": "four different nicknames",
+          "q": "In early versions, four different nicknames were defined as admins."
+        },
+        {
+          "v": "about a third",
+          "q": "and about a third are hosted on"
+        },
+        {
+          "v": "almost half",
+          "q": "U.S. and U.K. servers accounted for almost half of the bots."
+        },
+        {
+          "v": "three men",
+          "q": "In January 2020, Indonesia conducted the first arrests of three men on suspicion of being part of the Magecart attacks."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Tuyul"
+    },
+    "hedges": [
+      "Attribution to Indonesia is described as probable, not official; no group had claimed the botnet at publication.",
+      "The Asia/Jakarta time zone may have been set on purpose to mislead; it is only one of many indicators.",
+      "No attribution to a state-sponsored actor is made.",
+      "The report cannot say with certainty whether the activity is tied to organised crime or cybercriminal activity.",
+      "The admin nicknames suggest the campaign might be a joint effort rather than the work of a single individual.",
+      "Size figures describe the peak observed during the researchers' monitoring period."
+    ]
   }
 }

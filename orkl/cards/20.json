@@ -101,7 +101,7 @@
   },
   "20676725f96ecb865989fb60464f45ba38147dde": {
     "sha1": "20676725f96ecb865989fb60464f45ba38147dde",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T16:00:37Z",
     "model": "haiku",
@@ -245,6 +245,89 @@
       "The report says it may not be straightforward or possible for end users to protect network devices and embedded systems from these attacks.",
       "The report says that because there are multiple XOR.DDoS variants, only a subset of indicators will be seen in any one infection.",
       "The report says that if a version with a rootkit has compromised a system, removal may not be feasible."
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T16:12:33Z",
+      "ok": false,
+      "note": "summary: The summary says the campaign was \"mainly attacking root accounts\". The report says it \"always attempts to gain access to the root account\" and has \"on",
+      "by": "auditor"
+    }
+  },
+  "20baf490bcac32036585fda02e82e70a312212dd": {
+    "sha1": "20baf490bcac32036585fda02e82e70a312212dd",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:21:55Z",
+    "model": "haiku",
+    "summary": "A BleepingComputer article from July 2022 reports that at least two ransomware operations and a data extortion gang added search functions to their leak sites, making stolen victim data easier to find. The named groups are ALPHV/BlackCat, LockBit and Karakurt. The article says it is unclear whether searchable stolen data is a successful tactic, and that more threat actors are likely to adopt it.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "ALPHV/BlackCat",
+          "q": "Last week, the ALPHV/BlackCat ransomware operation announced that they created a searchable database",
+          "by": "BleepingComputer"
+        },
+        {
+          "v": "LockBit",
+          "q": "Towards the end of last week, BleepingComputer noticed that LockBit offered a redesigned version of their data leak site",
+          "by": "BleepingComputer"
+        },
+        {
+          "v": "Karakurt",
+          "q": "Another leak site that has implemented a search function is the one published by the Karakurt data extortion gang.",
+          "by": "BleepingComputer"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "hotel and spa",
+          "q": "data allegedly stolen in an attack at a hotel and spa in Oregon"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-07-11",
+          "q": "Published: 2022-07-11",
+          "what": "Article published"
+        },
+        {
+          "v": "mid-June",
+          "q": "The gang already tried this strategy in mid-June",
+          "what": "ALPHV/BlackCat earlier created a searchable site with data allegedly stolen in an attack at a hotel and spa in Oregon"
+        }
+      ],
+      "tools": [],
+      "techniques": [
+        {
+          "v": "search function on the leak site",
+          "q": "The new tactic consists in adding a search function on the leak site to make it easier to find victims or even specific details."
+        },
+        {
+          "v": "puts pressure on the victim to pay the ransom",
+          "q": "This is a step forward in the extortion business as it puts pressure on the victim to pay the ransom and have the data removed"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "At least two ransomware operations",
+          "q": "At least two ransomware operations and a data extortion gang have adopted the strategy recently"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The results may not have the best accuracy but it is still an evolution of the cybercriminal's extortion strategy.",
+      "data allegedly stolen in an attack at a hotel and spa in Oregon",
+      "BlackCat ransomware operators claim that they do this to make it easier for other cybercriminals to find passwords or confidential information about companies.",
+      "LockBit's search is not as advanced as the variant touted by BlackCat, and it is limited to only finding victims by name.",
+      "BleepingComputer's attempts to use the option showed that it did not work properly, though.",
+      "It is unclear if making stolen data searchable is a successful tactic but with multiple extortionist gangs adopting it, the option seems to be an attractive one.",
+      "more threat actors are likely to do the same"
     ]
   }
 }

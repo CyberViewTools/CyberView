@@ -476,5 +476,158 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "3d7dddc74fbd9ce1ecd8632df33a8c2574b8a8a8": {
+    "sha1": "3d7dddc74fbd9ce1ecd8632df33a8c2574b8a8a8",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:23:25Z",
+    "model": "haiku",
+    "summary": "AttackIQ's write-up of the FBI and CISA advisory AA23-320A (November 2023) on Scattered Spider, an eCrime adversary active since at least May 2022. Per the report, it targets BPO, telecommunications and technology organisations, uses phishing, SMS phishing, MFA fatigue and SIM swapping to get credentials, then legitimate remote management tools for persistent access. Since April 2023 it has run extortion using BlackCat/ALPHV ransomware. AttackIQ published a Windows assessment template that emulates these techniques for control testing.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Scattered Spider",
+          "q": "Scattered Spider is an eCrime adversary that has been active since at least May 2022, known for conducting social",
+          "by": "the report itself (AttackIQ), restating the FBI and CISA advisory"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Business-Process Outsourcing (BPO) organizations",
+          "q": "engineering campaigns against Business-Process Outsourcing (BPO) organizations, as well as the"
+        },
+        {
+          "v": "Telecommunications and Technology sectors",
+          "q": "Telecommunications and Technology sectors."
+        },
+        {
+          "v": "commercial facilities sectors",
+          "q": "Evaluate security control performance against a threat known for targeting commercial facilities sectors"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 16, 2023",
+          "q": "On November 16, 2023, the Federal Bureau of Investigation (FBI) and the Cybersecurity and Infrastructure",
+          "what": "FBI and CISA released joint Cybersecurity Advisory AA23-320A"
+        },
+        {
+          "v": "May 2022",
+          "q": "Scattered Spider is an eCrime adversary that has been active since at least May 2022, known for conducting social",
+          "what": "Scattered Spider active since at least this date"
+        },
+        {
+          "v": "April 2023",
+          "q": "Since April 2023, the adversary has been leading extortion campaigns",
+          "what": "extortion campaigns using BlackCat/ALPHV ransomware ongoing since this date"
+        },
+        {
+          "v": "November 2023",
+          "q": "during a series of activities recorded as recently as November 2023 with the goal of helping customers validate",
+          "what": "most recent observed activities the assessment template emulates"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BlackCat/ALPHV Ransomware-as-a-Service",
+          "q": "during which they use BlackCat/ALPHV Ransomware-as-a-Service (RaaS) to encrypt the victim’s data and"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Mimikatz is then"
+        },
+        {
+          "v": "legitimate Remote Management tools",
+          "q": "opts to use legitimate Remote Management tools instead of"
+        },
+        {
+          "v": "schtasks",
+          "q": "The schtasks utility can be"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing websites and SMS phishing",
+          "q": "The adversary employs phishing websites, SMS phishing, and social engineering attacks to gather authentication"
+        },
+        {
+          "v": "MFA notification fatigue",
+          "q": "Spider overwhelms targets by using MFA notification fatigue or resorts to SIM swapping attacks."
+        },
+        {
+          "v": "SIM swapping",
+          "q": "Spider overwhelms targets by using MFA notification fatigue or resorts to SIM swapping attacks."
+        },
+        {
+          "v": "Native API (T1106)",
+          "q": "Native API (T1106):"
+        },
+        {
+          "v": "Scheduled Task (T1053.005)",
+          "q": "Scheduled Task (T1053.005)"
+        },
+        {
+          "v": "Access Token Manipulation (T1134)",
+          "q": "Access Token Manipulation (T1134)"
+        },
+        {
+          "v": "Subvert Trust Controls: Code Signing (T1553.002)",
+          "q": "Subvert Trust Controls: Code Signing (T1553.002)"
+        },
+        {
+          "v": "Impair Defenses: Disable or Modify System Firewall (T1562.004)",
+          "q": "Impair Defenses: Disable or Modify System Firewall (T1562.004)"
+        },
+        {
+          "v": "OS Credential Dumping: LSASS Memory (T1003.001)",
+          "q": "OS Credential Dumping: LSASS Memory (T1003.001)"
+        },
+        {
+          "v": "File and Directory Discovery (T1083)",
+          "q": "File and Directory Discovery (T1083)"
+        },
+        {
+          "v": "Account Discovery: Domain Account (T1087.002)",
+          "q": "Account Discovery: Domain Account (T1087.002)"
+        },
+        {
+          "v": "Remote System Discovery (T1018)",
+          "q": "Remote System Discovery (T1018)"
+        },
+        {
+          "v": "System Owner/User Discovery (T1033)",
+          "q": "System Owner/User Discovery (T1033)"
+        },
+        {
+          "v": "Remote Desktop Protocol (T1021.001)",
+          "q": "Remote Desktop Protocol (T1021.001)"
+        },
+        {
+          "v": "Clipboard Data (T1115)",
+          "q": "Clipboard Data (T1115)"
+        },
+        {
+          "v": "Ingress Tool Transfer (T1105)",
+          "q": "Ingress Tool Transfer (T1105)"
+        },
+        {
+          "v": "Data Encrypted for Impact (T1486)",
+          "q": "Data Encrypted for Impact (T1486)"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Scattered Spider"
+    },
+    "hedges": [
+      "Indicators and TTPs are those identified through FBI investigations as recent as November 2023.",
+      "AttackIQ says reviewing CISA's detection and mitigation recommendations should come first, before reviewing its assessment results."
+    ]
   }
 }

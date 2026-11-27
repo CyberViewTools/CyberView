@@ -335,5 +335,186 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "4148b478b65d67f6875f0bd868c52661da110390": {
+    "sha1": "4148b478b65d67f6875f0bd868c52661da110390",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:25:37Z",
+    "model": "haiku",
+    "summary": "Joint advisory from FBI, CISA and HHS on ALPHV Blackcat, a ransomware-as-a-service operation whose affiliates use impersonation phone and SMS lures, remote access tools, credential theft and data extortion. Healthcare was the most commonly victimised sector among nearly 70 leaked victims since mid-December 2023, and the advisory suggests this is likely a response to a post urging affiliates to target hospitals. It lists indicators of compromise, maps techniques to MITRE ATT&CK and recommends mitigations such as phishing-resistant MFA and application allowlisting.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "ALPHV Blackcat affiliates",
+          "q": "ALPHV Blackcat affiliates have extensive networks and experience with ransomware and data extortion operations.",
+          "by": "FBI, CISA and HHS (joint advisory)"
+        },
+        {
+          "v": "ALPHV Blackcat administrators",
+          "q": "In February 2023, ALPHV Blackcat administrators announced the ALPHV Blackcat Ransomware 2.0 Sphynx",
+          "by": "FBI, CISA and HHS (joint advisory)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "healthcare",
+          "q": "Since mid-December 2023, of the nearly 70 leaked victims, the healthcare sector has been the most"
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "FBI, CISA, and HHS encourage critical infrastructure organizations to implement the recommendations in the"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April 19, 2022",
+          "q": "FBI FLASH BlackCat/ALPHV Ransomware Indicators of Compromise released April 19, 2022,",
+          "what": "FBI FLASH on BlackCat/ALPHV indicators of compromise released"
+        },
+        {
+          "v": "February 2023",
+          "q": "In February 2023, ALPHV Blackcat administrators announced the ALPHV Blackcat Ransomware 2.0 Sphynx",
+          "what": "Administrators announced the Ransomware 2.0 Sphynx update"
+        },
+        {
+          "v": "mid-December 2023",
+          "q": "Since mid-December 2023, of the nearly 70 leaked victims, the healthcare sector has been the most",
+          "what": "Start of the period in which healthcare was the most victimised sector"
+        },
+        {
+          "v": "December 19, 2023",
+          "q": "December 19, 2023: Initial version.",
+          "what": "Initial version of the advisory"
+        },
+        {
+          "v": "February 2024",
+          "q": "identified through FBI investigations as recently as February 2024.",
+          "what": "FBI investigations identified ALPHV Blackcat activity"
+        },
+        {
+          "v": "February 27, 2024",
+          "q": "February 27, 2024: Update.",
+          "what": "Update to the advisory"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AnyDesk",
+          "q": "ALPHV Blackcat affiliates deploy remote access software such as AnyDesk, Mega sync, and Splashtop in preparation of data exfiltration."
+        },
+        {
+          "v": "Splashtop",
+          "q": "ALPHV Blackcat affiliates deploy remote access software such as AnyDesk, Mega sync, and Splashtop in preparation of data exfiltration."
+        },
+        {
+          "v": "Plink",
+          "q": "After gaining access to networks, they use legitimate remote access and tunneling tools, such as Plink and Ngrok"
+        },
+        {
+          "v": "Ngrok",
+          "q": "After gaining access to networks, they use legitimate remote access and tunneling tools, such as Plink and Ngrok"
+        },
+        {
+          "v": "Brute Ratel C4",
+          "q": "ALPHV Blackcat affiliates claim to use Brute Ratel C4 [S1063 ] and Cobalt Strike [S1054 ] as beacons to command"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "ALPHV Blackcat affiliates claim to use Brute Ratel C4 [S1063 ] and Cobalt Strike [S1054 ] as beacons to command"
+        },
+        {
+          "v": "Evilginx2",
+          "q": "Evilginx2 to obtain MFA credentials, login credentials, and session"
+        },
+        {
+          "v": "POORTRY",
+          "q": "According to public reporting, affiliates have additionally used POORTRY and STONESTOP to terminate security"
+        },
+        {
+          "v": "STONESTOP",
+          "q": "According to public reporting, affiliates have additionally used POORTRY and STONESTOP to terminate security"
+        },
+        {
+          "v": "Metasploit",
+          "q": "To evade detection, affiliates employ allowlisted applications such as Metasploit."
+        },
+        {
+          "v": "TOR",
+          "q": "communicate with victims via TOR [S0183 ], Tox, email, or encrypted applications."
+        },
+        {
+          "v": "ScreenConnect",
+          "q": "ScreenConnect & attacker tools"
+        },
+        {
+          "v": "SimpleHelp",
+          "q": "SimpleHelp Remote Management tool"
+        },
+        {
+          "v": "ALPHV Blackcat encryptor",
+          "q": "The ALPHV Blackcat encryptor results in a file with the following naming convention"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "impersonating IT or helpdesk staff by phone or SMS",
+          "q": "Actors pose as company IT and/or helpdesk staff and use phone calls or SMS messages"
+        },
+        {
+          "v": "Kerberos token generation",
+          "q": "use Kerberos token generation for domain access"
+        },
+        {
+          "v": "adversary-in-the-middle attack",
+          "q": "ALPHV Blackcat affiliates use the open source adversary-in-the-middle attack [T1557 ]"
+        },
+        {
+          "v": "password harvesting from domain controllers and backups",
+          "q": "The actors also obtain passwords from the domain controller, local network, and"
+        },
+        {
+          "v": "clearing logs on the exchange server",
+          "q": "Once installed on the domain controller, the logs are cleared on the exchange server."
+        },
+        {
+          "v": "data extortion without deploying ransomware",
+          "q": "Some ALPHV Blackcat affiliates exfiltrate data after gaining access and extort victims without deploying"
+        },
+        {
+          "v": "paid unsolicited remediation reports",
+          "q": "ALPHV Blackcat affiliates offer to provide unsolicited cyber remediation advice as an incentive for payment,"
+        },
+        {
+          "v": "allowlisted applications to evade detection",
+          "q": "To evade detection, affiliates employ allowlisted applications such as Metasploit."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "nearly 70",
+          "q": "Since mid-December 2023, of the nearly 70 leaked victims, the healthcare sector has been the most"
+        },
+        {
+          "v": "version 14",
+          "q": "framework, version 14. See the MITRE"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ALPHV Blackcat"
+    },
+    "hedges": [
+      "This is likely in response to the ALPHV Blackcat administrator's post encouraging affiliates to target hospitals.",
+      "According to public reporting, affiliates have additionally used POORTRY and STONESTOP to terminate security processes.",
+      "ALPHV Blackcat affiliates claim to use Brute Ratel C4 and Cobalt Strike as beacons.",
+      "One proxy tool in the hash tables is described only as a suspected proxy tool.",
+      "The information in this report is being provided 'as is' for informational purposes only.",
+      "FBI, CISA, and HHS do not endorse any commercial entity, product, company, or service linked within the document."
+    ]
   }
 }

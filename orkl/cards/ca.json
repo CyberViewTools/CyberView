@@ -822,5 +822,236 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "cabddf313ce6958fe164e28b51e65d1de629e57e": {
+    "sha1": "cabddf313ce6958fe164e28b51e65d1de629e57e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:26:32Z",
+    "model": "haiku",
+    "summary": "Report on LUCR-3, a financially motivated actor also called Scattered Spider and overlapping with Oktapus, UNC3944 and STORM-0875. It gains initial access by compromising identities at identity providers, bypassing MFA and registering its own devices, then uses SaaS, AWS and CI/CD tools to steal intellectual property, code signing certificates and customer data for extortion. Some personas reportedly act as ALPHV affiliates deploying BlackCat ransomware. Targets include Fortune 2000 firms, recently including hospitality, gaming and retail. The report says attribution is difficult.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "LUCR-3",
+          "q": "LUCR-3 overlaps with groups such as Scattered Spider, Oktapus, UNC3944, and STORM-0875 and is a",
+          "by": "the report itself"
+        },
+        {
+          "v": "Scattered Spider",
+          "q": "LUCR-3 overlaps with groups such as Scattered Spider, Oktapus, UNC3944, and STORM-0875 and is a",
+          "by": "the report itself"
+        },
+        {
+          "v": "Oktapus",
+          "q": "LUCR-3 overlaps with groups such as Scattered Spider, Oktapus, UNC3944, and STORM-0875 and is a",
+          "by": "the report itself"
+        },
+        {
+          "v": "UNC3944",
+          "q": "LUCR-3 overlaps with groups such as Scattered Spider, Oktapus, UNC3944, and STORM-0875 and is a",
+          "by": "the report itself"
+        },
+        {
+          "v": "STORM-0875",
+          "q": "LUCR-3 overlaps with groups such as Scattered Spider, Oktapus, UNC3944, and STORM-0875 and is a",
+          "by": "the report itself"
+        },
+        {
+          "v": "ALPHV",
+          "q": "Further confusing attribution, some LUCR-3 personas appear to be affiliates of ALPHV with access to deploy BlackCat ransomware.",
+          "by": "the report itself"
+        },
+        {
+          "v": "GUI-Vil",
+          "q": "Much like LUCR-1 (GUI-Vil), LUCR-3 tooling, especially in Cloud, SaaS, and CI/CD, mostly uses web",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Software",
+          "q": "various sectors, including but not limited to Software, Retail, Hospitality, Manufacturing, and Telecoms."
+        },
+        {
+          "v": "Retail",
+          "q": "various sectors, including but not limited to Software, Retail, Hospitality, Manufacturing, and Telecoms."
+        },
+        {
+          "v": "Hospitality",
+          "q": "various sectors, including but not limited to Software, Retail, Hospitality, Manufacturing, and Telecoms."
+        },
+        {
+          "v": "Manufacturing",
+          "q": "various sectors, including but not limited to Software, Retail, Hospitality, Manufacturing, and Telecoms."
+        },
+        {
+          "v": "Telecoms",
+          "q": "various sectors, including but not limited to Software, Retail, Hospitality, Manufacturing, and Telecoms."
+        },
+        {
+          "v": "Gaming",
+          "q": "they haven’t previously focused as much on, such as hospitality, gaming, and retail."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-10-02",
+          "q": "Published: 2023-10-02 · Archived: 2026-04-02 12:07:43 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-04-02",
+          "q": "Published: 2023-10-02 · Archived: 2026-04-02 12:07:43 UTC",
+          "what": "Report archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "S3 Browser",
+          "q": "Lastly, LUCR-3 will leverage the GUI utility S3 Browser in combination with a long-lived access key"
+        },
+        {
+          "v": "AWS Cloudshell",
+          "q": "LUCR-3 utilizes AWS Cloudshell within the AWS management console to carry out any activity that requires direct interaction with the AWS API."
+        },
+        {
+          "v": "Systems Manager (SSM)",
+          "q": "Leveraging Systems Manager (SSM), LUCR-3 will run the"
+        },
+        {
+          "v": "Terraform Vault",
+          "q": "Many organizations store credentials in SecretsManger or Terraform Vault for"
+        },
+        {
+          "v": "SCCM",
+          "q": "LUCR-3 will utilize the victim organizations software deployment solutions, such as SCCM, to deploy"
+        },
+        {
+          "v": "BlackCat ransomware",
+          "q": "some LUCR-3 personas appear to be affiliates of ALPHV with access to deploy BlackCat ransomware."
+        },
+        {
+          "v": "GitHub",
+          "q": "LUCR-3 will also generate access tokens for interacting with the APIs of your code repositories, such as GitHub"
+        },
+        {
+          "v": "Gitlab",
+          "q": "On the CI/CD side, LUCR-3 will use the clone, archive, and view raw features of Github and Gitlab to view and"
+        },
+        {
+          "v": "Windows 10",
+          "q": "LUCR-3 utilizes mostly Windows 10 systems running GUI utilities to carry out their mission in the cloud."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Buy credentials from common deepweb marketplaces",
+          "q": "Buy credentials from common deepweb marketplaces"
+        },
+        {
+          "v": "Smishing victims to collect their credentials",
+          "q": "Smishing victims to collect their credentials"
+        },
+        {
+          "v": "Social engineering help desk personnel",
+          "q": "Social engineering help desk personnel to gain access to the credentials"
+        },
+        {
+          "v": "SIM Swapping",
+          "q": "SIM Swapping (when SMS OTP is enabled)"
+        },
+        {
+          "v": "Push Fatigue",
+          "q": "Push Fatigue (when SMS OTP is not enabled)"
+        },
+        {
+          "v": "OTP codes are captured and replayed",
+          "q": "Phishing attacks with redirects to legitimate sites where OTP codes are captured and replayed"
+        },
+        {
+          "v": "register their own mobile device",
+          "q": "When LUCR-3 modifies MFA settings, they often register their own mobile device and add secondary MFA"
+        },
+        {
+          "v": "residential VPNs",
+          "q": "This seems to be mostly accomplished via the use of residential VPNs."
+        },
+        {
+          "v": "uses victims' own tools",
+          "q": "LUCR-3 does not rely heavily on malware or even scripts; instead, LUCR-3 expertly uses victims' own tools,"
+        },
+        {
+          "v": "Policy manipulation",
+          "q": "Policy manipulation: LUCR-3 has been seen modifying the policy of existing roles assigned to EC2"
+        },
+        {
+          "v": "Credential Harvesting",
+          "q": "Credential Harvesting: As mentioned previously, LUCR-3 finds great value in harvesting credentials from"
+        },
+        {
+          "v": "create IAM Users",
+          "q": "CreateUser: LUCR-3 will attempt to create IAM Users when available."
+        },
+        {
+          "v": "Disable GuardDuty",
+          "q": "Disable GuardDuty: LUCR-3 will perform the typical deletion of GuardDuty detectors but also tries to"
+        },
+        {
+          "v": "Stop Logging",
+          "q": "Stop Logging: LUCR-3 also attempts to evade AWS detections"
+        },
+        {
+          "v": "Serial Console Access",
+          "q": "Serial Console Access: This may be giving LUCR-3 too much credit, but we have observed them"
+        },
+        {
+          "v": "will delete the emails",
+          "q": "LUCR-3, already sitting in those mailboxes, will delete the emails to"
+        },
+        {
+          "v": "Reset/Register Factor",
+          "q": "Reset/Register Factor: LUCR-3 will register their own device to ease their ability for continued access."
+        },
+        {
+          "v": "data theft in S3",
+          "q": "In AWS, this is accomplished by data theft in S3 and in database applications such as Dynamo and RDS."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "Fortune 2000",
+          "q": "LUCR-3 targets Fortune 2000 companies across"
+        },
+        {
+          "v": "tens of millions",
+          "q": "While extortion demands do vary, they are often in the tens of millions"
+        },
+        {
+          "v": "10.9.9",
+          "q": "the threat actor routinely leverages the S3 Browser (version 10.9.9) and the"
+        },
+        {
+          "v": "three (3)",
+          "q": "LUCR-3 has utilized three (3) main techniques for privilege escalation in AWS:"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "LUCR-3"
+    },
+    "hedges": [
+      "LUCR-3 attribution is difficult.",
+      "Many of us in the Cyber Intelligence community have even begun to track the individual personas separately.",
+      "Some LUCR-3 personas appear to be affiliates of ALPHV with access to deploy BlackCat ransomware.",
+      "This may be giving LUCR-3 too much credit (serial console access observed in compromised AWS accounts).",
+      "This seems to be mostly accomplished via the use of residential VPNs.",
+      "While email deletion on its own is a very weak signal, looking for email deletions via the web version of Outlook might bring to light higher fidelity signals.",
+      "They do not always need to utilize privilege escalation techniques, but we have observed them do so on occasion in AWS environments."
+    ]
   }
 }

@@ -392,5 +392,203 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "c25c04b4b91f0b4b010a1c30451bd9ecf702c094": {
+    "sha1": "c25c04b4b91f0b4b010a1c30451bd9ecf702c094",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:23:05Z",
+    "model": "haiku",
+    "summary": "Trend Micro reports on Kasseika ransomware, which uses bring-your-own-vulnerable-driver (BYOVD) attacks. It abuses the signed Martini.sys driver from VirIT Agent System to terminate at least 991 antivirus and security-related processes, and runs PsExec to deploy batch scripts. Initial access is through targeted phishing. The report says indicators resemble BlackMatter ransomware and that the BlackMatter source code appears to have been used. The payload is a Themida-packed 32-bit Windows binary that encrypts files with ChaCha20, keys protected with RSA, and deletes shadow copies and event…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "BlackMatter",
+          "q": "the actors behind it have acquired access to the source code of the notorious BlackMatter ransomware.",
+          "by": "Trend Micro (report authors)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-01-23",
+          "q": "Published: 2024-01-23 · Archived",
+          "what": "Report published"
+        },
+        {
+          "v": "2021",
+          "q": "Since its shutdown in 2021, other ransomware groups have been",
+          "what": "BlackMatter shut down; other groups began using similar techniques and tools"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Kasseika ransomware",
+          "q": "In this blog, we detail our investigation of the Kasseika ransomware and the indicators we found suggesting that"
+        },
+        {
+          "v": "PsExec",
+          "q": "Kasseika abused the legitimate Windows RAT PsExec to execute its malicious files."
+        },
+        {
+          "v": "Martini.sys",
+          "q": "The signed driver Martini.sys, originally labeled as viragt64.sys, is part of VirIT Agent System"
+        },
+        {
+          "v": "PINCAV trojan",
+          "q": "Figure 5. The service created by PINCAV trojan, a 64-bit Windows PE file written in C++"
+        },
+        {
+          "v": "Themida",
+          "q": "The Kasseika ransomware is a 32-bit Windows PE file packed by Themida."
+        },
+        {
+          "v": "CryptoPP",
+          "q": "from open-source C++ library CryptoPP."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "bring-your-own-vulnerable-driver (BYOVD)",
+          "q": "Following an increase in bring-your-own-vulnerable-driver (BYOVD) attacks launched by ransomware groups in"
+        },
+        {
+          "v": "targeted phishing",
+          "q": "we observed that it used targeted phishing techniques for"
+        },
+        {
+          "v": "remote administration tools",
+          "q": "It then uses remote administration tools (RATs) to gain privileged access and move laterally within its target network."
+        },
+        {
+          "v": "Martini driver",
+          "q": "In this case we investigated, the Kasseika ransomware abused Martini driver to terminate the victim machine’s antivirus-related processes."
+        },
+        {
+          "v": "shadow copy deletion",
+          "q": "The Kasseika ransomware deletes the shadow copies of the affected system by using Windows Management"
+        },
+        {
+          "v": "event logs",
+          "q": "clearing the system’s event logs through the execution of the commands."
+        },
+        {
+          "v": "ChaCha20",
+          "q": "Kasseika retrieves its encryption algorithm key, ChaCha20, together with the RSA encryption algorithm from"
+        },
+        {
+          "v": "wallpaper",
+          "q": "At the end of its encryption routine, the Kasseika ransomware changes the wallpaper of the affected system, as"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "991",
+          "q": "instructing it to terminate at least 991 processes within its list,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Kasseika ransomware"
+    },
+    "hedges": [
+      "The report says the indicators 'resemble' BlackMatter ransomware and that the BlackMatter source code use is 'suggestive of a mature actor in a limited group'."
+    ]
+  },
+  "c2cfe60bb82e25bca1622cf08d1e2fb5fd582dcf": {
+    "sha1": "c2cfe60bb82e25bca1622cf08d1e2fb5fd582dcf",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:26:07Z",
+    "model": "haiku",
+    "summary": "Lehigh Valley Health Network (LVHN), a health system in eastern Pennsylvania, says it was hit by the BlackCat ransomware-as-a-service group, also known as Alphv. The IT team detected unauthorized activity on Feb. 6. The attack so far affected the network supporting one physician practice in Lackawanna County, and operations continued normally. LVHN refused BlackCat's ransom payment demand. A US HHS alert said ransom demands reached $1.5 million and affiliates keep 80% to 90% of payments. Investigation details were still emerging.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "BlackCat",
+          "q": "says it has been hit with an attack by Russian-based ransomware-as-a-service group BlackCat.",
+          "by": "Lehigh Valley Health Network, as reported by the article"
+        },
+        {
+          "v": "Alphv",
+          "q": "LVHN is among the latest alleged healthcare sector victims of BlackCat, which is also known as Alphv.",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "healthcare",
+          "q": "BlackCat has targeted other organizations in the academic and healthcare sectors"
+        },
+        {
+          "v": "academic",
+          "q": "BlackCat has targeted other organizations in the academic and healthcare sectors"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russian-based",
+          "q": "says it has been hit with an attack by Russian-based ransomware-as-a-service group BlackCat."
+        },
+        {
+          "v": "Pennsylvania",
+          "q": "Pennsylvania Health System CEO Confirms BlackCat Attack"
+        },
+        {
+          "v": "U.S.",
+          "q": "a recent U.S. Department of Health and Human Services warning to the healthcare sector about threats involving the cybercrime group"
+        }
+      ],
+      "dates": [
+        {
+          "v": "Feb. 6",
+          "q": "The group's IT team on Feb. 6 detected unauthorized activity within its IT system, Nester says.",
+          "what": "IT team detected unauthorized activity within its IT system"
+        }
+      ],
+      "tools": [],
+      "techniques": [
+        {
+          "v": "ransomware-as-a-service",
+          "q": "The BlackCat ransomware-as-a-service group has demanded ransom payments as high as $1.5 million, and"
+        },
+        {
+          "v": "ransom payment",
+          "q": "BlackCat demanded a ransom payment, but LVHN refused to pay this criminal enterprise."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "13 hospitals",
+          "q": "Lehigh Valley Health Network, which operates 13 hospitals and numerous physician practices and clinics in"
+        },
+        {
+          "v": "$1.5 million",
+          "q": "The BlackCat ransomware-as-a-service group has demanded ransom payments as high as $1.5 million, and"
+        },
+        {
+          "v": "80% to 90%",
+          "q": "affiliates keep 80% to 90% of the extortion payments"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "BlackCat attack on Lehigh Valley Health Network"
+    },
+    "hedges": [
+      "While details of the LVHN attack by BlackCat are just emerging",
+      "Based on our initial analysis, the attack was on the network supporting one physician practice located in Lackawanna County",
+      "LVHN's investigation is ongoing",
+      "NextGen Health and PharmaCare Services were purportedly among healthcare sector victims listed on BlackCat's leak data site",
+      "LVHN is among the latest alleged healthcare sector victims of BlackCat",
+      "BlackCat tooling is constantly changing as they cycle through testing/usage, updating their arsenal frequently"
+    ]
   }
 }

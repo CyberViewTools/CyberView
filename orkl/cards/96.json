@@ -635,25 +635,146 @@
   },
   "9682ffb26883f4faf7f2a09cf2e41159bfe3f105": {
     "sha1": "9682ffb26883f4faf7f2a09cf2e41159bfe3f105",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:58:15Z",
+    "read_at": "2026-11-27T16:15:40Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Anomali Threat Research reports a new campaign by the cryptojacking group Rocke. It uses a new dropper written in Go, with Pastebin pastes for command and control, a Monero miner on a private pool hosted on DigitalOcean, and cron, init.d and systemd persistence. Only one VirusTotal engine detected the dropper. The report notes overlaps with Palo Alto Networks Unit 42's January 2019 report and Cisco Talos' 2018 research.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "Anomali Labs has detected a new campaign by the threat group Rocke. In this campaign,",
+          "by": "Anomali Labs (the report)"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "CN",
+          "q": "Registrant Country: CN"
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2018",
+          "q": "The threat actor group, Rocke, was first reported by Cisco Talos in August 2018.",
+          "what": "Rocke first reported by Cisco Talos"
+        },
+        {
+          "v": "January 17th, 2019",
+          "q": "On January 17th, 2019, Palo Alto Networks’ Unit 42 reported on a campaign conducted by the",
+          "what": "Unit 42 reported on a Rocke campaign using Python malware"
+        },
+        {
+          "v": "March 15, 2019",
+          "q": "Research | March 15, 2019",
+          "what": "Anomali Threat Research report published"
+        },
+        {
+          "v": "February 24th, 2019",
+          "q": "these pastes were added on February 24th, 2019.",
+          "what": "Pastes used in the malware's command and control were added"
+        },
+        {
+          "v": "December 2018",
+          "q": "group in a report by Cisco Talos in December 2018.",
+          "what": "Cisco Talos report linking related infrastructure to the same group"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Pastebin",
+          "q": "The malware uses Pastebin for Command and Control (C2)."
+        },
+        {
+          "v": "Monero",
+          "q": "Rocke activity, is to drop a miner onto a machine to mine Monero cryptocurrency."
+        },
+        {
+          "v": "Golang",
+          "q": "used by Rocke that is written in Go (Golang) instead of Python."
+        },
+        {
+          "v": "UPX",
+          "q": "The samples analyzed are packed with UPX."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploit Public-Facing Application",
+          "q": "T1190 Exploit Public-Facing Application"
+        },
+        {
+          "v": "Valid Accounts",
+          "q": "T1078 Valid Accounts"
+        },
+        {
+          "v": "Brute Force",
+          "q": "T1110 Brute Force"
+        },
+        {
+          "v": "Remote Services",
+          "q": "T1021 Remote Services"
+        },
+        {
+          "v": "Local Job Scheduling",
+          "q": "T1168 Local Job Scheduling"
+        },
+        {
+          "v": "File Permissions Modification",
+          "q": "T1222 File Permissions Modification"
+        },
+        {
+          "v": "Timestomp",
+          "q": "T1099 Timestomp"
+        },
+        {
+          "v": "Masquerading",
+          "q": "T1036 Masquerading"
+        },
+        {
+          "v": "Process Injection",
+          "q": "T1055 Process Injection"
+        },
+        {
+          "v": "cron for persistence",
+          "q": "The malware uses cron for persistence. The similar crontab entries are shown below. The"
+        },
+        {
+          "v": "propagation over SSH",
+          "q": "In addition to the propagation over SSH, the new malware tries to compromise Redis"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "3 public pastes",
+          "q": "depends on 3 public pastes. One paste serves the latest version, one acts as a redirect to"
+        },
+        {
+          "v": "only one engine",
+          "q": "It can be seen that only one engine successfully detected it as malicious."
+        },
+        {
+          "v": "416 days",
+          "q": "5. Turns the modified time stamp on the moved file back 416 days"
+        },
+        {
+          "v": "SYSTEMTEN",
+          "q": "In this campaign the username is “SYSTEMTEN” while"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text, value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "Researchers believe the campaign is ongoing, based on C2 updates seen as of March 13th, 2019.",
+      "The low detection rate raises the possibility that this campaign has been successfully running for weeks.",
+      "The report says it is likely the registered image hosting site is controlled by the threat group.",
+      "The first five characters of the username may be an indication of other Rocke activity.",
+      "The TTPs and payload filenames appear to follow a similar pattern to the Unit 42 campaign.",
+      "The infrastructure overlap with Cisco Talos' December 2018 report is presented as a link to the same threat group."
+    ]
   }
 }

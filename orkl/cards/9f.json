@@ -291,7 +291,7 @@
     "sha1": "9f488b5bf852dc12d371ca08fcb690a20aa20c56",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:00:54Z",
+    "read_at": "2026-11-27T16:16:57Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -307,7 +307,212 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "quote-not-in-text, value-not-in-quote",
-    "tries": 1
+    "reason": "quote-not-in-text",
+    "tries": 2
+  },
+  "9fd309f32f02d3c4d87ee342ddce50440291c64f": {
+    "sha1": "9fd309f32f02d3c4d87ee342ddce50440291c64f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T16:25:45Z",
+    "model": "haiku",
+    "summary": "Cisco Talos describes an attack by the Interlock ransomware group, which first appeared publicly in September 2024. The group used big-game hunting and double extortion. Initial access was a fake Chrome updater RAT, followed by a credential stealer, keylogger, RDP, AnyDesk, PuTTY and Azure AzCopy exfiltration. Talos estimates about 17 days of dwell time, and EDR was disabled on some servers. The ransomware encrypts files, drops ransom notes and demands a response within 96 hours. Talos assesses with low confidence that Interlock may have emerged from Rhysida operators, based on TTP and…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Interlock",
+          "q": "Interlock first appeared in public reporting in September 2024 and has been observed launching big-game hunting",
+          "by": "Cisco Talos Incident Response (report author)"
+        },
+        {
+          "v": "Rhysida",
+          "q": "Talos assesses with low confidence that Interlock ransomware is likely a new diversified group that emerged from Rhysida ransomware operators or developers",
+          "by": "Cisco Talos Incident Response (report author), low confidence"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "healthcare",
+          "q": "time of reporting includes healthcare, technology, government in the U.S. and manufacturing in Europe, according"
+        },
+        {
+          "v": "technology",
+          "q": "time of reporting includes healthcare, technology, government in the U.S. and manufacturing in Europe, according"
+        },
+        {
+          "v": "government",
+          "q": "time of reporting includes healthcare, technology, government in the U.S. and manufacturing in Europe, according"
+        },
+        {
+          "v": "manufacturing",
+          "q": "time of reporting includes healthcare, technology, government in the U.S. and manufacturing in Europe, according"
+        }
+      ],
+      "countries": [
+        {
+          "v": "U.S.",
+          "q": "time of reporting includes healthcare, technology, government in the U.S. and manufacturing in Europe, according"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 2024",
+          "q": "Interlock first appeared in public reporting in September 2024 and has been observed launching big-game hunting",
+          "what": "Interlock first appeared in public reporting"
+        },
+        {
+          "v": "2024-11-07",
+          "q": "Published: 2024-11-07",
+          "what": "Talos report published"
+        },
+        {
+          "v": "October 2, 2024",
+          "q": "The Interlock ransomware encryption binary is a 64-bit executable, compiled on October 2, 2024.",
+          "what": "Encryption binary compiled"
+        },
+        {
+          "v": "August 2023",
+          "q": "reported by Talos in an August 2023 Threat Advisory",
+          "what": "Talos advisory on Rhysida exclusion list"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Remote Access Tool (RAT)",
+          "q": "a Remote Access Tool (RAT) masquerading as a fake browser updater"
+        },
+        {
+          "v": "RDP",
+          "q": "the attacker primarily used remote desktop protocol (RDP) to move laterally within"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "as well as other tools such as AnyDesk and PuTTY."
+        },
+        {
+          "v": "PuTTY",
+          "q": "We also spotted the installation of PuTTY on the compromised machines, which was likely used to move laterally to Linux hosts."
+        },
+        {
+          "v": "LogMeIn",
+          "q": "possibly LogMeIn to allow remote connectivity."
+        },
+        {
+          "v": "Azure Storage Explorer",
+          "q": "The attacker used Azure Storage Explorer, which leverages the utility AZCopy"
+        },
+        {
+          "v": "AzCopy",
+          "q": "and AzCopy, which allows users to copy files to a remote Azure storage"
+        },
+        {
+          "v": "TfSysMon.sys",
+          "q": "instrumented a vulnerable device driver Sysmon.sys (TfSysMon.sys) to disable the"
+        },
+        {
+          "v": "LibTomCrypt",
+          "q": "Interlock ransomware uses LibTomCrypt library, an open-source comprehensive, modular and portable"
+        },
+        {
+          "v": "Group Policy Objects",
+          "q": "was pushed using Group Policy Objects"
+        },
+        {
+          "v": "credential stealer",
+          "q": "The credential stealer discovered in this campaign is compiled in Golang."
+        },
+        {
+          "v": "keylogger",
+          "q": "The keylogger DLL running on the victim machine is a tiny executable, which hooks to the victim machine keyboard and logs keystrokes"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "big-game hunting",
+          "q": "observed an attacker conducting big-game hunting and"
+        },
+        {
+          "v": "double extortion",
+          "q": "double extortion attacks using the relatively new Interlock ransomware."
+        },
+        {
+          "v": "fake browser updater",
+          "q": "a Remote Access Tool (RAT) masquerading as a fake browser updater"
+        },
+        {
+          "v": "move laterally",
+          "q": "the attacker primarily used remote desktop protocol (RDP) to move laterally within"
+        },
+        {
+          "v": "Kerberoasting",
+          "q": "We assess with moderate confidence that a Kerberoasting attack was used to obtain accounts with higher privileges."
+        },
+        {
+          "v": "EDR was disabled",
+          "q": "EDR was disabled on some of the compromised servers in the victim environment during"
+        },
+        {
+          "v": "delete contents of the Event logs",
+          "q": "attempts to delete contents of the Event logs on some"
+        },
+        {
+          "v": "Azure storage blob",
+          "q": "to an attacker-controlled Azure storage blob"
+        },
+        {
+          "v": "encrypts the targeted files",
+          "q": "When run, the ransomware encrypts the targeted files on the victim machine with the file extension"
+        },
+        {
+          "v": "delete itself upon encrypting",
+          "q": "The ransomware has the capability to delete itself upon encrypting the targeted files"
+        },
+        {
+          "v": "Windows StartUp folder",
+          "q": "established persistence by dropping a Windows shortcut file in the Windows StartUp folder"
+        },
+        {
+          "v": "Cipher Block Chaining",
+          "q": "The Windows Interlock ransomware variant uses the Cipher Block Chaining"
+        },
+        {
+          "v": "RSA",
+          "q": "either CBC or RSA encryption technique."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "approximately 17 days",
+          "q": "environment for approximately 17 days, from the initial compromise until deployment and execution of the"
+        },
+        {
+          "v": "96 hours",
+          "q": "They also demand a response within 96 hours or else they threaten to release"
+        },
+        {
+          "v": "sixty alphanumeric",
+          "q": "using a unique company ID of sixty alphanumeric"
+        },
+        {
+          "v": "8:00 PM",
+          "q": "that runs at 8:00 PM daily on the victim machine as a SYSTEM user"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Interlock ransomware"
+    },
+    "hedges": [
+      "Talos assesses with low confidence that Interlock is a new diversified group that emerged from Rhysida operators or developers.",
+      "Talos IR believes the attacker could have used an EDR uninstaller tool or a vulnerable driver to disable EDR.",
+      "We assess with moderate confidence that a Kerberoasting attack was used to obtain accounts with higher privileges.",
+      "We are not clear how these tools were dropped and executed on the infected machines.",
+      "We were not able to confirm how the storage-explorer and AzCopy were delivered to the victim machine.",
+      "We believe the attacker used storage-explorer to navigate and identify sensitive information, according to network artifacts analysis.",
+      "Targeting is described as opportunistic, indicated by the data leak site disclosure."
+    ]
   }
 }

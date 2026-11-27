@@ -143,25 +143,95 @@
   },
   "78ccec1251c3e760af649e5f64e4bd6e0f3301be": {
     "sha1": "78ccec1251c3e760af649e5f64e4bd6e0f3301be",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:57:55Z",
+    "read_at": "2026-11-27T16:15:30Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Trend Micro blog (September 2022) on attackers exploiting the older Oracle WebLogic flaw CVE-2020-14882 to deploy Kinsing cryptocurrency-mining malware. It describes the infection chain: a crafted HTTP request leads to a downloaded shell script that disables security features and cloud agents, removes rival miners, and fetches Kinsing. It shows how Trend Micro Cloud One Workload Security and Vision One detected and blocked the activity, and gives threat-hunting guidance and MITRE ATT&CK mappings.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "malicious actors",
+          "q": "We have recently observed malicious actors exploiting both recently disclosed and older Oracle WebLogic Server",
+          "by": "the report itself"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "September 14, 2022",
+          "q": "September 14, 2022",
+          "what": "blog entry published"
+        },
+        {
+          "v": "October 31, 2020",
+          "q": "which our intrusion prevention system (IPS) detected from October 31, 2020, to July 27, 2022.",
+          "what": "start of the IPS detection window for CVE-2020-14882 exploitation"
+        },
+        {
+          "v": "July 27, 2022",
+          "q": "which our intrusion prevention system (IPS) detected from October 31, 2020, to July 27, 2022.",
+          "what": "end of the IPS detection window for CVE-2020-14882 exploitation"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Kinsing malware",
+          "q": "this blog will focus on Kinsing malware activity."
+        },
+        {
+          "v": "Trend Micro Cloud One – Workload Security",
+          "q": "Trend Micro Cloud One – Workload Security helps defend systems against vulnerability exploits, malware, and"
+        },
+        {
+          "v": "Trend Micro Vision One",
+          "q": "Trend Micro Vision One provided real-time details into the paths and events"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploit Public-Facing Application",
+          "q": "Exploit Public-Facing Application T1190"
+        },
+        {
+          "v": "Resource Hijacking",
+          "q": "Resource Hijacking"
+        },
+        {
+          "v": "disable multiple security features",
+          "q": "It would also disable multiple security features within the system."
+        },
+        {
+          "v": "create a cronjob",
+          "q": "It would then create a cronjob to download the wb.sh script."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2020-14882",
+          "q": "One of the older vulnerabilities that is still being actively exploited by malicious actors is CVE-2020-14882, a remote code"
+        }
+      ],
+      "figures": [
+        {
+          "v": "CVSS v3.0 score of 9.8",
+          "q": "It also has a CVSS v3.0 score of 9.8."
+        },
+        {
+          "v": "versions 10.3.6.0.0, 12.1.3.0.0, 12.2.1.3.0, 12.2.1.4.0, and 14.1.1.0.0",
+          "q": "This vulnerability affects versions 10.3.6.0.0, 12.1.3.0.0, 12.2.1.3.0, 12.2.1.4.0, and 14.1.1.0.0, and can be exploited"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Kinsing"
+    },
+    "hedges": [
+      "Based on our analysis, most of the exploits did not show special characteristics or features.",
+      "Though many malicious actors use this vulnerability to deploy different malware families, the blog focuses on Kinsing malware activity."
+    ]
   }
 }

@@ -135,7 +135,7 @@
   },
   "144ff3f73f70ab2e208db4560e9e6562a6ca1ada": {
     "sha1": "144ff3f73f70ab2e208db4560e9e6562a6ca1ada",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T15:55:57Z",
     "model": "haiku",
@@ -227,29 +227,123 @@
       "The report says the differences between the two miner files are unclear, though their key information is identical.",
       "The report says the small overlap between Redis-related and SSH-related scanned ports may be due to honeypot deployment and network configuration.",
       "The report says the mining earnings on the newly found wallet should come from mining by versions before 3011."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T16:12:33Z",
+      "ok": false,
+      "note": "summary: It says version 3011 may be a testing or transitional release, but the 2018.6.1 update says that once the x86_64 sample appeared, 3011 is no longer a t",
+      "by": "auditor"
+    }
   },
   "14ed9f4cb898b47864e36e066426fc1ec5b58e46": {
     "sha1": "14ed9f4cb898b47864e36e066426fc1ec5b58e46",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T16:06:13Z",
+    "read_at": "2026-11-27T16:21:12Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "SANS blog post (2022-10-05) on the leaked and cracked Brute Ratel C4 post-exploitation toolkit (v1.2.2), which spread across English- and Russian-speaking cybercrime forums. It says the tool can generate shellcode that many EDR and AV products miss, and that ransomware affiliates will likely use it. Sophos saw it alongside Cobalt Strike at an ALPHV ransomware engagement in July 2022. A Russian-speaking group called Molecules cracked the licence check.",
+    "kind": "overview",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Molecules",
+          "q": "was subsequently cracked by a Russian-speaking group called “Molecules” who reverse engineered and bypassed the license check.",
+          "by": "the report (SANS blog)"
+        },
+        {
+          "v": "ALPHV",
+          "q": "ALPHV (aka BlackCat) ransomware engagement.",
+          "by": "the report, citing Sophos incident responders"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "public sector",
+          "q": "enterprises and public sector organizations should recognize the imminent threat of the proliferation of"
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "US-based firms to be able to bypass Brute Ratel’s licensing verification so they can leverage the new toolkit."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2022-10-05",
+          "q": "Published: 2022-10-05 · Archived: 2026-04-05 14:32:28 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "November 2020",
+          "q": "back in November 2020, when the source code for Cobalt Strike",
+          "what": "Cobalt Strike 4.0 source code shared, widening free access to it"
+        },
+        {
+          "v": "13 September 2022",
+          "q": "A version of Brute Ratel was uploaded to VirusTotal at 19:59:20 UTC on 13 September 2022, via an archive file",
+          "what": "A Brute Ratel version was uploaded to VirusTotal"
+        },
+        {
+          "v": "July 2022",
+          "q": "In July 2022, Sophos incident responders confirmed they encountered Brute Ratel in the wild, alongside Cobalt Strike, at an",
+          "what": "Sophos encountered Brute Ratel alongside Cobalt Strike in a ransomware engagement"
+        },
+        {
+          "v": "29 September 2022",
+          "q": "on 29 September 2022, the developer shared a video on YouTube",
+          "what": "Developer shared a video showing the tool evading an EDR product"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Brute Ratel C4",
+          "q": "the leaking and cracking of the Brute Ratel C4 (BRC4) post-exploitation toolkit."
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "since then, Cobalt Strike has been widely adopted by threat actors, particularly"
+        },
+        {
+          "v": "Sliver",
+          "q": "similar to Sliver, Mythic, and Covenant, that all lag behind the most popular tool, which has been Cobalt Strike for"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "lateral movement",
+          "q": "arbitrary command execution to perform lateral movement, privilege"
+        },
+        {
+          "v": "detection evasion",
+          "q": "This extended window of detection evasion can give threat actors enough time to establish initial access, begin"
+        },
+        {
+          "v": "reverse engineering",
+          "q": "cracked by a Russian-speaking group called “Molecules” who reverse engineered and bypassed the license check."
+        },
+        {
+          "v": "bypass Brute Ratel’s licensing verification",
+          "q": "US-based firms to be able to bypass Brute Ratel’s licensing verification so they can leverage the new toolkit."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "BRC4 version 1.2.2/5",
+          "q": "Chetan Nayak confirmed this file contains a valid copy of BRC4 version 1.2.2/5."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Brute Ratel C4"
+    },
+    "hedges": [
+      "The report says it has been reported that some threat actors created spurious US-based firms to get around licensing.",
+      "The report's own assessment: cybercriminals, especially ransomware affiliates, are going to use this tool in the foreseeable future."
+    ]
   }
 }

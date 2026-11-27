@@ -11,7 +11,7 @@
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, nowIso, dayAgo, listEventFiles } from "./lib/store.mjs";
+import { DATA, writeJson, nowIso, dayAgo, listEventFiles } from "./lib/store.mjs";
 import { matchEvent } from "./triage.mjs";
 import { leased } from "./lib/lease.mjs";
 import { deepEvent } from "./lib/routing.mjs";

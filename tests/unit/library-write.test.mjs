@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
+import { mkdtempSync, rmSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { BY, cleanStory } from "../../scripts/lib/library-check.mjs";
 import { basedOn } from "../../scripts/lib/library-subjects.mjs";
-import { placeDraft, writeQueue, loadStories, run, parseMax, codesOf, STORIES_DIR } from "../../scripts/library-write.mjs";
+import { placeDraft, writeQueue, loadStories, run, parseMax, codesOf } from "../../scripts/library-write.mjs";
 
 const h = (c) => c.repeat(40);
 const story = (o = {}) => ({ key: "a-7", kind: "actor", name: "TT Group", headline: "h", in_short: "i", sections: [], status: "draft", based_on: "x", tries: 0, by: BY, written_at: "t", writer_model: "sonnet", ...o });

@@ -26,7 +26,7 @@
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson, listEventFiles, dayAgo, nowIso, readStatus } from "./lib/store.mjs";
 import { nextHealth, due } from "./lib/backoff.mjs";
 import { retryAfterMs } from "./lib/net.mjs";
 import { parseFeed, CYBER as FEED_CYBER } from "./collect.mjs";

@@ -24,7 +24,7 @@ CyberView is always growing; its full, current description is generated from [`c
 
 ## How it stays current
 
-Scheduled Claude jobs and GitHub workflows research new events and commit JSON files to the `data` branch, which every checkout mounts at `./data`. Each data push starts the deploy (`.github/workflows/pages.yml`): `scripts/build.mjs` validates every record and rebuilds the bundle and archive, and GitHub Pages publishes `site/`. The code is on `main` and changes only through pull requests that pass CI. How the two branches work: `docs/branches.md`. Jobs and their prompts: `docs/jobs.md`.
+Scheduled Claude jobs and GitHub workflows research new events and commit JSON files to the `data` branch, which every checkout mounts at `./data`. Each data push starts the deploy (`.github/workflows/pages.yml`): `scripts/build.mjs` validates every record and rebuilds the bundle and archive, and GitHub Pages publishes `site/`. The code is on `main` and changes only through pull requests that pass CI. How the two branches work: `docs/branches.md`. The web research jobs run as scheduled Claude tasks; the jobs that need no web pages (triage, the brief, the improver, analysis, the security review, tabletop exercises) and the Library, which turns ORKL's threat reports into checked summaries and reviewed actor stories, run on GitHub Actions billed to CyberView's API account. Jobs and their prompts: `docs/jobs.md`.
 
 ## Run it on your own computer (for developers)
 

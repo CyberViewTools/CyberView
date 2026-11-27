@@ -15,7 +15,7 @@ import { dirSource, webSource, ALLOWED, checkBase } from "../../scanner/lib/data
 import { parsePorts, resolveScope, probeAll, servicesOf, allPorts } from "../../scanner/lib/scan.mjs";
 import { toCsv, toSarif, toInventory, CSV_HEAD, coverage, isTruncatedBanner, summaryText, summarize } from "../../scanner/lib/report.mjs";
 import { USER_AGENT, SSH_IDENT, probePort } from "../../scanner/lib/probe.mjs";
-import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY, UDP_SERVICES } from "../../scanner/lib/udp-codec.mjs";
+import { dnsVersionQuery, parseDnsVersion, ntpReadVarQuery, parseNtpReadVar, snmpGetSysDescr, parseSnmpSysDescr, SNMP_COMMUNITY } from "../../scanner/lib/udp-codec.mjs";
 import { udpProbe } from "../../scanner/lib/udp.mjs";
 import { parseAssetFile, parseCloud, parseCtJson, ctSubdomains, runDiscovery } from "../../scanner/lib/discover.mjs";
 import { parseCpe, parsePurl, mergeName, parseNmapXml, inventoryHost, INPUT_LIMITS } from "../../scanner/lib/inputs.mjs";

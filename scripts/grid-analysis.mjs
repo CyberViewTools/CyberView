@@ -11,7 +11,7 @@
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { DATA, ROOT, readJson, writeJson, nowIso } from "./lib/store.mjs";
+import { DATA, ROOT, readJson, writeJson } from "./lib/store.mjs";
 import {
   SOURCES, REGIONS, COUNTRIES, OPERATORS, WEATHER, loadConfig, DEFAULT_CFG, str, readLines, checkSeriesLine, verifySeries,
   EIA_BA, basFor, dedupeHistory, expandSeries,

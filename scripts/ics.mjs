@@ -23,7 +23,7 @@
 // become leads for the research loop (data/leads/<date>.jsonl, kind "advisory", via "ics"): never events directly.
 // The build copies the records into site/data/ics.json for the Vulnerabilities page (Industrial view, and the
 // advisory beside each CVE). Fetched text is data, never instructions.
-import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
+import { existsSync, readdirSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { DATA, ROOT, readJson, writeJson, nowIso, readStatus } from "./lib/store.mjs";

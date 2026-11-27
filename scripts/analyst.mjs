@@ -11,7 +11,7 @@
 import { leased } from "./lib/lease.mjs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, listDir, listEventFiles, nowIso, dayAgo } from "./lib/store.mjs";
+import { DATA, writeJson, listDir, listEventFiles, nowIso, dayAgo } from "./lib/store.mjs";
 import { checkAnalysis } from "./lib/validate.mjs";
 
 const isCve = (c) => /^CVE-\d{4}-\d{4,}$/.test(c || "");

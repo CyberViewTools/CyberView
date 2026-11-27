@@ -2,7 +2,23 @@
 
 Durable working memory for the CyberView lead/build lane. Read this plus `docs/orchestration/BACKLOG.md` to pick up where the last session left off without reading any prior chat. The chat is a disposable driver; the repo is the memory. Rewrite this file in place (not append-only) as things change.
 
-## In flight / recent (as of 2026-11-23)
+## As of 2026-11-26 (evening)
+
+Merged today (#207, #214, #215, #217, #219, #220, #221):
+- **Library live, billed only to the API key.** Routine `library` is on and `library.backfill` is true (the backlog follows the pilot). It runs from `.github/workflows/library.yml` (cron `17,37,57 * * * *` AND after every "Deploy to GitHub Pages" run, skipped until 5 minutes after the last run ended, because GitHub skipped the cron for hours). It bills only `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY`, never the subscription, within `library.api.monthly_usd_cap` ($75 a month, counted apart from the pipeline's fallback cap; `libraryServedNow` / `libraryDecision`). Waves: read 150, audit 150, write 16, review 16; `library.concurrency` 8/6/4/4; `library.run_minutes` 18 on a runner. First run: 150 reads, 109 cards passed the script checks (41 unread: quote or value not found word for word), 15 drafts, $0.66. By the evening the Library page showed reviewed stories.
+- **The API key needs a workspace header.** The owner's key belongs to no workspace; the API refused every call (`400 ... must include the anthropic-workspace-id header`). Repository variable `ANTHROPIC_WORKSPACE_ID` = the "Cyberview" Console workspace; `library.yml`, `ai-job.yml` and `ai-launch.yml` send it as `ANTHROPIC_CUSTOM_HEADERS`.
+- **Six web-independent jobs off the launcher session.** triage, brief, improver, analysis, security-review and tabletop each run from `.github/workflows/job-<job>.yml` (one cron each, equal to routines.json; shared steps `ai-job.yml`), billed to the API key. Their "CyberView L:" scheduled tasks are disabled (Triage desk, Daily brief, Improver, Analysis, Security review, Tabletop). `ai-launch.yml` is manual only; `vars.AI_LAUNCH` is no longer read by anything. GitHub did not reliably start the 16 schedules ai-launch.yml used to hold.
+- **Triage fixed.** It timed out every run from 25 Nov (subscription and API): every `fuse.mjs` call rebuilds all stories (~12 s with ~19,000 leads) and it closed stories one call each. `fuse.mjs done` now takes many `<id> "<reason>"` pairs (one build); the desk closes in batches of up to 30. Verified: a run closed 22 stories in 5.7 min for $0.02.
+- **Badly named event files.** A worker saved `gh0strat-oCam-...json`; the job committed with --force and build.yml went red for every PR. `finish.mjs` now renames NEW event files to a valid id before the build (`scripts/lib/event-names.mjs`).
+- **Tests off live data.** Library desk run tests use empty folders; the Library zero-state browser check drops the copied built Library; the phone status-page length budget is 6,400 px (6,026 once the Library routine was on).
+
+Still on the launcher session (subscription), by design: the web jobs (sweep, backlog, review, analyst, verify, advisory, regional, report-review, scout), because runner IPs get bot-challenged on core news sources. They still re-read the session's history on every wake.
+
+Owner next: read the pilot stories and `node scripts/library-desk.mjs pilot-report` when the pilot latches; decide the audit share after the pilot (`library.audit_pct`, ships 100). 41 of the first 150 cards failed on quote or value matching; normalising whitespace and punctuation before comparing would save re-reads (not done).
+
+Open PRs (not from today): #198, #176, #167, #163, #157, #155, #153, #149.
+
+## Earlier (as of 2026-11-23)
 
 Merged today:
 - #126 — efficiency gates (fixes the follow-up 15-minute clock bug, turn caps, usage reserve)
@@ -98,7 +114,7 @@ Still open: CLOUDSDK_AUTH_ACCESS_TOKEN is re-injected into worker shells by the 
 
 ## Pending owner actions
 
-1. Set env var `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY` in the cyberview environment to arm the API fallback. The subscription stays primary (see CLAUDE.md "Reliability rules"). Name only — never a value here.
+1. Done 2026-11-26: `CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY` is a repository secret (GitHub Actions) and `ANTHROPIC_WORKSPACE_ID` a repository variable. For the cloud launcher's fallback, the same env var in the cyberview environment. Names only — never a value here.
 2. Optionally disconnect unused MCP connectors: Alpha Vantage, Inkbox, Netlify (CyberView uses none of these). Keep the Cloudflare Radar, EIA and ENTSO-E API keys — the grid-analysis pipeline uses them.
 
 ## Model map (from #132)

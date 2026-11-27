@@ -1,11 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from "node:fs";
+import { mkdtempSync, rmSync, readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { BY } from "../../scripts/lib/library-check.mjs";
 import { basedOn } from "../../scripts/lib/library-subjects.mjs";
-import { writeQueue, STORIES_DIR } from "../../scripts/library-write.mjs";
+import { writeQueue } from "../../scripts/library-write.mjs";
 import * as W from "../../scripts/library-write.mjs";
 import * as R from "../../scripts/library-read.mjs";
 import { readQueue } from "../../scripts/library-read.mjs";
@@ -543,7 +543,7 @@ test("staleStoriesCiting: card-wrong is recorded and wins over new-report", () =
 // B-I8: the owner's withdraw command takes a story or a card off the site, records why, and keeps it off until something changes
 import { withdraw } from "../../scripts/library-review.mjs";
 import { siteStory, siteCard } from "../../scripts/orkl.mjs";
-import { actorSubjects, looseSubjects, actorIndex } from "../../scripts/lib/library-subjects.mjs";
+import { actorSubjects } from "../../scripts/lib/library-subjects.mjs";
 test("withdraw: a story is withdrawn (not shown, no pending draft) and a correction with role owner is written", () => {
   const dir = mk();
   try {

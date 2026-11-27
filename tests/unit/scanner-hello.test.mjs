@@ -12,7 +12,7 @@ import { generateKeyPairSync } from "node:crypto";
 import { Resolver } from "node:dns/promises";
 import { parseRdp, parseSmb, parseLdap, ldapDone } from "../../scanner/lib/hello.mjs";
 import { parseKafka, parseRedis, parseConnack, parseMongo, bsonFields } from "../../scanner/lib/hello.mjs";
-import { HELLO, HELLO_SENDS, wire,parseEhlo, parseCapa, parseHead, parseMdns, parseAsfPong, tcpHello, udpHello, helloPlan, helloRecord, helloFindings, identifyHost, identifyHeaderText } from "../../scanner/lib/hello.mjs";
+import { HELLO, HELLO_SENDS, wire, parseEhlo, parseCapa, parseHead, parseAsfPong, tcpHello, udpHello, helloPlan, helloRecord, helloFindings, identifyHost, identifyHeaderText } from "../../scanner/lib/hello.mjs";
 import { QUERIES, dnsPlanArgs, dnsQueries, interpret, dnsRecords, toDnsCsv, DNS_SENDS } from "../../scanner/lib/dns-records.mjs";
 import { mailInventory, toMailCsv, STARTTLS } from "../../scanner/lib/mail-starttls.mjs";
 import { probeAll } from "../../scanner/lib/scan.mjs";

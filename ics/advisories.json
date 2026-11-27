@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-27T11:36:39Z",
+  "updated_at": "2026-11-27T11:51:40Z",
   "window_days": 365,
   "sources": {
     "cisa": {
       "name": "CISA ICS advisories",
       "tier": "gov",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
       "count": 521,
       "error": "",
@@ -17,7 +17,7 @@
     "siemens": {
       "name": "Siemens ProductCERT",
       "tier": "vendor",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
       "count": 132,
       "error": "",
@@ -29,7 +29,7 @@
     "schneider": {
       "name": "Schneider Electric CPCERT",
       "tier": "vendor",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
       "count": 38,
       "error": "",
@@ -41,19 +41,19 @@
     "abb": {
       "name": "ABB PSIRT",
       "tier": "vendor",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
-      "count": 54,
+      "count": 55,
       "error": "",
-      "fetched": 0,
+      "fetched": 1,
       "failed": 0,
       "waiting": 0,
-      "listed": 54
+      "listed": 55
     },
     "phoenix": {
       "name": "Phoenix Contact PSIRT (CERT@VDE)",
       "tier": "vendor",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
       "count": 30,
       "error": "",
@@ -65,15 +65,15 @@
     "certvde": {
       "name": "CERT@VDE",
       "tier": "gov",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
-      "count": 558,
+      "count": 559,
       "error": ""
     },
     "moxa": {
       "name": "Moxa security advisories",
       "tier": "vendor",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
       "count": 96,
       "error": ""
@@ -81,14 +81,69 @@
     "mitsubishi": {
       "name": "Mitsubishi Electric PSIRT",
       "tier": "vendor",
-      "at": "2026-11-27T11:36:39Z",
+      "at": "2026-11-27T11:51:40Z",
       "ok": true,
       "count": 5,
       "error": ""
     }
   },
-  "count": 918,
+  "count": 919,
   "advisories": [
+    {
+      "id": "2NGA002995",
+      "source": "abb",
+      "vendor": "ABB",
+      "title": "ABB Relion Protection Relays One-time password and factory account vulnerabilities",
+      "products": [
+        "REX610",
+        "RE_611 IEC/CN",
+        "RBX615",
+        "REF615 ANSI",
+        "REF615R ANSI",
+        "RER615",
+        "REC615",
+        "REX615",
+        "615 series IEC",
+        "615 series CN",
+        "615 series ANSI",
+        "RER620 ANSI"
+      ],
+      "products_total": 16,
+      "cves": [
+        "CVE-2026-4641",
+        "CVE-2026-4642"
+      ],
+      "cve_cvss": {
+        "CVE-2026-4641": 8.1,
+        "CVE-2026-4642": 6.6
+      },
+      "cvss": 8.1,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:F/RL:W/RC:C",
+      "severity": "H",
+      "cwes": [
+        "CWE-863"
+      ],
+      "exploited": "",
+      "exploit_note": "",
+      "kev_cves": [],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "vendor_fix"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://search.abb.com/library/Download.aspx?DocumentID=2NGA002995&LanguageCode=en&DocumentPartId=pdf&Action=Launch",
+      "doc": "https://psirt.abb.com/csaf/2026/2nga002995.json",
+      "summary": "ABB is aware of vulnerabilities in the product versions listed as affected in the advisory. An attacker who successfully exploits these vulnerabilities could gain unauthorized control of the product or execute arbitrary code on it.",
+      "published": "2026-11-27T00:30:00Z",
+      "updated": "2026-11-27T00:30:00Z",
+      "src_at": "2026-11-27T11:40:00Z",
+      "v": 2
+    },
     {
       "id": "SEVD-2026-328-01",
       "source": "schneider",

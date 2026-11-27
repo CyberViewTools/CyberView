@@ -220,13 +220,13 @@ export function noteOutcome(l, served) {
 }
 // ---------- The Library bills only the API (config/pipeline.json library.api; owner, 2026-11-26). The key is the same one the
 // fallback uses (CYBERVIEW_FALLBACK_ANTHROPIC_API_KEY), handed to a Library worker only as ANTHROPIC_API_KEY by workerEnv("api").
-const LIBAPI = libraryApiConfig(PIPE.library || {});
+const libApi = (now = Date.now()) => libraryApiConfig(PIPE.library || {}, now);   // this month's cap (library.api.month_caps)
 let libCache = { at: 0, served: null, spend: { usd: 0, workers: 0, last_at: null } };
 function libraryState(now = Date.now()) {
   if (libCache.served && now - libCache.at < 15000) return libCache;
   let spend = { usd: 0, workers: 0, last_at: null };
   try { spend = librarySpend(readUsage(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth(), 1), now), now); } catch {}
-  const served = libraryDecision({ keyPresent: !!FALLBACK_KEY, enabled: LIBAPI.enabled, monthSpendUsd: spend.usd, cap: LIBAPI.monthly_usd_cap, keyLimited: libraryKeyLimited });
+  const LIBAPI = libApi(now), served = libraryDecision({ keyPresent: !!FALLBACK_KEY, enabled: LIBAPI.enabled, monthSpendUsd: spend.usd, cap: LIBAPI.monthly_usd_cap, keyLimited: libraryKeyLimited });
   libCache = { at: now, served, spend };
   return libCache;
 }
@@ -234,7 +234,7 @@ function libraryState(now = Date.now()) {
 export const libraryServedNow = (now = Date.now()) => libraryState(now).served;
 /** A plain reason when the Library is parked; never contains the key. The words "usage limit reached" end the desk run. */
 export function libraryNote(now = Date.now()) {
-  const s = libraryState(now);
+  const s = libraryState(now), LIBAPI = libApi(now);
   if (!FALLBACK_KEY) return `usage limit reached; the Library bills only the API and the key (${FB.env_var}) is not set here`;
   if (!LIBAPI.enabled) return "usage limit reached; the Library's API billing is switched off (library.api.enabled)";
   if (libraryKeyLimited) return "usage limit reached; the API key hit its own limit";

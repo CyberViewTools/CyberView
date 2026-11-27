@@ -39,8 +39,19 @@ test("libraryApiConfig and the shipped config: $75 a month, switched on", () => 
   assert.equal(libraryApiConfig({ api: { monthly_usd_cap: "x" } }).monthly_usd_cap, 75);
   assert.equal(libraryApiConfig({ api: { monthly_usd_cap: 0 } }).monthly_usd_cap, 0);
   const lib = JSON.parse(readFileSync(new URL("../../config/pipeline.json", import.meta.url), "utf8")).library;
-  assert.deepEqual(libraryApiConfig(lib), { enabled: true, monthly_usd_cap: 75 });
+  const nov = Date.parse("2026-11-27T22:00:00Z"), dec = Date.parse("2026-12-01T00:00:00Z");
+  assert.deepEqual(libraryApiConfig(lib, nov), { enabled: true, monthly_usd_cap: 88 }, "owner, 2026-11-27: $15 more for November (88 leaves room for calls in flight)");
+  assert.deepEqual(libraryApiConfig(lib, dec), { enabled: true, monthly_usd_cap: 75 }, "December is back on the monthly $75");
   assert.equal(lib.backfill, true);
+});
+
+test("libraryApiConfig: a month_caps entry replaces the cap for that UTC month only; a bad entry is ignored", () => {
+  const lib = { api: { monthly_usd_cap: 75, month_caps: { "2026-11": 88, "2026-12": "x", "2027-01": -5 } } };
+  assert.equal(libraryApiConfig(lib, Date.parse("2026-11-30T23:59:59Z")).monthly_usd_cap, 88);
+  assert.equal(libraryApiConfig(lib, Date.parse("2026-12-15T00:00:00Z")).monthly_usd_cap, 75);
+  assert.equal(libraryApiConfig(lib, Date.parse("2027-01-15T00:00:00Z")).monthly_usd_cap, 75);
+  assert.equal(libraryApiConfig(lib, Date.parse("2026-10-15T00:00:00Z")).monthly_usd_cap, 75);
+  assert.equal(libraryApiConfig({ api: { month_caps: { "2026-11": 0 } } }, Date.parse("2026-11-02T00:00:00Z")).monthly_usd_cap, 0, "0 parks the month");
 });
 
 test("libraryMinutes: run_minutes only on a GitHub Actions runner, bounded; the launcher keeps its 10-minute cap", () => {

@@ -275,26 +275,139 @@
   },
   "a90ac4e3c02a1ea796f99068f59350546a1537eb": {
     "sha1": "a90ac4e3c02a1ea796f99068f59350546a1537eb",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T07:20:33Z",
+    "read_at": "2026-11-27T07:49:03Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "ANY.RUN reports a large-scale Magecart-style campaign active for at least 24 months, supported by over 100 domains. Its payment-skimming code hijacks checkout steps, imitates payment pages (notably Redsys in Spain), and sends card data over WebSocket. Victims are mostly retail e-commerce sites, but the report says banks bear the primary impact. Victims are in at least 12 countries, concentrated in Spain, France and the United States. The same injected code was also used to push an Android APK.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "threat actors applied multi-step checkout hijacking",
+          "by": "ANY.RUN"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "Banks (not merchants) bear the primary impact"
+        },
+        {
+          "v": "retail e-commerce",
+          "q": "mostly retail e-commerce companies were targeted"
+        }
+      ],
+      "countries": [
+        {
+          "v": "United Kingdom",
+          "q": "including the United Kingdom and Denmark"
+        },
+        {
+          "v": "Denmark",
+          "q": "including the United Kingdom and Denmark"
+        },
+        {
+          "v": "Spain",
+          "q": "of such incidents in Spain, France, and United States."
+        },
+        {
+          "v": "France",
+          "q": "of such incidents in Spain, France, and United States."
+        },
+        {
+          "v": "United States",
+          "q": "of such incidents in Spain, France, and United States."
+        }
+      ],
+      "dates": [
+        {
+          "v": "February 2024 to April 2025",
+          "q": "A total of 17 WooCommerce websites were infected between February 2024 and April 2025",
+          "what": "17 WooCommerce websites infected"
+        }
+      ],
+      "tools": [
+        {
+          "v": "magecart",
+          "q": "A large-scale magecart operation remained active for over 24 months"
+        },
+        {
+          "v": "Android APK",
+          "q": "Distribution of Android APK via the Same Inject"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "checkout hijacking",
+          "q": "threat actors applied multi-step checkout hijacking"
+        },
+        {
+          "v": "payment page mimicry",
+          "q": "Payment page mimicry, including infrastructure-level impersonation of legitimate providers"
+        },
+        {
+          "v": "WebSocket exfiltration",
+          "q": "WebSocket-based exfiltration of card data."
+        },
+        {
+          "v": "fallback mechanism",
+          "q": "The loader uses the fallback mechanism: it iterates through backup"
+        },
+        {
+          "v": "Dynamic Payload Delivery",
+          "q": "Dynamic Payload Delivery"
+        },
+        {
+          "v": "anti-tampering",
+          "q": "Anti-tampering: code integrity is verified via function serialization"
+        },
+        {
+          "v": "code obfuscation",
+          "q": "heavily obfuscated JavaScript inside the HTML page"
+        },
+        {
+          "v": "state persistence in localStorage",
+          "q": "State persistence in localStorage"
+        },
+        {
+          "v": "masquerading as legitimate dependencies",
+          "q": "Masquerading as legitimate external dependencies"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "over 100",
+          "q": "active for at least 24 months and supported by over 100"
+        },
+        {
+          "v": "24 months",
+          "q": "active for at least 24 months and supported by over 100"
+        },
+        {
+          "v": "17",
+          "q": "A total of 17 WooCommerce websites were infected between February 2024 and April 2025"
+        },
+        {
+          "v": "12",
+          "q": "Among the victims are organizations from at least 12"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "Global Magecart Campaign"
+    },
+    "hedges": [
+      "Some cases are confirmed directly via telemetry and network traffic, while others are identified via infrastructural correlation.",
+      "The 17 WooCommerce websites are described as likely linked to this campaign.",
+      "Infrastructure disguised as legitimate web services complicates attribution.",
+      "One case lacks confirmed card exfiltration, possibly due to redirection to a legitimate external payment flow.",
+      "Different visual scenarios within one malware family do not necessarily indicate different campaigns.",
+      "Targeting of an international audience is drawn from the localisation of the payloads."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T07:09:10Z",

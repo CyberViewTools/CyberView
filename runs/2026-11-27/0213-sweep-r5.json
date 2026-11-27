@@ -1,0 +1,56 @@
+{
+  "job": "sweep-r5",
+  "started_at": "2026-11-27T02:05:00Z",
+  "finished_at": "2026-11-27T02:15:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "MEXT procurement incident"
+  ],
+  "pages_read": [
+    {
+      "url": "https://cybersecurity-jp.com/news/118985",
+      "title": "MEXT procurement system",
+      "used_in": "mext-procurement-system-unauthorized-access-2026-11"
+    },
+    {
+      "url": "https://www.newspim.com/news/view/20261127000203",
+      "title": "NSO KEPCO response",
+      "used_in": "closed"
+    },
+    {
+      "url": "https://cert.pl/en/posts/2026/11/CVE-2026-110699/",
+      "title": "Chainlit",
+      "used_in": "closed"
+    }
+  ],
+  "added": [],
+  "updated": [
+    "mext-procurement-system-unauthorized-access-2026-11"
+  ],
+  "skipped": [
+    {
+      "title": "CVE-only stories (Tokyo Fire app, FreeRDP, JobRouter, kernel upgrade, Chainlit)",
+      "url": "",
+      "reason": "no exploitation, PoC or urgent notice read"
+    },
+    {
+      "title": "Epoch Times explainer",
+      "url": "https://www.epochtimes.com/b5/26/11/26/n14895788.htm",
+      "reason": "general explainer"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "CVE-2025-63821 PoC",
+      "url": "https://vulners.com/kitploit/KITPLOIT:TOOLS-GITHUB-XERNARY-CVE-2025-63821",
+      "note": "403, could not read",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "vulners.com (403)"
+  ],
+  "notes": "Epoch Times, JVN, JobRouter pages not opened; closed on headline as ordinary advisories or explainer.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

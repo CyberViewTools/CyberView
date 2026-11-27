@@ -1,36 +1,69 @@
 {
- "id": "softwareok-q-dir-desktopok-installers-tampered-2026-11",
- "title": "AhnLab: Q-Dir and DesktopOK installers on the official SoftwareOK site were tampered with to install a Python RAT",
- "date": "2026-11-26",
- "date_note": "The ASEC post gives only its publication day; it states no date for the tampering.",
- "category": "incident",
- "severity": 2,
- "status": "developing",
- "org": "SoftwareOK",
- "country": "Unknown",
- "place": "SoftwareOK (location not stated in the source)",
- "lat": 0,
- "lng": 0,
- "geo_basis": "no place stated in the source",
- "pin_type": "none",
- "actor": "",
- "sectors": {"values": ["individuals"], "basis": "inferred"},
- "surface": {"value": "supply-chain", "basis": "stated"},
- "summary": "AhnLab's ASEC says some Q-Dir and DesktopOK installation files distributed on the official SoftwareOK website had been tampered with to contain malicious files. Confirmed so far are Q-Dir 12.85.0.0, 12.84.0.0 and 12.83.0.0 and DesktopOK 12.85.0.0 and 12.82.0.0. The files install a Python-based remote access trojan, and ASEC says the cause and path of the replacement have not been identified.",
- "plain": "AhnLab says some Q-Dir and DesktopOK installers from the official SoftwareOK site were altered to install a remote access trojan. It says how the files were replaced is not yet known.",
- "exec": "AhnLab says software downloaded from a vendor's official site carried a remote access trojan; the way the files were replaced is unidentified.",
- "action": "AhnLab advises checking SHA-256 hashes against the official page, reinstalling the latest version, and checking for suspicious Python environments, scheduled tasks and external traffic; reinstalling alone may not remove the RAT.",
- "products": ["Q-Dir", "DesktopOK"],
- "attack": [],
- "tags": ["supply-chain", "malware"],
- "sources": [
-  {"name": "AhnLab ASEC", "url": "https://asec.ahnlab.com/en/96827/", "published": "2026-11-26", "read_depth": "full"}
- ],
- "evidence": [
-  {"url": "https://asec.ahnlab.com/en/96827/", "quote": "some Q-Dir and DesktopOK installation files distributed on the official SoftwareOK website had been tampered with to contain malicious files"}
- ],
- "source_tier": "primary",
- "validation": {"state": "single_source", "checked_at": "2026-11-27T02:00:01Z", "note": "Only the AhnLab ASEC analysis was read; SoftwareOK's own statement was not found."},
- "first_seen": "2026-11-27T02:00:01Z",
- "updated_at": "2026-11-27T02:00:01Z"
+  "title": "AhnLab: Q-Dir and DesktopOK installers on the official SoftwareOK site were tampered with to install a Python RAT",
+  "date": "2026-11-26",
+  "date_note": "The ASEC post gives only its publication day; it states no date for the tampering.",
+  "category": "incident",
+  "severity": 2,
+  "status": "developing",
+  "org": "SoftwareOK",
+  "country": "Unknown",
+  "place": "SoftwareOK (location not stated in the source)",
+  "lat": 0,
+  "lng": 0,
+  "geo_basis": "no place stated in the source",
+  "pin_type": "none",
+  "actor": "",
+  "sectors": {
+    "values": [
+      "individuals"
+    ],
+    "basis": "inferred"
+  },
+  "surface": {
+    "value": "supply-chain",
+    "basis": "stated"
+  },
+  "summary": "AhnLab's ASEC says some Q-Dir and DesktopOK installation files distributed on the official SoftwareOK website had been tampered with to contain malicious files. Confirmed so far are Q-Dir 12.85.0.0, 12.84.0.0 and 12.83.0.0 and DesktopOK 12.85.0.0 and 12.82.0.0. The files install a Python-based remote access trojan, and ASEC says the cause and path of the replacement have not been identified.",
+  "plain": "AhnLab says some Q-Dir and DesktopOK installers from the official SoftwareOK site were altered to install a remote access trojan. It says how the files were replaced is not yet known.",
+  "exec": "AhnLab says software downloaded from a vendor's official site carried a remote access trojan; the way the files were replaced is unidentified.",
+  "action": "AhnLab advises checking SHA-256 hashes against the official page, reinstalling the latest version, and checking for suspicious Python environments, scheduled tasks and external traffic; reinstalling alone may not remove the RAT.",
+  "products": [
+    "Q-Dir",
+    "DesktopOK"
+  ],
+  "attack": [],
+  "tags": [
+    "supply-chain",
+    "malware"
+  ],
+  "sources": [
+    {
+      "name": "AhnLab ASEC",
+      "url": "https://asec.ahnlab.com/en/96827/",
+      "published": "2026-11-26",
+      "read_depth": "full"
+    }
+  ],
+  "evidence": [
+    {
+      "url": "https://asec.ahnlab.com/en/96827/",
+      "quote": "some Q-Dir and DesktopOK installation files distributed on the official SoftwareOK website had been tampered with to contain malicious files"
+    }
+  ],
+  "source_tier": "primary",
+  "validation": {
+    "state": "single_source",
+    "checked_at": "2026-11-27T02:00:01Z",
+    "note": "Only the AhnLab ASEC analysis was read; SoftwareOK's own statement was not found."
+  },
+  "first_seen": "2026-11-27T02:00:01Z",
+  "updated_at": "2026-11-27T02:00:01Z",
+  "review": {
+    "state": "passed",
+    "at": "2026-11-27T02:09:12Z",
+    "first_at": "2026-11-27T02:09:12Z",
+    "note": "Compared title, versions, RAT, unidentified cause and advice against ASEC post",
+    "flags": []
+  },
+  "qa_checked_at": "2026-11-27T02:09:12Z"
 }

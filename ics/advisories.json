@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-27T11:51:40Z",
+  "updated_at": "2026-11-27T13:50:49Z",
   "window_days": 365,
   "sources": {
     "cisa": {
       "name": "CISA ICS advisories",
       "tier": "gov",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 521,
       "error": "",
@@ -17,19 +17,19 @@
     "siemens": {
       "name": "Siemens ProductCERT",
       "tier": "vendor",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
-      "count": 132,
+      "count": 134,
       "error": "",
-      "fetched": 0,
+      "fetched": 4,
       "failed": 0,
       "waiting": 0,
-      "listed": 132
+      "listed": 134
     },
     "schneider": {
       "name": "Schneider Electric CPCERT",
       "tier": "vendor",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 38,
       "error": "",
@@ -41,11 +41,11 @@
     "abb": {
       "name": "ABB PSIRT",
       "tier": "vendor",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 55,
       "error": "",
-      "fetched": 1,
+      "fetched": 0,
       "failed": 0,
       "waiting": 0,
       "listed": 55
@@ -53,7 +53,7 @@
     "phoenix": {
       "name": "Phoenix Contact PSIRT (CERT@VDE)",
       "tier": "vendor",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 30,
       "error": "",
@@ -65,7 +65,7 @@
     "certvde": {
       "name": "CERT@VDE",
       "tier": "gov",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 559,
       "error": ""
@@ -73,7 +73,7 @@
     "moxa": {
       "name": "Moxa security advisories",
       "tier": "vendor",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 96,
       "error": ""
@@ -81,13 +81,13 @@
     "mitsubishi": {
       "name": "Mitsubishi Electric PSIRT",
       "tier": "vendor",
-      "at": "2026-11-27T11:51:40Z",
+      "at": "2026-11-27T13:50:49Z",
       "ok": true,
       "count": 5,
       "error": ""
     }
   },
-  "count": 919,
+  "count": 921,
   "advisories": [
     {
       "id": "2NGA002995",
@@ -142,6 +142,191 @@
       "published": "2026-11-27T00:30:00Z",
       "updated": "2026-11-27T00:30:00Z",
       "src_at": "2026-11-27T11:40:00Z",
+      "v": 2
+    },
+    {
+      "id": "SSA-443410",
+      "source": "siemens",
+      "vendor": "Siemens",
+      "title": "Node2Shell Vulnerability in Industrial Edge Management Applications",
+      "products": [
+        "Cloud Connector Configurator",
+        "Industrial Edge Management Cloud",
+        "Common Configurator (CC on IEM)",
+        "Common Configurator on Device (CC on Edge)",
+        "Data Flow Monitoring",
+        "Databus Configurator",
+        "DataXess Configurator",
+        "Edge OPC UA Server Configurator",
+        "Flow Creator Configurator",
+        "Industrial Edge Hub"
+      ],
+      "products_total": 10,
+      "cves": [
+        "CVE-2026-111497"
+      ],
+      "cve_cvss": {
+        "CVE-2026-111497": 9.8
+      },
+      "cvss": 9.8,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "C",
+      "cwes": [
+        "CWE-787"
+      ],
+      "exploited": "kev",
+      "exploit_note": "",
+      "kev_cves": [
+        "CVE-2026-111497"
+      ],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "none_available",
+        "vendor_fix"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://cert-portal.siemens.com/productcert/html/ssa-443410.html",
+      "doc": "https://cert-portal.siemens.com/productcert/csaf/ssa-443410.json",
+      "summary": "Siemens is currently assessing the impact of Node2Shell (CVE-2026-111497) on Industrial Edge. Please check your Industrial Edge Management (IEM) setup: - No Management Applications installed: No action is required. Although the affected Brotli library is included in the IEM software stack, the affec",
+      "published": "2026-10-30T00:00:00Z",
+      "updated": "2026-11-27T00:00:00Z",
+      "src_at": "2026-11-27T00:00:00Z",
+      "v": 2
+    },
+    {
+      "id": "SSA-545865",
+      "source": "siemens",
+      "vendor": "Siemens",
+      "title": "Improper Token Verification Vulnerability in Mendix OIDC Provider Module",
+      "products": [
+        "Mendix OIDC Provider (Mendix 10 compatible)",
+        "Mendix OIDC Provider (Mendix 11 compatible)",
+        "Mendix OIDC Provider (Mendix 9 compatible)"
+      ],
+      "products_total": 3,
+      "cves": [
+        "CVE-2026-124981"
+      ],
+      "cve_cvss": {
+        "CVE-2026-124981": 8.7
+      },
+      "cvss": 8.7,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N",
+      "severity": "H",
+      "cwes": [
+        "CWE-347"
+      ],
+      "exploited": "",
+      "exploit_note": "",
+      "kev_cves": [],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "vendor_fix"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://cert-portal.siemens.com/productcert/html/ssa-545865.html",
+      "doc": "https://cert-portal.siemens.com/productcert/csaf/ssa-545865.json",
+      "summary": "Mendix OIDC Provider contains a token verification vulnerability that could allow an remote attack to hijack an Account. Siemens has released new versions for the affected products and recommends to update to the latest versions.",
+      "published": "2026-11-27T00:00:00Z",
+      "updated": "2026-11-27T00:00:00Z",
+      "src_at": "2026-11-27T00:00:00Z",
+      "v": 2
+    },
+    {
+      "id": "SSA-579716",
+      "source": "siemens",
+      "vendor": "Siemens",
+      "title": "Insufficient Session Expiration Vulnerability in Mendix Runtime",
+      "products": [
+        "Mendix Runtime V10",
+        "Mendix Runtime V11",
+        "Mendix Runtime V11.12",
+        "Mendix Runtime V11.6",
+        "Mendix Runtime V9"
+      ],
+      "products_total": 5,
+      "cves": [
+        "CVE-2026-135278"
+      ],
+      "cve_cvss": {
+        "CVE-2026-135278": 5.4
+      },
+      "cvss": 5.4,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+      "severity": "M",
+      "cwes": [
+        "CWE-613"
+      ],
+      "exploited": "",
+      "exploit_note": "",
+      "kev_cves": [],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "vendor_fix"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://cert-portal.siemens.com/productcert/html/ssa-579716.html",
+      "doc": "https://cert-portal.siemens.com/productcert/csaf/ssa-579716.json",
+      "summary": "The products listed below contain a session management vulnerability that could allow a deactivated user to continue using an existing session to access and modify data within their previously granted permissions. Siemens has released new versions for the affected products and recommends to update t",
+      "published": "2026-11-27T00:00:00Z",
+      "updated": "2026-11-27T00:00:00Z",
+      "src_at": "2026-11-27T00:00:00Z",
+      "v": 2
+    },
+    {
+      "id": "SSA-898633",
+      "source": "siemens",
+      "vendor": "Siemens",
+      "title": "Brotli Vulnerability in Palo Alto Networks PAN-OS on RUGGEDCOM APE1808 Devices",
+      "products": [],
+      "products_total": 0,
+      "cves": [
+        "CVE-2026-111497"
+      ],
+      "cve_cvss": {
+        "CVE-2026-111497": 9.8
+      },
+      "cvss": 9.8,
+      "cvss_version": "3.1",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "severity": "C",
+      "cwes": [
+        "CWE-787"
+      ],
+      "exploited": "kev",
+      "exploit_note": "",
+      "kev_cves": [
+        "CVE-2026-111497"
+      ],
+      "sectors": [],
+      "countries": "",
+      "hq": "",
+      "remediation": [
+        "mitigation",
+        "vendor_fix"
+      ],
+      "fix": true,
+      "not_affected": false,
+      "url": "https://cert-portal.siemens.com/productcert/html/ssa-898633.html",
+      "doc": "https://cert-portal.siemens.com/productcert/csaf/ssa-898633.json",
+      "summary": "Palo Alto Networks has published [1] information on a vulnerability in PAN-OS related to the Brotli vulnerability. This advisory lists the related Siemens Industrial products affected by this vulnerability. Customers are advised to consult and implement the workarounds provided in Palo Alto Networks",
+      "published": "2026-10-30T00:00:00Z",
+      "updated": "2026-11-27T00:00:00Z",
+      "src_at": "2026-11-27T00:00:00Z",
       "v": 2
     },
     {
@@ -5999,60 +6184,6 @@
       "v": 2
     },
     {
-      "id": "SSA-443410",
-      "source": "siemens",
-      "vendor": "Siemens",
-      "title": "Node2Shell Vulnerability in Industrial Edge Management Applications",
-      "products": [
-        "Cloud Connector Configurator",
-        "Industrial Edge Management Cloud",
-        "Common Configurator (CC on IEM)",
-        "Common Configurator on Device (CC on Edge)",
-        "Data Flow Monitoring",
-        "Databus Configurator",
-        "DataXess Configurator",
-        "Edge OPC UA Server Configurator",
-        "Flow Creator Configurator",
-        "Industrial Edge Hub"
-      ],
-      "products_total": 10,
-      "cves": [
-        "CVE-2026-111497"
-      ],
-      "cve_cvss": {
-        "CVE-2026-111497": 9.8
-      },
-      "cvss": 9.8,
-      "cvss_version": "3.1",
-      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-      "severity": "C",
-      "cwes": [
-        "CWE-787"
-      ],
-      "exploited": "kev",
-      "exploit_note": "",
-      "kev_cves": [
-        "CVE-2026-111497"
-      ],
-      "sectors": [],
-      "countries": "",
-      "hq": "",
-      "remediation": [
-        "mitigation",
-        "none_available",
-        "vendor_fix"
-      ],
-      "fix": true,
-      "not_affected": false,
-      "url": "https://cert-portal.siemens.com/productcert/html/ssa-443410.html",
-      "doc": "https://cert-portal.siemens.com/productcert/csaf/ssa-443410.json",
-      "summary": "Siemens is currently assessing the impact of Node2Shell (CVE-2026-111497) on Industrial Edge. Please check your Industrial Edge Management (IEM) setup: - No Management Applications installed: No action is required. Although the affected Brotli library is included in the IEM software stack, the affec",
-      "published": "2026-10-30T00:00:00Z",
-      "updated": "2026-11-06T00:00:00Z",
-      "src_at": "2026-11-06T00:00:00Z",
-      "v": 2
-    },
-    {
       "products": [],
       "products_total": 0,
       "cves": [
@@ -6612,49 +6743,6 @@
       "published": "2026-10-30T00:30:00Z",
       "updated": "2026-10-30T00:30:00Z",
       "src_at": "2026-10-30T15:40:00Z",
-      "v": 2
-    },
-    {
-      "id": "SSA-898633",
-      "source": "siemens",
-      "vendor": "Siemens",
-      "title": "Node2Shell Vulnerability in Palo Alto Networks PAN-OS on RUGGEDCOM APE1808 Devices",
-      "products": [
-        "RUGGEDCOM APE1808"
-      ],
-      "products_total": 1,
-      "cves": [
-        "CVE-2026-111497"
-      ],
-      "cve_cvss": {
-        "CVE-2026-111497": 9.8
-      },
-      "cvss": 9.8,
-      "cvss_version": "3.1",
-      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-      "severity": "C",
-      "cwes": [
-        "CWE-787"
-      ],
-      "exploited": "kev",
-      "exploit_note": "",
-      "kev_cves": [
-        "CVE-2026-111497"
-      ],
-      "sectors": [],
-      "countries": "",
-      "hq": "",
-      "remediation": [
-        "vendor_fix"
-      ],
-      "fix": true,
-      "not_affected": false,
-      "url": "https://cert-portal.siemens.com/productcert/html/ssa-898633.html",
-      "doc": "https://cert-portal.siemens.com/productcert/csaf/ssa-898633.json",
-      "summary": "Palo Alto Networks has published [1] information on a vulnerability in PAN-OS related to the Node2Shell vulnerability. This advisory lists the related Siemens Industrial products affected by this vulnerability. Customers are advised to consult and implement the workarounds provided in Palo Alto Netw",
-      "published": "2026-10-30T00:00:00Z",
-      "updated": "2026-10-30T00:00:00Z",
-      "src_at": "2026-10-30T00:00:00Z",
       "v": 2
     },
     {

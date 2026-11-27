@@ -101,30 +101,29 @@
   },
   "1016ea444ad925f388c7bb7d3e7d16d2caa1c56b": {
     "sha1": "1016ea444ad925f388c7bb7d3e7d16d2caa1c56b",
-    "status": "unread",
+    "status": "read",
     "partial": true,
-    "read_at": "2026-11-27T00:58:56Z",
+    "read_at": "2026-11-27T01:19:41Z",
     "model": "haiku",
-    "summary": "NadSec's technical teardown of Coruna, a multi-stage exploit chain against Apple Safari/WebKit and the XNU kernel on arm64e iOS and macOS devices. Delivery is by watering-hole compromise, with gambling and fake crypto-exchange lure pages. Google Threat Intelligence Group (GTIG) is cited for attributing the operation to UNC6691. The report describes XOR string obfuscation, a Mach-O parser, several WebKit exploit primitives, a PAC bypass, and a kernel vulnerability (CVE-2023-41974). The supplied text ends partway through the XSLT trigger section, so the kernel stage, kill chain and attribution…",
+    "summary": "NadSec technical teardown of Coruna, a multi-stage exploit chain against Apple Safari/WebKit and the XNU kernel on arm64e iOS and macOS devices. Delivery is by watering-hole compromise, with gambling and fake crypto-exchange lure pages. GTIG attributes the operation to UNC6691 and documented more delivery domains than the analysed sample. The chain covers WebKit memory primitives, PAC bypass, JIT cage escape, and a kernel bug, CVE-2023-41974 in IOSurfaceRoot. The supplied text is cut off mid-analysis at the XSLTProcessor trigger section.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "UNC6691",
           "q": "Operated by UNC6691 (GTIG, March 2026)",
-          "by": "Google Threat Intelligence Group (GTIG), as cited in the report"
-        },
-        {
-          "v": "UNC6691",
-          "q": "attribution to UNC6691.",
-          "by": "NadSec (report author)"
+          "by": "Google Threat Intelligence Group (GTIG)"
         }
       ],
       "sectors": [],
       "countries": [
         {
+          "v": "Singapore",
+          "q": "Domain registered via Gname.com (Singapore). Registrant: Hong Kong, China"
+        },
+        {
           "v": "Hong Kong, China",
-          "q": "2025-06-01 Domain registered via Gname.com (Singapore). Registrant: Hong Kong, China"
+          "q": "Domain registered via Gname.com (Singapore). Registrant: Hong Kong, China"
         },
         {
           "v": "US",
@@ -133,40 +132,40 @@
       ],
       "dates": [
         {
-          "v": "2026-03-06",
-          "q": "Published: 2026-03-06",
-          "what": "Report published"
-        },
-        {
-          "v": "2026-05-09",
-          "q": "Archived: 2026-05-09 02:01:31 UTC",
-          "what": "Report archived"
-        },
-        {
-          "v": "March 2026",
-          "q": "Operated by UNC6691 (GTIG, March 2026)",
-          "what": "GTIG report documenting UNC6691 operation"
-        },
-        {
           "v": "2025-06-01",
           "q": "2025-06-01 Domain registered via Gname.com (Singapore). Registrant: Hong Kong, China",
           "what": "Delivery infrastructure domain registered"
         },
         {
+          "v": "2025-07-08",
+          "q": "2025-07-08 DNS shows direct IP",
+          "what": "DNS showed direct IP hosting, not yet CloudFront-fronted"
+        },
+        {
           "v": "2025-12",
           "q": "~2025-12 UNC6691 acquires Coruna framework (per GTIG)",
-          "what": "UNC6691 acquires Coruna framework, per GTIG"
+          "what": "UNC6691 acquired the Coruna framework, per GTIG"
+        },
+        {
+          "v": "2026-03-06",
+          "q": "Published: 2026-03-06 · Archived: 2026-05-09 02:01:31 UTC",
+          "what": "Report published"
         },
         {
           "v": "2026-03-06",
           "q": "2026-03-06 WHOIS updated - registrant country changed to US (operational cover)",
-          "what": "Registrant country changed to US"
+          "what": "Registrant country changed to US in WHOIS"
+        },
+        {
+          "v": "2026-03-09",
+          "q": "2026-03-09 CloudFront-fronted",
+          "what": "Delivery infrastructure CloudFront-fronted, with all payloads still live"
         }
       ],
       "tools": [
         {
-          "v": "Coruna",
-          "q": "Coruna is a multi-stage, multi-platform exploit chain targeting Apple's Safari/WebKit engine"
+          "v": "Coruna framework",
+          "q": "~2025-12 UNC6691 acquires Coruna framework (per GTIG)"
         }
       ],
       "techniques": [
@@ -175,60 +174,36 @@
           "q": "Delivery is via watering-hole compromise: a legitimate website visited by the target is injected with a"
         },
         {
-          "v": "hidden iFrame delivery",
-          "q": "while the Coruna exploit chain loads via hidden iFrame"
+          "v": "gambling site",
+          "q": "a fraudulent gambling site or fake cryptocurrency exchange (e.g., impersonating"
         },
         {
-          "v": "bypassing Apple's Pointer Authentication Codes (PAC)",
-          "q": "bypassing Apple's Pointer Authentication Codes (PAC)"
+          "v": "hidden iFrame",
+          "q": "the Coruna exploit chain loads via hidden iFrame"
         },
         {
-          "v": "scanning for ROP/JOP gadgets",
-          "q": "scanning system framework memory for ROP/JOP gadgets"
+          "v": "PAC Bypass",
+          "q": "5. Trigger Mechanisms & PAC Bypass"
         },
         {
-          "v": "parsing Mach-O binaries from JavaScript",
-          "q": "parsing Mach-O binaries from JavaScript"
+          "v": "JIT Cage Escape",
+          "q": "8. JIT Cage Escape & Native Code Execution"
         },
         {
-          "v": "type confusion",
-          "q": "YGPUu7 exploits JavaScriptCore's NaN-boxing representation via a crafted type confusion"
+          "v": "NaN-Boxing Type Confusion",
+          "q": "4.1 NaN-Boxing Type Confusion (YGPUu7)"
         },
         {
-          "v": "JIT compiler optimization bug",
-          "q": "KRfmo6 exploits a JIT compiler optimization bug"
+          "v": "JIT compiler bug",
+          "q": "exploits a JIT compiler bug in JSC's DFG/FTL optimization pipeline"
         },
         {
-          "v": "stack overflow",
-          "q": "uses a recursive try/catch stack overflow to achieve confusion"
-        },
-        {
-          "v": "remounting root filesystem read-write",
-          "q": "remounting the root filesystem read-write"
-        },
-        {
-          "v": "over HTTP",
-          "q": "Post-exploitation communication is handled entirely over HTTP"
-        },
-        {
-          "v": "hidden DOM element",
-          "q": "it is injected into the page using a hidden DOM element"
-        },
-        {
-          "v": "random query parameter",
-          "q": "Every GET request appends a random query parameter."
+          "v": "Intl.Segmenter Trigger",
+          "q": "5.1 Intl.Segmenter Trigger"
         },
         {
           "v": "single-byte XOR",
           "q": "The encoding is a single-byte XOR applied element-wise to an array of integers."
-        },
-        {
-          "v": "anti-forensics measure",
-          "q": "as a deliberate anti-forensics measure"
-        },
-        {
-          "v": "Lockdown Mode",
-          "q": "The exploit avoids execution if the device is in Lockdown Mode."
         }
       ],
       "cves": [
@@ -243,36 +218,36 @@
           "q": "All 16 JavaScript modules are hosted on a single hardcoded domain"
         },
         {
-          "v": "13 payload URLs",
-          "q": "maps all 13 payload URLs to their functional roles"
-        },
-        {
-          "v": "~700KB of obfuscated source",
+          "v": "28 files",
           "q": "(15 unique JavaScript modules, 28 files, ~700KB of obfuscated source)"
         },
         {
-          "v": "~1.2MB framework",
-          "q": "The entire ~1.2MB framework (across 28 JavaScript files)"
-        },
-        {
-          "v": "1,250 XOR-encoded string instances",
-          "q": "Across all 28 files, there are 1,250 XOR-encoded string instances."
-        },
-        {
-          "v": "1,771 XOR-encoded numeric constant instances",
-          "q": "framework, 1,771 XOR-encoded numeric constant instances use the pattern"
-        },
-        {
-          "v": "64 unique keys",
-          "q": "drawn from a pool of 64 unique keys in the range 45-122"
+          "v": "~700KB",
+          "q": "(15 unique JavaScript modules, 28 files, ~700KB of obfuscated source)"
         },
         {
           "v": "649 functions",
           "q": "a 2MB ARM64 DYLIB with 649 functions"
         },
         {
-          "v": "265 kernel exploit imports",
+          "v": "1,250",
+          "q": "Across all 28 files, there are 1,250"
+        },
+        {
+          "v": "1,771",
+          "q": "1,771 XOR-encoded numeric constant instances use the pattern"
+        },
+        {
+          "v": "265",
           "q": "symbol/import categorization (265 kernel exploit imports)"
+        },
+        {
+          "v": "1,000,000",
+          "q": "The second validation runs 1,000,000 randomized read/write roundtrips"
+        },
+        {
+          "v": "13",
+          "q": "all 13 payloads still live"
         }
       ]
     },
@@ -281,21 +256,19 @@
       "name": "Coruna"
     },
     "hedges": [
-      "Initial assessment that one delivery domain was in use rested only on the recovered IOC file; GTIG later documented several more.",
-      "The double-extension URL pattern is described as a possible CDN artifact.",
-      "Targeting of legitimate site JavaScript files is described as a suggestion, potentially replacing or augmenting them.",
-      "Minification is described as likely produced by a JavaScript bundler or minifier in the build pipeline.",
-      "Registrant country change to US is described as operational cover.",
-      "Attribution to UNC6691 is taken from the GTIG March 2026 report, as cited by the author.",
-      "One module hash is described as suggesting a polymorphic module."
+      "The double-extension URL pattern is described by the report as a possible CDN artifact, not confirmed.",
+      "Watering-hole targeting of JavaScript files is described as potentially replacing or augmenting legitimate scripts.",
+      "The minifier and build-tool origin of the code is described as likely, not established.",
+      "The initial single-delivery-domain assessment was based only on the recovered IOC file and was later revised after GTIG's report.",
+      "Several internal structure and offset values are described as 'suggesting' or 'appearing' to serve a purpose, rather than being confirmed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:04Z",
-      "ok": false,
-      "note": "summary: The supplied text ends partway through the YGPUu7 NaN-boxing trigger function in section 4.1, not in an XSLT trigger section. XSLTProcessor appears onl",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:04Z",
+        "ok": false,
+        "note": "summary: The supplied text ends partway through the YGPUu7 NaN-boxing trigger function in section 4.1, not in an XSLT trigger section. XSLTProcessor appears onl",
+        "by": "auditor"
+      }
+    ]
   }
 }

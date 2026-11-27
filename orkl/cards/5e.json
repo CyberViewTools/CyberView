@@ -132,11 +132,11 @@
   },
   "5e48fa8ab017554c8a3407eaf6ae01823a4558ff": {
     "sha1": "5e48fa8ab017554c8a3407eaf6ae01823a4558ff",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:54:09Z",
+    "read_at": "2026-11-27T01:19:27Z",
     "model": "haiku",
-    "summary": "TrendAI Research analysed a supply chain compromise in which trojanized npm packages sold as date-math utilities contain a loader that starts a Linux binary when the module loads. The binary is the RedShell Linux implant of the RedC2 4.0 framework, which the report says is marketed on Hack Forums. Described capabilities include shell access, SSH key and browser credential collection, database discovery, plaintext HTTP exfiltration, fileless execution, persistence and SOCKS5 pivoting. RedC2 includes Red Agent, an LLM assistant that turns natural-language prompts into command sequences. The…",
+    "summary": "TrendAI Research describes a cluster of trojanized npm packages, presented as date utilities, that carry a Linux ELF loader. The loader starts the RedShell Linux implant of the RedC2 4.0 framework on module import, without install hooks. RedC2 is marketed on Hack Forums and includes Red Agent, an LLM assistant that turns natural-language commands into framework tasks.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -145,140 +145,123 @@
       "dates": [
         {
           "v": "Aug.23, 2025",
-          "q": "v2.0 (Aug.23, 2025): Introduced RedC2 EXT, the external CLI client",
-          "what": "RedC2 v2.0 released, adding the EXT client"
-        },
-        {
-          "v": "Jan. 7, 2026",
-          "q": "dates this release to Jan. 7, 2026.",
-          "what": "RedC2 update page's date for the v2.0 release"
+          "q": "v2.0 (Aug.23, 2025): Introduced RedC2 EXT, the external CLI client, along with Red Agent improvements,",
+          "what": "RedC2 v2.0 released"
         },
         {
           "v": "Jan. 24, 2026",
-          "q": "v3.0 (Jan. 24, 2026): Added multi-operator terminals and improved server startup",
+          "q": "v3.0 (Jan. 24, 2026): Added multi-operator terminals and improved server startup, credential extraction, remote",
           "what": "RedC2 v3.0 released"
         },
         {
           "v": "June 1, 2026",
-          "q": "v4.0 (June 1, 2026): Introduced the native RedShell Linux implant",
+          "q": "v4.0 (June 1, 2026): Introduced the native RedShell Linux implant, added Linux server support, moved Windows and",
           "what": "RedC2 v4.0 introduced the native RedShell Linux implant"
         },
         {
           "v": "July 19, 2026",
-          "q": "v4.1 (July 19, 2026): Added cross-network shell tunnelling",
-          "what": "RedC2 v4.1 released with cross-network shell tunnelling"
+          "q": "v4.1 (July 19, 2026): Added cross-network shell tunnelling, driven from the Network Map.",
+          "what": "RedC2 v4.1 added cross-network shell tunnelling"
         },
         {
           "v": "Aug. 5, 2026",
-          "q": "v4.1.3 (Aug. 5, 2026): Extended Linux coverage with Windows Subsystem for Linux (WSL) support",
-          "what": "RedC2 v4.1.3 released with Linux and WSL coverage"
+          "q": "v4.1.3 (Aug. 5, 2026): Extended Linux coverage with Windows Subsystem for Linux (WSL) support for servers and",
+          "what": "RedC2 v4.1.3 extended Linux coverage"
         }
       ],
       "tools": [
         {
-          "v": "RedC2",
-          "q": "RedC2 extends its control layer with an AI-driven component called Red Agent"
+          "v": "RedShell",
+          "q": "RedShell ships as cross-platform implants for Windows and macOS that share a common command grammar."
         },
         {
-          "v": "RedShell",
-          "q": "the RedShell Linux implant for the RedC2 4.0"
+          "v": "RedC2",
+          "q": "RedC2 ships with an AI assistant called Red Agent, an LLM-backed command execution layer that turns natural-language"
         },
         {
           "v": "Red Agent",
-          "q": "RedC2 ships with an AI assistant called Red Agent, an LLM-backed command execution layer"
-        },
-        {
-          "v": "Red Vert and Red Runner",
-          "q": "It also bundles utilities for converting standard PE files into evasive shellcode (Red Vert and Red Runner)"
+          "q": "RedC2 ships with an AI assistant called Red Agent, an LLM-backed command execution layer that turns natural-language"
         },
         {
           "v": "RedC2 EXT",
-          "q": "Introduced RedC2 EXT, the external CLI client"
+          "q": "v2.0 (Aug.23, 2025): Introduced RedC2 EXT, the external CLI client, along with Red Agent improvements,"
+        },
+        {
+          "v": "Red Vert",
+          "q": "It also bundles utilities for converting standard PE files into evasive shellcode (Red Vert and Red Runner), an external CLI"
+        },
+        {
+          "v": "Red Runner",
+          "q": "It also bundles utilities for converting standard PE files into evasive shellcode (Red Vert and Red Runner), an external CLI"
         }
       ],
       "techniques": [
         {
           "v": "trojanized npm packages",
-          "q": "A cluster of trojanized npm packages, published as dependency-free utilities for calendar and streak calculations,"
+          "q": "A cluster of trojanized npm packages, published as dependency-free utilities for calendar and streak calculations, delivers"
         },
         {
-          "v": "trojan loader",
-          "q": "which acts as a trojan loader."
+          "v": "no install hook",
+          "q": "Execution requires no install hook and no exported function call, only an import anywhere in the dependency graph,"
         },
         {
-          "v": "module load",
-          "q": "as soon as the module loads"
-        },
-        {
-          "v": "in-memory ELF execution",
+          "v": "In-memory ELF execution",
           "q": "In-memory ELF execution through memfd."
         },
         {
-          "v": "cross-network shell tunnelling",
-          "q": "Added cross-network shell tunnelling, driven from the Network Map."
+          "v": "Shellcode execution",
+          "q": "Shellcode execution using executable memory mappings."
         },
         {
-          "v": "persistence",
+          "v": "Persistence",
           "q": "Persistence through cron, .bashrc, systemd, or XDG autostart."
+        },
+        {
+          "v": "SSH keys and browser credentials",
+          "q": "Collection of SSH keys and browser credentials."
+        },
+        {
+          "v": "cross-network shell tunnelling",
+          "q": "v4.1 (July 19, 2026): Added cross-network shell tunnelling, driven from the Network Map."
         },
         {
           "v": "SOCKS5 proxying",
           "q": "SOCKS5 proxying and TCP port forwarding."
         },
         {
-          "v": "browser credentials",
-          "q": "Collection of SSH keys and browser credentials."
-        },
-        {
-          "v": "databases",
-          "q": "Detection of databases present on the host."
-        },
-        {
-          "v": "plaintext HTTP",
-          "q": "Exfiltration uses plaintext HTTP over TCP with no TLS."
-        },
-        {
-          "v": "double-fork",
-          "q": "It then daemonizes itself using a double-fork technique"
-        },
-        {
-          "v": "AI-assisted task execution",
-          "q": "AI-assisted task execution through the framework’s Red Agent component."
-        },
-        {
-          "v": "certificate verification disabled",
-          "q": "certificate verification disabled."
+          "v": "UAC bypass",
+          "q": "The Windows build is considerably heavier; it adds User Account Control (UAC) bypass, antivirus and endpoint detection"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "120-second timeout",
-          "q": "enforces a 120-second timeout."
+          "v": "TLS 1.2",
+          "q": "TLS 1.2 is enforced as the minimum protocol version to prevent fallback to weaker legacy protocols, and partial-write and"
         },
         {
-          "v": "three-second reconnect timer",
-          "q": "before the three-second reconnect timer fires."
+          "v": "16 characters",
+          "q": "value is reused if at least 16 characters remain."
         }
       ]
     },
     "subject": {
       "type": "malware",
-      "name": "RedShell"
+      "name": "RedShell Linux implant (RedC2 4.0)"
     },
     "hedges": [
-      "Several capability descriptions are attributed to the framework's documentation rather than observed directly, including Red Agent's behaviour and the Linux implant's build requirements.",
-      "The report says a step that changes file permissions may be absent in other variants.",
-      "The report says normal certificate verification applies to its curl uploads unless curl's behaviour has been changed externally.",
-      "The report notes a conflict: the v2.0 release is dated Aug. 23, 2025, but RedC2's update page dates it Jan. 7, 2026."
+      "Red Agent capabilities are described according to the framework's documentation.",
+      "The chmod step may be absent in other variants (the report says 'a step that may be absent in other variants').",
+      "The report notes the upload's certificate checks apply 'unless curl's behavior has been changed externally.'",
+      "The RedC2 update page separately dates v2.0 to Jan. 7, 2026, differing from the report's Aug. 23, 2025."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:24Z",
-      "ok": false,
-      "note": "summary: Says the npm packages were 'sold as' date-math utilities. The text says they were 'published as small, dependency-free utilities for calendar and strea",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:24Z",
+        "ok": false,
+        "note": "summary: Says the npm packages were 'sold as' date-math utilities. The text says they were 'published as small, dependency-free utilities for calendar and strea",
+        "by": "auditor"
+      }
+    ]
   }
 }

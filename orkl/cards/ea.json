@@ -66,51 +66,56 @@
   },
   "eaec34789efaff36c406a8ae812679016743e56a": {
     "sha1": "eaec34789efaff36c406a8ae812679016743e56a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:58:22Z",
+    "read_at": "2026-11-27T01:19:23Z",
     "model": "haiku",
-    "summary": "Cisco Talos reports an ongoing campaign since at least December 2025 by a actor it tracks as UAT-10027, delivering a previously undisclosed backdoor named Dohdoor. Targets were in education and health care, mainly in the United States. Initial access is likely phishing. A batch script and DLL sideloading lead to Dohdoor, which resolves C2 over DNS-over-HTTPS via Cloudflare, uses process hollowing, and unhooks calls monitored by EDR. Talos saw evidence pointing to a likely Cobalt Strike payload, though no payload was recovered. Talos assesses with low confidence a North Korea nexus, citing…",
+    "summary": "Cisco Talos reports a campaign active since at least December 2025 by a tracked actor, UAT-10027, delivering a previously undisclosed loader named Dohdoor. Victims are in the education and health care sectors, mainly in the United States. Initial access is likely phishing. The loader resolves C2 over DNS-over-HTTPS through Cloudflare, is sideloaded via legitimate Windows executables, performs process hollowing, and unhooks system calls to evade EDR. Talos assesses with low confidence that the actor is North Korea-nexus, based on TTP overlaps with Lazarus. Cobalt Strike use is only potential,…",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "UAT-10027",
-          "q": "by a threat actor we track as “UAT-10027,” delivering a previously undisclosed backdoor dubbed “Dohdoor.”",
+          "q": "threat actor we track as “UAT-10027,” delivering a previously undisclosed backdoor dubbed “Dohdoor.”",
           "by": "Cisco Talos"
         },
         {
+          "v": "North Korea-nexus",
+          "q": "Talos assesses with low confidence that UAT-10027 is North Korea-nexus, based on the similarities in",
+          "by": "Cisco Talos (low confidence)"
+        },
+        {
           "v": "Lazarus",
-          "q": "were observed in the tradecraft of the North Korean APT actor Lazarus.",
-          "by": "Cisco Talos"
+          "q": "with that of the other known North Korean APT actor Lazarus.",
+          "by": "Cisco Talos (TTP similarity, not a confirmed link)"
         }
       ],
       "sectors": [
         {
           "v": "education",
-          "q": "targeted victims in the education and health care sectors in the United States through a multi-"
+          "q": "targeted victims in the education and health care sectors in the United States"
         },
         {
           "v": "health care",
-          "q": "targeted victims in the education and health care sectors in the United States through a multi-"
+          "q": "targeted victims in the education and health care sectors in the United States"
         }
       ],
       "countries": [
         {
           "v": "United States",
-          "q": "targeted victims in the education and health care sectors in the United States through a multi-"
+          "q": "targeted victims in the education and health care sectors in the United States"
         }
       ],
       "dates": [
         {
-          "v": "December 2025",
-          "q": "Cisco Talos discovered an ongoing malicious campaign since at least as early as December 2025 by a",
-          "what": "campaign observed since at least this date"
-        },
-        {
           "v": "2026-02-26",
           "q": "Published: 2026-02-26 · Archived: 2026-05-12 02:01:07 UTC",
-          "what": "report published"
+          "what": "Report published by Cisco Talos"
+        },
+        {
+          "v": "December 2025",
+          "q": "since at least as early as December 2025 by a",
+          "what": "Earliest observed activity of the campaign"
         },
         {
           "v": "Nov. 25, 2025",
@@ -121,15 +126,15 @@
       "tools": [
         {
           "v": "Dohdoor",
-          "q": "previously undisclosed backdoor dubbed “Dohdoor.”"
+          "q": "delivering a previously undisclosed backdoor dubbed “Dohdoor.”"
         },
         {
-          "v": "Cobalt Strike",
+          "v": "Cobalt Strike Beacon",
           "q": "execute the potential Cobalt Strike Beacon payload, reflectively within legitimate Windows"
         },
         {
           "v": "Lazarloader",
-          "q": "We observed similarities in the technical characteristics of Dohdoor with Lazarloader, a tool belonging to the"
+          "q": "We observed similarities in the technical characteristics of Dohdoor with Lazarloader, a tool belonging to the North Korean APT Lazarus."
         }
       ],
       "techniques": [
@@ -138,32 +143,36 @@
           "q": "Dohdoor utilizes the DNS-over-HTTPS (DoH) technique for command-and-control (C2) communications"
         },
         {
-          "v": "DLL sideloading",
+          "v": "sideloading",
           "q": "The batch script then executes the malicious DLL dubbed as Dohdoor, by sideloading it to a legitimate"
         },
         {
           "v": "process hollowing",
-          "q": "process utilizing process hollowing technique."
+          "q": "It then performs process hollowing,"
         },
         {
-          "v": "phishing",
-          "q": "initial access is likely achieved through social engineering phishing techniques."
+          "v": "living-off-the-land executables",
+          "q": "Talos observed the actor misused various living-off-the-land executables (LOLBins) to sideload"
         },
         {
-          "v": "anti-forensic cleanup",
-          "q": "DLL sideloading technique to execute the malicious DLL while simultaneously conducting anti-forensic cleanup."
+          "v": "social engineering phishing",
+          "q": "initial access is likely achieved through social engineering phishing techniques"
         },
         {
-          "v": "unhooking system calls to bypass EDR",
+          "v": "anti-forensics",
+          "q": "the script performs anti-forensics by deleting the Run"
+        },
+        {
+          "v": "unhooking system calls",
           "q": "implements an EDR bypass technique by unhooking system calls (syscalls) to"
         },
         {
-          "v": "hash-based API resolution",
-          "q": "dynamically resolving Windows API functions using hash-based lookups rather than using static imports,"
+          "v": "hash-based lookups",
+          "q": "resolving Windows API functions using hash-based lookups rather than using static imports"
         },
         {
-          "v": "encrypted C2 communications",
-          "q": "obfuscation and encrypted C2 communications, and bypasses endpoint detection and response (EDR) detections."
+          "v": "custom XOR-SUB decryption",
+          "q": "undergoes custom XOR-SUB decryption using a position-dependent cipher"
         }
       ],
       "cves": [],
@@ -173,7 +182,7 @@
           "q": "Dohdoor is a 64-bit DLL that was compiled on Nov. 25, 2025, containing the debug"
         },
         {
-          "v": "4:1",
+          "v": "4:1 expansion ratio",
           "q": "The encrypted data maintains a 4:1 expansion ratio where the"
         }
       ]
@@ -183,20 +192,20 @@
       "name": "Dohdoor"
     },
     "hedges": [
-      "Talos assesses with low confidence that UAT-10027 is North Korea-nexus",
-      "While the initial infection vector remains unknown",
-      "The threat actor appeared to have executed the download command via a PowerShell script that was potentially delivered",
-      "we were unable to find a payload that was downloaded and implanted by the Dohdoor",
-      "indicating that the threat actor was potentially using the Cobalt Strike beacon as the payload",
-      "the campaign’s focus on the education and health care sectors deviates from Lazarus’ typical profile"
+      "Initial infection vector remains unknown; phishing is described only as a likely initial access route.",
+      "North Korea-nexus attribution is made with low confidence, based on TTP and tooling similarities with Lazarus.",
+      "The Lazarus overlap rests on similar tactics, techniques and procedures, not on a confirmed link.",
+      "The researchers could not find a payload downloaded and implanted by Dohdoor.",
+      "Cobalt Strike use is only potential, inferred from a C2 host's JA3S hash and certificate serial resembling the default server.",
+      "Reflective execution of the payload is described only as potential."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:10:09Z",
-      "ok": false,
-      "note": "summary: It says Talos saw evidence pointing to a \"likely\" Cobalt Strike payload. The text is weaker: the actor was \"potentially\" using the Cobalt Strike beacon",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:10:09Z",
+        "ok": false,
+        "note": "summary: It says Talos saw evidence pointing to a \"likely\" Cobalt Strike payload. The text is weaker: the actor was \"potentially\" using the Cobalt Strike beacon",
+        "by": "auditor"
+      }
+    ]
   }
 }

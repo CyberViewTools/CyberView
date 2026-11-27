@@ -71,11 +71,11 @@
   },
   "b0f478f447f65c4f77c981a3f5f3ce85274aa352": {
     "sha1": "b0f478f447f65c4f77c981a3f5f3ce85274aa352",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:46:46Z",
+    "read_at": "2026-11-27T01:17:51Z",
     "model": "haiku",
-    "summary": "Netresec blog post by Erik Hjelmvik (published 28 April 2025) on decoding njRAT remote access trojan traffic with the NetworkMiner tool, using a Triage sandbox run. It lists the artefacts NetworkMiner can extract from njRAT command-and-control traffic: victim screenshots, transferred files, C2 commands, bot replies, stolen credentials and keylog data. The text says njRAT has been in use since 2013 and that antivirus vendors call it Bladabindi. The post is a tutorial rather than a campaign report and names no threat actor.",
+    "summary": "A Netresec blog post by Erik Hjelmvik shows how the NetworkMiner tool decodes command-and-control traffic from a Triage sandbox run of njRAT, a remote access trojan. The post says njRAT has been around since 2013 and remains a popular backdoor. NetworkMiner can extract victim screenshots, transferred files, commands, replies, stolen credentials and keylog data. Decoding njRAT on non-standard ports requires the Professional edition.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -85,11 +85,11 @@
         {
           "v": "2025-04-28",
           "q": "Published: 2025-04-28 · Archived: 2026-11-25 02:12:11 UTC",
-          "what": "Blog post and video published"
+          "what": "Report published"
         },
         {
           "v": "2013",
-          "q": "2013, but despite being over 10 years old it still remains",
+          "q": "2013, but despite being over 10 years old it still remains one of the most popular backdoors used by malicious actors.",
           "what": "njRAT has been around since this year"
         }
       ],
@@ -100,14 +100,14 @@
         },
         {
           "v": "Bladabindi",
-          "q": "Anti virus vendors usually refer to njRAT as Bladabindi."
+          "q": "virus vendors usually refer to njRAT as Bladabindi."
         },
         {
           "v": "NetworkMiner",
           "q": "NetworkMiner has a built-in parser for the njRAT Command-and-Control (C2) protocol."
         },
         {
-          "v": "Triage sandbox",
+          "v": "Triage",
           "q": "I investigate network traffic from a Triage sandbox execution of njRAT in this video."
         },
         {
@@ -121,8 +121,8 @@
           "q": "CAP = Screen Capture"
         },
         {
-          "v": "Get Passwords",
-          "q": "ret = Get Passwords"
+          "v": "Stolen credentials/passwords",
+          "q": "Stolen credentials/passwords"
         },
         {
           "v": "Key Logger",
@@ -133,19 +133,15 @@
           "q": "PLG = Plugin Delivery"
         },
         {
-          "v": "Process List",
-          "q": "Ex proc = Process List"
-        },
-        {
-          "v": "Stolen credentials/passwords",
-          "q": "Stolen credentials/passwords"
+          "v": "File Manager",
+          "q": "Ex fm = File Manager"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "over 10 years old",
-          "q": "2013, but despite being over 10 years old it still remains"
+          "q": "2013, but despite being over 10 years old it still remains one of the most popular backdoors used by malicious actors."
         }
       ]
     },
@@ -154,16 +150,16 @@
       "name": "njRAT"
     },
     "hedges": [
-      "Analysis covers one Triage sandbox execution of njRAT shown in the video.",
-      "Protocol decoding covers well-known njRAT ports and a few extra ports; other ports need NetworkMiner Professional."
+      "The njRAT parser only activates on well-known njRAT ports and a few extra ports, so other ports are not decoded by default.",
+      "Decoding njRAT traffic on other ports requires NetworkMiner Professional, which adds port-independent protocol identification."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:10:03Z",
-      "ok": false,
-      "note": "summary: The text says antivirus vendors 'usually' refer to njRAT as Bladabindi. The summary drops 'usually' and states it flatly, which is stronger than the te",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:10:03Z",
+        "ok": false,
+        "note": "summary: The text says antivirus vendors 'usually' refer to njRAT as Bladabindi. The summary drops 'usually' and states it flatly, which is stronger than the te",
+        "by": "auditor"
+      }
+    ]
   }
 }

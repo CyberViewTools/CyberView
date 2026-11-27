@@ -1,62 +1,77 @@
 {
   "96fb5cfccc089f9db6f13f7c322ed9e18dd66fc7": {
     "sha1": "96fb5cfccc089f9db6f13f7c322ed9e18dd66fc7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:50:47Z",
+    "read_at": "2026-11-27T01:18:18Z",
     "model": "haiku",
-    "summary": "Mandiant's M-Trends 2026 overview (published 2026-03-23) draws on over 500,000 hours of 2025 incident investigations. It reports exploits as the top initial access vector (32%), rising voice phishing (11%), and a 14-day global median dwell time. Access handed from initial access partners to ransomware groups now takes 22 seconds. It highlights edge-device espionage (UNC6201, UNC5807), the BRICKSTORM backdoor, ransomware that destroys recovery capability, and malware that queries AI tools.",
+    "summary": "Mandiant's annual M-Trends 2026 report, drawn from over 500,000 hours of 2025 incident investigations. It reports exploits as the top initial access vector (32%), voice phishing rising to 11%, and the hand-off from initial access to secondary groups falling to 22 seconds. Median dwell time rose to 14 days. Ransomware groups target backups and hypervisors, and espionage actors persist on edge devices (BRICKSTORM dwell nearly 400 days). The report notes AI-linked malware such as PROMPTFLUX, PROMPTSTEAL and QUIETVAULT, but says 2025 breaches were not directly the result of AI.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "UNC3944",
           "q": "UNC3944 target IT help desks to bypass multifactor authentication (MFA)",
-          "by": "Mandiant, in the M-Trends 2026 report"
+          "by": "Mandiant (report author)"
         },
         {
           "v": "UNC6201",
           "q": "Threat clusters like UNC6201 and UNC5807 deliberately target edge and core network devices",
-          "by": "Mandiant, in the M-Trends 2026 report"
+          "by": "Mandiant (report author)"
         },
         {
           "v": "UNC5807",
           "q": "Threat clusters like UNC6201 and UNC5807 deliberately target edge and core network devices",
-          "by": "Mandiant, in the M-Trends 2026 report"
+          "by": "Mandiant (report author)"
+        },
+        {
+          "v": "Akira",
+          "q": "prolific groups using REDBIKE (Akira)",
+          "by": "Mandiant (report author)"
+        },
+        {
+          "v": "Qilin",
+          "q": "AGENDA (Qilin), actively targeted backup infrastructure, identity services, and virtualization management",
+          "by": "Mandiant (report author)"
         }
       ],
       "sectors": [
         {
           "v": "high tech",
-          "q": "high tech sector (17%) outpacing the financial sector (14.6%)"
+          "q": "the high tech sector (17%) outpacing the financial sector (14.6%) as the most frequently targeted industry"
         },
         {
           "v": "financial",
-          "q": "high tech sector (17%) outpacing the financial sector (14.6%)"
+          "q": "the high tech sector (17%) outpacing the financial sector (14.6%) as the most frequently targeted industry"
         }
       ],
-      "countries": [],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "the high quantity of cyber espionage and North Korean IT worker incidents"
+        }
+      ],
       "dates": [
         {
           "v": "2026-03-23",
-          "q": "Published: 2026-03-23",
+          "q": "Published: 2026-03-23 · Archived: 2026-10-14 02:01:44 UTC",
           "what": "M-Trends 2026 report published"
-        },
-        {
-          "v": "2025",
-          "q": "In 2025, Mandiant observed a clear divergence in adversary pacing",
-          "what": "Year of the frontline investigations and observations reported"
         },
         {
           "v": "2022",
           "q": "In 2022, the median time between an initial access event and the hand-off to a secondary threat group was more",
-          "what": "Median hand-off time from initial access to a secondary group was over 8 hours"
+          "what": "median hand-off time to a secondary group was more than 8 hours"
+        },
+        {
+          "v": "2025",
+          "q": "In 2025, that window collapsed to just 22 seconds.",
+          "what": "hand-off window between initial access and secondary group collapsed to 22 seconds"
         }
       ],
       "tools": [
         {
           "v": "BRICKSTORM",
-          "q": "deploying custom, in-memory malware like the BRICKSTORM backdoor directly onto these"
+          "q": "Attackers are deploying custom, in-memory malware like the BRICKSTORM backdoor directly onto these"
         },
         {
           "v": "PROMPTFLUX",
@@ -68,15 +83,7 @@
         },
         {
           "v": "QUIETVAULT",
-          "q": "the QUIETVAULT credential stealer was observed checking targeted machines"
-        },
-        {
-          "v": "REDBIKE (Akira)",
-          "q": "prolific groups using REDBIKE (Akira) and AGENDA (Qilin)"
-        },
-        {
-          "v": "AGENDA (Qilin)",
-          "q": "prolific groups using REDBIKE (Akira) and AGENDA (Qilin)"
+          "q": "the QUIETVAULT credential stealer was observed checking targeted machines for local AI command-line tools,"
         }
       ],
       "techniques": [
@@ -90,7 +97,7 @@
         },
         {
           "v": "ClickFix social engineering",
-          "q": "or the ClickFix social engineering technique, to gain a foothold."
+          "q": "or the ClickFix social engineering technique, to gain a foothold"
         },
         {
           "v": "malicious advertisements",
@@ -98,27 +105,31 @@
         },
         {
           "v": "prior compromise",
-          "q": "prior compromise ranked as the third-most common initial infection vector (10%) for intrusions globally"
+          "q": "prior compromise ranked as the third-most common initial infection vector (10%)"
         },
         {
           "v": "harvesting long-lived OAuth tokens and session cookies",
-          "q": "harvesting long-lived OAuth tokens and session cookies"
+          "q": "harvesting long-lived OAuth tokens and session cookies. By compromising third-party SaaS vendors, attackers"
         },
         {
-          "v": "destroying the ability to recover",
-          "q": "they are actively destroying the ability to recover"
+          "v": "deleting backup objects from cloud storage",
+          "q": "are actively deleting backup objects from cloud storage"
         },
         {
-          "v": "misconfigured Active Directory Certificate Services templates",
-          "q": "Attackers are exploiting misconfigured Active Directory Certificate Services templates to create admin accounts"
+          "v": "exploiting the \"Tier-0\" nature of hypervisors",
+          "q": "attackers are exploiting the \"Tier-0\" nature of hypervisors to bypass guest-level defenses"
         },
         {
           "v": "native packet-capturing functionality",
-          "q": "By leveraging native packet-capturing functionality on these devices"
+          "q": "By leveraging native packet-capturing functionality on these devices, adversaries can directly intercept sensitive data"
         },
         {
-          "v": "in-memory malware",
-          "q": "deploying custom, in-memory malware like the BRICKSTORM backdoor directly onto these"
+          "v": "zero-day usage",
+          "q": "from increasing zero-day usage over 2024 (as reported on"
+        },
+        {
+          "v": "distillation attacks",
+          "q": "\"distillation attacks\" threaten intellectual property by extracting the proprietary logic"
         }
       ],
       "cves": [],
@@ -137,7 +148,7 @@
         },
         {
           "v": "32%",
-          "q": "consecutive year, accounting for 32% of intrusions."
+          "q": "accounting for 32% of intrusions"
         },
         {
           "v": "11%",
@@ -149,50 +160,67 @@
         },
         {
           "v": "17%",
-          "q": "high tech sector (17%) outpacing the financial sector (14.6%)"
+          "q": "the high tech sector (17%) outpacing the financial sector (14.6%) as the most frequently targeted industry"
         },
         {
           "v": "14.6%",
-          "q": "high tech sector (17%) outpacing the financial sector (14.6%)"
+          "q": "the high tech sector (17%) outpacing the financial sector (14.6%) as the most frequently targeted industry"
         },
         {
-          "v": "6%",
-          "q": "email phishing dropped to just 6% of intrusions in 2025."
-        },
-        {
-          "v": "10%",
-          "q": "prior compromise ranked as the third-most common initial infection vector (10%) for intrusions globally"
-        },
-        {
-          "v": "30%",
-          "q": "the top initial infection vector in ransomware operations (30%)"
+          "v": "more than 16 industry verticals",
+          "q": "The full scope of incidents affected more than 16 industry verticals, with the high"
         },
         {
           "v": "22 seconds",
           "q": "In 2025, that window collapsed to just 22 seconds."
         },
         {
-          "v": "400 days",
-          "q": "nearly 400 days, standard 90-day log retention policies"
+          "v": "8 hours",
+          "q": "than 8 hours. In 2025, that window collapsed to just 22 seconds."
+        },
+        {
+          "v": "30%",
+          "q": "ransomware operations (30%), doubling what it was in 2024 (15%)."
+        },
+        {
+          "v": "10%",
+          "q": "prior compromise ranked as the third-most common initial infection vector (10%)"
+        },
+        {
+          "v": "6%",
+          "q": "email phishing dropped to just 6% of intrusions in 2025."
         },
         {
           "v": "-7 days",
-          "q": "mean time to exploit vulnerabilities dropped to an estimated -7 days"
+          "q": "mean time to exploit vulnerabilities dropped to an estimated -7 days, meaning"
+        },
+        {
+          "v": "nearly 400 days",
+          "q": "nearly 400 days, standard 90-day log retention policies leave organizations"
+        },
+        {
+          "v": "90-day log retention",
+          "q": "nearly 400 days, standard 90-day log retention policies leave organizations"
+        },
+        {
+          "v": "17 years",
+          "q": "For 17 years, our annual M-Trends report has been a core component of advancing that mission, sharing"
         }
       ]
     },
     "subject": null,
     "hedges": [
       "This shift likely reflects growing sophistication, particularly in evading defenses.",
-      "Mean time to exploit vulnerabilities dropped to an estimated -7 days, meaning exploitation is routinely occurring before a patch is even released."
+      "Mean time to exploit vulnerabilities is described as an estimated -7 days.",
+      "The report does not consider 2025 to be the year where breaches were the direct result of AI."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:46Z",
-      "ok": false,
-      "note": "summary: It says the hand-off 'now takes 22 seconds' but drops the text's qualifier: 22 seconds is the median time between initial access and hand-off to a seco",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:46Z",
+        "ok": false,
+        "note": "summary: It says the hand-off 'now takes 22 seconds' but drops the text's qualifier: 22 seconds is the median time between initial access and hand-off to a seco",
+        "by": "auditor"
+      }
+    ]
   }
 }

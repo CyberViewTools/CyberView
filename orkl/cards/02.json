@@ -1,11 +1,11 @@
 {
   "02a4df5f9777d66c5d1060a942e10e18684cf3f9": {
     "sha1": "02a4df5f9777d66c5d1060a942e10e18684cf3f9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:48:11Z",
+    "read_at": "2026-11-27T01:18:01Z",
     "model": "haiku",
-    "summary": "Zscaler ThreatLabz analysed exploitation of CVE-2026-88771, a critical unauthenticated remote code execution flaw in Citrix NetScaler ADC and Gateway appliances, disclosed on September 27, 2026. Attackers staged a payload in access logs and forged an authentication-log entry, which a privileged maintenance script later executed. Observed follow-on activity included web shell deployment and a FreeBSD implant. The report notes an infrastructure overlap with StyleSmuggler (CVE-2026-75650), but says this does not establish threat actor attribution. It also lists indicators of compromise and…",
+    "summary": "Zscaler ThreatLabz analyses exploitation of CVE-2026-88771, a critical unauthenticated remote code execution flaw in Citrix NetScaler ADC and Gateway that Citrix disclosed on 27 September 2026. Attackers poisoned appliance logs with a forged failure record that a privileged maintenance script later executed, then tried to deploy web shells and a FreeBSD implant. The report notes overlap with StyleSmuggler (CVE-2026-75650) infrastructure but says this does not establish threat actor attribution.",
     "kind": "vulnerability",
     "facts": {
       "actors": [],
@@ -20,43 +20,43 @@
         {
           "v": "2026-10-16",
           "q": "Published: 2026-10-16 · Archived: 2026-11-16 02:00:24 UTC",
-          "what": "Zscaler blog post published on the vulnerability"
+          "what": "Zscaler published the blog post"
         }
       ],
       "tools": [
         {
-          "v": "web shells",
-          "q": "execution before authentication, appliance fingerprinting, and attempts to deploy multiple web shells."
-        },
-        {
           "v": "FreeBSD x64 implant",
-          "q": "ThreatLabz also observed delivery of a FreeBSD x64 implant from infrastructure that overlapped with activity we previously"
+          "q": "ThreatLabz also observed delivery of a FreeBSD x64 implant from infrastructure that overlapped"
         },
         {
-          "v": "StyleSmuggler",
-          "q": "associated with exploitation of StyleSmuggler (CVE-2026-75650), a vulnerability affecting Adobe Commerce and"
+          "v": "Rust-based 64-bit FreeBSD binary",
+          "q": "The command was designed to download a Rust-based 64-bit FreeBSD binary to"
         }
       ],
       "techniques": [
-        {
-          "v": "log-poisoning",
-          "q": "ThreatLabz discovered a staged log-poisoning chain."
-        },
         {
           "v": "unauthenticated remote command execution",
           "q": "CVE-2026-88771 enables unauthenticated remote command execution on Citrix NetScaler by exploiting the"
         },
         {
-          "v": "Delayed execution by a privileged script",
+          "v": "access-log poisoning",
+          "q": "a staged exploitation chain involving access-log poisoning, remote command execution before authentication"
+        },
+        {
+          "v": "staging the payload in the HTTP access log",
+          "q": "Step 1: Staging the payload in the HTTP access log"
+        },
+        {
+          "v": "delayed execution by a privileged script",
           "q": "Step 3: Delayed execution by a privileged script"
         },
         {
-          "v": "payload spraying across multiple URLs",
-          "q": "payload spraying across multiple URLs, directory creation, PHP enablement, and inline payload delivery."
+          "v": "web shells",
+          "q": "attempts to deploy multiple web shells"
         },
         {
-          "v": "appliance fingerprinting",
-          "q": "execution before authentication, appliance fingerprinting, and attempts to deploy multiple web shells."
+          "v": "PHP enablement",
+          "q": "payload spraying across multiple URLs, directory creation, PHP enablement, and inline payload delivery"
         }
       ],
       "cves": [
@@ -66,25 +66,37 @@
         },
         {
           "v": "CVE-2026-107406",
-          "q": "and NetScaler Gateway, CVE-2026-107406, which can lead to RCE or denial of service."
+          "q": "CVE-2026-107406, which can lead to RCE or denial of service."
         },
         {
           "v": "CVE-2026-75650",
-          "q": "associated with exploitation of StyleSmuggler (CVE-2026-75650), a vulnerability affecting Adobe Commerce and"
+          "q": "CVE-2026-75650 is an unauthenticated template-engine injection vulnerability affecting Adobe Commerce and Magento Open Source."
         }
       ],
       "figures": [
         {
           "v": "CVSS v3.1 score of 9.8",
-          "q": "CVSS v3.1 score of 9.8 according to NVD and a CVSS v4.0 score of 9.5 according to the Citrix security bulletin"
+          "q": "The vulnerability carries a CVSS v3.1 score of 9.8 according to NVD"
         },
         {
           "v": "CVSS v4.0 score of 9.5",
-          "q": "CVSS v3.1 score of 9.8 according to NVD and a CVSS v4.0 score of 9.5 according to the Citrix security bulletin"
+          "q": "a CVSS v4.0 score of 9.5 according to the Citrix security bulletin CTX697096"
+        },
+        {
+          "v": "CVSS v3.1 score of 10.0",
+          "q": "Adobe assigned it a CVSS v3.1 score of 10.0 and confirmed exploitation in the wild"
         },
         {
           "v": "at least 26 source IP addresses",
-          "q": "ThreatLabz also observed a burst of exploitation attempts from at least 26 source IP addresses over approximately"
+          "q": "a burst of exploitation attempts from at least 26 source IP addresses over approximately"
+        },
+        {
+          "v": "six to seven minutes",
+          "q": "over approximately six to seven minutes."
+        },
+        {
+          "v": "14.1-73.46",
+          "q": "Citrix NetScaler ADC and Citrix NetScaler Gateway 14.1-73.46 and later releases"
         }
       ]
     },
@@ -95,17 +107,18 @@
     "hedges": [
       "This overlap provides an investigative lead but does not establish threat actor attribution.",
       "Shared hosting and compromised infrastructure, malware distribution services, or payload reuse by unrelated operators could explain the connection.",
-      "This overlap raises the possibility that one operator or malware-distribution service maintained payloads for different platforms and opportunistically deployed them.",
-      "This blog post is provided for informational purposes only, with no guarantee of accuracy, completeness or reliability."
+      "This may explain why attackers repeatedly submit the trigger.",
+      "This raises the possibility that one operator or malware-distribution service maintained payloads for different platforms and opportunistically deployed them.",
+      "This blog post has been created by Zscaler for informational purposes only and is provided \"as is\" without any guarantees of accuracy, completeness or reliability."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:04Z",
-      "ok": false,
-      "note": "summary: It says follow-on activity 'included web shell deployment'. The text only says attempts to deploy web shells (and that the inline variant 'attempted to",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:04Z",
+        "ok": false,
+        "note": "summary: It says follow-on activity 'included web shell deployment'. The text only says attempts to deploy web shells (and that the inline variant 'attempted to",
+        "by": "auditor"
+      }
+    ]
   },
   "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3": {
     "sha1": "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3",

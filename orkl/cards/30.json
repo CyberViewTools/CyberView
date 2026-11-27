@@ -3,166 +3,31 @@
     "sha1": "3042e2dbd28723fe6ea76b7032c26358893758cc",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T00:52:25Z",
+    "read_at": "2026-11-27T01:19:39Z",
     "model": "haiku",
-    "summary": "SentinelOne reports a second victim of the TraderTraitor macOS backdoors FLATROOF and ROOFDECK, first seen in the LayerZero Labs attack. The victim is an India-based IT services provider with no crypto ties, reached through fake job-interview coding projects that used weaponized Terraform lock files. Both backdoors were on disk from March 18, 2026, and beaconing began March 29. A newer ROOFDECK version was deployed April 20 and beaconed to a new server until June 1. The report says delivery could not be proven and that much of the later infection activity is unknown.",
-    "kind": "actor-campaign",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "TraderTraitor",
-          "q": "the financially motivated DPRK state-sponsored Lazarus subgroup TraderTraitor (aka UNC4899, PUKCHONG, Jade Sleet)",
-          "by": "SentinelOne"
-        },
-        {
-          "v": "UNC4899",
-          "q": "(aka UNC4899, PUKCHONG, Jade Sleet)",
-          "by": "SentinelOne"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "IT services",
-          "q": "smaller organization in the IT services industry"
-        },
-        {
-          "v": "cryptocurrency trading",
-          "q": "targeting entities involved in cryptocurrency trading"
-        }
-      ],
-      "countries": [
-        {
-          "v": "DPRK",
-          "q": "the financially motivated DPRK state-sponsored Lazarus subgroup TraderTraitor"
-        },
-        {
-          "v": "India",
-          "q": "The affected organization is an IT services provider based in India and unaffiliated with cryptocurrency."
-        }
-      ],
-      "dates": [
-        {
-          "v": "2026-09-18",
-          "q": "Published: 2026-09-18",
-          "what": "Report published"
-        },
-        {
-          "v": "April 2026",
-          "q": "Following disclosure of the TraderTraitor attack against LayerZero Labs in April 2026",
-          "what": "TraderTraitor attack against LayerZero Labs disclosed"
-        },
-        {
-          "v": "March 18",
-          "q": "both backdoors were on disk as far back as March 18",
-          "what": "FLATROOF and ROOFDECK already on disk on the victim machine"
-        },
-        {
-          "v": "March 29",
-          "q": "They remained dormant until March 29, when beaconing and host activity began.",
-          "what": "Dormant backdoors began beaconing and host activity"
-        },
-        {
-          "v": "April 20",
-          "q": "On April 20, one day after",
-          "what": "Attackers deployed a new ROOFDECK version and removed the older binaries"
-        },
-        {
-          "v": "June 1",
-          "q": "until June 1.",
-          "what": "Last observed beaconing to the new C2 server"
-        }
-      ],
-      "tools": [
-        {
-          "v": "FLATROOF",
-          "q": "named FLATROOF and ROOFDECK (by LayerZero Labs and Mandiant)"
-        },
-        {
-          "v": "ROOFDECK",
-          "q": "ROOFDECK acts as a more sophisticated backdoor with broader reconnaissance and lateral movement capabilities."
-        },
-        {
-          "v": "Terraform",
-          "q": "This report expands on how Terraform lock files enable the delivery of malware"
-        },
-        {
-          "v": "Nostr",
-          "q": "TraderTraitor has previously used Nostr."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "social engineering via fake job interviews",
-          "q": "uses social engineering via fake job interview lures"
-        },
-        {
-          "v": "weaponized Terraform lock file delivering malware from a custom provider",
-          "q": "This report expands on how Terraform lock files enable the delivery of malware"
-        },
-        {
-          "v": "Gatekeeper bypass",
-          "q": "Immediately after starting, FLATROOF suppresses Gatekeeper by removing"
-        },
-        {
-          "v": "launch agent persistence",
-          "q": "Persistence was achieved via a plist entry"
-        },
-        {
-          "v": "Nostr profile lookup for C2 discovery",
-          "q": "profile on the Nostr network"
-        },
-        {
-          "v": "clipboard capture",
-          "q": "Reads and writes the macOS clipboard"
-        },
-        {
-          "v": "data-harvesting of browsers, keychain and command history",
-          "q": "The backdoor also carries a data-harvesting Python module"
-        },
-        {
-          "v": "Telegram exfiltration",
-          "q": "exfiltrate them over Telegram using a built-in Telegram bot token"
-        },
-        {
-          "v": "stripped binaries to evade detection",
-          "q": "with stripped symbols and debug information, likely intended to more effectively evade detection"
-        }
-      ],
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "USD 292 million",
-          "q": "USD 292 million was stolen from KelpDAO"
-        },
-        {
-          "v": "one endpoint",
-          "q": "One endpoint was involved"
-        },
-        {
-          "v": "three malicious provider domains",
-          "q": "We identified three malicious provider domains"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "TraderTraitor macOS backdoor campaign (FLATROOF and ROOFDECK)"
-    },
-    "hedges": [
-      "Cannot prove how the backdoors were delivered; they were on disk as early as March 18, 2026.",
-      "Unclear whether the lure companies were fabricated or were real companies whose hiring teams were impersonated.",
-      "Can only speculate whether the April 20 ROOFDECK update was a reaction to the LayerZero Labs publication.",
-      "Lacks insight into many subsequent infections resulting from the GitHub repositories found.",
-      "Believes the small victim ultimately yielded insufficient value to sustain the intrusion.",
-      "FLATROOF is likely intended for initial data collection and deploying secondary payloads."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:14Z",
-      "ok": false,
-      "note": "summary: It says the victim was reached through fake job-interview coding projects with weaponized Terraform lock files. The report says it cannot prove how the",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:14Z",
+        "ok": false,
+        "note": "summary: It says the victim was reached through fake job-interview coding projects with weaponized Terraform lock files. The report says it cannot prove how the",
+        "by": "auditor"
+      }
+    ]
   }
 }

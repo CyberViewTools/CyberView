@@ -1,82 +1,87 @@
 {
   "151dc0a02c21288bbb1bc0ed38dba74591f65c4b": {
     "sha1": "151dc0a02c21288bbb1bc0ed38dba74591f65c4b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T01:00:12Z",
+    "read_at": "2026-11-27T01:21:07Z",
     "model": "haiku",
-    "summary": "Orange Cyberdefense CERT report (8 April 2026) on malvertising intrusions that delivered the SmokedHam backdoor, disguised as RVTools or Remote Desktop Manager installers. One intrusion ended in Qilin ransomware deployment. The report associates the cluster with moderate confidence to UNC2465, a financially motivated actor linked to ransomware affiliate work. It also describes SmokedHam variants, use of employee monitoring software, Cloudflare and AWS infrastructure, and the related Cacciatore Python backdoor.",
+    "summary": "Orange Cyberdefense CERT report (April 2026) on SmokedHam, a backdoor delivered through malvertising disguised as RVTools or Remote Desktop Manager installers. In one intrusion it was followed by Qilin ransomware deployment on ESXi virtual machines. The report links the activity with moderate confidence to UNC2465, a financially motivated group historically tied to DarkSide, LockBit and Hunters International, and suggests it became a Qilin affiliate. It also describes employee monitoring tools abused to blend in, revoked code-signing certificates, and a related Python backdoor called…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "UNC2465",
-          "q": "With a moderate confidence level, we associate the activity cluster responsible for our SmokedHam and Qilin infection with UNC2465.",
-          "by": "the report (Orange Cyberdefense CERT), moderate confidence"
-        },
-        {
-          "v": "Qilin",
-          "q": "indicate the threat actor behind this intrusion is part of the Qilin Ransomware-as-a-Service.",
-          "by": "the report"
-        },
-        {
-          "v": "REVENANT SPIDER",
-          "q": "Qilin is operated by a threat group tracked as REVENANT SPIDER (aka Water Galura, Spikey Scorpius, Pestilent Mantis, Gold Feather).",
-          "by": "the report"
+          "q": "Also known as Storm-0241, UNC2465 is a Russian-speaking financially motivated threat group that has been active since at least mid-2019.",
+          "by": "Orange Cyberdefense CERT (the report)"
         },
         {
           "v": "Storm-0241",
           "q": "Also known as Storm-0241, UNC2465 is a Russian-speaking financially motivated threat group that has been active since at least mid-2019.",
-          "by": "the report"
+          "by": "Orange Cyberdefense CERT (the report)"
         },
         {
-          "v": "DarkSide",
-          "q": "While UNC2465 was historically affiliated to the DarkSide Ransomware-as-a-Service (RaaS)",
-          "by": "the report"
+          "v": "Qilin",
+          "q": "A ransom note was delivered, claiming responsibility for the attack on behalf of the Qilin ransomware group.",
+          "by": "Orange Cyberdefense CERT (the report)"
         },
         {
-          "v": "Hunters International",
-          "q": "we suspect it might also have been associated with the following RaaS: LockBit, and Hunters International.",
-          "by": "the report (suspected, not confirmed)"
+          "v": "REVENANT SPIDER",
+          "q": "REVENANT SPIDER's spokesperson, Haise (aka Lucifer44) was particularly active on the now-defunct Russian-language underground forum RAMP.",
+          "by": "Orange Cyberdefense CERT (the report)"
         }
       ],
       "sectors": [],
       "countries": [],
       "dates": [
         {
-          "v": "8th April, 2026",
-          "q": "8th April, 2026",
-          "what": "Date of the report, marked TLP:CLEAR"
-        },
-        {
           "v": "early February 2026",
           "q": "In early February 2026, our CSIRT team analyzed an infection chain initiated after a user",
-          "what": "An infection chain beginning with a search for RVTools was analysed"
+          "what": "CSIRT analysed an infection chain that began with a user searching for rvtools"
         },
         {
           "v": "early April 2026",
           "q": "Between early February and early April 2026, Orange Cyberdefense CERT was involved in",
-          "what": "Period in which the CERT was involved in three malvertising incidents"
+          "what": "End of the period in which the CERT was involved in malvertising incidents affecting three European clients"
         },
         {
           "v": "late March 2026",
           "q": "In a separate incident from late March 2026, our CERT observed a similar NSIS installer",
-          "what": "A separate incident in which a Python backdoor (Cacciatore) was delivered"
+          "what": "Separate incident in which a similar installer delivered the Cacciatore Python backdoor"
         },
         {
           "v": "early December 2025",
           "q": "We also identified several installer variants, distributed in early December 2025, leveraging",
-          "what": "WINWORD-based SmokedHam installer variants were distributed"
+          "what": "WINWORD-based installer variants were distributed"
         },
         {
-          "v": "late November and December 2025",
-          "q": "Other installer samples, found between late November and December 2025, embedded",
-          "what": "Samples were found that check the OS install date and uptime"
+          "v": "late November 2025",
+          "q": "We observed some SmokedHam installer variants, often distributed around late October and late November 2025",
+          "what": "GPG-based SmokedHam installer variants were distributed"
         },
         {
           "v": "early January 2026",
-          "q": "First observed in early January 2026, the “testing” SmokedHam is called as such",
-          "what": "A testing SmokedHam variant was first observed"
+          "q": "First observed in early January 2026, the “testing” SmokedHam is called as such due to the",
+          "what": "Testing SmokedHam variant first observed"
+        },
+        {
+          "v": "March 2025",
+          "q": "Our analysis also closely resembles what researchers from Synacktiv observed back in March 2025, in a ransomware case delivering Hunters International.",
+          "what": "Synacktiv observed a case with similar tooling delivering Hunters International"
+        },
+        {
+          "v": "mid-2022",
+          "q": "Qilin (formerly known as Agenda) is a double-extortion operation active since mid-2022, demanding payment",
+          "what": "Qilin began operating as a double-extortion operation"
+        },
+        {
+          "v": "January 2025",
+          "q": "with more than 1,330 victims listed since January 2025.",
+          "what": "Start of the period over which Qilin victims on leak sites were counted"
+        },
+        {
+          "v": "May 2021",
+          "q": "This cluster has been first mentioned by Mandiant in May 2021, then more extensively documented in June 2021 and 2022.",
+          "what": "Mandiant first mentioned the UNC2465 cluster"
         }
       ],
       "tools": [
@@ -86,11 +91,19 @@
         },
         {
           "v": "Parcel RAT",
-          "q": "SmokedHam is also referred to as Parcel RAT, SharpRhino, and WorkersDevBackdoor."
+          "q": "Parcel RAT, SharpRhino, and WorkersDevBackdoor."
+        },
+        {
+          "v": "SharpRhino",
+          "q": "Parcel RAT, SharpRhino, and WorkersDevBackdoor."
+        },
+        {
+          "v": "WorkersDevBackdoor",
+          "q": "Parcel RAT, SharpRhino, and WorkersDevBackdoor."
         },
         {
           "v": "ThunderShell",
-          "q": "SmokedHam appears to be a modified, lightweight version of the open-source RAT known as ThunderShell."
+          "q": "ThunderShell. Available on GitHub, this project credits Mr.Un1k0d3rn, Tazz0 and RingZer0"
         },
         {
           "v": "Cacciatore",
@@ -98,96 +111,148 @@
         },
         {
           "v": "Controlio",
-          "q": "This file consists of an installer package for an employee monitoring solution called Controlio."
+          "q": "Both the Controlio and TeraMind installers are configured to start automatically during system boot using dedicated services."
         },
         {
           "v": "TeraMind",
-          "q": "Employee monitoring solutions like TeraMind and Controlio can provide to threat actors"
-        },
-        {
-          "v": "Advanced IP Scanner",
-          "q": "by leveraging the Advanced IP Scanner tool."
+          "q": "Both the Controlio and TeraMind installers are configured to start automatically during system boot using dedicated services."
         },
         {
           "v": "Zoho Assist",
-          "q": "the threat actor also used the Zoho Assist remote access software (RMM)"
+          "q": "the threat actor also used the Zoho Assist remote access software"
         },
         {
-          "v": "Plink",
-          "q": "relied on the command-line SSH Plink client included in the PuTTY suite"
+          "v": "Advanced IP Scanner",
+          "q": "notably by leveraging the Advanced IP Scanner tool."
+        },
+        {
+          "v": "PuTTY",
+          "q": "the command-line SSH Plink client included in the PuTTY suite."
         },
         {
           "v": "Total Commander",
-          "q": "the threat actor was observed downloading 7zip as well as the Total Commander tool."
+          "q": "downloading 7zip as well as the Total Commander tool."
         },
         {
-          "v": "Qilin ransomware",
-          "q": "A ransom note was delivered, claiming responsibility for the attack on behalf of the Qilin ransomware group."
+          "v": "7zip",
+          "q": "downloading 7zip as well as the Total Commander tool."
+        },
+        {
+          "v": "RVTools",
+          "q": "RVTools is a Windows administration tool used by VMware administrators to collect information about virtual machine infrastructures."
+        },
+        {
+          "v": "NSIS",
+          "q": "NSIS (Nullsoft Scriptable Install System) installer"
+        },
+        {
+          "v": "Veeam",
+          "q": "the threat actor targeted multiple Veeam backup servers, likely with the intent"
+        },
+        {
+          "v": "Cloudflare Workers",
+          "q": "The use of Cloudflare Workers for domain fronting."
         }
       ],
       "techniques": [
         {
           "v": "malvertising",
-          "q": "delivered through malvertising and masquerading as common utility installers for RVTools or Remote Desktop"
+          "q": "Over the last years, UNC2465 has used malvertising for malware distribution"
+        },
+        {
+          "v": "website spoofing",
+          "q": "Malicious website spoofing Dell’s legitimate RVTools download page."
+        },
+        {
+          "v": "Employee monitoring",
+          "q": "Employee monitoring solutions like TeraMind and Controlio can provide to threat actors"
         },
         {
           "v": "reverse SSH tunnels",
-          "q": "Lateral movement was facilitated by the establishment of reverse SSH tunnels to the threat actor’s own AWS EC2 instances"
-        },
-        {
-          "v": "Windows Run key persistence",
-          "q": "establishing persistence through the Windows Run key."
-        },
-        {
-          "v": "sandbox evasion",
-          "q": "In order to evade sandbox, the PowerShell contains an execution delay."
+          "q": "Lateral movement was facilitated by the establishment of reverse SSH tunnels"
         },
         {
           "v": "domain fronting",
-          "q": "The use of Cloudflare Workers for domain fronting."
+          "q": "Domain fronting to obfuscate its true C2 servers, including through Cloudflare workers."
         },
         {
-          "v": "Code-signing certificates",
-          "q": "Code-signing certificates are special digital certificates that show a high level of trust in an"
+          "v": "data exfiltration",
+          "q": "data exfiltration towards remote AWS EC2 servers"
         },
         {
-          "v": "renamed Python bytecode files",
-          "q": "renamed to conceal the original source code and increase the files’ apparent entropy."
+          "v": "ransomware encryption",
+          "q": "initiated a ransomware encryption routine targeting multiple"
         },
         {
-          "v": "employee monitoring software",
-          "q": "Employee monitoring solutions like TeraMind and Controlio can provide to threat actors"
+          "v": "evade sandbox",
+          "q": "In order to evade sandbox, the PowerShell contains an execution delay."
+        },
+        {
+          "v": "Windows Run key",
+          "q": "thereby establishing persistence through the Windows Run key."
+        },
+        {
+          "v": "code-signing certificates",
+          "q": "Leveraging of code-signing certificates delivered to mid-sized Asian businesses."
+        },
+        {
+          "v": "RC4",
+          "q": "then encrypted using RC4 with the specified key,"
+        },
+        {
+          "v": "polling",
+          "q": "The malware performs regular polling requests to the server."
+        },
+        {
+          "v": "renamed",
+          "q": "normally using the .pyc extension but renamed to conceal the original source code"
+        },
+        {
+          "v": "C2 fallback mechanism",
+          "q": "Interestingly enough, the Cacciatore backdoor also has a C2 fallback mechanism using a"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "more than 30 samples",
-          "q": "by comparing more than 30 samples retrieved in 2025 and 2026."
+          "q": "comparing more than 30 samples retrieved in 2025 and 2026."
         },
         {
-          "v": "approximately 19 MB",
+          "v": "three infection chains",
+          "q": "All three infection chains observed by our analysts revealed the use of the SmokedHam backdoor"
+        },
+        {
+          "v": "three slightly different SmokedHam binaries",
+          "q": "During our analysis, we identified three slightly different SmokedHam binaries."
+        },
+        {
+          "v": "19 MB",
           "q": "resulting in the download of a file of approximately 19 MB."
         },
         {
-          "v": "three European clients",
-          "q": "affecting three European clients."
+          "v": "10 or 3 minutes",
+          "q": "The uptime is not exactly 10 or 3 minutes (depending on the sample)."
         },
         {
           "v": "two Amazon S3 buckets",
           "q": "transferred them to two Amazon S3 buckets."
         },
         {
-          "v": "80%",
-          "q": "rewarding affiliates with 80% of ransom payments of $3 million or less"
-        },
-        {
           "v": "more than 1,330 victims",
           "q": "with more than 1,330 victims listed since January 2025."
         },
         {
+          "v": "80%",
+          "q": "allegedly rewarding affiliates with 80% of ransom payments of $3 million or less"
+        },
+        {
+          "v": "85%",
+          "q": "allegedly rewarding affiliates with 80% of ransom payments of $3 million or less and 85% for payments above $3 million."
+        },
+        {
           "v": "$2,000 to $6,000",
-          "q": "for $2,000 to $6,000 (but prices can go way higher)."
+          "q": "on underground forums, for $2,000 to $6,000"
         }
       ]
     },
@@ -196,23 +261,23 @@
       "name": "SmokedHam"
     },
     "hedges": [
-      "The UNC2465 association is made with moderate confidence.",
-      "The report says it is highly likely UNC2465 outsources some malware distribution to traffers.",
-      "A possible past association with LockBit and Hunters International is only suspected.",
-      "The Qilin deployment implies UNC2465 possibly became a Qilin affiliate at some point in 2025.",
-      "Date and uptime checks may reflect either sandbox evasion or development artifacts from testing.",
-      "Victim-triage checks are suspected and might not be systematic.",
-      "A single operator or developer iterating on tooling is strongly suggested, not confirmed.",
-      "Affiliation between SmokedHam and Cacciatore is reasonably inferred from shared delivery tooling, not directly proven."
+      "UNC2465 attribution is made with only a moderate confidence level.",
+      "Link between SmokedHam and Cacciatore is reasonably inferred from the delivery chain, not directly proven.",
+      "Report believes UNC2465 possibly became a Qilin affiliate at some point in 2025.",
+      "Report suspects UNC2465 may also have been associated with the LockBit and Hunters International RaaS.",
+      "Report says UNC2465 highly likely outsources some malware distribution to traffers paid per installation or by profit share.",
+      "Report suspects visitors are triaged by country and user-agent, but says these checks might not be systematic.",
+      "Sandbox-evasion-style checks on OS install date and uptime may instead reflect development artifacts from testing environments.",
+      "Report describes the overlap with Synacktiv's Hunters International case as a resemblance, not an attribution."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:04Z",
-      "ok": false,
-      "note": "figures[4]: The report says Qilin is 'allegedly' rewarding affiliates with 80% of ransom payments of $3 million or less. The quote drops 'allegedly', so the car",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:04Z",
+        "ok": false,
+        "note": "figures[4]: The report says Qilin is 'allegedly' rewarding affiliates with 80% of ransom payments of $3 million or less. The quote drops 'allegedly', so the car",
+        "by": "auditor"
+      }
+    ]
   },
   "155f6699b12b95e3d98513ae34d34cef8eb393ba": {
     "sha1": "155f6699b12b95e3d98513ae34d34cef8eb393ba",

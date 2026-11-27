@@ -63,45 +63,47 @@
   },
   "4c46fb4b612355eadc79e8b39041441329d772c5": {
     "sha1": "4c46fb4b612355eadc79e8b39041441329d772c5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T00:49:28Z",
+    "read_at": "2026-11-27T01:18:05Z",
     "model": "haiku",
-    "summary": "Jamf Threat Labs describes CloudSyncD, a two-stage macOS malware family disguised as a Zoom installer. A fake password prompt validates the user's password and conceals it in a decoy configuration file, then launches a second-stage implant. The implant beacons to command-and-control servers and can receive and run executables. The samples moved from development builds to live infrastructure within two days. The report did not observe persistence being established in its sandbox tests.",
+    "summary": "Jamf Threat Labs describes CloudSyncD, a two-stage macOS backdoor delivered as a fake Zoom installer. The first stage uses a fake authorization prompt to capture the user's password, hides it in a decoy configuration file using zero-width characters, and then launches a second-stage implant that beacons to a command-and-control server. The first sample was seen on September 15, 2026, in a development build; later builds were configured against live infrastructure. The report did not observe persistence being established.",
     "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "operators",
+          "q": "indicating the operators have moved from testing toward deployment.",
+          "by": "Jamf Threat Labs"
+        }
+      ],
       "sectors": [],
       "countries": [],
       "dates": [
         {
-          "v": "September 15 2026",
-          "q": "We first encountered CloudSyncD on September 15, 2026, in a build that was plainly still under development.",
-          "what": "first encountered CloudSyncD, in a development build"
+          "v": "September 15, 2026",
+          "q": "We first encountered CloudSyncD on September 15, 2026",
+          "what": "Jamf Threat Labs first encountered CloudSyncD in a build still under development"
         },
         {
           "v": "September 30 2026",
           "q": "September 30 2026 by",
-          "what": "report published by Jamf Threat Labs"
+          "what": "Jamf Threat Labs published the analysis"
         },
         {
           "v": "2011",
-          "q": "Both domains were registered in 2011 through the same registrar",
-          "what": "the two command-and-control domains were registered"
+          "q": "Both domains were registered in 2011 through the same registrar and sit behind Cloudflare",
+          "what": "The two command-and-control domains were registered"
         }
       ],
       "tools": [
         {
-          "v": "CloudSyncD",
-          "q": "We are tracking this malware under the name CloudSyncD, after the daemon name its second stage runs under."
-        },
-        {
           "v": "dscl",
-          "q": "Once a password is entered, the dropper validates it against the local account using dscl and does not continue"
+          "q": "validates it against the local account using dscl and does not continue"
         },
         {
           "v": "sudo",
-          "q": "8. The second stage is launched through sudo using the harvested password."
+          "q": "executes it using sudo along with the collected user's password."
         },
         {
           "v": "sysctl",
@@ -110,6 +112,10 @@
         {
           "v": "ioreg",
           "q": "The survey sent on first contact is assembled from sysctl and ioreg ."
+        },
+        {
+          "v": "Cloudflare",
+          "q": "Both domains were registered in 2011 through the same registrar and sit behind Cloudflare"
         }
       ],
       "techniques": [
@@ -126,67 +132,71 @@
           "q": "Hiding the password in a decoy configuration file"
         },
         {
-          "v": "ZERO WIDTH SPACE",
+          "v": "U+200B and U+200C",
           "q": "They are U+200B ZERO WIDTH SPACE and U+200C ZERO WIDTH NON-JOINER, neither of which renders"
         },
         {
-          "v": "anonymous file descriptor",
-          "q": "The dropper first writes the payload to an anonymous file descriptor"
+          "v": "delivered in two stages",
+          "q": "CloudSyncD is delivered in two stages, both built from the same C++ and Objective-C codebase."
+        },
+        {
+          "v": "fileless execution",
+          "q": "Attempted fileless execution of an embedded second stage"
+        },
+        {
+          "v": "executes it using sudo",
+          "q": "executes it using sudo along with the collected user's password."
         },
         {
           "v": "Blanket acceptance of any server certificate",
           "q": "Blanket acceptance of any server certificate"
         },
         {
-          "v": "Remote task execution",
-          "q": "Remote task execution"
+          "v": "Tasking delivers executables",
+          "q": "Tasking delivers executables, not shell commands, so the observable is a newly written or fileless Mach-O"
         },
         {
-          "v": "application bundle swap",
-          "q": "The purpose is an application bundle swap: remove the bundle the victim launched"
+          "v": "individually obfuscated fragments",
+          "q": "The script is assembled at runtime from individually obfuscated fragments"
         },
         {
-          "v": "survey sent on first contact",
-          "q": "The survey sent on first contact is assembled from sysctl and ioreg ."
-        },
-        {
-          "v": "beacons every 8 to 16 seconds",
-          "q": "9. The implant creates its working tree, begins logging, and beacons every 8 to 16 seconds"
-        },
-        {
-          "v": "jQuery script",
-          "q": "masquerading as a jQuery script so a beacon resembles an ordinary JavaScript fetch"
-        },
-        {
-          "v": "ChaCha20-Poly1305",
-          "q": "one ChaCha20-Poly1305 record per line."
-        },
-        {
-          "v": "persistence",
-          "q": "We did not observe persistence being established"
+          "v": "stored encrypted in the binary",
+          "q": "The implant's configuration is stored encrypted in the binary and decrypted at runtime."
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "756 KB",
-          "q": "roughly 756 KB in the development build"
+          "q": "It carries a complete universal Mach-O inside itself, roughly 756 KB"
         },
         {
           "v": "48",
-          "q": "is followed by 48 zero-width"
+          "q": "followed by 48 zero-width"
         },
         {
           "v": "offset of 64",
           "q": "Decoding that run gives an offset of 64 and a length of 8."
         },
         {
+          "v": "length of 8",
+          "q": "Decoding that run gives an offset of 64 and a length of 8."
+        },
+        {
+          "v": "8 to 16 seconds",
+          "q": "beacons every 8 to 16 seconds"
+        },
+        {
+          "v": "just under 2 KB",
+          "q": "Sends a host survey of just under 2 KB"
+        },
+        {
           "v": "three times",
           "q": "A package download is attempted three times with increasing timeouts, and fails."
         },
         {
-          "v": "just under 2 KB",
-          "q": "4. Sends a host survey of just under 2 KB, then settles into repeat check-ins carrying only the hardware"
+          "v": "two separate domains",
+          "q": "so far on two separate domains"
         }
       ]
     },
@@ -195,20 +205,23 @@
       "name": "CloudSyncD"
     },
     "hedges": [
-      "presumably to avoid writing the Mach-O to disk.",
-      "This technique will fail on the majority of macOS systems due to System Integrity Protection.",
+      "Although CloudSyncD might look like an infostealer at first, the password is never recorded or sent anywhere.",
+      "Indicating the operators have moved from testing toward deployment.",
       "Which bundle gets moved in we cannot say.",
-      "We never saw it used",
-      "We did not observe persistence being established"
+      "The swap never ran in any detonation.",
+      "Because the script deletes itself on both paths, it is unlikely to survive on a live host.",
+      "We did not observe persistence being established.",
+      "We never saw it used: the implant ran from its staging path under its original filename.",
+      "This technique will fail on the majority of macOS systems due to System Integrity Protection."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:24Z",
-      "ok": false,
-      "note": "facts.techniques[12]: 'persistence' is listed as a technique, but the quote says the report did not observe persistence being established. The card presents the",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:24Z",
+        "ok": false,
+        "note": "facts.techniques[12]: 'persistence' is listed as a technique, but the quote says the report did not observe persistence being established. The card presents the",
+        "by": "auditor"
+      }
+    ]
   },
   "4ca9538e60f7b82ccc9f00a6ae6070efe90afd2f": {
     "sha1": "4ca9538e60f7b82ccc9f00a6ae6070efe90afd2f",

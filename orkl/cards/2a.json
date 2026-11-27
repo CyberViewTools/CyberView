@@ -66,158 +66,31 @@
     "sha1": "2abc6b757313f2b4c868fa2c960b7a06d7cab880",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T00:52:13Z",
+    "read_at": "2026-11-27T01:19:32Z",
     "model": "haiku",
-    "summary": "KSI Digital analyses 'Ancient', a Linux IoT botnet family captured in its SSH/Telnet honeypot between 2026-10-04 and 2026-10-05. Delivery was a Telnet login by an already-infected device, followed by a shell dropper that went through three versions. The bot hides its C2 lookup via DNS-over-TLS and stays dormant while traced. A 10-minute controlled contact confirmed the C2 was live. Its C2 protocol is a custom handshake tagged ANCT, not Mirai's, though some feeds label its binaries Mirai. The same loader tooling delivered an unrelated Mirai kit a day later from a shared network. Whether one…",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "DE",
-          "q": "myLoc / WIIT AG, DE"
-        }
-      ],
-      "dates": [
-        {
-          "v": "2026-10-04",
-          "q": "On 2026-10-04 at 15:37:39 UTC an infected device, 94.154.43[.]138 , logged in to our Telnet honeypot and ran:",
-          "what": "An infected device logged in over Telnet and started the delivery chain"
-        },
-        {
-          "v": "2026-10-05",
-          "q": "With the C2 port additionally allowed for 10 minutes (2026-10-05 02:01-02:11 UTC; all other destinations still",
-          "what": "Controlled 10-minute contact; ANCT handshake completed and C2 confirmed live"
-        },
-        {
-          "v": "2026-10-05",
-          "q": "uploaded to MalwareBazaar by another researcher on 2026-10-05",
-          "what": "A fourth dropper version was uploaded to MalwareBazaar by another researcher"
-        },
-        {
-          "v": "2026-06-09",
-          "q": "RIPE registered that AS on 2026-06-09.",
-          "what": "RIPE registered the AS219502 network"
-        },
-        {
-          "v": "2026-10-01",
-          "q": "on ThreatFox since 2026-10-01",
-          "what": "A Mirai kit payload server and C2 were listed on ThreatFox"
-        }
-      ],
-      "tools": [
-        {
-          "v": "Cowrie",
-          "q": "Samples were captured by a Cowrie honeypot"
-        },
-        {
-          "v": "strace",
-          "q": "Traced runs (strace, 10-25 min)"
-        },
-        {
-          "v": "YARA",
-          "q": "YARA rules for the dropper and for the bot binary"
-        },
-        {
-          "v": "Suricata",
-          "q": "Suricata rules for the"
-        },
-        {
-          "v": "Sigma",
-          "q": "a Sigma rule for the host persistence artifacts"
-        },
-        {
-          "v": "ThreatFox",
-          "q": "reported to ThreatFox"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Ingress tool transfer",
-          "q": "T1105 Ingress Tool Transfer"
-        },
-        {
-          "v": "Cron persistence",
-          "q": "T1053.003 Cron"
-        },
-        {
-          "v": "RC script persistence",
-          "q": "T1037.004 RC Scripts"
-        },
-        {
-          "v": "Unix shell configuration modification",
-          "q": "T1546.004 Unix Shell Configuration"
-        },
-        {
-          "v": "Hidden files",
-          "q": "T1564.001 Hidden Files"
-        },
-        {
-          "v": "Application layer DNS protocol",
-          "q": "T1071.004 Application Layer Protocol: DNS"
-        },
-        {
-          "v": "Encrypted channel",
-          "q": "T1573 Encrypted Channel"
-        },
-        {
-          "v": "Debugger evasion",
-          "q": "T1622 Debugger Evasion"
-        },
-        {
-          "v": "Staying dormant while traced",
-          "q": "stays dormant while traced ( ptrace )"
-        }
-      ],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "34 commands and downloads",
-          "q": "Over the next four hours we logged 34 commands and downloads from that same device."
-        },
-        {
-          "v": "33 connection attempts",
-          "q": "made 33 connection attempts to"
-        },
-        {
-          "v": "163 addresses",
-          "q": "(163 addresses that logged in over Telnet)"
-        },
-        {
-          "v": "1.79 MB",
-          "q": "1.79 MB in 2,785 packets (mostly 734-byte segments)"
-        },
-        {
-          "v": "nine bot builds",
-          "q": "tested on all four dropper versions and nine bot builds"
-        },
-        {
-          "v": "five /24s",
-          "q": "It announces five /24s and started announcing these two in June"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "ancient"
-    },
-    "hedges": [
-      "The bot appears to stay idle while being ptraced.",
-      "The 32-byte client message is consistent with a key exchange (consistent with a key exchange); the report does not confirm it.",
-      "The ANCT tag reads as an abbreviation of 'ANCienT', matching the dropper's naming.",
-      "It looks like a generic loader routine whose first line was changed to a campaign-specific marker.",
-      "Either the server kept handing out an older build or the operator rolled back.",
-      "That fits one operator running both, or a shared loader service with several customers. We can't tell which from our data.",
-      "The key exchange and cipher behind the ANCT handshake are open questions; the bot's upload content is unknown."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T01:09:14Z",
-      "ok": false,
-      "note": "summary: It says flatly that the bot 'stays dormant while traced'. Section 3 hedges this: 'The bot appears to stay idle while being ptraced.' The hedge is dropp",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T01:09:14Z",
+        "ok": false,
+        "note": "summary: It says flatly that the bot 'stays dormant while traced'. Section 3 hedges this: 'The bot appears to stay idle while being ptraced.' The hedge is dropp",
+        "by": "auditor"
+      }
+    ]
   }
 }

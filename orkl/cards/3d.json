@@ -1,12 +1,12 @@
 {
   "3d0ad3647843680aefeb6603717b71116e886fc3": {
     "sha1": "3d0ad3647843680aefeb6603717b71116e886fc3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:24:36Z",
+    "read_at": "2026-11-27T00:11:15Z",
     "model": "haiku",
-    "summary": "CISA alert, published 2024-03-29, on reports of malicious code embedded in XZ Utils versions 5.6.0 and 5.6.1, tracked as CVE-2024-3094. The report says the malicious code may allow unauthorized access to affected systems. CISA recommends downgrading to XZ Utils 5.4.6 Stable, hunting for malicious activity, and reporting positive findings to CISA. It also points to a Red Hat urgent security alert for Fedora 41 and Rawhide users.",
-    "kind": "vulnerability",
+    "summary": "CISA alert published 2024-03-29 about reports of malicious code embedded in XZ Utils versions 5.6.0 and 5.6.1, tracked as CVE-2024-3094. The code may allow unauthorized access to affected systems. CISA recommends downgrading to XZ Utils 5.4.6 Stable, hunting for malicious activity, and reporting positive findings.",
+    "kind": "incident",
     "facts": {
       "actors": [],
       "sectors": [],
@@ -15,14 +15,24 @@
         {
           "v": "2024-03-29",
           "q": "Published: 2024-03-29 · Archived: 2026-11-25 02:12:56 UTC",
-          "what": "CISA published this alert on the XZ Utils compromise"
+          "what": "CISA published the alert"
+        },
+        {
+          "v": "2026-11-25",
+          "q": "Published: 2024-03-29 · Archived: 2026-11-25 02:12:56 UTC",
+          "what": "The alert page was archived"
         }
       ],
-      "tools": [],
+      "tools": [
+        {
+          "v": "XZ Utils",
+          "q": "CISA and the open source community are responding to reports of malicious code being embedded in XZ Utils"
+        }
+      ],
       "techniques": [
         {
           "v": "Supply Chain Compromise",
-          "q": "Reported Supply Chain Compromise Affecting XZ Utils Data"
+          "q": "Reported Supply Chain Compromise Affecting XZ Utils Data Compression Library, CVE-2024-3094"
         }
       ],
       "cves": [
@@ -33,31 +43,35 @@
       ],
       "figures": [
         {
-          "v": "versions 5.6.0 and 5.6.1",
-          "q": "versions 5.6.0 and 5.6.1."
+          "v": "5.6.0",
+          "q": "versions 5.6.0 and 5.6.1"
         },
         {
-          "v": "5.4.6 Stable",
+          "v": "5.6.1",
+          "q": "versions 5.6.0 and 5.6.1"
+        },
+        {
+          "v": "5.4.6",
           "q": "5.4.6 Stable—hunt for any malicious activity and report any positive findings to CISA."
         }
       ]
     },
     "subject": {
       "type": "vulnerability",
-      "name": "CVE-2024-3094"
+      "name": "CVE-2024-3094 (XZ Utils)"
     },
     "hedges": [
-      "Describes reports of malicious code being embedded, not a confirmed analysis of the code.",
-      "The malicious code may be present in Linux distributions and may allow unauthorized access to affected systems."
+      "The title describes the event as a 'Reported' supply chain compromise.",
+      "The malicious code may allow unauthorized access to affected systems."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:26Z",
-      "ok": false,
-      "note": "hedges[0]: The text does not say the reports are unconfirmed or that no analysis of the code was done. It only says CISA is responding to reports of malicious c",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:26Z",
+        "ok": false,
+        "note": "hedges[0]: The text does not say the reports are unconfirmed or that no analysis of the code was done. It only says CISA is responding to reports of malicious c",
+        "by": "auditor"
+      }
+    ]
   },
   "3d1ad756cd0dd95edb8349a1d5be4879c323450c": {
     "sha1": "3d1ad756cd0dd95edb8349a1d5be4879c323450c",

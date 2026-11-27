@@ -32,11 +32,11 @@
   },
   "8ae77b40bf44aff69e51e6a6e5111a288e3877d3": {
     "sha1": "8ae77b40bf44aff69e51e6a6e5111a288e3877d3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:22:15Z",
+    "read_at": "2026-11-27T00:11:06Z",
     "model": "haiku",
-    "summary": "Introductory page of a Chinese-language documentation series on Cobalt Strike 4.1, a penetration-testing and adversary-simulation tool. It outlines the series in three parts: basic use, advanced topics such as C2 configuration and proxying, and internals. It describes no threat actor, campaign, malware incident or vulnerability, so it is not a threat report.",
+    "summary": "Introductory page of a hobby-written, Chinese-language documentation set on Cobalt Strike, mainly version 4.1 with some 3.14 examples. It outlines three parts: basic use, extended and advanced topics such as C2 configuration, concealment and proxy forwarding, and how the features work internally. The author says the documentation gives no finished tools, only ideas and references, and does not cover antivirus bypass, which is deferred to a separate planned document. The page describes no threat actors, campaigns or incidents.",
     "kind": "not-a-threat-report",
     "facts": {
       "actors": [],
@@ -49,127 +49,97 @@
       "figures": []
     },
     "subject": null,
-    "hedges": [
-      "The author says they are not a specialist in Cobalt Strike and the notes are a spare-time record.",
-      "The author says updates are irregular and errors may be present, and asks readers to point them out.",
-      "The page says it provides no finished tools, only ideas or reference material.",
-      "The page says it will not cover antivirus bypass techniques, which are planned for a separate document."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:12Z",
-      "ok": false,
-      "note": "summary: The text never calls Cobalt Strike a penetration-testing and adversary-simulation tool. That characterization comes from outside the text. The rest of ",
-      "by": "auditor"
-    }
+    "hedges": [],
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:12Z",
+        "ok": false,
+        "note": "summary: The text never calls Cobalt Strike a penetration-testing and adversary-simulation tool. That characterization comes from outside the text. The rest of ",
+        "by": "auditor"
+      }
+    ]
   },
   "8ae7243e78d70618e1eff845156b8d689095e493": {
     "sha1": "8ae7243e78d70618e1eff845156b8d689095e493",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:24:55Z",
+    "read_at": "2026-11-27T00:11:55Z",
     "model": "haiku",
-    "summary": "BlackBerry's Research and Intelligence Team describes BHunt, a .NET crypto-stealer. Bitdefender first reported it, with a dropper likely packaged with KMS cracking utilities. BHunt looks for crypto wallet files, steals browser passwords, monitors the clipboard for 12 or 13 word recovery phrases, and checks whether a system suits a crypto miner (XMRig). It uses commercial packers (VMProtect, Themida), autorun registry persistence, and legitimate NirSoft WebBrowserPassView. Some payload retrieval used Pastebin links that are no longer hosted.",
+    "summary": "BlackBerry's analysis of BHunt, a .NET infostealer that targets cryptocurrency wallets, browser passwords and clipboard contents, and in some cases installs a crypto miner. Bitdefender first reported it, saying the infection began with a dropper likely packaged with KMS cracking utilities. The malware uses commercial packers, legitimate NirSoft and XMRig tools, and autorun persistence to evade detection. The report includes hashes, IoCs and a YARA rule.",
     "kind": "malware-analysis",
     "facts": {
-      "actors": [
-        {
-          "v": "threat actors",
-          "q": "The threat actors packed the sample with VMProtect to hide their contents",
-          "by": "BlackBerry Research and Intelligence Team"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "2017",
           "q": "purchased by security company Avast in 2017.",
-          "what": "Avast purchased Piriform Software Ltd., developer of CCleaner, whose name the BHunt dropper's certificate used"
+          "what": "Avast purchased Piriform Software Ltd., the company behind CCleaner"
+        },
+        {
+          "v": "Jan 28th 2022",
+          "q": "date = \"Jan 28th 2022\"",
+          "what": "date given in the BlackBerry YARA rule metadata"
         }
       ],
       "tools": [
         {
           "v": "VMProtect",
-          "q": "The threat actors packed the sample with VMProtect to hide their contents"
-        },
-        {
-          "v": "Key Management Service (KMS) cracking utilities",
-          "q": "that was likely packaged with Key Management Service (KMS) cracking utilities."
-        },
-        {
-          "v": "WebBrowserPassView",
-          "q": "file is NirSoft’s WebBrowserPassView tool."
+          "q": "The threat actors packed the sample with VMProtect to"
         },
         {
           "v": "Themida",
           "q": "this time with a packer called Themida."
         },
         {
-          "v": "XMRig",
-          "q": "we found this file to be XMRig, a high-performance crypto miner."
+          "v": "WebBrowserPassView",
+          "q": "file is NirSoft’s WebBrowserPassView tool."
         },
         {
-          "v": "Pastebin",
-          "q": "reaches out to two unique Pastebin links to retrieve some encrypted data."
+          "v": "XMRig",
+          "q": "Upon further investigation, we found this file to be XMRig, a high-performance crypto miner."
         }
       ],
       "techniques": [
         {
-          "v": "obfuscating files with commercial binary packers",
-          "q": "obfuscating files with commercial binary packers and splitting its"
-        },
-        {
-          "v": "splitting functionality across multiple files",
-          "q": "splitting its functionality across multiple files."
-        },
-        {
-          "v": "masquerading as a Microsoft file",
+          "v": "masquerade as a Microsoft file",
           "q": "to masquerade as a Microsoft file"
         },
         {
-          "v": "borrowing a company's certificate to look legitimate",
-          "q": "embedded a certificate from “Piriform Ltd” to help the file appear legitimate."
+          "v": "obfuscating files with commercial binary packers",
+          "q": "This threat tries to slow analysis by obfuscating files with commercial binary packers and splitting its"
         },
         {
-          "v": "autorun registry key persistence",
-          "q": "and persisted using an autorun registry key."
+          "v": "leveraging legitimate tools",
+          "q": "functionality across multiple files. BHunt also takes it a step further by leveraging legitimate tools for nefarious"
         },
         {
-          "v": "terminating Firefox to free locked database files",
-          "q": "The malware terminates any running instances of Firefox"
-        },
-        {
-          "v": "clipboard monitoring for wallet recovery phrases",
-          "q": "periodically check the victim’s clipboard for a string containing 12 or 13 words."
-        },
-        {
-          "v": "stealing crypto wallet files",
+          "v": "stealing wallet files",
           "q": "The Blackjack function is responsible for stealing wallet files."
         },
         {
-          "v": "stealing browser passwords",
+          "v": "attempts to steal the victim’s browser passwords",
           "q": "The Sweet_Bonanza function attempts to steal the victim’s browser passwords."
         },
         {
-          "v": "deploying a crypto miner",
-          "q": "deploy a crypto miner to the victim’s device"
+          "v": "periodically check the victim’s clipboard",
+          "q": "The function of this program is to periodically check the victim’s clipboard for a string containing 12 or 13 words."
         },
         {
-          "v": "using legitimate tools for malicious purposes",
-          "q": "BHunt also takes it a step further by leveraging legitimate tools for nefarious"
+          "v": "persisted using an autorun registry key",
+          "q": "and persisted using an autorun registry key."
+        },
+        {
+          "v": "reaches out to two unique Pastebin links",
+          "q": "Chaos_crew reaches out to two unique Pastebin links to retrieve some encrypted data."
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "12 or 13 words",
-          "q": "containing 12 or 13 words."
-        },
-        {
-          "v": "two unique Pastebin links",
-          "q": "reaches out to two unique Pastebin links to retrieve some encrypted data."
+          "q": "for a string containing 12 or 13 words."
         }
       ]
     },
@@ -178,20 +148,21 @@
       "name": "BHunt"
     },
     "hedges": [
-      "The dropper was likely packaged with Key Management Service (KMS) cracking utilities, per the report's description of the initial infection.",
-      "The Pastebin links are no longer hosted, so the downloaded data could not be confirmed.",
-      "The purpose of the Chaos_crew function appears to be evaluating a system's suitability for installing a crypto miner.",
-      "The purpose of the Copier binary is a mystery; the report believes it is part of the same malware campaign.",
-      "The miner file is believed to be XMRig."
+      "which is likely intended to help it find login credentials stored there for online crypto accounts",
+      "that was likely packaged with Key Management Service (KMS) cracking utilities",
+      "we believe to be part of the same malware campaign",
+      "These Pastebins are no longer hosted, so we have not been able to confirm exactly what data was downloaded.",
+      "It appears that the purpose of the Chaos_crew function is to evaluate the suitability of the victim’s system",
+      "What the malware authors were hoping to achieve with this function is a mystery"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:12Z",
-      "ok": false,
-      "note": "hedges[3]: The text says Copier's sole purpose is to copy svx.exe to svc.exe. What is a mystery is what the authors hoped to achieve with it, given the path mis",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:12Z",
+        "ok": false,
+        "note": "hedges[3]: The text says Copier's sole purpose is to copy svx.exe to svc.exe. What is a mystery is what the authors hoped to achieve with it, given the path mis",
+        "by": "auditor"
+      }
+    ]
   },
   "8aa950c31ded5e0ba99bb4ccc632b7e897c48032": {
     "sha1": "8aa950c31ded5e0ba99bb4ccc632b7e897c48032",

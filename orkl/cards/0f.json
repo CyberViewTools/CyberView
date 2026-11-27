@@ -142,31 +142,41 @@
   },
   "0f7ff132baf7eda53163a89c4f74e547b72caa71": {
     "sha1": "0f7ff132baf7eda53163a89c4f74e547b72caa71",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:25:57Z",
+    "read_at": "2026-11-27T00:12:12Z",
     "model": "haiku",
-    "summary": "Broadcom's protection bulletin describes Bofamet, a new Python-based infostealer found in the wild. It collects credentials, system information, browser cookies, Telegram session data, Discord tokens, screenshots and Steam configuration files, and sends them to the attackers through a Telegram bot. The bulletin lists Symantec and Carbon Black detection names and recommends blocking malware execution. It names no actor and gives no victim, sector or country details.",
+    "summary": "Broadcom's protection bulletin describes Bofamet, a new Python-based infostealer found in the wild. From compromised endpoints it collects credentials, system information, browser cookies, Telegram session data, Discord tokens, screenshots and Steam configuration files. It exfiltrates this data to the attackers through a Telegram bot. The bulletin lists Symantec and Carbon Black detection names and recommends blocking malware execution.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
+      "dates": [
+        {
+          "v": "2026-11-25",
+          "q": "Archived: 2026-11-25 02:17:47 UTC",
+          "what": "Page archived"
+        }
+      ],
       "tools": [
         {
-          "v": "Bofamet",
+          "v": "Python",
           "q": "Bofamet is a new Python-based infostealer found in the wild."
+        },
+        {
+          "v": "Telegram bot",
+          "q": "The collected data is exfiltrated back to the attackers with help of a Telegram bot."
         }
       ],
       "techniques": [
         {
-          "v": "Telegram bot",
-          "q": "attackers with help of a Telegram bot."
+          "v": "credential and cookie theft",
+          "q": "from the compromised endpoints including: credentials, system information, browser cookies, Telegram session"
         },
         {
-          "v": "browser cookies",
-          "q": "from the compromised endpoints including: credentials, system information, browser cookies, Telegram session"
+          "v": "data exfiltration via Telegram bot",
+          "q": "The collected data is exfiltrated back to the attackers with help of a Telegram bot."
         }
       ],
       "cves": [],
@@ -177,13 +187,13 @@
       "name": "Bofamet Stealer"
     },
     "hedges": [],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:08Z",
-      "ok": false,
-      "note": "summary: It says the bulletin lists Symantec and Carbon Black detection names. Only Symantec detections are named (Adaptive, Behavior and File-based). The Carbo",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:08Z",
+        "ok": false,
+        "note": "summary: It says the bulletin lists Symantec and Carbon Black detection names. Only Symantec detections are named (Adaptive, Behavior and File-based). The Carbo",
+        "by": "auditor"
+      }
+    ]
   }
 }

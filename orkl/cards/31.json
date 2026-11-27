@@ -1,24 +1,24 @@
 {
   "3109d080d2613ed01f1459ac88244706dce591d1": {
     "sha1": "3109d080d2613ed01f1459ac88244706dce591d1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:29:08Z",
+    "read_at": "2026-11-27T00:13:09Z",
     "model": "haiku",
-    "summary": "Palo Alto Networks Unit 42 reports campaign CL-UNK-1211, observed from October 2025 to April 2026, targeting government entities and state-affiliated infrastructure on Linux servers. Attackers used web shells, a custom Go remote access trojan (SysGoRAT), open-source tools, credential harvesting, mailbox theft, database dumping and anti-forensics. The report says artifacts suggest AI-generated payloads. Whether the cluster is nation-state or cybercrime is not yet determined.",
+    "summary": "Unit 42 (Palo Alto Networks) reports a campaign it tracks as CL-UNK-1211, observed from October 2025 to April 2026, targeting government entities and state-affiliated infrastructure on Linux servers and databases. The attackers used web shells, credential harvesting, a custom Go remote access Trojan named SysGoRAT, reverse shells, SSH and database pivoting, mailbox searches for social media account access, and anti-forensics such as log deletion and timestomping. The report says the code shows signs of AI generation, and whether the actor is nation-state or cybercrime is not yet determined.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "CL-UNK-1211",
           "q": "We track this activity as CL-UNK-1211.",
-          "by": "Palo Alto Networks Unit 42"
+          "by": "Unit 42 (Palo Alto Networks), in the report"
         }
       ],
       "sectors": [
         {
           "v": "government entities",
-          "q": "The attackers targeted government entities and state-affiliated infrastructure,"
+          "q": "targeting government entities and state-affiliated infrastructure"
         }
       ],
       "countries": [],
@@ -26,113 +26,105 @@
         {
           "v": "October 2025",
           "q": "activity spanning from October 2025–April 2026.",
-          "what": "start of observed activity"
+          "what": "Start of the observed activity window"
         },
         {
           "v": "April 2026",
           "q": "activity spanning from October 2025–April 2026.",
-          "what": "end of observed activity"
+          "what": "End of the observed activity window"
         },
         {
           "v": "2026-10-15",
           "q": "Published: 2026-10-15 · Archived: 2026-11-16 02:00:26 UTC",
-          "what": "report published"
+          "what": "Report published"
         }
       ],
       "tools": [
+        {
+          "v": "web shells",
+          "q": "deployed a variety of web shells on the targeted Linux servers."
+        },
         {
           "v": "SysGoRAT",
           "q": "We named this malware SysGoRAT."
         },
         {
           "v": "LinPEAS",
-          "q": "open-source tool called LinPEAS to check for local privilege escalation paths"
-        },
-        {
-          "v": "revsocks",
-          "q": "The attackers deployed the open-source tool revsocks, a reverse SOCKS5 tunneling tool with"
-        },
-        {
-          "v": "pysoxy",
-          "q": "The tool set also included pysoxy, an open-source Python SOCKS proxy script used to route"
-        },
-        {
-          "v": "GSocket",
-          "q": "GSocket and gs-netcat: The attackers misused Global Socket, a framework designed to solve NAT and"
-        },
-        {
-          "v": "custom vulnerability scanner",
-          "q": "The attackers deployed a custom vulnerability scanner written in Go that scans for servers vulnerable to CVE-"
+          "q": "executing an open-source tool called LinPEAS to check for local privilege escalation paths."
         },
         {
           "v": "PwnKit",
           "q": "PwnKit, a self-contained exploit for CVE-2021-4034"
         },
         {
-          "v": "web shells",
-          "q": "the attackers deployed a variety of web shells on the targeted Linux servers"
+          "v": "revsocks",
+          "q": "deployed the open-source tool revsocks, a reverse SOCKS5 tunneling tool"
+        },
+        {
+          "v": "pysoxy",
+          "q": "The tool set also included pysoxy, an open-source Python SOCKS proxy script"
+        },
+        {
+          "v": "GSocket",
+          "q": "GSocket and gs-netcat: The attackers misused Global Socket"
+        },
+        {
+          "v": "Netcat",
+          "q": "Named pipe via Netcat"
         },
         {
           "v": "sshpass",
-          "q": "The attackers also used the sshpass command with hard-coded administrative credentials to enable lateral"
+          "q": "The attackers also used the sshpass command with hard-coded administrative credentials"
+        },
+        {
+          "v": "custom vulnerability scanner",
+          "q": "The attackers deployed a custom vulnerability scanner written in Go"
         }
       ],
       "techniques": [
         {
-          "v": "PHP configuration hijacking",
-          "q": "Global PHP configuration hijacking for persistent access"
+          "v": "web shell deployment",
+          "q": "Initial access via web shell deployment and credential harvesting"
         },
         {
           "v": "credential harvesting",
           "q": "Initial access via web shell deployment and credential harvesting"
         },
         {
-          "v": "cleartext passwords",
-          "q": "Scanning the network for cleartext passwords"
+          "v": "shell profile hijack to capture sudo passwords",
+          "q": "The attackers replaced the .bashrc file with a copy containing a malicious command that steals victims’ passwords."
         },
         {
-          "v": "reverse shell",
+          "v": "PHP configuration hijacking for persistence",
+          "q": "the attackers modified the auto_prepend_file value across all PHP configurations under the"
+        },
+        {
+          "v": "reverse shells",
           "q": "The attackers employed multiple reverse shell techniques across at least seven distinct C2 servers."
-        },
-        {
-          "v": "SSH public key",
-          "q": "The attackers achieved SSH-based persistence by injecting an SSH public key into the compromised user’s"
-        },
-        {
-          "v": "Lateral Movement",
-          "q": "SSH for Lateral Movement"
-        },
-        {
-          "v": "Data Exfiltration",
-          "q": "Additional Data Exfiltration Attempts"
-        },
-        {
-          "v": "Privilege Escalation",
-          "q": "Privilege Escalation Using Open Source Tools"
-        },
-        {
-          "v": "dumped entire database contents",
-          "q": "dumped entire database contents before attempting to exfiltrate the data."
         },
         {
           "v": "enumerated mailboxes",
           "q": "The attackers enumerated mailboxes to identify and gain access to social media accounts tied to government email"
         },
         {
-          "v": "double-hop execution chain",
-          "q": "created a double-hop execution chain to reach another segment"
+          "v": "SSH-based persistence",
+          "q": "The attackers achieved SSH-based persistence by injecting an SSH public key"
         },
         {
-          "v": "red team",
-          "q": "They attempted to disguise their activity as a red team operation"
+          "v": "enabling command execution on an internal MSSQL server",
+          "q": "They started by enabling command execution on an internal MSSQL server"
         },
         {
-          "v": "disable endpoint protections",
-          "q": "attempting to disable endpoint protections on compromised systems"
+          "v": "file-hosting platforms",
+          "q": "They also misused legitimate file-hosting platforms to blend the outgoing data with standard web traffic."
         },
         {
-          "v": "anti-forensics",
-          "q": "A core component of the attackers’ playbook involved anti-forensics techniques, specifically:"
+          "v": "dumped entire database contents",
+          "q": "they dumped entire database contents into compressed local archives"
+        },
+        {
+          "v": "reconnaissance",
+          "q": "The attackers used multiple PHP scripts to conduct reconnaissance of the target networks."
         },
         {
           "v": "timestomping",
@@ -140,7 +132,19 @@
         },
         {
           "v": "log deletion",
-          "q": "Following the mass log deletion, the attackers executed several automated cleanup commands"
+          "q": "Following the mass log deletion, the attackers executed several automated cleanup commands and scripts"
+        },
+        {
+          "v": "disable security protection devices",
+          "q": "an attempt to disable security protection devices"
+        },
+        {
+          "v": "disguise their activity as a red team operation",
+          "q": "They attempted to disguise their activity as a red team operation"
+        },
+        {
+          "v": "privilege escalation",
+          "q": "Command-line credential harvesting and privilege escalation using different shells"
         }
       ],
       "cves": [
@@ -155,20 +159,24 @@
       ],
       "figures": [
         {
-          "v": "seven distinct C2 servers",
-          "q": "The attackers employed multiple reverse shell techniques across at least seven distinct C2 servers."
+          "v": "at least seven distinct C2 servers",
+          "q": "across at least seven distinct C2 servers."
         },
         {
           "v": "seven command types",
           "q": "SysGoRAT supports a fixed set of seven command types, described in Table 1."
         },
         {
-          "v": "three separate C2 servers",
-          "q": "deployed across three separate C2 servers"
+          "v": "100 rows",
+          "q": "writing four tables, each capped at 100 rows"
         },
         {
-          "v": "each capped at 100 rows",
-          "q": "writing four tables, each capped at 100 rows"
+          "v": "three separate C2 servers",
+          "q": "The primary method, deployed across three separate C2 servers"
+        },
+        {
+          "v": "six different installation methods",
+          "q": "supports six different installation methods"
         }
       ]
     },
@@ -177,20 +185,19 @@
       "name": "CL-UNK-1211"
     },
     "hedges": [
-      "Artifacts suggest the code was either generated using LLMs or executed by an automated AI agent; this is not confirmed.",
-      "UNK designates clusters whose affiliation with nation-state or cybercrime activity has not yet been determined.",
-      "The credential logger most likely targets a database authentication routine.",
-      "No evidence that SolarWinds systems were compromised; the name was misused as an evasion method.",
-      "Some attempted exfiltration scripts contained syntax errors and would fail upon execution.",
-      "Attribution to CL-UNK-1211 follows the Unit 42 attribution framework."
+      "suggesting that the code was either generated using large language models (LLMs) or executed by an automated AI agent.",
+      "We designate the term UNK to clusters of activity whose affiliation with either nation-state or cybercrime activity we have not yet determined.",
+      "We have no evidence of SolarWinds systems and infrastructure being compromised during this operation; the attackers misused the organization’s name as an evasion method.",
+      "most likely targeting a database authentication routine",
+      "Their presence suggests that the code was either copied directly from an AI prompt output or deployed by an automated AI agent."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:19Z",
-      "ok": false,
-      "note": "summary: 'mailbox theft' and 'database dumping' are stated as accomplished. The text says the attackers attempted to exfiltrate mailboxes. The mailbox script ha",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:19Z",
+        "ok": false,
+        "note": "summary: 'mailbox theft' and 'database dumping' are stated as accomplished. The text says the attackers attempted to exfiltrate mailboxes. The mailbox script ha",
+        "by": "auditor"
+      }
+    ]
   }
 }

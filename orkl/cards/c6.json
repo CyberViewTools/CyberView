@@ -81,37 +81,36 @@
   },
   "c6152c541765698942ba8ca508aa2ce1c192c923": {
     "sha1": "c6152c541765698942ba8ca508aa2ce1c192c923",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:29:11Z",
+    "read_at": "2026-11-27T00:13:20Z",
     "model": "haiku",
-    "summary": "CloudSEK analysed an exposed open directory tied to Silent Lynx, a Central Asia-focused espionage cluster, covering activity through October 2026. The report describes intrusions into Tajik railway and government document systems, a webshell-based intrusion into an Uzbek forestry GeoServer, Turkmenistan-themed lures, and use of a self-hosted DeepSeek-powered AI agent for reconnaissance and log cleanup. Silent Lynx attribution is high confidence on tooling; a Kazakhstan nexus is medium confidence.",
+    "summary": "CloudSEK analysed an exposed open directory belonging to Silent Lynx, a Central Asia-focused espionage cluster, covering operations through October 2026. The report describes intrusions into Tajikistan's national railway network and a government document platform, command execution on an Uzbek forestry GeoServer, and phishing lures aimed at Turkmenistan. The operator used a self-hosted AI agent (Hermes, running DeepSeek models) for reconnaissance, collection and log cleanup, with Telegram as the control channel. CloudSEK assesses the directory's link to Silent Lynx with high confidence and a…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Silent Lynx",
-          "q": "We assess with high confidence that the directory belongs to a Silent Lynx operator",
-          "by": "CloudSEK"
-        },
-        {
-          "v": "Gentlemen",
-          "q": "The same harness and model family appeared in CloudSEK's earlier investigation of a Gentlemen ransomware",
-          "by": "CloudSEK"
+          "q": "An exposed open directory belonging to Silent Lynx, a Central Asia-focused espionage cluster, gave CloudSEK an",
+          "by": "CloudSEK TRIAD"
         }
       ],
       "sectors": [
         {
-          "v": "government and critical infrastructure",
-          "q": "data from active intrusions into government and critical infrastructure organisations across the region"
+          "v": "government",
+          "q": "Central Asian governments and critical infrastructure. Findings include compromised Tajik railway networks,"
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "Central Asian governments and critical infrastructure. Findings include compromised Tajik railway networks,"
         },
         {
           "v": "transport",
-          "q": "The operator held persistent, domain-level access to transport-sector networks"
+          "q": "The operator held persistent, domain-level access to transport-sector networks and used a single"
         },
         {
           "v": "defence",
-          "q": "thousands of defence-related government documents"
+          "q": "thousands of defence-related government documents, intrusion into Uzbekistan's Smart Forestry platform, and"
         }
       ],
       "countries": [
@@ -121,7 +120,7 @@
         },
         {
           "v": "Uzbekistan",
-          "q": "intrusion into Uzbekistan's Smart Forestry platform"
+          "q": "thousands of defence-related government documents, intrusion into Uzbekistan's Smart Forestry platform, and"
         },
         {
           "v": "Turkmenistan",
@@ -129,48 +128,59 @@
         },
         {
           "v": "Kazakhstan",
-          "q": "Kazakhstan nexus: the operation runs in Russian"
-        },
-        {
-          "v": "Pakistan",
-          "q": "against Pakistan's Ministry of Foreign Affairs and its national telecom"
+          "q": "Kazakhstan nexus: the operation runs in Russian, and the operator's own test traffic came from a residential"
         }
       ],
       "dates": [
         {
-          "v": "2026-11-11",
-          "q": "Published: 2026-11-11",
-          "what": "CloudSEK publishes the report"
-        },
-        {
-          "v": "January 2025",
-          "q": "Silent Lynx has been tracked publicly since January 2025 under several vendor names",
-          "what": "Silent Lynx first tracked publicly"
+          "v": "November 11, 2026",
+          "q": "November 11, 2026",
+          "what": "Report published"
         },
         {
           "v": "October 2026",
-          "q": "operations through October 2026",
-          "what": "period covered by the exposed directory"
+          "q": "inside view of the group's operations through October 2026. The directory held the group's tooling alongside data",
+          "what": "Period covered by the exposed directory"
+        },
+        {
+          "v": "mid-August",
+          "q": "The operator had domain-level access to Tajikistan's national railway network from mid-August to at least 10",
+          "what": "Start of operator access to the Tajik railway network"
+        },
+        {
+          "v": "May 2026",
+          "q": "Prior reporting observed activity involving Uzbekistan's Smart Forestry initiative in May 2026 but did not",
+          "what": "Smart Forestry activity observed in prior reporting"
+        },
+        {
+          "v": "April and September 2026",
+          "q": "compiled multiple builds between April and September 2026, including a dedicated build for the railway intrusion.",
+          "what": "Laplas implant builds compiled"
+        },
+        {
+          "v": "October 2026",
+          "q": "in October 2026, pointing to an upcoming campaign against Turkmenistan.",
+          "what": "Turkmen lures built and tested"
         },
         {
           "v": "2 October",
-          "q": "On 2 October the operator logged in from it",
-          "what": "operator logged in from a residential Kazakh connection, then again via a commercial VPN"
+          "q": "The Kazakhtelecom line ties back to the operator directly. On 2 October the operator logged in from it, switched",
+          "what": "Operator logged in from a Kazakh ISP, then switched to a VPN"
         },
         {
-          "v": "mid-August 2026",
-          "q": "The operator's Telegram session with the agent dates back to mid-August 2026",
-          "what": "operator's Telegram session with the agent begins"
+          "v": "early October 2026",
+          "q": "databases, shredded shell histories, cleared cron rows and zeroed login records in early October 2026.",
+          "what": "Agent-run cleanup of logs and histories"
         }
       ],
       "tools": [
         {
-          "v": "Laplas",
-          "q": "srvdriv.exe is a TLS reverse shell from the Laplas family"
+          "v": "Chvost",
+          "q": "Prior reporting named Chvost, Laplas and PickleShell as the group's custom reverse shells."
         },
         {
-          "v": "Chvost",
-          "q": "ssdpdrv.exe is a Chvost-family shell"
+          "v": "Laplas",
+          "q": "The implants match the group's known Laplas and Chvost families, alongside a previously unreported"
         },
         {
           "v": "PickleShell",
@@ -178,92 +188,128 @@
         },
         {
           "v": "Hermes",
-          "q": "The operator runs much of the work through Hermes, an open-source autonomous agent framework"
-        },
-        {
-          "v": "Ligolo",
-          "q": "fscan, Ligolo, GOST, Inveigh, Responder, NetExec, Impacket, public exploits"
-        },
-        {
-          "v": "Metasploit",
-          "q": "prepared Metasploit resource"
+          "q": "The operator runs much of the work through Hermes, an open-source autonomous agent framework, installed"
         },
         {
           "v": "DeepSeek",
-          "q": "with DeepSeek models handling most of the logged traffic"
+          "q": "A self-hosted AI agent running on DeepSeek handled reconnaissance, collection and log cleanup, with"
         },
         {
           "v": "Telegram",
-          "q": "Telegram ties the operation together."
+          "q": "Telegram ties the operation together. The agent ran Hermes' messaging gateway with a Telegram bot, so the"
+        },
+        {
+          "v": "Ligolo",
+          "q": "The Ligolo server database records a live tunnel through a railway host for nearly two months."
+        },
+        {
+          "v": "Metasploit",
+          "q": "The operator also deployed an ASP.NET webshell on one railway web server and prepared Metasploit resource"
+        },
+        {
+          "v": "Tor",
+          "q": "through Tor exit nodes, with two commercial VPN exits."
+        },
+        {
+          "v": "Proton VPN",
+          "q": "to Proton VPN and logged in again four minutes later."
+        },
+        {
+          "v": "NetBird",
+          "q": "The agent works from a Kali box on a self-hosted NetBird mesh, with the control plane"
+        },
+        {
+          "v": "Impacket",
+          "q": "fscan, Ligolo, GOST, Inveigh, Responder, NetExec, Impacket, public exploits"
+        },
+        {
+          "v": "Responder",
+          "q": "fscan, Ligolo, GOST, Inveigh, Responder, NetExec, Impacket, public exploits"
         }
       ],
       "techniques": [
         {
-          "v": "spear-phishing",
-          "q": "spear-phishing of Central Asian government bodies with LNK and archive lures"
+          "v": "spear-phishing with LNK and archive lures",
+          "q": "spear-phishing of Central Asian government bodies with LNK and archive lures that lead to lightweight reverse"
         },
         {
-          "v": "phishing lures",
-          "q": "phishing lures targeting Turkmenistan"
-        },
-        {
-          "v": "reverse shell",
-          "q": "srvdriv.exe is a TLS reverse shell from the Laplas family"
-        },
-        {
-          "v": "webshell",
-          "q": "deployed an ASP.NET webshell on one railway web server"
+          "v": "TLS reverse shell",
+          "q": "srvdriv.exe is a TLS reverse shell from the Laplas family. It opens an OpenSSL session to the operator and spawns"
         },
         {
           "v": "AMSI bypass",
-          "q": "an AMSI-bypass delivery variant"
+          "q": "Same as final, with an AMSI bypass first"
+        },
+        {
+          "v": "decoy PDF lure",
+          "q": "Opening the shortcut loads a decoy PDF from the operator's server and starts a hidden PowerShell process."
+        },
+        {
+          "v": "webshell deployment",
+          "q": "The operator also deployed an ASP.NET webshell on one railway web server and prepared Metasploit resource"
         },
         {
           "v": "credential dumps",
-          "q": "Produced several NTDS-format credential dumps"
+          "q": "Produced several NTDS-format credential dumps that include Administrator and krbtgt."
         },
         {
-          "v": "default passwords",
-          "q": "devices running default passwords"
+          "v": "high-concurrency enumeration",
+          "q": "Noisy collection. High-concurrency enumeration, sequential ID probing and Telegram progress pings"
         },
         {
-          "v": "AI-assisted reconnaissance",
-          "q": "DeepSeek-powered AI-assisted reconnaissance, data collection, and evidence cleanup"
+          "v": "AI agent-driven reconnaissance and cleanup",
+          "q": "A self-hosted AI agent running on DeepSeek handled reconnaissance, collection and log cleanup, with"
         },
         {
-          "v": "log cleanup",
-          "q": "The agent also ran its own cleanup."
+          "v": "log and history cleanup",
+          "q": "databases, shredded shell histories, cleared cron rows and zeroed login records in early October 2026."
         },
         {
-          "v": "routing through Tor",
-          "q": "Server logins were routed through Tor"
+          "v": "Tor routing",
+          "q": "through Tor exit nodes, with two commercial VPN exits."
+        },
+        {
+          "v": "Telegram-based control channel",
+          "q": "Telegram ties the operation together. The agent ran Hermes' messaging gateway with a Telegram bot, so the"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "more than a dozen gigabytes",
-          "q": "It held more than a dozen gigabytes across hundreds of thousands of files"
-        },
-        {
-          "v": "Four infection chains",
-          "q": "Four infection chains from mid-2025 to August 2026"
+          "q": "It held more than a dozen gigabytes across hundreds of thousands of files, with no separation"
         },
         {
           "v": "more than two thousand unique documents",
-          "q": "The collection runs to more than two thousand unique documents dated through 2026"
-        },
-        {
-          "v": "more than a hundred government organisations",
-          "q": "A directory export listing more than a hundred government organisations"
-        },
-        {
-          "v": "more than a hundred source IPs",
-          "q": "from more than a hundred source IPs"
+          "q": "The collection runs to more than two thousand unique documents dated through 2026, correspondence to or"
         },
         {
           "v": "hundreds of root logins",
-          "q": "It records hundreds of root logins over five days in late September and early October 2026"
+          "q": "It records hundreds of root logins"
+        },
+        {
+          "v": "more than a hundred source IPs",
+          "q": "from more than a hundred source IPs. Most came"
+        },
+        {
+          "v": "nearly two months",
+          "q": "The Ligolo server database records a live tunnel through a railway host for nearly two months."
+        },
+        {
+          "v": "dozens of internal Windows hosts",
+          "q": "Enumerated dozens of internal Windows hosts, from Windows 7 to Server 2022, many with SMBv1"
+        },
+        {
+          "v": "thousands of documents",
+          "q": "Thousands of documents addressed to or routed through the Ministry of Defence, sorted by month through"
+        },
+        {
+          "v": "hundreds of State Investment Committee letters",
+          "q": "Hundreds of State Investment Committee letters."
+        },
+        {
+          "v": "more than a hundred government organisations",
+          "q": "A directory export listing more than a hundred government organisations, with department and user"
         }
       ]
     },
@@ -273,18 +319,19 @@
     },
     "hedges": [
       "CloudSEK assesses with high confidence that the directory belongs to a Silent Lynx operator, based on implant code markers and build paths.",
-      "Kazakhstan nexus assessed at medium confidence: the operation runs in Russian and test traffic came from a residential Kazakh connection.",
-      "CloudSEK could not confirm whether the callback sources are victims, sandboxes or operator test hosts.",
-      "The records cover only three working days and cannot show weekend behaviour.",
-      "Attribution is high confidence on tooling and medium-high confidence on the intrusion set."
+      "The Kazakhstan nexus is assessed at medium confidence; the operation runs in Russian and test traffic came from a Kazakh residential connection.",
+      "Intrusion set attribution is medium-high confidence, per the report.",
+      "CloudSEK could not confirm whether the Laplas and Chvost callback sources are victims, sandboxes or operator test hosts.",
+      "The Turkmenistan campaign is described as upcoming, based on lures built and tested in October 2026.",
+      "The timing sample covers only three working days and cannot show weekend behaviour."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:37Z",
-      "ok": false,
-      "note": "actors[1]: Gentlemen is only mentioned as the subject of a separate earlier CloudSEK investigation that used the same agent stack. The text says 'The two operat",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:37Z",
+        "ok": false,
+        "note": "actors[1]: Gentlemen is only mentioned as the subject of a separate earlier CloudSEK investigation that used the same agent stack. The text says 'The two operat",
+        "by": "auditor"
+      }
+    ]
   }
 }

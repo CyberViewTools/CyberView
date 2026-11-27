@@ -114,35 +114,45 @@
   },
   "8f336de69d213b62b8a2a59cb441646e99310ec1": {
     "sha1": "8f336de69d213b62b8a2a59cb441646e99310ec1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:22:20Z",
+    "read_at": "2026-11-27T00:11:12Z",
     "model": "haiku",
-    "summary": "A SANS Internet Storm Center diary entry by Didier Stevens analyses a packet capture containing Cobalt Strike traffic. The author filters HTTP URIs for patterns typical of Cobalt Strike shellcode, notes that the followed stream looks encoded and may use XOR encoding, exports the data, and runs it through a Cobalt Strike beacon analysis tool. The result is the configuration of a beacon. The entry gives no threat actor, victim sector, country or CVE.",
+    "summary": "SANS Internet Storm Center diary by Didier Stevens, a senior handler. He analyses a packet capture posted by Brad that contains Cobalt Strike traffic. He finds HTTP URIs typical of Cobalt Strike shellcode, notes data that looks XOR-encoded, and uses his own beacon analysis tool to show the capture holds a beacon configuration.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
+      "dates": [
+        {
+          "v": "2026-11-25",
+          "q": "Archived: 2026-11-25 02:11:57 UTC",
+          "what": "The diary page was archived."
+        }
+      ],
       "tools": [
         {
           "v": "Cobalt Strike",
           "q": "Cobalt Strike traffic."
         },
         {
-          "v": "Cobalt Strike beacon analysis tool",
-          "q": "1768.py Cobalt Strike beacon analysis tool:"
+          "v": "Metasploit",
+          "q": "typical for Cobalt Strike shellcode (and Metasploit too)"
+        },
+        {
+          "v": "1768.py",
+          "q": "my 1768.py Cobalt Strike beacon analysis tool"
         }
       ],
       "techniques": [
         {
-          "v": "XOR-encoded data in HTTP stream",
-          "q": "XOR encoding:"
+          "v": "XOR encoding",
+          "q": "this might be some kind of XOR encoding"
         },
         {
-          "v": "beacon configuration extraction",
-          "q": "And this is indeed the configuration of a beacon."
+          "v": "configuration of a beacon",
+          "q": "this is indeed the configuration of a beacon"
         }
       ],
       "cves": [],
@@ -153,17 +163,17 @@
       "name": "Cobalt Strike"
     },
     "hedges": [
-      "this might be some kind of XOR encoding",
-      "data that looks encoded and has some repetitions"
+      "The data looks encoded and might be some kind of XOR encoding (the author's reading).",
+      "The URI pattern is typical for Cobalt Strike shellcode and Metasploit too (the author's observation)."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:12Z",
-      "ok": false,
-      "note": "techniques[0]: The value states as fact that the data is XOR-encoded. The text only says 'this might be some kind of XOR encoding', so the card drops the hedge ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:12Z",
+        "ok": false,
+        "note": "techniques[0]: The value states as fact that the data is XOR-encoded. The text only says 'this might be some kind of XOR encoding', so the card drops the hedge ",
+        "by": "auditor"
+      }
+    ]
   },
   "8fb41a6db4044de0619582b12dbb6bb3627e50db": {
     "sha1": "8fb41a6db4044de0619582b12dbb6bb3627e50db",

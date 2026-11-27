@@ -85,23 +85,28 @@
   },
   "74f9ea2e6d18b6e38364e1645f4b0d2620d01245": {
     "sha1": "74f9ea2e6d18b6e38364e1645f4b0d2620d01245",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:26:14Z",
+    "read_at": "2026-11-27T00:12:22Z",
     "model": "haiku",
-    "summary": "Quorum Cyber profiles Scattered Spider (also known as UNC3944 and Roasted 0ktapus), a financially motivated group reported active since at least May 2022. The report says it gains initial access mainly through stolen credentials from SMS and email phishing, and has used Azure Serial to reach administrative console access on virtual machines. It is also reported to use a STONESTOP loader to install a signed driver, POORTRY, which terminates security software in a bring-your-own-vulnerable-driver attack. The group is said to phish other users from the employee database and move laterally.",
+    "summary": "Quorum Cyber's profile of Scattered Spider (also UNC3944 and Roasted 0ktapus), a financially motivated group active since at least May 2022. The report says the group gets initial access through stolen credentials from SMS and email phishing, has used Azure Serial Console to reach virtual machines, and uses a loader called STONESTOP to install the POORTRY signed driver in a bring-your-own-vulnerable-driver attack that terminates security software. It also reports phishing of other users via the employee database and lateral movement. Microsoft has not yet given the group a designation.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Scattered Spider",
           "q": "Scattered Spider (also known as UNC3944 and Roasted 0ktapus) is a relatively new, financially motivated threat",
-          "by": "Quorum Cyber (the report)"
+          "by": "Quorum Cyber (report author)"
         },
         {
           "v": "UNC3944",
           "q": "Scattered Spider (also known as UNC3944 and Roasted 0ktapus) is a relatively new, financially motivated threat",
-          "by": "Quorum Cyber (the report)"
+          "by": "Quorum Cyber (report author)"
+        },
+        {
+          "v": "Roasted 0ktapus",
+          "q": "Scattered Spider (also known as UNC3944 and Roasted 0ktapus) is a relatively new, financially motivated threat",
+          "by": "Quorum Cyber (report author)"
         }
       ],
       "sectors": [],
@@ -109,8 +114,8 @@
       "dates": [
         {
           "v": "May 2022",
-          "q": "group that has been active since at least May 2022.",
-          "what": "Group reported active since at least this date"
+          "q": "has been active since at least May 2022",
+          "what": "Group reported to have been active since at least this month and year"
         }
       ],
       "tools": [
@@ -120,24 +125,20 @@
         },
         {
           "v": "POORTRY",
-          "q": "‘POORTRY’, which is designed to terminate processes associated with security software and to delete files as part"
+          "q": "a malicious signed driver dubbed ‘POORTRY’, which is designed to terminate processes associated with security software"
+        },
+        {
+          "v": "Azure Serial",
+          "q": "have been detected utilising Azure Serial"
         }
       ],
       "techniques": [
         {
           "v": "SMS phishing",
-          "q": "commonly gains initial network access via stolen credentials obtained from SMS phishing operations"
+          "q": "commonly gains initial network access via stolen credentials obtained from SMS phishing operations and have been"
         },
         {
-          "v": "Azure Serial",
-          "q": "have been detected utilising Azure Serial"
-        },
-        {
-          "v": "Bring Your Own Vulnerable Driver (BYOVD)",
-          "q": "as part of a Bring Your Own Vulnerable Driver (BYOVD) attack."
-        },
-        {
-          "v": "stealware",
+          "v": "email and SMS phishing",
           "q": "credentials by email and SMS phishing attacks or the use of stealware."
         },
         {
@@ -151,6 +152,14 @@
         {
           "v": "lateral movement",
           "q": "provides them with lateral movement within the"
+        },
+        {
+          "v": "Bring Your Own Vulnerable Driver (BYOVD)",
+          "q": "of a Bring Your Own Vulnerable Driver (BYOVD) attack."
+        },
+        {
+          "v": "terminate processes associated with security software",
+          "q": "designed to terminate processes associated with security software and to delete files as part"
         }
       ],
       "cves": [],
@@ -158,19 +167,19 @@
     },
     "subject": null,
     "hedges": [
-      "The group is yet to receive a Microsoft designation but will fall into the Tempest (financially motivated) category once registered.",
-      "Scattered Spider are reported to use a loader named STONESTOP to install a malicious signed driver.",
-      "The group has been attributed to creating the STONESTOP and POORTRY toolkit to terminate security software.",
-      "Historically, Scattered Spider has mainly gained initial access via theft of administrative credentials by email and SMS phishing or stealware.",
-      "This is likely to maintain persistence and provides them with lateral movement within the network."
+      "The group is yet to receive a Microsoft designation and will fall into the Tempest category once registered.",
+      "The Azure Serial Console, STONESTOP and POORTRY activity is described as reported ('are reported to use', 'have been detected').",
+      "The STONESTOP and POORTRY toolkit is described as having been attributed to the group.",
+      "Persistence and lateral movement are described as likely outcomes of the phishing activity.",
+      "The email and SMS phishing and stealware access methods are described as historical ('Historically')."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:56Z",
-      "ok": false,
-      "note": "techniques[1]: The text says 'Azure Serial Console'. The value 'Azure Serial' cuts off the feature's name.; summary: The summary says 'Azure Serial' where the t",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:56Z",
+        "ok": false,
+        "note": "techniques[1]: The text says 'Azure Serial Console'. The value 'Azure Serial' cuts off the feature's name.; summary: The summary says 'Azure Serial' where the t",
+        "by": "auditor"
+      }
+    ]
   }
 }

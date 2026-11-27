@@ -94,46 +94,46 @@
   },
   "81c9d894e544493159a57c858c0e9203fc405fab": {
     "sha1": "81c9d894e544493159a57c858c0e9203fc405fab",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:30:17Z",
+    "read_at": "2026-11-27T00:12:59Z",
     "model": "haiku",
-    "summary": "Check Point Research describes VoidLink, a Linux malware framework written in Zig with loaders, implants, rootkits and more than 30 plugins, aimed at cloud and container environments. The report says it appears to be built by Chinese-affiliated developers, with exact affiliation unclear, and appears to be in development. It found no evidence of real-world infections. It describes adaptive stealth, rootkit deployment, multiple command-and-control channels and credential harvesting. The intended use, commercial or criminal, remains unclear.",
+    "summary": "Check Point Research describes VoidLink, a modular Linux malware framework written in Zig and aimed at cloud and container environments. It has a web C2 dashboard, 37 plugins at the time of research, rootkit options, adaptive stealth, several C2 channels and anti-forensic modules. The developers are described as Chinese-affiliated, with exact affiliation unclear. The samples appear to be in-progress builds, and no real-world infections had been observed as of writing.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Chinese-affiliated developers",
           "q": "The framework appears to be built and maintained by Chinese-affiliated developers (exact affiliation",
-          "by": "Check Point Research (report author)"
+          "by": "Check Point Research"
         }
       ],
       "sectors": [
         {
           "v": "software engineers",
-          "q": "indicating that software engineers may be a potential target"
+          "q": "indicating that software engineers may be a potential target, either for espionage activities or possible future supply-chain-based"
         },
         {
-          "v": "cloud environments",
-          "q": "tailored towards modern cloud environments with a focus on stealth"
+          "v": "developer and administrator workstations",
+          "q": "beyond cloud environments to developer and administrator workstations that interface directly with those cloud"
         }
       ],
       "countries": [
         {
-          "v": "China",
-          "q": "that appear to originate from a Chinese-affiliated development environment"
+          "v": "Chinese-affiliated",
+          "q": "appear to originate from a Chinese-affiliated development environment"
         }
       ],
       "dates": [
         {
           "v": "2026-01-13",
-          "q": "Published: 2026-01-13",
-          "what": "Report published"
+          "q": "Published: 2026-01-13 · Archived: 2026-10-29 02:03:28 UTC",
+          "what": "Report published by Check Point Research"
         },
         {
           "v": "December 2025",
           "q": "In December 2025, Check Point Research identified a small cluster of previously unseen Linux malware samples",
-          "what": "Check Point Research identified a cluster of previously unseen Linux malware samples"
+          "what": "Linux malware samples identified by Check Point Research"
         }
       ],
       "tools": [
@@ -143,80 +143,80 @@
         },
         {
           "v": "VoidStream",
-          "q": "All are managed through a protocol dubbed VoidStream by the developers"
+          "q": "All are managed through a protocol dubbed VoidStream by the"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "similar to (and likely inspired by) Cobalt Strike and its Beacon API."
         }
       ],
       "techniques": [
         {
-          "v": "rootkit-style capabilities",
-          "q": "It includes rootkit-style capabilities (LD_PRELOAD, LKM, and eBPF)"
-        },
-        {
-          "v": "self-deletion upon tampering",
-          "q": "encryption, self-deletion upon tampering, and adaptive behavior based on the detected environment,"
-        },
-        {
-          "v": "container escapes",
-          "q": "from automated container escapes over secret extraction to dedicated"
+          "v": "rootkit capabilities",
+          "q": "alongside a range of user-mode and kernel-level rootkit capabilities."
         },
         {
           "v": "adaptive stealth",
-          "q": "adaptive stealth that adjusts runtime evasion based"
+          "q": "adaptive stealth that adjusts runtime evasion based on the security products it detects"
+        },
+        {
+          "v": "command-and-control channels",
+          "q": "It also supports multiple command-and-control channels, including HTTP/HTTPS, ICMP, and DNS tunneling, and"
+        },
+        {
+          "v": "P2P/mesh-style communication",
+          "q": "can form P2P/mesh-style communication between compromised hosts."
+        },
+        {
+          "v": "self-modifying code",
+          "q": "a self-modifying code option decrypts protected code regions at runtime"
+        },
+        {
+          "v": "deletes itself",
+          "q": "If VoidLink detects any type of tampering, it deletes itself."
+        },
+        {
+          "v": "Anti-forensic modules",
+          "q": "Anti-forensic modules ensure that any traces left by VoidLink are also deleted."
         },
         {
           "v": "SSH-based worm",
           "q": "an SSH-based worm that attempts to connect to known hosts and spread laterally."
         },
         {
-          "v": "harvest credentials",
-          "q": "Multiple plugins to harvest credentials and secrets, including SSH keys, git"
+          "v": "container escapes",
+          "q": "automated container escapes over secret extraction"
         },
         {
-          "v": "wipe or edit logs",
-          "q": "Components that wipe or edit logs and shell history based on keywords and"
+          "v": "harvest credentials",
+          "q": "Multiple plugins to harvest credentials and secrets, including SSH keys, git"
         },
         {
           "v": "timestomping",
           "q": "perform timestomping of files to disrupt forensic timelines."
         },
         {
-          "v": "selectively hide its processes, files, and network sockets",
-          "q": "Using the rootkits, the implant can selectively hide its processes, files, and network sockets, as well as hide the"
-        },
-        {
-          "v": "HTTP camouflage",
-          "q": "There is a layer responsible for HTTP camouflage, which attempts to make requests"
-        },
-        {
-          "v": "DNS tunneling",
-          "q": "including HTTP/HTTPS, ICMP, and DNS tunneling, and"
-        },
-        {
-          "v": "mesh C2",
-          "q": "While not fully implemented, analyzed samples also contain methods for mesh C2—a peer-to-peer networking"
-        },
-        {
-          "v": "anti-debugging",
-          "q": "In addition to anti-debugging techniques, VoidLink detects"
-        },
-        {
-          "v": "self-modifying code",
-          "q": "a self-modifying code option decrypts protected code regions at runtime and encrypts"
-        },
-        {
           "v": "Dirty Pipe",
           "q": "Privilege-escalation module that implements a Dirty Pipe,"
+        },
+        {
+          "v": "instance metadata",
+          "q": "VoidLink queries additional information on instance metadata"
         }
       ],
       "cves": [],
       "figures": [
         {
+          "v": "37 plugins",
+          "q": "At the time of our research, 37 plugins were available,"
+        },
+        {
           "v": "30+ plug-in modules",
           "q": "more than 30+ plug-in modules available by default."
         },
         {
-          "v": "37 plugins",
-          "q": "At the time of our research, 37 plugins were available,"
+          "v": "AWS, GCP, Azure, Alibaba, and Tencent",
+          "q": "Currently, VoidLink can detect AWS, GCP, Azure, Alibaba, and Tencent, with plans to add detections for Huawei"
         }
       ]
     },
@@ -225,21 +225,21 @@
       "name": "VoidLink"
     },
     "hedges": [
-      "The exact affiliation of the developers remains unclear.",
-      "The framework's intended use remains unclear; it may be a commercial product or a tool built for one customer.",
-      "As of writing, no evidence of real-world infections has been observed.",
-      "Mesh C2 is described as not fully implemented in the analysed samples.",
-      "Many binaries included debug symbols, suggesting in-progress builds rather than a finished, widely deployed tool.",
-      "The commercial purpose is suggested by the design and documentation, not confirmed.",
-      "The report says it is not clear whether the framework is meant as a penetration testing tool, a criminal tool, or a product for a single customer."
+      "Exact developer affiliation remains unclear.",
+      "The framework's intended use remains unclear.",
+      "As of writing, no evidence of real-world infections had been observed.",
+      "Samples appear to be in-progress builds rather than a finished, widely deployed tool.",
+      "It is unclear whether the framework is meant to be sold as a pentest tool, a criminal tool, or a single-customer product.",
+      "Mesh C2 is not fully implemented in the analysed samples.",
+      "Commercial positioning is suggested, not confirmed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:05Z",
-      "ok": false,
-      "note": "techniques[14]: The report says the Dirty Pipe plugin was 'compiled for MAC with unsed code, wouldn't work'. The quote cuts this off, so the card presents Dirty",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:05Z",
+        "ok": false,
+        "note": "techniques[14]: The report says the Dirty Pipe plugin was 'compiled for MAC with unsed code, wouldn't work'. The quote cuts this off, so the card presents Dirty",
+        "by": "auditor"
+      }
+    ]
   }
 }

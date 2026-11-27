@@ -1,11 +1,11 @@
 {
   "1b346c0a0f5985f257ad7dcc7e5c1ecffb44a339": {
     "sha1": "1b346c0a0f5985f257ad7dcc7e5c1ecffb44a339",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:24:34Z",
+    "read_at": "2026-11-27T00:11:32Z",
     "model": "haiku",
-    "summary": "Trend Micro threat encyclopedia entry for Ransom.Win32.WHITERABBIT.YACAET, described as ransomware. It arrives as a file dropped by other malware or downloaded unknowingly from malicious sites, drops ransom note files, and avoids encrypting files with certain extensions. The page gives remediation steps: Trend Micro products detect it, users should disable System Restore before scanning, delete the listed files, and restore encrypted files from backup. The page was archived on 2026-11-25.",
+    "summary": "Trend Micro Threat Encyclopedia entry for the ransomware detected as Ransom.Win32.WHITERABBIT.YACAET. The entry says it arrives as a file dropped by other malware or downloaded from malicious sites, drops ransom note files, and avoids encrypting certain file extensions. It lists vendor machine-learning detection names and removal steps, and advises restoring encrypted files from backup. The entry names no threat actors, sectors or countries.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -15,21 +15,26 @@
         {
           "v": "2026-11-25",
           "q": "Archived: 2026-11-25 02:09:53 UTC",
-          "what": "Page archived by the source"
+          "what": "Vendor page snapshot archived"
         }
       ],
-      "tools": [],
+      "tools": [
+        {
+          "v": "Ransom.Win32.WHITERABBIT.YACAET",
+          "q": "Ransom.Win32.WHITERABBIT.YACAET - Threat Encyclopedia"
+        }
+      ],
       "techniques": [
         {
-          "v": "file dropped by other malware",
-          "q": "This Ransomware arrives on a system as a file dropped by other malware or as a file downloaded unknowingly by"
+          "v": "delivery by being dropped by other malware or downloaded from malicious sites",
+          "q": "This Ransomware arrives on a system as a file dropped by other malware"
         },
         {
-          "v": "ransom note",
+          "v": "drops ransom note files",
           "q": "It drops files as ransom note."
         },
         {
-          "v": "avoids encrypting files",
+          "v": "avoids encrypting certain file extensions",
           "q": "It avoids encrypting files with the following file extensions."
         }
       ],
@@ -41,16 +46,15 @@
       "name": "Ransom.Win32.WHITERABBIT.YACAET"
     },
     "hedges": [
-      "Not all files, folders and registry entries may be installed during execution; this may be due to incomplete installation or other OS conditions.",
-      "There may be some files that are hidden, so the hidden-files search option should be checked."
+      "Not all files, folders and registry keys may be installed, due to incomplete installation or other operating system conditions."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:08Z",
-      "ok": false,
-      "note": "summary: The summary says 'Trend Micro products detect it', but the text only says the product detects it under a machine learning name (Troj.Win32.TRX.XXPE50FF",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:08Z",
+        "ok": false,
+        "note": "summary: The summary says 'Trend Micro products detect it', but the text only says the product detects it under a machine learning name (Troj.Win32.TRX.XXPE50FF",
+        "by": "auditor"
+      }
+    ]
   }
 }

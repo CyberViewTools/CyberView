@@ -1,11 +1,11 @@
 {
   "cec2a8e7a175ade89ce5588e47697f212d98e2a9": {
     "sha1": "cec2a8e7a175ade89ce5588e47697f212d98e2a9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:22:26Z",
+    "read_at": "2026-11-27T00:11:11Z",
     "model": "haiku",
-    "summary": "A malware-analysis blog post, published 2018-08-08 and archived 2026-11-25, on recovering the configuration of JRAT/Adwind malware with the x32dbg debugger. The post says the malware first creates a fake JAR and config to confuse analysts, then starts several processes, including checks for AV products via WMI. It says the real config can be found in memory by searching for a known string. No threat actor, sector or country is named.",
+    "summary": "A 2018 blog post by MlwrDssctng describes a debugger-based method for exporting the configuration of the JRAT/Adwind malware. The post says the malware creates a decoy JAR and config before running the real ones. It names x32dbg as the debugger used. No actors, CVEs or figures are named.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -15,28 +15,19 @@
         {
           "v": "2018-08-08",
           "q": "Published: 2018-08-08 · Archived: 2026-11-25 02:10:03 UTC",
-          "what": "Blog post published"
-        },
-        {
-          "v": "2026-11-25",
-          "q": "Published: 2018-08-08 · Archived: 2026-11-25 02:10:03 UTC",
-          "what": "Page archived"
+          "what": "blog post published"
         }
       ],
       "tools": [
         {
           "v": "x32dbg",
-          "q": "Export JRAT/Adwind Config with x32dbg"
+          "q": "Start x32dbg"
         }
       ],
       "techniques": [
         {
           "v": "fake JAR and config",
-          "q": "creates a fake JAR and config at the"
-        },
-        {
-          "v": "detect AV solutions with the help of WMI",
-          "q": "example to detect AV solutions with the help of WMI etc.)"
+          "q": "creates a fake JAR and config at the beginning to confuse analysts."
         }
       ],
       "cves": [],
@@ -47,13 +38,13 @@
       "name": "JRAT/Adwind"
     },
     "hedges": [],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:45Z",
-      "ok": false,
-      "note": "summary: Says the malware 'first creates a fake JAR and config ... then starts several processes, including checks for AV products via WMI'. The text says JRAT ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:45Z",
+        "ok": false,
+        "note": "summary: Says the malware 'first creates a fake JAR and config ... then starts several processes, including checks for AV products via WMI'. The text says JRAT ",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -1,18 +1,18 @@
 {
   "91e53285dfee54a08f652a09e3840f60093c7be8": {
     "sha1": "91e53285dfee54a08f652a09e3840f60093c7be8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:23:58Z",
+    "read_at": "2026-11-27T00:11:17Z",
     "model": "haiku",
-    "summary": "Ars Technica news piece (published 2017-01-18) on Fruitfly, Mac malware that Malwarebytes reported. It captures screenshots and webcam images, collects information on devices on the same network, and can connect to them. The report says it seems to target biomedical research centers and may have circulated for at least two years. How machines get infected is unclear. Some of its code components predate OS X.",
+    "summary": "Analysis of Fruitfly, a newly discovered Mac malware family. It conducts surveillance on targeted networks, including capturing screenshots and webcam images and gathering information about devices on the same network. Malwarebytes described it as seemingly targeting biomedical research centers. Its infection route is unclear. Evidence suggests it may have circulated for more than two years, possibly since the Yosemite release of OS X in 2014.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [
         {
           "v": "biomedical research centers",
-          "q": "seems to be targeting biomedical research centers"
+          "q": "which seems to be targeting biomedical research centers."
         }
       ],
       "countries": [],
@@ -20,58 +20,44 @@
         {
           "v": "2017-01-18",
           "q": "Published: 2017-01-18",
-          "what": "News article reporting the malware was published"
+          "what": "Article reporting the Fruitfly malware was published"
         },
         {
           "v": "October 2014",
-          "q": "the Yosemite release of OS X in October 2014",
-          "what": "Yosemite release of OS X; the malware may have been circulating since then"
+          "q": "since the release of the Yosemite release of OS X in October 2014",
+          "what": "Possible start of circulation, tied to the Yosemite release of OS X"
         },
         {
           "v": "January 2015",
-          "q": "launch agent file with a creation date of January 2015",
-          "what": "Creation date of a launch agent file, cited as evidence the malware has existed for at least two years"
-        },
-        {
-          "v": "2001",
-          "q": "first release of OS X in 2001",
-          "what": "First release of OS X; some malware code functions were in use before this"
-        },
-        {
-          "v": "1998",
-          "q": "was last updated in 1998",
-          "what": "Open source libjpeg code used by the malware was last updated"
+          "q": "a launch agent file with a creation date of January 2015",
+          "what": "Creation date of a launch agent file cited as evidence the malware is older than discovery"
         }
       ],
       "tools": [
         {
           "v": "Fruitfly",
           "q": "which a recent Mac OS update released by Apple is detecting as Fruitfly"
+        },
+        {
+          "v": "libjpeg",
+          "q": "Open source code known as libjpeg, which the malware uses to open or create JPG-formatted image files, was last updated in"
         }
       ],
       "techniques": [
         {
-          "v": "screenshot and webcam capture",
+          "v": "screenshots and webcam images",
           "q": "screenshots and webcam images, collects information about each device connected to the same network as the"
         },
         {
-          "v": "network device discovery",
-          "q": "collects information about each device connected to the same network as the"
-        },
-        {
-          "v": "connecting to other devices on the network",
-          "q": "can then connect to those devices"
+          "v": "connect to those devices",
+          "q": "can then connect to those devices, according to a blog post published by anti-malware provider"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "more than two years",
-          "q": "possibly for more than two years"
-        },
-        {
-          "v": "at least two years",
-          "q": "suggests the malware has been in the wild for at least two years"
+          "q": "possibly for more than two years, a researcher reported Wednesday."
         }
       ]
     },
@@ -80,20 +66,19 @@
       "name": "Fruitfly"
     },
     "hedges": [
-      "The report says it is possibly for more than two years that the malware has been active, based on the reporter's account.",
-      "The report says it is still unclear how machines get infected.",
-      "The report says Fruitfly possibly was developed later and simply reused old components.",
-      "The report says the evidence suggests, rather than proves, that the malware has been in the wild for at least two years.",
-      "The report says the malware appears to have been in existence, undetected for some time.",
-      "The report says the malware seems to be targeting biomedical research centers."
+      "possibly for more than two years",
+      "It's still unclear how machines get infected.",
+      "The malware appears to have actually been in existence, undetected for some time, and seems to be targeting biomedical research centers.",
+      "Still other evidence suggests the malware has been in the wild for at least two years.",
+      "It's possible Fruitfly wasn't developed until much later and simply incorporated those antiquated components."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:20Z",
-      "ok": false,
-      "note": "hedges[0]: The text attributes the 'possibly for more than two years' claim to 'a researcher' who reported it, not to the reporter. 'Based on the reporter's acc",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:20Z",
+        "ok": false,
+        "note": "hedges[0]: The text attributes the 'possibly for more than two years' claim to 'a researcher' who reported it, not to the reporter. 'Based on the reporter's acc",
+        "by": "auditor"
+      }
+    ]
   }
 }

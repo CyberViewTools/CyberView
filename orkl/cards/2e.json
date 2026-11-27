@@ -1,61 +1,73 @@
 {
   "2e21dde48be974440193a00e7b6441e6a9ca1b9a": {
     "sha1": "2e21dde48be974440193a00e7b6441e6a9ca1b9a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:25:44Z",
+    "read_at": "2026-11-27T00:11:39Z",
     "model": "haiku",
-    "summary": "Part 1 of an analysis of the Panda Banker banking trojan by Crovax, published 2021-08-26. The malware shares code with Zeus, injects code into web browsers to steal banking and credit card credentials, uses anti-analysis and obfuscation, and deletes itself when it detects analysis tools. Memory analysis shows an unknown process spawning data_1.exe. Behavioural and reverse engineering findings are deferred to part 2.",
+    "summary": "Part 1 of an analysis of Panda Banker, a banking trojan that shares some code with the older Zeus malware. It injects code into web browsers to steal banking and card credentials, uses anti-analysis and obfuscation, and deletes itself when monitoring tools are detected. After execution it spawns a second binary. Part 1 covers initial memory analysis of that activity. Behavioural and reverse engineering are deferred to part 2. Published 2021-08-26 by Crovax.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
-      "sectors": [
-        {
-          "v": "banking",
-          "q": "It’s known to inject code into the users web browser and attempt to steal banking/credit card credentials."
-        }
-      ],
+      "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "2021-08-26",
-          "q": "Published: 2021-08-26 · Archived: 2026-11-25 02:03:14 UTC",
-          "what": "Analysis part 1 published"
+          "q": "Published: 2021-08-26",
+          "what": "Report published"
+        },
+        {
+          "v": "2026-11-25",
+          "q": "Archived: 2026-11-25 02:03:14 UTC",
+          "what": "Report archived"
         }
       ],
       "tools": [
         {
-          "v": "Zeus",
-          "q": "shares some of its code base with an older malware variant called ‘Zeus.’"
-        },
-        {
           "v": "volatility",
           "q": "We can see this during the process tree listing in volatility"
+        },
+        {
+          "v": "Zeus",
+          "q": "shares some of its code base with an older malware variant called ‘Zeus.’"
         }
       ],
       "techniques": [
         {
+          "v": "browser code injection",
+          "q": "inject code into the users web browser"
+        },
+        {
           "v": "anti-analysis and code obfuscation",
-          "q": "Panda banker has a series of different anti-analysis and code obfuscation techniques to thwart any attempt in"
+          "q": "anti-analysis and code obfuscation techniques"
         },
         {
-          "v": "checking for analysis tools",
-          "q": "Some of these techniques consist of checking for process monitoring tools and packet analysis tool."
+          "v": "checks for process and packet monitoring tools",
+          "q": "checking for process monitoring tools and packet analysis tool"
         },
         {
-          "v": "web browser code injection",
-          "q": "It’s known to inject code into the users web browser and attempt to steal banking/credit card credentials."
+          "v": "self-deletion after detecting monitoring tools",
+          "q": "it will delete itself from the host system"
         },
         {
-          "v": "self-deletion",
-          "q": "The executable, once it has detected one of these tools, it will delete itself from the host system."
+          "v": "spawns and executes a second binary",
+          "q": "would spawn another binary in the AppData directory then execute it"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "two",
-          "q": "it would spawn two"
+          "v": "pid 1960",
+          "q": "an unknown process (pid 1960) spawning another process"
+        },
+        {
+          "v": "pid 3816",
+          "q": "named ‘data_1.exe’ (pid 3816) then terminating itself"
+        },
+        {
+          "v": "two additional processes",
+          "q": "spawn two additional processes (svchost.exe)"
         }
       ]
     },
@@ -64,16 +76,16 @@
       "name": "Panda Banker"
     },
     "hedges": [
-      "Findings are based on the author's initial analysis, which covers only part of the malware.",
-      "The behavioural and reverse engineering sections are deferred to part 2 of the write-up."
+      "Findings are based on the author's initial analysis, and the memory analysis focused on one captured activity.",
+      "Behavioural and reverse engineering sections are deferred to part 2, so additional functionality is not covered in this write-up."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:19Z",
-      "ok": false,
-      "note": "figures[0]: The quote 'it would spawn two' refers to two additional svchost.exe processes. The figure value 'two' has no label and the card doesn't say what is ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:19Z",
+        "ok": false,
+        "note": "figures[0]: The quote 'it would spawn two' refers to two additional svchost.exe processes. The figure value 'two' has no label and the card doesn't say what is ",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -1,12 +1,12 @@
 {
   "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5": {
     "sha1": "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:29:16Z",
+    "read_at": "2026-11-27T00:13:05Z",
     "model": "haiku",
-    "summary": "Genians Security Center (GSC) describes a reply-based spearphishing campaign that impersonated a senior aide in a South Korean National Assembly member's office in September 2026. The LNK-based chain used PowerShell and a public note page as a command channel, and the operator swapped in XenoRAT, information-collection and document-theft scripts, then NodeLinkRAT, a Node.js-based remote access tool, on October 16, 2026. GSC assesses the campaign as Kimsuky with moderate confidence.",
-    "kind": "actor-campaign",
+    "summary": "Genians Security Center describes NodeLinkRAT, a JavaScript remote access tool run on a Node.js runtime, used in a June to October 2026 campaign against South Korean policy and security professionals. The attack began with reply-based spearphishing posing as a National Assembly member's aide, using a disguised shortcut file. Later stages were fetched from a public note service whose contents the operator swapped to change tools, including XenoRAT and document-theft scripts. GSC assesses the campaign as Kimsuky with moderate confidence.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
@@ -17,140 +17,122 @@
       ],
       "sectors": [
         {
-          "v": "government (National Assembly office)",
-          "q": "a threat actor impersonating a senior aide in a South Korean National Assembly"
-        },
-        {
           "v": "policy and security professionals",
-          "q": "policy and security professionals through reply-based spearphishing, then used a public note service as a command channel"
+          "q": "approached South Korean policy and security professionals through reply-based spearphishing"
         }
       ],
       "countries": [
         {
-          "v": "South Korea",
-          "q": "a threat actor impersonating a senior aide in a South Korean National Assembly"
-        },
-        {
-          "v": "Japan",
-          "q": "NodeLinkRAT uses the Japan-based host"
-        },
-        {
           "v": "North Korea",
-          "q": "The attack resembles the activities of North Korea-backed hacking groups in its TTPs, infrastructure preferences, and lure"
+          "q": "The attack resembles the activities of North Korea-backed hacking groups in its TTPs, infrastructure preferences, and lure themes."
+        },
+        {
+          "v": "South Korea",
+          "q": "approached South Korean policy and security professionals through reply-based spearphishing"
         }
       ],
       "dates": [
         {
           "v": "September 12 and 18, 2026",
           "q": "Between September 12 and 18, 2026, a threat actor impersonating a senior aide in a South Korean National Assembly",
-          "what": "Spearphishing attack against an attendee of a September 9 seminar"
-        },
-        {
-          "v": "June and October 2026",
-          "q": "GSC collected multiple third-stage code samples between June and October 2026.",
-          "what": "GSC collected third-stage code samples"
+          "what": "Spearphishing campaign window against a seminar attendee"
         },
         {
           "v": "June 18, 2026",
-          "q": "3-3-1. In-Memory Execution of XenoRAT (June 18, 2026)",
-          "what": "In-memory execution of a XenoRAT variant"
+          "q": "In-Memory Execution of XenoRAT (June 18, 2026)",
+          "what": "In-memory execution of a XenoRAT variant via the note page"
         },
         {
           "v": "September 18, 2026",
-          "q": "3-3-2. Dropbox-Based Information Collection and Exfiltration (September 18, 2026)",
-          "what": "Dropbox-based information collection and exfiltration"
+          "q": "Dropbox-Based Information Collection and Exfiltration (September 18, 2026)",
+          "what": "System information collection with upload to Dropbox"
         },
         {
           "v": "September 27, 2026",
-          "q": "3-3-3. Information Exfiltration Through MEGA Cloud (September 27, 2026)",
-          "what": "Exfiltration via MEGA cloud"
+          "q": "Information Exfiltration Through MEGA Cloud (September 27, 2026)",
+          "what": "Collection code changed to exfiltrate results to MEGA Cloud"
         },
         {
           "v": "September 28, 2026",
-          "q": "3-3-4. Dropbox App Replacement and Document Exfiltration (September 28, 2026)",
-          "what": "Dropbox app replacement and document theft"
+          "q": "Dropbox App Replacement and Document Exfiltration (September 28, 2026)",
+          "what": "Document theft script uploading files to free web hosting"
         },
         {
           "v": "October 16, 2026",
-          "q": "3-3-5. NodeLinkRAT, a Node.js-Based Remote Access Tool (October 16, 2026)",
-          "what": "NodeLinkRAT installed and run on the victim PC"
-        },
-        {
-          "v": "2026-11-15",
-          "q": "Published: 2026-11-15 · Archived: 2026-11-17 02:00:40 UTC",
-          "what": "Report published by Genians"
+          "q": "NodeLinkRAT, a Node.js-Based Remote Access Tool (October 16, 2026)",
+          "what": "NodeLinkRAT installed and executed on the victim PC"
         }
       ],
       "tools": [
         {
-          "v": "XenoRAT",
-          "q": "Three XenoRAT variants were identified in this attack."
+          "v": "NodeLinkRAT",
+          "q": "Genians Security Center (GSC) named this remote access tool NodeLinkRAT."
         },
         {
-          "v": "NodeLinkRAT",
-          "q": "named this remote access tool NodeLinkRAT."
+          "v": "XenoRAT",
+          "q": "The reconstructed PE is a .NET-based XenoRAT variant."
+        },
+        {
+          "v": "Node.js",
+          "q": "This code instead installs Node.js, a legitimate development tool, directly on the victim's PC"
+        },
+        {
+          "v": "PowerShell",
+          "q": "This script is a PowerShell-based second-stage loader that initially runs only in memory without being saved to disk."
+        },
+        {
+          "v": "aNotepad",
+          "q": "After downloading the aNotepad page contents"
+        },
+        {
+          "v": "Dropbox",
+          "q": "The script obtains an access token using a hardcoded Dropbox app key and refresh token"
+        },
+        {
+          "v": "MEGA Cloud",
+          "q": "Information Exfiltration Through MEGA Cloud (September 27, 2026)"
         },
         {
           "v": "MEGAcmd",
           "q": "The attacker focused on its official command-line tool, MEGAcmd."
         },
         {
-          "v": "Dropbox API",
-          "q": "Uploads to external cloud storage using the Dropbox API and MEGAcmd"
-        },
-        {
-          "v": "Node.js",
-          "q": "This code instead installs Node.js, a legitimate"
-        },
-        {
-          "v": "aNotepad",
-          "q": "A multistage fileless chain involving LNK, PowerShell, free web hosting, and aNotepad"
-        },
-        {
-          "v": "PowerShell",
-          "q": "A multistage fileless chain involving LNK, PowerShell, free web hosting, and aNotepad"
+          "v": "socket.io-client",
+          "q": "socket.io-client provides real-time exchange of commands and results with the C2 server"
         }
       ],
       "techniques": [
         {
-          "v": "reply-based spearphishing",
+          "v": "Reply-based spearphishing",
           "q": "Reply-based spearphishing impersonating a senior aide in a National Assembly member's office under the pretext of"
         },
         {
-          "v": "multistage fileless chain",
-          "q": "A multistage fileless chain involving LNK, PowerShell, free web hosting, and aNotepad"
-        },
-        {
-          "v": "public note page C2 channel",
-          "q": "Installation of XenoRAT or NodeLinkRAT by replacing code on a public note page"
-        },
-        {
-          "v": "polymorphic second-stage code",
-          "q": "Different second-stage code delivered on each C2 connection to hinder analysis and repeated collection"
-        },
-        {
-          "v": "scheduled task persistence",
-          "q": "The second-stage script downloaded when the LNK file runs establishes persistence through a scheduled task."
+          "v": "LNK file disguised as an HWP document",
+          "q": "Execution of an LNK file disguised as an HWP document inside an archive"
         },
         {
           "v": "character substitution obfuscation",
           "q": "This character substitution obfuscation is designed to evade static detection."
         },
         {
-          "v": "fileless in-memory execution",
+          "v": "fileless approach",
           "q": "The second-stage loader itself runs in memory without being written to disk, using a fileless approach"
         },
         {
-          "v": "cloud storage exfiltration",
-          "q": "Uploads to external cloud storage using the Dropbox API and MEGAcmd"
+          "v": "scheduled task",
+          "q": "The second-stage script downloaded when the LNK file runs establishes persistence through a scheduled task."
         },
         {
-          "v": "document theft",
-          "q": "The remaining sample is a script that steals document files themselves rather than collecting information."
+          "v": "public note service",
+          "q": "It uses a public note service as an additional C2 channel"
         },
         {
-          "v": "LOLBins (living-off-the-land tools)",
-          "q": "The attack also uses only legitimate tools included with the operating system (LOLBins),"
+          "v": "LOLBins",
+          "q": "The attack also uses only legitimate tools included with the operating system (LOLBins)"
+        },
+        {
+          "v": "AES-256-GCM",
+          "q": "Communications are encrypted with AES-256-GCM"
         }
       ],
       "cves": [],
@@ -164,16 +146,12 @@
           "q": "On September 28, four code samples were observed on the note page."
         },
         {
-          "v": "three Base64 blocks",
-          "q": "On September 18, three Base64 blocks were posted consecutively on the note page."
+          "v": "approximately three months",
+          "q": "This code was observed approximately three months before the September spearphishing attack."
         },
         {
-          "v": "every 38 minutes",
-          "q": "Because \"UPA.ps1\" re-executes the note page contents every 38 minutes, documents the victim is working on are exfiltrated"
-        },
-        {
-          "v": "AES-256-GCM",
-          "q": "Communications are encrypted with AES-256-GCM, but the key is hardcoded as"
+          "v": "38 minutes",
+          "q": "repeating every 38 minutes"
         }
       ]
     },
@@ -183,20 +161,19 @@
     },
     "hedges": [
       "GSC assesses the Kimsuky attribution with moderate confidence; no single decisive piece of evidence has been obtained.",
-      "Attribution from individual factors alone is difficult, since XenoRAT and Dropbox or free hosting are widely abused by many actors.",
-      "Third-party imitation of the same techniques cannot be completely ruled out.",
-      "Deliberate deception is possible, since Korean strings and South Korean services may reflect targeting or be used to mislead.",
-      "Some attack stages may not have been identified, because the note page code changed frequently.",
-      "Victim-specific code selection through another, unconfirmed method cannot be ruled out.",
-      "Organisational changes in North Korean actors may cause partial overlap or confusion with their previous campaigns."
+      "XenoRAT is open source, and Dropbox and free hosting are commonly abused by many threat actors, so those alone carry limited weight.",
+      "A third party may have imitated the same techniques, and this cannot be completely ruled out.",
+      "Korean strings and South Korean services may reflect targeting of South Korea, and deliberate deception is also possible.",
+      "There may be attack stages that have not been identified, because the note page content changed frequently.",
+      "Victim-specific code may have been selected through another, unconfirmed method, which cannot be ruled out."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:05Z",
-      "ok": false,
-      "note": "sectors[0]: The National Assembly office was only the identity the actor impersonated. The text says the target was a seminar attendee, and the conclusion names",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:05Z",
+        "ok": false,
+        "note": "sectors[0]: The National Assembly office was only the identity the actor impersonated. The text says the target was a seminar attendee, and the conclusion names",
+        "by": "auditor"
+      }
+    ]
   }
 }

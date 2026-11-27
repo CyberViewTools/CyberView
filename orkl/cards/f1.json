@@ -1,90 +1,81 @@
 {
   "f1041799719ddb6d23d004cb21e8b09a9316d0c3": {
     "sha1": "f1041799719ddb6d23d004cb21e8b09a9316d0c3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:21:00Z",
+    "read_at": "2026-11-27T00:10:53Z",
     "model": "haiku",
-    "summary": "IBM X-Force IRIS tracks ITG07, which it says most closely aligns with activity other vendors call Chafer or APT39. Over the past nine months ITG07 intruded into transportation-sector organisations, using legacy tools and a custom backdoor that IRIS named TREKX. The report describes credential theft, lateral movement and data exfiltration. IRIS views ITG07 as mainly engaged in surveillance and tracking of individuals. The initial access vector could not be confirmed.",
+    "summary": "IBM X-Force IRIS reports on ITG07, a threat actor that over nine months conducted intrusions into several geographically dispersed transportation-sector organizations. IRIS says ITG07 most closely aligns with Chafer/APT39, which Symantec describes as an alleged Iran-based group. The report describes a custom backdoor, TREKX, first reported by NCCGroup in March 2019, and tools including custom mimikatz, NBTScan, PsExec and webshells. Observed behaviour includes credential theft, lateral movement, persistence disguised as a service, and data exfiltration, which IRIS believes mainly serves…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "ITG07",
           "q": "which we call ITG07, that has conducted intrusions in a number of geographically dispersed organizations",
-          "by": "IBM X-Force IRIS (report authors)"
+          "by": "IBM X-Force IRIS"
         },
         {
           "v": "Chafer",
-          "q": "this adversarial group most closely aligns with activity reported by other vendors as Chafer, or APT39.",
-          "by": "IBM X-Force IRIS, citing other vendors"
+          "q": "According to Symantec’s analysis of this group, Chafer is an alleged Iran-based hacking group and has been responsible for",
+          "by": "Symantec (cited by IBM X-Force IRIS)"
         },
         {
           "v": "APT39",
           "q": "this adversarial group most closely aligns with activity reported by other vendors as Chafer, or APT39.",
-          "by": "IBM X-Force IRIS, citing other vendors"
+          "by": "IBM X-Force IRIS"
         }
       ],
       "sectors": [
         {
           "v": "transportation",
-          "q": "in the transportation sector."
+          "q": "in the transportation sector. In analyzing various tactics, techniques and procedures (TTPs) employed by ITG07"
         },
         {
           "v": "aviation",
-          "q": "in the aviation industry, primarily in the Middle East."
+          "q": "intrusions into multiple organizations in the aviation industry, primarily in the Middle East."
         }
       ],
       "countries": [
         {
           "v": "Iran",
-          "q": "Chafer is an alleged Iran-based hacking group"
+          "q": "Chafer is an alleged Iran-based hacking group and has been responsible for"
         }
       ],
       "dates": [
         {
-          "v": "past nine months",
-          "q": "During the past nine months, our team has been tracking a threat",
-          "what": "IRIS tracked ITG07 intrusions over this period"
-        },
-        {
           "v": "March 2019",
-          "q": "It appears the same malware was reported by NCCGroup in March 2019 and attributed to Chafer",
-          "what": "NCCGroup reported the same malware and attributed it to Chafer"
+          "q": "reported by NCCGroup in March 2019 and attributed to Chafer",
+          "what": "TREKX malware reported by NCCGroup and attributed to Chafer"
         }
       ],
       "tools": [
+        {
+          "v": "TREKX",
+          "q": "TREKX is a backdoor capable of receiving and executing commands from a remote attacker."
+        },
         {
           "v": "mimikatz",
           "q": "A particular, customized version of mimikatz named mnl.exe/mnl32.exe"
         },
         {
-          "v": "TREKX",
-          "q": "(RAT) that we then named TREKX, based on strings and file markers of command output files, to support early"
+          "v": "JSPSPY",
+          "q": "webshells such as JSPSPY and ASPXSPY; and"
+        },
+        {
+          "v": "ASPXSPY",
+          "q": "webshells such as JSPSPY and ASPXSPY; and"
         },
         {
           "v": "NBTScan",
           "q": "the threat actors used NBTScan, a common tool widely used by ITG07"
         },
         {
-          "v": "JSPSPY",
-          "q": "webshells such as JSPSPY and ASPXSPY"
-        },
-        {
-          "v": "ASPXSPY",
-          "q": "webshells such as JSPSPY and ASPXSPY"
-        },
-        {
-          "v": "GoogleDrive RAT",
-          "q": "those reported as the GoogleDrive RAT by Nyotron."
+          "v": "Navicat",
+          "q": "IRIS observed ITG07 using the Navicat utility in an attempt to harvest database information in a number of instances."
         },
         {
           "v": "ps.exe",
-          "q": "the group used a custom portscanner named ps.exe"
-        },
-        {
-          "v": "Navicat",
-          "q": "observed ITG07 using the Navicat utility in an attempt to harvest database information"
+          "q": "named ps.exe and our analysis indicates it is functionally similar to a file of the same name and function reported"
         },
         {
           "v": "PsExec",
@@ -92,15 +83,11 @@
         },
         {
           "v": "RemCom",
-          "q": "such as RemCom and Plink to create"
+          "q": "use the secure shell (SSH)-based utilities such as RemCom and Plink to create"
         },
         {
           "v": "Plink",
-          "q": "such as RemCom and Plink to create"
-        },
-        {
-          "v": "BITS",
-          "q": "The legitimate Microsoft Background Intelligence Transfer Service (BITS) for moving files in and out of"
+          "q": "use the secure shell (SSH)-based utilities such as RemCom and Plink to create"
         }
       ],
       "techniques": [
@@ -109,59 +96,74 @@
           "q": "A preference for access to the environment via legitimate Citrix connections;"
         },
         {
-          "v": "communicated via HTTP requests",
-          "q": "are communicated via HTTP requests."
+          "v": "BITS",
+          "q": "The legitimate Microsoft Background Intelligence Transfer Service (BITS) for moving files in and out of"
+        },
+        {
+          "v": "credential extractor",
+          "q": "The attacker used the credential extractor to steal access data and gain privileged local access to the network."
+        },
+        {
+          "v": "Pass the Hash",
+          "q": "These credentials could then be used in attacks such as Pass the Hash and Pass the Ticket."
+        },
+        {
+          "v": "webshells",
+          "q": "webshells such as JSPSPY and ASPXSPY; and"
+        },
+        {
+          "v": "HTTP requests",
+          "q": "control (C&C) messages between the malware and the C&C server are communicated via HTTP requests. Our"
+        },
+        {
+          "v": "phishing",
+          "q": "phishing, exploitation of vulnerable web applications, SQL injection and remote code execution."
+        },
+        {
+          "v": "SQL injection",
+          "q": "phishing, exploitation of vulnerable web applications, SQL injection and remote code execution."
         },
         {
           "v": "service that would look legitimate",
           "q": "service that would look legitimate unless further investigated."
         },
         {
-          "v": "extraction of credential",
-          "q": "a utility that enables the extraction of credential"
-        },
-        {
-          "v": "Pass the Hash and Pass the Ticket",
-          "q": "These credentials could then be used in attacks such as Pass the Hash and Pass the Ticket."
-        },
-        {
-          "v": "move to additional hosts",
-          "q": "tools the attackers used to attempt to move to additional hosts on the network."
-        },
-        {
-          "v": "exfiltrating valuable data",
-          "q": "its objective of exfiltrating valuable data"
-        },
-        {
-          "v": "phishing",
-          "q": "phishing, exploitation of vulnerable web applications, SQL injection and remote code execution."
+          "v": "exfiltration",
+          "q": "ITG07 was observed leveraging another RAT malware but primarily for the purposes of exfiltrating"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "nine months",
+          "q": "During the past nine months, our team has been tracking a threat"
+        },
+        {
+          "v": "two samples",
+          "q": "Our analysis focused on two samples: the RAT itself"
+        }
+      ]
     },
     "subject": {
-      "type": "malware",
-      "name": "TREKX"
+      "type": "campaign",
+      "name": "ITG07 cyber operations"
     },
     "hedges": [
-      "IRIS links this activity to ITG07 based on its own data sources, and notes each vendor has an overlapping but unique view of threat activity.",
-      "ITG07 most closely aligns with activity other vendors report as Chafer or APT39; this is an alignment, not a confirmed identity.",
-      "Symantec's analysis describes Chafer as an alleged Iran-based hacking group.",
-      "IRIS says the TREKX backdoor is probably custom-built.",
-      "The report says Remexi, a malware long reported for this group, was not observed in this activity.",
-      "Definitive identification of the initial attack vector was not possible; the listed vectors are possibilities only.",
-      "IRIS says ITG07 appears to be primarily engaged in surveillance and tracking of individuals, with attacks likely carried out to gather information.",
-      "IRIS assesses it is very likely the transportation industry will continue to be a high-value target."
+      "IRIS frames the Chafer/APT39 link as a correlation: each vendor has its own optic, and the group most closely aligns with other vendors' reporting.",
+      "TREKX is described as probably a custom remote access Trojan.",
+      "IRIS did not observe Remexi, which was long reported as part of the group's typical TTPs.",
+      "Evidence did not exist to definitively identify the initial attack vector; the listed vectors are potential only.",
+      "ITG07 appears to be primarily engaged in surveillance and tracking, with most attacks likely carried out to gather information.",
+      "Symantec describes Chafer as an alleged Iran-based hacking group."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:50:10Z",
-      "ok": false,
-      "note": "summary: Calls TREKX 'a custom backdoor' without the hedge. The text says 'probably custom'. Also states flatly that IRIS views ITG07 as 'mainly' engaged in sur",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:50:10Z",
+        "ok": false,
+        "note": "summary: Calls TREKX 'a custom backdoor' without the hedge. The text says 'probably custom'. Also states flatly that IRIS views ITG07 as 'mainly' engaged in sur",
+        "by": "auditor"
+      }
+    ]
   },
   "f14090e9d13611088d28a9f182575a70b357636a": {
     "sha1": "f14090e9d13611088d28a9f182575a70b357636a",

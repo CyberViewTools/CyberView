@@ -1,18 +1,18 @@
 {
   "d96773243a3ffb8b312823d35b0f6414d2a3462e": {
     "sha1": "d96773243a3ffb8b312823d35b0f6414d2a3462e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:22:09Z",
+    "read_at": "2026-11-27T00:11:15Z",
     "model": "haiku",
-    "summary": "SC Media, citing BleepingComputer, reports that the Hive ransomware gang uses a novel obfuscation method called IPfuscation. Sentinel Labs researchers examined 64-bit Windows executables that carried Cobalt Strike beacon payloads and hid them by disguising the data as IPv4-style addresses, so the payload only appears as shellcode once converted. The shellcode is then run through direct syscalls or proxy execution. Variants also use IPv6, MAC and UUID addresses. Researchers say static signatures alone are inadequate and recommend behavioural detection and AI-based analysis for endpoints.",
+    "summary": "SC Media brief reporting that the Hive ransomware gang uses a novel obfuscation technique called IPfuscation, which disguises Cobalt Strike beacon payloads as IP-address-like strings. Sentinel Labs researchers found shellcode executed through direct syscalls or proxy execution, and also saw IPv6, MAC and UUID variants. The researchers say static signatures are inadequate and recommend behavioural detection.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Hive ransomware gang",
           "q": "The Hive ransomware gang has been leveraging a novel obfuscation approach involving IPv4 addresses and",
-          "by": "SC Media report, citing BleepingComputer"
+          "by": "SC Media (the report), citing BleepingComputer"
         }
       ],
       "sectors": [],
@@ -22,22 +22,31 @@
           "v": "2022-03-31",
           "q": "Published: 2022-03-31 · Archived: 2026-11-25 02:16:56 UTC",
           "what": "Report published"
+        },
+        {
+          "v": "2026-11-25",
+          "q": "Published: 2022-03-31 · Archived: 2026-11-25 02:16:56 UTC",
+          "what": "Page archived"
         }
       ],
       "tools": [
         {
           "v": "Cobalt Strike",
-          "q": "numerous conversions resulting in Cobalt Strike beacon downloads, BleepingComputer reports."
+          "q": "resulting in Cobalt Strike beacon downloads, BleepingComputer reports."
         }
       ],
       "techniques": [
         {
-          "v": "IPfuscation",
-          "q": "The new technique dubbed \"IPfuscation\" was identified by Sentinel Labs researchers who examined various"
+          "v": "IPfuscation obfuscation using IP-address-like strings",
+          "q": "The new technique dubbed \"IPfuscation\" was identified by Sentinel Labs researchers who examined various 64-"
         },
         {
-          "v": "direct SYSCALLs or proxy execution",
+          "v": "Shellcode execution via direct syscalls or proxy execution",
           "q": "executed by the malware through direct SYSCALLs or proxy execution."
+        },
+        {
+          "v": "IPfuscation variants using IPv6, MAC and UUID formats",
+          "q": "More IPfuscation variants have been observed by researchers, with IPv6, MAC, and UUID addresses also being"
         }
       ],
       "cves": [],
@@ -48,16 +57,17 @@
       "name": "Hive ransomware"
     },
     "hedges": [
-      "The findings suggest that static signature dependence alone is inadequate in detecting malicious payloads."
+      "The findings suggest that static signature dependence alone is inadequate in detecting malicious payloads.",
+      "Recommendations are attributed to researchers ('according to researchers'); the findings are relayed via BleepingComputer."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:52Z",
-      "ok": false,
-      "note": "summary: The text says only that 'the findings suggest' static signature dependence alone is inadequate. The summary instead says 'Researchers say static signat",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:52Z",
+        "ok": false,
+        "note": "summary: The text says only that 'the findings suggest' static signature dependence alone is inadequate. The summary instead says 'Researchers say static signat",
+        "by": "auditor"
+      }
+    ]
   },
   "d93d4e91ffcef2852aee0867f487dd1355f684c3": {
     "sha1": "d93d4e91ffcef2852aee0867f487dd1355f684c3",

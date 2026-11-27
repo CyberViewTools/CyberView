@@ -1,56 +1,55 @@
 {
   "3b9b99b0c50d67fb9fb349e48254025f95648cd6": {
     "sha1": "3b9b99b0c50d67fb9fb349e48254025f95648cd6",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:26:02Z",
+    "read_at": "2026-11-27T00:12:15Z",
     "model": "haiku",
-    "summary": "A Broadcom Symantec protection bulletin reports a new campaign distributing Poco RAT to Spanish-speaking users in Latin America. The report attributes the campaign to the Darkling APT (aka Dark Caracal), which it says is known to use Bandook-based backdoors. Victims receive phishing emails with malicious PDF attachments that redirect them to download .rev files, which lead to malware droppers that install Poco RAT. The payloads give attackers remote control, command execution and system information collection. The bulletin lists detection names for Symantec and Carbon Black products.",
+    "summary": "Broadcom's Symantec protection bulletin reports a new campaign distributing Poco RAT to Spanish-speaking users in Latin America. The campaign is attributed to the Darkling APT, also called Dark Caracal, which the report says is known to use Bandook-based backdoors. Victims receive phishing emails with malicious PDF attachments that redirect them to download .rev files from legitimate file-sharing services. These lead to droppers that install Poco RAT, which gives attackers remote control, command execution and system information collection. The bulletin lists Symantec and Carbon Black…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Darkling APT",
           "q": "The campaign has been attributed to the Darkling APT (aka Dark Caracal).",
-          "by": "the report itself (Broadcom protection bulletin)"
+          "by": "Broadcom (Symantec protection bulletin)"
         },
         {
           "v": "Dark Caracal",
           "q": "The campaign has been attributed to the Darkling APT (aka Dark Caracal).",
-          "by": "the report itself (Broadcom protection bulletin)"
+          "by": "Broadcom (Symantec protection bulletin)"
         }
       ],
       "sectors": [],
-      "countries": [
-        {
-          "v": "Latin America",
-          "q": "A new campaign distributing Poco RAT to Spanish-speaking users in Latin America has been reported in the wild."
-        }
-      ],
+      "countries": [],
       "dates": [
         {
           "v": "2026-11-25",
           "q": "Archived: 2026-11-25 02:20:36 UTC",
-          "what": "bulletin archived"
+          "what": "Bulletin page archived"
         }
       ],
       "tools": [
         {
           "v": "Poco RAT",
-          "q": "A new campaign distributing Poco RAT to Spanish-speaking users in Latin America has been reported in the wild."
+          "q": "The Poco RAT malware is spread via phish email messages containing"
         },
         {
-          "v": "Bandook-based backdoors",
+          "v": "Bandook",
           "q": "Bandook-based backdoors in their attacks."
         }
       ],
       "techniques": [
         {
-          "v": "phish email messages",
-          "q": "The Poco RAT malware is spread via phish email messages containing"
+          "v": "phishing emails with PDF attachments",
+          "q": "phish email messages containing"
         },
         {
-          "v": "command execution",
+          "v": "redirect to file downloads from file-sharing services",
+          "q": "legitimate file-sharing services."
+        },
+        {
+          "v": "remote control, command execution and system information collection",
           "q": "control of the compromised machine, command execution and system information collection, among others."
         }
       ],
@@ -58,17 +57,20 @@
       "figures": []
     },
     "subject": {
-      "type": "campaign",
-      "name": "Poco RAT distribution campaign"
+      "type": "malware",
+      "name": "Poco RAT"
     },
-    "hedges": [],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:48:26Z",
-      "ok": false,
-      "note": "summary: Says 'The report attributes the campaign to the Darkling APT'. The text only says 'has been attributed', in the passive, without naming who attributes ",
-      "by": "auditor"
-    }
+    "hedges": [
+      "The bulletin says the campaign 'has been reported in the wild' and 'has been attributed to' the Darkling APT, which is wording about attribution rather than a stated finding.",
+      "The group's use of Bandook-based backdoors is worded as 'is known to leverage'."
+    ],
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:48:26Z",
+        "ok": false,
+        "note": "summary: Says 'The report attributes the campaign to the Darkling APT'. The text only says 'has been attributed', in the passive, without naming who attributes ",
+        "by": "auditor"
+      }
+    ]
   }
 }

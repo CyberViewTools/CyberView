@@ -1,11 +1,11 @@
 {
   "dd3b8b08b9ef241b039249c3567a4f9376c32d32": {
     "sha1": "dd3b8b08b9ef241b039249c3567a4f9376c32d32",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-26T23:25:11Z",
+    "read_at": "2026-11-27T00:11:42Z",
     "model": "haiku",
-    "summary": "Blog post by a malware analyst who was hunting Gootkit on a Nuclear Pack exploit kit instance in France in March 2015 and instead found a new ransomware, CryptoFortress. The author compares it with TorrentLocker (also called Teerac.A), notes a close match in design, and lists two samples and two later write-ups by Eset and CertLexsi.",
+    "summary": "A 2015 blog post describes CryptoFortress ransomware. The author began hunting for Gootkit, found a Nuclear Pack instance in France pushing CryptoFortress via CVE-2013-2551 on 2015-03-04, and first took the sample for Teerac.A (aka TorrentLocker). The sample then showed a close identity with CryptoFortress. The author says the post was heavily edited to fix a mistake. Two samples are listed, and the post cites an ESET TorrentLocker report and a CertLexsi CryptoFortress reading.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -13,57 +13,57 @@
       "countries": [
         {
           "v": "France",
-          "q": "pushed in a Nuclear Pack instance in France those days"
+          "q": "I was hunting for Gootkit (pushed in a Nuclear Pack instance in France those days) but instead I got a"
         }
       ],
       "dates": [
         {
           "v": "2015-03-04",
           "q": "Nuclear Pack pushing CryptoFortress via CVE-2013-2551 - FR - 2015-03-04",
-          "what": "Nuclear Pack pushed CryptoFortress in France; a fresh CryptoFortress sample was obtained"
+          "what": "Nuclear Pack instance observed pushing CryptoFortress via CVE-2013-2551 in France"
         },
         {
           "v": "2014-10-25",
           "q": "26f13c4ad8c1ccf81e80a556cf6db0af - 2014-10-25",
-          "what": "Date of the TorrentLocker sample listed in the post"
+          "what": "Date listed against a sample hash in the sample list"
         },
         {
           "v": "2015-03-06",
           "q": "CryptoFortress - 2015-03-06 - Renaud Tabary - CertLexsi",
-          "what": "CertLexsi post-publication reading on CryptoFortress"
+          "what": "Post-publication reading on CryptoFortress listed by CertLexsi"
         },
         {
           "v": "2014-12",
-          "q": "TorrentLocker - Ransomware in a country near you - 2014-12 - Marc-Etienne M.Léveillé - Eset",
-          "what": "Eset report on TorrentLocker published"
+          "q": "(PDF) TorrentLocker - Ransomware in a country near you - 2014-12 - Marc-Etienne M.Léveillé - Eset",
+          "what": "ESET TorrentLocker report listed as further reading"
         }
       ],
       "tools": [
         {
+          "v": "Nuclear Pack",
+          "q": "Nuclear Pack pushing CryptoFortress via CVE-2013-2551 - FR - 2015-03-04"
+        },
+        {
           "v": "CryptoFortress",
-          "q": "New crypto ransomware in town : CryptoFortress"
+          "q": "The sample I got today is showing a close identity : CryptoFortress"
         },
         {
           "v": "TorrentLocker",
-          "q": "I thought i was facing Teerac.A (aka TorrentLocker)"
+          "q": "I thought i was facing Teerac.A (aka TorrentLocker) which was showing that design :"
         },
         {
           "v": "Teerac.A",
-          "q": "I thought i was facing Teerac.A (aka TorrentLocker)"
-        },
-        {
-          "v": "Gootkit",
-          "q": "I was hunting for Gootkit (pushed in a Nuclear Pack instance in France those days)"
-        },
-        {
-          "v": "Nuclear Pack",
-          "q": "Nuclear Pack pushing CryptoFortress via CVE-2013-2551 - FR - 2015-03-04"
+          "q": "I thought i was facing Teerac.A (aka TorrentLocker) which was showing that design :"
         }
       ],
       "techniques": [
         {
-          "v": "exploit kit delivery",
+          "v": "exploit-kit delivery via CVE-2013-2551",
           "q": "Nuclear Pack pushing CryptoFortress via CVE-2013-2551 - FR - 2015-03-04"
+        },
+        {
+          "v": "Buy Decryption software",
+          "q": "Clicking on the \"Buy Decryption software\" :"
         }
       ],
       "cves": [
@@ -73,7 +73,7 @@
         },
         {
           "v": "CVE-2015-0311",
-          "q": "and CVE-2015-0311 call in that pass"
+          "q": "(have no sure explanation for the 444 error on the \"undefined\" and CVE-2015-0311 call in that pass)."
         }
       ],
       "figures": []
@@ -83,17 +83,17 @@
       "name": "CryptoFortress"
     },
     "hedges": [
-      "The author has no sure explanation for the 444 error and the CVE-2015-0311 call in that pass.",
-      "The post was heavily edited to fix the author's own mistake.",
-      "The sample is described as showing a close identity to TorrentLocker, not as the same family."
+      "This post has been heavily edited to fix my mistake.",
+      "The author first thought the sample was Teerac.A (aka TorrentLocker) before finding a close identity with CryptoFortress.",
+      "The author has no sure explanation for a 444 error and a CVE-2015-0311 call in one pass."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-26T23:49:59Z",
-      "ok": false,
-      "note": "summary: It calls the Eset and CertLexsi write-ups \"later\" than the post. The Eset report is dated 2014-12, before the post (2015-03-04). Only the CertLexsi ite",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-26T23:49:59Z",
+        "ok": false,
+        "note": "summary: It calls the Eset and CertLexsi write-ups \"later\" than the post. The Eset report is dated 2014-12, before the post (2015-03-04). Only the CertLexsi ite",
+        "by": "auditor"
+      }
+    ]
   }
 }

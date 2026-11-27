@@ -4,7 +4,7 @@
   "country": "",
   "cves": [],
   "first_seen": "2026-11-24T14:00:22Z",
-  "updated_at": "2026-11-24T17:43:54Z",
+  "updated_at": "2026-11-27T11:16:30Z",
   "products": [],
   "category": "incident",
   "status": "developing",
@@ -40,6 +40,12 @@
   "source_tier": "established",
   "sources": [
     {
+      "name": "UpGuard Research",
+      "url": "https://www.upguard.com/labs/data-leaks/inside-an-exposed-chinese-identity-system",
+      "published": "2026-11-19",
+      "read_depth": "full"
+    },
+    {
       "name": "Clubic",
       "url": "https://www.clubic.com/actualite-640798-milliards-de-donnees-personnelles-en-libre-acces-des-pirates-laissent-a-leur-tour-fuiter-leurs-fichiers.html",
       "published": "2026-11-24",
@@ -53,6 +59,10 @@
     }
   ],
   "evidence": [
+    {
+      "url": "https://www.upguard.com/labs/data-leaks/inside-an-exposed-chinese-identity-system",
+      "quote": "the server exposed 99 indices containing 1.64 billion documents (about 259 GB)"
+    },
     {
       "url": "https://www.clubic.com/actualite-640798-milliards-de-donnees-personnelles-en-libre-acces-des-pirates-laissent-a-leur-tour-fuiter-leurs-fichiers.html",
       "quote": "qui totalisaient plus de 3,5 milliards d'enregistrements"
@@ -72,8 +82,8 @@
   ],
   "validation": {
     "state": "single_source",
-    "checked_at": "2026-11-24T14:00:22Z",
-    "note": "Clubic and The420.in read; both relay the same WIRED report, so they count as one account; WIRED and the researchers' own reports were not read."
+    "checked_at": "2026-11-27T11:16:30Z",
+    "note": "Clubic and The420.in both relay the same WIRED report (one account). UpGuard's own report (19 Nov 2026) covers the 1.64 billion-document database; no primary page was read for the second database (Fowler), so the event stays single_source. WIRED not read."
   },
   "review": {
     "state": "passed",

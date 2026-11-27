@@ -274,22 +274,22 @@
   },
   "dca972746c383a4c3b9c0852963aa4f9e01ab265": {
     "sha1": "dca972746c383a4c3b9c0852963aa4f9e01ab265",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T09:51:23Z",
+    "read_at": "2026-11-27T10:12:36Z",
     "model": "haiku",
-    "summary": "CrowdStrike's blog on REvil ransomware in the Kaseya attack. REvil operators used zero-day vulnerabilities to deliver a malicious update to Kaseya VSA, reportedly compromising fewer than 60 Kaseya customers and 1,500 downstream companies. CrowdStrike associates REvil with PINCHY SPIDER and suspects a link to GandCrab. The report says the Falcon platform would have blocked the attack using machine learning and behavioural detection. Reported ransom demands were $70 million USD, possibly lowered to $50 million USD with a universal decryptor offer.",
+    "summary": "CrowdStrike's blog on the 2021 Kaseya attack, in which REvil ransomware operators used zero-day vulnerabilities to push a malicious update through Kaseya VSA. CrowdStrike links REvil to the PINCHY SPIDER group and says its Falcon platform would have blocked the attack. Reported figures include fewer than 60 Kaseya customers and 1,500 downstream companies, a $70 million ransom demand that may have been lowered to $50 million, and an operator claim of more than 1 million infected systems.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
-          "v": "PINCHY SPIDER",
-          "q": "CrowdStrike associates REvil ransomware to the PINCHY SPIDER threat actor",
+          "v": "REvil ransomware operators",
+          "q": "On Friday, July 2, REvil ransomware operators managed to compromise Kaseya VSA",
           "by": "CrowdStrike"
         },
         {
-          "v": "REvil ransomware operators",
-          "q": "On Friday, July 2, REvil ransomware operators managed to compromise Kaseya VSA",
+          "v": "PINCHY SPIDER",
+          "q": "CrowdStrike associates REvil ransomware to the PINCHY SPIDER threat actor",
           "by": "CrowdStrike"
         }
       ],
@@ -304,7 +304,7 @@
         {
           "v": "July 7, 2021",
           "q": "Karan Sood - Liviu Arsene July 7, 2021",
-          "what": "CrowdStrike blog post on REvil and the Kaseya attack was published"
+          "what": "CrowdStrike blog post on the Kaseya attack published"
         },
         {
           "v": "July 2",
@@ -314,7 +314,7 @@
         {
           "v": "2018",
           "q": "PINCHY SPIDER threat actor group developing it since 2018.",
-          "what": "CrowdStrike Intelligence began tracking REvil and the group developing it"
+          "what": "CrowdStrike began tracking REvil and the PINCHY SPIDER group"
         }
       ],
       "tools": [
@@ -324,7 +324,7 @@
         },
         {
           "v": "GandCrab ransomware",
-          "q": "also been involved in the development of the now defunct GandCrab ransomware."
+          "q": "involved in the development of the now defunct GandCrab ransomware."
         },
         {
           "v": "Kaseya VSA",
@@ -337,16 +337,12 @@
           "q": "REvil ransomware operators used zero-day vulnerabilities to deliver a malicious update, compromising fewer"
         },
         {
-          "v": "various scanning and other security solutions",
-          "q": "such as disabling various scanning and other security solutions on the"
+          "v": "disabling various scanning and other security solutions",
+          "q": "malicious actions such as disabling various scanning and other security solutions on the"
         },
         {
-          "v": "dropped to disk and sideloaded",
-          "q": "This prevents REvil being dropped to disk and sideloaded into MsMpeng.exe, an older but"
-        },
-        {
-          "v": "trusted process with signed binaries",
-          "q": "even if the parent is a trusted process with signed binaries — effectively"
+          "v": "privately disclosed vulnerability",
+          "q": "made use of a privately disclosed vulnerability, now tracked as CVE-2021-30116, in order to"
         }
       ],
       "cves": [
@@ -366,7 +362,7 @@
         },
         {
           "v": "$70 million USD",
-          "q": "recent reports suggest REvil operators initially asked for a ransom of $70 million USD, claiming to"
+          "q": "reports suggest REvil operators initially asked for a ransom of $70 million USD, claiming to"
         },
         {
           "v": "more than 1 million systems",
@@ -379,25 +375,25 @@
       ]
     },
     "subject": {
-      "type": "malware",
-      "name": "REvil ransomware"
+      "type": "incident",
+      "name": "Kaseya attack"
     },
     "hedges": [
-      "Current reports suggest that the REvil operator made use of a privately disclosed vulnerability, now tracked as CVE-2021-30116.",
-      "Recent reports suggest REvil operators initially asked for a ransom of $70 million USD.",
-      "REvil operators may have lowered the ransom demand to $50 million USD along with a universal decryptor offer.",
-      "The customer counts are attributed to Kaseya's public statement.",
-      "The group is believed to have also been involved in the development of GandCrab ransomware.",
-      "Similarities between REvil and GandCrab led CrowdStrike Intelligence to suspect the two ransomware are related.",
-      "The claim of more than 1 million infected systems comes from recent reports, not from the report itself."
+      "Current reports suggest the REvil operator used a privately disclosed vulnerability to gain execution.",
+      "The $70 million ransom figure comes from recent reports, which say the operators initially asked for it.",
+      "The report says REvil operators may have lowered the ransom demand to $50 million.",
+      "CrowdStrike Intelligence suspects REvil and GandCrab are related, based on similarities between them.",
+      "The group is believed to have been involved in developing GandCrab, which is now defunct.",
+      "The figures of fewer than 60 Kaseya customers and 1,500 downstream companies come from Kaseya's public statement.",
+      "The claim of more than 1 million infected systems is one the operators made, not a verified count."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T10:05:27Z",
-      "ok": false,
-      "note": "figures[0]: The text says \"fewer than 60 Kaseya customers\". The value \"60 Kaseya customers\" drops the \"fewer than\" bound and states an exact figure.",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T10:05:27Z",
+        "ok": false,
+        "note": "figures[0]: The text says \"fewer than 60 Kaseya customers\". The value \"60 Kaseya customers\" drops the \"fewer than\" bound and states an exact figure.",
+        "by": "auditor"
+      }
+    ]
   }
 }

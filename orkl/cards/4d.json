@@ -184,99 +184,86 @@
   },
   "4da1acf23e710c9275069409ac1c8491dd16837e": {
     "sha1": "4da1acf23e710c9275069409ac1c8491dd16837e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:55:09Z",
-    "model": "haiku",
-    "summary": "Cado Security describes CoinStomp, a shell-script malware family targeting Asian cloud service providers to mine cryptocurrency. Its noted techniques include timestomping, removal of system cryptographic policies, a reverse shell for C2 on port 443, and systemd persistence of root-level payloads, including a customised XMRig miner. The report notes a reference to the Xanthe campaign but considers CoinStomp likely distinct. The blog post is dated February 2, 2022.",
+    "read_at": "2026-11-27T22:19:14Z",
+    "model": "sonnet",
+    "summary": "Cado Security describes CoinStomp, a family of shell scripts that target cloud compute instances at Asian cloud service providers to mine cryptocurrency. It uses timestomping, removes system cryptographic policies, and uses a /dev/tcp reverse shell over port 443 for command and control. It also contains a commented-out reference to the earlier Xanthe campaign, which Cado believes is distinct and possibly meant to foil attribution. Payloads include a customised XMRig miner.",
     "kind": "malware-analysis",
     "facts": {
-      "actors": [
-        {
-          "v": "Rocke",
-          "q": "Timestomping has been used by the Rocke",
-          "by": "Cado Security (report author)"
-        }
-      ],
+      "actors": [],
       "sectors": [
         {
-          "v": "Cloud Service Providers",
-          "q": "Targets Asian Cloud Service Providers"
-        },
-        {
-          "v": "cloud computing",
-          "q": "Many cloud computing instances will be vulnerable"
+          "v": "Cloud service providers",
+          "q": "Researchers at Cado Security recently discovered a new malware campaign targeting Asian Cloud Service Providers (CSPs)."
         }
       ],
       "countries": [],
       "dates": [
         {
-          "v": "2022-02-02",
+          "v": "February 2, 2022",
           "q": "February 2, 2022",
-          "what": "Cado Security blog post on the CoinStomp malware was published"
+          "what": "Publication date of the Cado Security report"
+        },
+        {
+          "v": "20/05/2019",
+          "q": "updates the modified and access timestamps for the modusr file to 22:23 20/05/2019",
+          "what": "Timestamp that the sample sets on copied chmod binary via timestomping"
         }
       ],
       "tools": [
         {
+          "v": "CoinStomp",
+          "q": "This malware, which we’ve since named CoinStomp, is comprised of a family of shell scripts"
+        },
+        {
           "v": "XMRig",
-          "q": "is a customised version of the XMRig Monero mining software"
+          "q": "The dhcpclient binary is a customised version of the XMRig Monero mining software"
         },
         {
-          "v": "masscan",
-          "q": "two lines are added to kill the tail and masscan utilities"
+          "v": "sshno",
+          "q": "Sshno is a heavily-obfuscated 32 bit ELF binary which was retrieved from the C2 server"
         },
         {
-          "v": "Sshno",
-          "q": "Sshno is a heavily-obfuscated 32 bit ELF binary"
-        },
-        {
-          "v": "dhcpclient",
-          "q": "The dhcpclient binary is a customised version"
-        },
-        {
-          "v": "Stater",
-          "q": "Stater and adupd were two additional payloads"
+          "v": "stater",
+          "q": "Stater and adupd were two additional payloads with similar functionality to sshno."
         },
         {
           "v": "adupd",
-          "q": "Stater and adupd were two additional payloads"
+          "q": "Stater and adupd were two additional payloads with similar functionality to sshno."
+        },
+        {
+          "v": "dhcpclient",
+          "q": "The dhcpclient binary is a customised version of the XMRig Monero mining software"
         }
       ],
       "techniques": [
         {
-          "v": "timestomping",
+          "v": "Timestomping as anti-forensics",
           "q": "Timestomping (manipulation of timestamps) employed as an anti-forensics measure"
         },
         {
-          "v": "Removal of System Cryptographic Policies",
-          "q": "Removal of System Cryptographic Policies"
+          "v": "Removal of system cryptographic policies",
+          "q": "Removal of system cryptographic policies"
         },
         {
-          "v": "reverse shell",
-          "q": "method of creating a reverse shell or C2 communication channel"
+          "v": "/dev/tcp reverse shell for C2 over port 443",
+          "q": "Command and Control communication initiated via a /dev/tcp reverse shell"
         },
         {
-          "v": "systemd services",
-          "q": "persisted as system-wide systemd services"
+          "v": "Cryptojacking",
+          "q": "exploit cloud compute instances hosted by these CSPs for the purpose of mining cryptocurrency"
         },
         {
-          "v": "anti-forensics",
-          "q": "Employing anti-forensics techniques and weakening the target machine"
-        },
-        {
-          "v": "cryptomining",
-          "q": "for the purpose of mining cryptocurrency"
+          "v": "Persistence as systemd services",
+          "q": "Each of these payloads were persisted as system-wide systemd services"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "443",
-          "q": "the use of port 443 helps make this traffic appear legitimate"
-        },
-        {
-          "v": "two",
-          "q": "two lines are added to kill the tail and masscan utilities"
+          "v": "Port 443",
+          "q": "over port 443 – the port number typically associated with HTTPS traffic."
         }
       ]
     },
@@ -285,20 +272,18 @@
       "name": "CoinStomp"
     },
     "hedges": [
-      "It seems likely that timestomping was employed to obfuscate usage of the chmod and chattr utilities.",
-      "Report assumes the config files are XMRig configuration files but says it is unclear whether the spelling mistakes are intentional.",
-      "The payload at the anonymous DNS URL was unavailable, so the report cannot determine whether it was part of the Xanthe campaign.",
-      "Report says CoinStomp seems distinct from Xanthe, given no overlap in capabilities or infrastructure.",
-      "Report says inclusion of the URL may well have been an attempt to foil attribution.",
-      "Report says the extra payloads look like an attempt to establish additional backdoor or C2 channels."
+      "The payload at the Xanthe-related URL was unavailable, so Cado could not tell whether it was part of the Xanthe campaign.",
+      "Cado says the campaign seems distinct from Xanthe given the lack of overlap in capabilities and infrastructure.",
+      "Inclusion of the Xanthe URL \"may well have been an attempt to foil attribution\".",
+      "It is assumed, but not clear, that the .jason files are XMRig configuration files or that the misspellings are intentional."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:42Z",
-      "ok": false,
-      "note": "actors[0]: The text only says timestomping was used by the Rocke group in prior cryptojacking attacks. It does not attribute CoinStomp to Rocke, and it says the",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:42Z",
+        "ok": false,
+        "note": "actors[0]: The text only says timestomping was used by the Rocke group in prior cryptojacking attacks. It does not attribute CoinStomp to Rocke, and it says the",
+        "by": "auditor"
+      }
+    ]
   }
 }

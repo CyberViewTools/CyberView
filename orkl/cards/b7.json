@@ -743,102 +743,32 @@
     "sha1": "b76743a97db3664476bc8d8a49b64aecb30e6d28",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T15:55:01Z",
-    "model": "haiku",
-    "summary": "Digital Bond research paper. The title field names an unrelated 2016 CrowdStrike piece, which does not match the body. Ethernet cards in SCADA/DCS field devices, tested on Rockwell 1756 ENBT and Koyo H4-ECOM100 modules, accept firmware uploads without source or data authentication, so an attacker with network access could load malicious firmware. Hypothetical impacts include delayed attacks, bricked cards, and a field device worm. Management services (HTTP, FTP, SNMP) also had flaws, including cross site scripting. Recommended fixes: authenticated, signed firmware; physical keys; and…",
-    "kind": "vulnerability",
+    "read_at": "2026-11-27T22:19:16Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
-      "sectors": [
-        {
-          "v": "DCS and SCADA",
-          "q": "Field devices essential for the monitoring and control in DCS and SCADA"
-        },
-        {
-          "v": "critical infrastructure",
-          "q": "Some real time and embedded operating systems are used in numerous field devices that monitor and control critical infrastructures."
-        }
-      ],
+      "sectors": [],
       "countries": [],
       "dates": [],
-      "tools": [
-        {
-          "v": "IDA PRO",
-          "q": "We have loaded the file into the IDA PRO disassembler and debugger program and"
-        },
-        {
-          "v": "deezee",
-          "q": "Using a tool developed by Matasano named deezee, we scan the firmware image looking"
-        },
-        {
-          "v": "Wireshark",
-          "q": "the commonly used packet capture utility, Wireshark, we find that the firmware is upgraded"
-        },
-        {
-          "v": "ControlFlash",
-          "q": "upload it with the ControlFlash program"
-        },
-        {
-          "v": "netedit",
-          "q": "the upgrade program, netedit, seems to work over UDP broadcast protocol"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "unauthenticated firmware upload",
-          "q": "Keywords: Unauthenticated Firmware Upload, PAC, PLC, RTU, Controller, Field"
-        },
-        {
-          "v": "field device worm",
-          "q": "Field Device Worm, Field Device Ethernet Card"
-        },
-        {
-          "v": "denial of service",
-          "q": "Perhaps the simplest attack on the CPU card is a denial of service attack that could brick"
-        },
-        {
-          "v": "cross site scripting",
-          "q": "Several different forms of cross site scripting (XSS) were found on the sample field"
-        },
-        {
-          "v": "missing security patches",
-          "q": "One of the common findings in control system security assessments is missing security patches."
-        },
-        {
-          "v": "no authentication",
-          "q": "The management interface requires no authentication to access the device"
-        }
-      ],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "two field device Ethernet cards",
-          "q": "load malicious code into two field device Ethernet cards"
-        },
-        {
-          "v": "tens or hundreds of field devices",
-          "q": "There are tens or hundreds of field devices in control"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "vulnerability",
-      "name": "Field Device Ethernet Card Vulnerabilities"
-    },
-    "hedges": [
-      "The ping function was a proof-of-concept demonstration only; the authors say an attacker could load much more dangerous code.",
-      "The authors present the impacts as hypothetical scenarios (the paper says 'imagine' and 'could') rather than observed incidents.",
-      "The tests covered a small number of devices in the authors' lab, and the authors say the sample is limited.",
-      "The authors say operating system analysis is beyond the scope of this paper."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:13:07Z",
-      "ok": false,
-      "note": "summary: The claim that the title field names an unrelated 2016 CrowdStrike piece is not in the report text. The text's title is 'Field Device Ethernet Card Vul",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:13:07Z",
+        "ok": false,
+        "note": "summary: The claim that the title field names an unrelated 2016 CrowdStrike piece is not in the report text. The text's title is 'Field Device Ethernet Card Vul",
+        "by": "auditor"
+      }
+    ]
   },
   "b7a30e31147edc126c459afbc50c59cabc8e9836": {
     "sha1": "b7a30e31147edc126c459afbc50c59cabc8e9836",

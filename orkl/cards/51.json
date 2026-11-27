@@ -396,177 +396,32 @@
     "sha1": "5183b51959c244b3215f7e95e1560241e7e9a34a",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:19:03Z",
-    "model": "haiku",
-    "summary": "ANSSI reports an intrusion campaign against Centreon monitoring software that breached several French entities, mostly information technology providers, especially web hosting providers. Compromised Centreon servers ran a P.A.S. 3.1.4 webshell and an Exaramel backdoor. ANSSI says the campaign bears several similarities to earlier Sandworm campaigns, but the initial compromise method is not known. The report gives detection methods and recommendations. The activity is dated from late 2017 to 2020.",
-    "kind": "actor-campaign",
+    "read_at": "2026-11-27T22:20:01Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Sandworm",
-          "q": "This campaign bears several similarities with previous campaigns attributed to the intrusion set named Sandworm.",
-          "by": "ANSSI (the report)"
-        },
-        {
-          "v": "TeleBots",
-          "q": "that was used by the intrusion set TeleBots, also known as Sandworm [1].",
-          "by": "ANSSI (the report), citing ESET"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "information technology providers",
-          "q": "This campaign mostly affected information technology providers, especially web hosting providers."
-        }
-      ],
-      "countries": [
-        {
-          "v": "French",
-          "q": "which resulted in the breach of several French entities."
-        },
-        {
-          "v": "U.S.",
-          "q": "during various attacks on the 2016 U.S. elections."
-        }
-      ],
-      "dates": [
-        {
-          "v": "late 2017",
-          "q": "The first victim seems to have been compromised from late 2017.",
-          "what": "first victim seems to have been compromised"
-        },
-        {
-          "v": "2020",
-          "q": "The campaign lasted until 2020.",
-          "what": "campaign lasted until"
-        },
-        {
-          "v": "december 2016",
-          "q": "In december 2016, the DEPARTMENT OF HOMELAND SECURITY published a report known as Grizzly Steppe [8]",
-          "what": "US government published the Grizzly Steppe report"
-        },
-        {
-          "v": "march 2018",
-          "q": "Before march 2018, ANSSI identified the existence of an unencrypted configuration file named config.json",
-          "what": "unencrypted configuration file identified before this date"
-        },
-        {
-          "v": "november 2017 to february 2018",
-          "q": "Logs indicating daily execution of respawner.sh by CRON were observed from november 2017 to february 2018.",
-          "what": "logs showed daily execution of a script by cron"
-        },
-        {
-          "v": "2018",
-          "q": "Exaramel is a backdoor first publicly reported by ESET in 2018 [1].",
-          "what": "Exaramel first publicly reported by ESET"
-        },
-        {
-          "v": "october 2019",
-          "q": "A sample of the LINUX version was uploaded to VIRUSTOTAL in october 2019, as stated by ESET researcher Anton Cherepanov [9].",
-          "what": "a Linux Exaramel sample was uploaded to a malware sharing service"
-        },
-        {
-          "v": "27/01/2021",
-          "q": "27/01/2021 Page 2 of 38",
-          "what": "report version 1.0 is dated in this footer"
-        }
-      ],
-      "tools": [
-        {
-          "v": "P.A.S. webshell",
-          "q": "The P.A.S. webshell was developed by an ukrainian student, Jaroslav Volodimirovich Panchenko"
-        },
-        {
-          "v": "Exaramel",
-          "q": "Exaramel is a backdoor first publicly reported by ESET in 2018 [1]."
-        },
-        {
-          "v": "Fobushell",
-          "q": "that the DHS named Fobushell, an alternate name for the P.A.S. webshell."
-        },
-        {
-          "v": "SetUID",
-          "q": "An additional binary was identified with SetUID functionnalities on the path /bin/backup."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Exploit Public-Facing Application",
-          "q": "Exploit Public-Facing Application"
-        },
-        {
-          "v": "Server Software Component - Web Shell",
-          "q": "Server Software Component - Web Shell"
-        },
-        {
-          "v": "Scheduled Task/Job: Cron",
-          "q": "Scheduled Task/Job: Cron"
-        },
-        {
-          "v": "Create or Modify System Process: Systemd Service",
-          "q": "Create or Modify System Process: Systemd Service"
-        },
-        {
-          "v": "Command and Scripting Interpreter - Unix Shell",
-          "q": "Command and Scripting Interpreter - Unix Shell"
-        },
-        {
-          "v": "Abuse Elevation Control Mechanism - Setuid and Setgid",
-          "q": "Abuse Elevation Control Mechanism - Setuid and Setgid"
-        },
-        {
-          "v": "brute force password attack",
-          "q": "The P.A.S. webshell has a brute force password attack function against six services"
-        },
-        {
-          "v": "Encrypted Channel",
-          "q": "Encrypted Channel"
-        },
-        {
-          "v": "Exfiltration over C2 Channel",
-          "q": "Exfiltration over C2 Channel"
-        }
-      ],
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "1400 lines",
-          "q": "Its source code length is approximately 1400 lines."
-        },
-        {
-          "v": "5 packages",
-          "q": "It is divided in 5 packages: main,"
-        },
-        {
-          "v": "2.5.2",
-          "q": "The most recent installation version studied by ANSSI was 2.5.2."
-        },
-        {
-          "v": "one year",
-          "q": "to export web server logs and to store them for at least one year."
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "Sandworm intrusion set campaign targeting Centreon systems"
-    },
-    "hedges": [
-      "The initial compromise method is not known.",
-      "Analysis did not allow identifying the origin of the backdoor binary.",
-      "The report says the P.A.S. webshell alone is not an indicator that allows a link to an intrusion set.",
-      "The Command and Control servers are most probably entirely controlled by the intrusion set.",
-      "The report says the version timeline of the backdoor is not entirely coherent, though it suggests several evolutions.",
-      "The report does not mention the versions and passwords for several samples of the Grizzly Steppe webshells."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:38:17Z",
-      "ok": false,
-      "note": "summary: Drops the hedge on the start date. The text says the first victim 'seems to have been compromised from late 2017', but the summary states the activity ",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "empty-summary, bad-kind",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:38:17Z",
+        "ok": false,
+        "note": "summary: Drops the hedge on the start date. The text says the first victim 'seems to have been compromised from late 2017', but the summary states the activity ",
+        "by": "auditor"
+      }
+    ]
   },
   "5166e89de3f941b0303e4cb108b0366e2d2a17db": {
     "sha1": "5166e89de3f941b0303e4cb108b0366e2d2a17db",

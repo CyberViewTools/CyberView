@@ -503,11 +503,11 @@
   },
   "50c1d61b163f3a484b2b13a6eb6a87fd02567e52": {
     "sha1": "50c1d61b163f3a484b2b13a6eb6a87fd02567e52",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:57:41Z",
-    "model": "haiku",
-    "summary": "Doctor Web reports Linux.Lady.1, a Linux Trojan written in Go that can run cryptocurrency mining software, find the infected computer's external IP address, and attack other computers. It tries to connect to Redis servers without a password, and if that succeeds it adds a downloader script to cron and an SSH key to the authorized keys. Dr.Web for Linux detects and removes Linux.Lady.1 and Linux.DownLoader.196.",
+    "read_at": "2026-11-27T22:19:29Z",
+    "model": "sonnet",
+    "summary": "Doctor Web describes Linux.Lady.1, a Linux Trojan written in Go that can report host details to a command server, download and run a cryptocurrency miner, and try to spread to other machines through Redis servers that have no password. It uses a downloader script, Linux.DownLoader.196, and adds an SSH key for access. Dr.Web for Linux detects both.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [],
@@ -517,7 +517,7 @@
         {
           "v": "August 8, 2016",
           "q": "August 8, 2016",
-          "what": "Doctor Web analysts detected and examined a new Linux Trojan"
+          "what": "Date of Doctor Web's news item describing the Linux.Lady.1 Trojan"
         }
       ],
       "tools": [
@@ -527,29 +527,33 @@
         },
         {
           "v": "Linux.DownLoader.196",
-          "q": "adds a downloader script, named Linux.DownLoader.196, to the cron scheduler"
+          "q": "the malware adds a downloader script, named Linux.DownLoader.196, to the cron scheduler."
+        },
+        {
+          "v": "Go",
+          "q": "Its key feature lies in the fact that it is written in Go, a language developed by Google."
+        },
+        {
+          "v": "Redis",
+          "q": "via a port used by the Redis (remote dictionary server) data structure store"
         }
       ],
       "techniques": [
         {
-          "v": "cryptocurrency mining",
-          "q": "run a cryptocurrency mining program on an infected computer"
+          "v": "Cryptocurrency mining",
+          "q": "able to run a cryptocurrency mining program on an infected computer"
         },
         {
-          "v": "connects to Redis servers without a password",
-          "q": "tries to connect to the remote servers via a port used by the Redis"
+          "v": "Connecting to Redis without a password",
+          "q": "without entering a password in expectation that the system has not been configured correctly"
         },
         {
-          "v": "attacks other computers on the network",
-          "q": "attack other computers of the network"
+          "v": "Persistence via cron scheduler",
+          "q": "the malware adds a downloader script, named Linux.DownLoader.196, to the cron scheduler."
         },
         {
-          "v": "cron-scheduled downloader persistence",
-          "q": "adds a downloader script, named Linux.DownLoader.196, to the cron scheduler"
-        },
-        {
-          "v": "SSH key added for remote access",
-          "q": "adds a key for connection to the computer over SSH protocol"
+          "v": "Adding a key to SSH authorized keys",
+          "q": "adds a key for connection to the computer over SSH protocol to the list of authorized keys"
         }
       ],
       "cves": [],
@@ -560,15 +564,15 @@
       "name": "Linux.Lady.1"
     },
     "hedges": [
-      "The Trojan's Redis connection attempt relies on the expectation that the system has not been configured correctly."
+      "The Trojan attacks Redis servers in expectation that the system has not been configured correctly."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:42Z",
-      "ok": false,
-      "note": "dates[0]: August 8, 2016 is the date of the news item. The text does not say the analysts detected or examined the Trojan on that date, so the card claims more ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:42Z",
+        "ok": false,
+        "note": "dates[0]: August 8, 2016 is the date of the news item. The text does not say the analysts detected or examined the Trojan on that date, so the card claims more ",
+        "by": "auditor"
+      }
+    ]
   }
 }

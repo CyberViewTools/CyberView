@@ -337,424 +337,93 @@
     "sha1": "86386937e41bf38b9841e7283909aa36d152dc14",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T15:55:56Z",
-    "model": "haiku",
-    "summary": "ESET, working with CERT-UA, analysed a destructive attack on a Ukrainian energy provider in April 2022. The attackers used Industroyer2, a new variant of the 2016 Industroyer ICS malware, to cut power in a region, alongside CaddyWiper and Linux and Solaris wipers. ESET assesses with high confidence that the Sandworm group is responsible. The report says how the attackers got in and moved to the ICS network is not yet known.",
-    "kind": "malware-analysis",
+    "read_at": "2026-11-27T22:19:21Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Sandworm",
-          "q": "We assess with high confidence that the APT group Sandworm is responsible for this new attack",
-          "by": "ESET"
-        },
-        {
-          "v": "Russian Military Unit 74455",
-          "q": "six officers of the Russian Military Unit 74455 of the Main Intelligence Directorate (GRU)",
-          "by": "the United States government, as reported by ESET"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "energy",
-          "q": "This ICS-capable malware targets a Ukrainian energy company."
-        },
-        {
-          "v": "bank",
-          "q": "We first discovered CaddyWiper on 2022-03-14 when it was used against a Ukrainian bank"
-        },
-        {
-          "v": "governmental entity",
-          "q": "2022-04-01: Deployment of CaddyWiper against a Ukrainian governmental entity"
-        }
-      ],
-      "countries": [
-        {
-          "v": "Ukraine",
-          "q": "Ukraine is once again at the center of cyberattacks targeting their critical infrastructure."
-        }
-      ],
-      "dates": [
-        {
-          "v": "2016",
-          "q": "Industroyer is an infamous piece of malware that was used in 2016 by the Sandworm APT",
-          "what": "Original Industroyer used to cut power in Ukraine"
-        },
-        {
-          "v": "2017",
-          "q": "In 2017, ESET researchers revealed that a piece of malware called Industroyer was",
-          "what": "ESET publicly revealed Industroyer"
-        },
-        {
-          "v": "2020",
-          "q": "This was confirmed in 2020 by the United States government when six officers of the",
-          "what": "US government indicted GRU officers"
-        },
-        {
-          "v": "2022-02-24",
-          "q": "2022-02-24: Beginning of the current Russian invasion in Ukraine",
-          "what": "Start of the Russian invasion of Ukraine (context)"
-        },
-        {
-          "v": "2022-03-14",
-          "q": "We first discovered CaddyWiper on 2022-03-14 when it was used against a Ukrainian bank",
-          "what": "CaddyWiper first discovered, used against a Ukrainian bank"
-        },
-        {
-          "v": "2022-04-08",
-          "q": "The destructive actions were scheduled for 2022-04-08 but artefacts suggest that the",
-          "what": "Destructive actions were scheduled against the energy provider"
-        },
-        {
-          "v": "2022-04-08 16:10 UTC",
-          "q": "2022-04-08 16:10 UTC: Execution of Industroyer2 to cut power in an Ukrainian region",
-          "what": "Industroyer2 executed to cut power in a Ukrainian region"
-        }
-      ],
-      "tools": [
-        {
-          "v": "Industroyer2",
-          "q": "Industroyer2 only implements the IEC-104 (aka IEC 60870-5-104) protocol to communicate"
-        },
-        {
-          "v": "CaddyWiper",
-          "q": "CaddyWiper, ORCSHRED, SOLOSHRED and AWFULSHRED."
-        },
-        {
-          "v": "ORCSHRED",
-          "q": "Linux and Solaris destructive malware (ORCSHRED, SOLOSHRED,"
-        },
-        {
-          "v": "SOLOSHRED",
-          "q": "Linux and Solaris destructive malware (ORCSHRED, SOLOSHRED,"
-        },
-        {
-          "v": "AWFULSHRED",
-          "q": "CaddyWiper, ORCSHRED, SOLOSHRED and AWFULSHRED."
-        },
-        {
-          "v": "ARGUEPATCH",
-          "q": "uses a new loader, named ARGUEPATCH by CERT-UA."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "deployment via Group Policy",
-          "q": "It was deployed via Group Policy Object"
-        },
-        {
-          "v": "disk wiping",
-          "q": "The wiper erases user data and partition information from attached drives"
-        },
-        {
-          "v": "partition table erasure",
-          "q": "This erases extended information of drive’s partitions"
-        },
-        {
-          "v": "scheduled task execution",
-          "q": "executed using a scheduled task on 2022-04-08 at 16:10:00 UTC."
-        },
-        {
-          "v": "credential-based spread over SSH",
-          "q": "Once it finds a reachable SSH server, it tries credentials from a list"
-        },
-        {
-          "v": "stopping and disabling services",
-          "q": "it first tries to stop and disable HTTP and SSH services."
-        },
-        {
-          "v": "hardcoded configuration",
-          "q": "It contains a detailed configuration hardcoded in its"
-        },
-        {
-          "v": "obfuscated error output",
-          "q": "We believe it is an obfuscation attempt by Sandworm developers to"
-        },
-        {
-          "v": "trojanized legitimate software component",
-          "q": "ARGUEPATCH is a patched version"
-        }
-      ],
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "8 different IP addresses",
-          "q": "Specifically, the analyzed sample contains 8 different IP addresses of devices"
-        },
-        {
-          "v": "six officers",
-          "q": "This was confirmed in 2020 by the United States government when six officers of the"
-        },
-        {
-          "v": "at least two weeks",
-          "q": "attack had been planned for at least two weeks"
-        },
-        {
-          "v": "five year gap",
-          "q": "with a five year gap between each version"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "Industroyer2"
-    },
-    "hedges": [
-      "We assess with high confidence that the attackers used a new version of the Industroyer malware",
-      "We assess with high confidence that the APT group Sandworm is responsible for this new attack",
-      "At this point, we don't know how attackers compromised the victim nor how they moved from the IT network to the Industrial Control System (ICS) network.",
-      "We believe it was intended to slow down the recovery process and prevent operators of the energy company from regaining control of the ICS consoles.",
-      "We believe the attacker had credentials prior to the attack to enable the spread of the wiper.",
-      "The analysis is still on-going in order to determine what are the exact actions taken for each device.",
-      "We don't know why attackers choose to trojanized this piece of software, it might be a troll towards defenders."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:54Z",
-      "ok": false,
-      "note": "summary: It says the attackers used Industroyer2 'to cut power in a region', which reads as a successful outage. The text only says Sandworm 'made an attempt to",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-too-long, value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:54Z",
+        "ok": false,
+        "note": "summary: It says the attackers used Industroyer2 'to cut power in a region', which reads as a successful outage. The text only says Sandworm 'made an attempt to",
+        "by": "auditor"
+      }
+    ]
   },
   "86fa5c6b040131cf4345d0904ab05251cc387246": {
     "sha1": "86fa5c6b040131cf4345d0904ab05251cc387246",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:00:33Z",
-    "model": "haiku",
-    "summary": "IronNet reports botnets and cryptominer operators rapidly exploiting Atlassian Confluence CVE-2021-26084 after an August 2021 patch and public proof-of-concept code. Observed activity from early September dropped XMRig miners, SSH-worming scripts and a JSP webshell derived from public GitHub samples. The report calls most activity financially motivated, but judges that more sophisticated actors likely use the exploit for intelligence collection.",
-    "kind": "vulnerability",
+    "read_at": "2026-11-27T22:19:47Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Sysrv-Hello Botnet",
-          "q": "Lastly, we also observed the Sysrv-Hello Botnet pushing a different shell script that ultimately",
-          "by": "the report (IronNet)"
-        },
-        {
-          "v": "more sophisticated threat actors",
-          "q": "we have strong confidence that this exploit is being used by more sophisticated threat actors with intelligence collection in mind.",
-          "by": "the report (IronNet)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "Hong Kong",
-          "q": "appears to have been submitted out of Hong Kong via a web"
-        }
-      ],
-      "dates": [
-        {
-          "v": "August 25",
-          "q": "On August 25, Atlassian publicly released a patch for a critical remote code execution",
-          "what": "Atlassian publicly released a patch for the Confluence vulnerability"
-        },
-        {
-          "v": "September 1",
-          "q": "as September 1, IronNet’s threat hunters observed active exploitation of Confluence servers",
-          "what": "IronNet hunters observed active exploitation of Confluence servers"
-        },
-        {
-          "v": "2021",
-          "q": "An additional trend that has been observed throughout 2021 is a shift away from compromising",
-          "what": "Report describes a 2021 shift from compromising users toward server exploitation"
-        }
-      ],
-      "tools": [
-        {
-          "v": "z0miner",
-          "q": "threat actors dropping the cryptominer, z0miner, were quick to jump on this vulnerability"
-        },
-        {
-          "v": "XMRig",
-          "q": "always ultimately leading to a XMRig coinminer"
-        },
-        {
-          "v": "webshell",
-          "q": "The webshell used in this attack was a .jsp file"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "proof of concept exploit",
-          "q": "a proof of concept (POC) code demonstrating how to exploit this CVE was published to GitHub"
-        },
-        {
-          "v": "cryptocurrency mining",
-          "q": "where cryptocurrency miners and webshells were dropped by what appeared to be multiple"
-        },
-        {
-          "v": "disable security processes",
-          "q": "The shell script first tries to disable security processes and protection mechanisms like"
-        },
-        {
-          "v": "persistence method via crontab",
-          "q": "persistence method via crontab is established"
-        },
-        {
-          "v": "lateral movement",
-          "q": "this shell script contains a lateral movement component that leverages the host's"
-        },
-        {
-          "v": "integrating exploits for known CVEs",
-          "q": "are rapidly integrating exploits for known CVEs into their"
-        }
-      ],
-      "cves": [
-        {
-          "v": "CVE-2021-26084",
-          "q": "Continued Exploitation of CVE-2021-26084"
-        }
-      ],
-      "figures": [
-        {
-          "v": "four files",
-          "q": "Finally, the script will pull down four files:"
-        },
-        {
-          "v": "2 YARA rules",
-          "q": "detected by 2 YARA rules from Florian Roth’s THOR APT"
-        },
-        {
-          "v": "a few days",
-          "q": "defenders have had a few days (at best) between when a vulnerability is made public"
-        }
-      ]
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
     },
-    "subject": {
-      "type": "vulnerability",
-      "name": "CVE-2021-26084"
-    },
-    "hedges": [
-      "The report says the activity appeared to involve multiple distinct threat actors, and that one botnet was only suspected.",
-      "Activity observed was largely automated botnet exploitation with what appeared to be financial motivations.",
-      "The report has strong confidence, not observed evidence, that more sophisticated actors use the exploit for intelligence collection.",
-      "Webshell bug links were most likely added by the original developers; the submission origin appears to be Hong Kong.",
-      "Some webshell functions may be omitted for various reasons; the actor may have wanted a lightweight payload.",
-      "The report says the techniques and malware used are nothing new or particularly sophisticated."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:54Z",
-      "ok": false,
-      "note": "summary: The report says the activity had \"what appeared to be financial motivations\", but the summary states it as \"calls most activity financially motivated\" ",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:54Z",
+        "ok": false,
+        "note": "summary: The report says the activity had \"what appeared to be financial motivations\", but the summary states it as \"calls most activity financially motivated\" ",
+        "by": "auditor"
+      }
+    ]
   },
   "86b8c909afd63ec436249037400dd59428798f1d": {
     "sha1": "86b8c909afd63ec436249037400dd59428798f1d",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:02:40Z",
-    "model": "haiku",
-    "summary": "Sucuri blog post (February 2016) on a WordPress infection that injects encrypted JavaScript into legitimate .js files and loads a hidden iframe ad page. The report calls it the admedia iframe injection. Its malicious subdomains were registered under one name and point to DigitalOcean servers. It describes domain shadowing, cross-site contamination across shared hosting, and constant reinfection through backdoors left on the server.",
-    "kind": "malware-analysis",
+    "read_at": "2026-11-27T22:19:46Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Vasunya",
-          "q": "WHOIS records show that they all had been registered by “Vasunya”",
-          "by": "the report itself, citing WHOIS records"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "2015-12-22",
-          "q": "created on Dec 22, 2015",
-          "what": "a malicious domain in the campaign was created"
-        },
-        {
-          "v": "2015-12-23",
-          "q": "by the same “Vasunya” on December 23, 2015",
-          "what": "an earlier domain from the previous variant was registered"
-        },
-        {
-          "v": "2016-01-08",
-          "q": "created on Jan 8, 2016",
-          "what": "a malicious domain in the campaign was created"
-        },
-        {
-          "v": "2016-02-01",
-          "q": "created on Feb 1, 2016",
-          "what": "a malicious domain in the campaign was created"
-        },
-        {
-          "v": "2016-02-01",
-          "q": "By Denis Sinegubko on February 1, 2016",
-          "what": "the Sucuri blog post was published"
-        }
-      ],
+      "dates": [],
       "tools": [],
-      "techniques": [
-        {
-          "v": "domain shadowing: malicious subdomains on legitimate domains",
-          "q": "The use of the third level domains is typical for “domain shadowing.”"
-        },
-        {
-          "v": "encrypted code injected at the end of .js files",
-          "q": "encrypted code at the end of all legitimate .js files."
-        },
-        {
-          "v": "invisible iframe injection",
-          "q": "injects an invisible iframe"
-        },
-        {
-          "v": "infects only first-time visitors",
-          "q": "This malware only infects first time visitors"
-        },
-        {
-          "v": "multiple backdoors uploaded to the web server",
-          "q": "uploads multiple backdoors into various locations on the webserver"
-        },
-        {
-          "v": "cross-site contamination across sites on the same hosting account",
-          "q": "known as cross-site contamination"
-        },
-        {
-          "v": "domain rotation to work around blacklisting",
-          "q": "probably to work around blacklisting of the other domains"
-        },
-        {
-          "v": "encrypted code that changes from site to site",
-          "q": "The encrypted part mutates from site to site"
-        }
-      ],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "24 hours",
-          "q": "that expires in 24 hours"
-        },
-        {
-          "v": "32 hex digit comments",
-          "q": "32 hex digit comments at the beginning and end of the malicious code."
-        },
-        {
-          "v": "two months",
-          "q": "within the last two months"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "admedia iframe injection"
-    },
-    "hedges": [
-      "Most likely an MD5 hash based on the domain name.",
-      "The last one was created Feb 1st, probably to work around blacklisting of the other domains."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:54Z",
-      "ok": false,
-      "note": "techniques[0]: The text says third-level domains are typical of domain shadowing, then adds 'In this case we deal with a domain registered specifically for this",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:54Z",
+        "ok": false,
+        "note": "techniques[0]: The text says third-level domains are typical of domain shadowing, then adds 'In this case we deal with a domain registered specifically for this",
+        "by": "auditor"
+      }
+    ]
   }
 }

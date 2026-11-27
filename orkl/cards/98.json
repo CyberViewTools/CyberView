@@ -1101,160 +1101,31 @@
     "sha1": "98e5d391ba4a750d85b95f498f0cf381a7e86a65",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T15:58:14Z",
-    "model": "haiku",
-    "summary": "Report on SystemdMiner, a botnet that appeared in April 2019 shortly before the main command server of the DDG.Mining botnet went offline. It spreads through YARN unauthorized access, configuration management tools and saved SSH keys, and installs a modified XMRig cryptominer. Its real command servers are said to sit on the dark network, reached through proxy services. The report analyses its scripts and binaries, and notes that the attacker took down some payload download URLs after publication.",
-    "kind": "malware-analysis",
+    "read_at": "2026-11-27T22:19:34Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "DDG.Mining Botnet",
-          "q": "On Apr 11, we published a threat update on the DDG.Mining Botnet here with the following",
-          "by": "the report"
-        },
-        {
-          "v": "SystemdMiner",
-          "q": "We named this new botnet SystemdMiner, as multiple components of this malicious",
-          "by": "the report"
-        }
-      ],
+      "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "United Kingdom",
-          "q": "AS63949|LINODE-AP Linode, LLC|United Kingdom|London --> Main C&C"
-        },
-        {
-          "v": "United States",
-          "q": "AS62217|VooServers_Ltd|United States|New York"
-        },
-        {
-          "v": "China",
-          "q": "Kong, HK|Hong Kong|China"
-        }
-      ],
-      "dates": [
-        {
-          "v": "7 May 2019",
-          "q": "7 May 2019 / Botnet",
-          "what": "Report published"
-        },
-        {
-          "v": "Apr 11",
-          "q": "On Apr 11, we published a threat update on the DDG.Mining Botnet here",
-          "what": "Earlier threat update published on the DDG botnet"
-        },
-        {
-          "v": "2019.4.19",
-          "q": "Then in the early morning of 2019.4.19, we found that DDG updated its configuration data",
-          "what": "DDG updated its configuration and shell script, and a new section was added"
-        },
-        {
-          "v": "4.25",
-          "q": "In the early morning of 4.25, DDG came back online with 2 new C2s",
-          "what": "DDG came back online with two new C2 servers"
-        },
-        {
-          "v": "2019.4.23",
-          "q": "At around noon at 2019.4.23, the attacker officially put the systemd.sh online",
-          "what": "Attacker put the full systemd.sh script online"
-        },
-        {
-          "v": "2019.4.26",
-          "q": "Update(2019.4.26 17:30)",
-          "what": "Update noting the attacker had taken down some payload download URLs"
-        }
-      ],
-      "tools": [
-        {
-          "v": "systemd-login-ddg",
-          "q": "systemd-login-ddg is one of the core files"
-        },
-        {
-          "v": "XMRig",
-          "q": "program based on XMRig will be downloaded for profit making."
-        },
-        {
-          "v": "UPX packer",
-          "q": "DDG's current binary samples are all packed with standard UPX packer"
-        },
-        {
-          "v": "ansible",
-          "q": "ansible / chef-knife) for horizontal propagation;Propagating itself with the SSH key"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "SSH weak passwords",
-          "q": "The DDG is mainly spread by using SSH weak passwords and Redis unauthorized"
-        },
-        {
-          "v": "Redis unauthorized",
-          "q": "The DDG is mainly spread by using SSH weak passwords and Redis unauthorized"
-        },
-        {
-          "v": "YARN unauthorize access",
-          "q": "systemd-resolve : exploit YARN unauthorize access vulnerabilities to spread itself"
-        },
-        {
-          "v": "SSH key",
-          "q": "Propagating itself with the SSH key"
-        },
-        {
-          "v": "morphed UPX packer",
-          "q": "systemdMiner's binary samples packed with morphed UPX packer with no intuitive"
-        },
-        {
-          "v": "cron",
-          "q": "The main function of the script is to setup a new cron file"
-        },
-        {
-          "v": "competitors",
-          "q": "The function of this script is to remove various competitors."
-        },
-        {
-          "v": "cryptomining",
-          "q": "SystemdMiner's current profit method is cryptomining"
-        }
-      ],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "3000+ active P2P nodes per day",
-          "q": "3000+ active P2P Nodes per day."
-        },
-        {
-          "v": "two standby C2s",
-          "q": "Thanks to its P2P network structure and two standby C2s"
-        },
-        {
-          "v": "three means",
-          "q": "This botnet uses three means to spread itself"
-        },
-        {
-          "v": "2 new C2s",
-          "q": "DDG came back online with 2 new C2s and upgraded its"
-        },
-        {
-          "v": "3 hours",
-          "q": "About 3 hours after the release of this article"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "SystemdMiner"
-    },
-    "hedges": [
-      "Mining-pool IP addresses are said to belong to normal companies or organisations, most likely hacked hosts."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:54Z",
-      "ok": false,
-      "note": "techniques[0]: The quote says SSH weak passwords are how DDG spreads. The text contrasts this with SystemdMiner, which uses YARN, automation tools and saved SSH",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote, quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:54Z",
+        "ok": false,
+        "note": "techniques[0]: The quote says SSH weak passwords are how DDG spreads. The text contrasts this with SystemdMiner, which uses YARN, automation tools and saved SSH",
+        "by": "auditor"
+      }
+    ]
   }
 }

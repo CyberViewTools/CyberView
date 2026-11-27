@@ -607,134 +607,31 @@
     "sha1": "c8939694e238bdf6f51ada44d90f0e4018836ef3",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T15:54:56Z",
-    "model": "haiku",
-    "summary": "CUJO AI's March 2021 analysis of the Linux version of the Prometei botnet, which first appeared in December 2020. Prometei was originally a modular Windows botnet that mined Monero. The Linux sample installs itself with root or user-level privileges, sets up persistence through a system service and a cron job, and checks in to a command server. Its commands include starting a Monero miner (XMRig) and routing traffic through Tor or I2P proxy modules. The report calls it most likely an early development version and says it is unclear whether the Windows and Linux developers are the same group.",
-    "kind": "malware-analysis",
+    "read_at": "2026-11-27T22:19:15Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "original developer(s)",
-          "q": "It’s possible that the original developer(s) were unhappy with the spread of their",
-          "by": "the report (CUJO AI analysis)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "DE",
-          "q": "5.189.171[.]187 | DE"
-        },
-        {
-          "v": "IR",
-          "q": "178.21.164[.]68 | IR"
-        }
-      ],
-      "dates": [
-        {
-          "v": "March 10, 2021",
-          "q": "March 10, 2021",
-          "what": "Date the IoT Malware Journals article on the Linux Prometei variant was published"
-        },
-        {
-          "v": "December 2020",
-          "q": "which first made headlines in December 2020.",
-          "what": "Prometei first made headlines, with its Linux variant discovered in early December"
-        }
-      ],
-      "tools": [
-        {
-          "v": "Prometei",
-          "q": "Originally, Prometei had been a modular Windows botnet that mined the Monero"
-        },
-        {
-          "v": "Mirai",
-          "q": "We often find IoT malware that is simply built on the leaked source code of Mirai or Gafgyt."
-        },
-        {
-          "v": "XMRig",
-          "q": "Prometei can also deploy a cryptocurrency miner in the form of the application XMRig."
-        },
-        {
-          "v": "updatecheckerd",
-          "q": "The process is usually named updatecheckerd."
-        },
-        {
-          "v": "msdtc",
-          "q": "msdtc – Proxy client"
-        },
-        {
-          "v": "smcard",
-          "q": "smcard – TOR relay"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "persistence",
-          "q": "The program continues by setting up persistence."
-        },
-        {
-          "v": "scheduled cron job",
-          "q": "Execution will continue by setting up a scheduled cron job."
-        },
-        {
-          "v": "masquerades itself",
-          "q": "As a final step, the malware masquerades itself by copying the binary into the following"
-        },
-        {
-          "v": "system-wide install",
-          "q": "the malicious code will install itself system-wide"
-        },
-        {
-          "v": "check-in activity",
-          "q": "Every Prometei bot installation gets tracked by a simple check-in activity"
-        },
-        {
-          "v": "system information",
-          "q": "the collected system information gets sent right back to the botnet controller:"
-        },
-        {
-          "v": "routed through TOR or I2P",
-          "q": "Prometei has an additional module in which traffic can be routed through TOR or I2P"
-        },
-        {
-          "v": "cryptocurrency mining",
-          "q": "How Prometei mines cryptocurrency"
-        }
-      ],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "~5.7",
-          "q": "~5.7 is a good indicator that what we have"
-        },
-        {
-          "v": "16 byte",
-          "q": "which has a 16 byte string inside"
-        },
-        {
-          "v": "0 and 30",
-          "q": "randomized with each request, integer between 0 and 30"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "Prometei"
-    },
-    "hedges": [
-      "It’s possible that the original developer(s) were unhappy with the spread of their malware and wanted to take advantage of other platforms.",
-      "Another theory is that this new Linux variant is the work of a completely different group.",
-      "This is most likely an early development version of the malware, and we may see advancements in its capabilities as time goes on.",
-      "It is also unclear whether the same group that developed the malware for Windows is behind the Linux version, and whether the developers are also the ones that distribute this piece of malware."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:13:16Z",
-      "ok": false,
-      "note": "tools[1]: The text only says IoT malware is often built on leaked Mirai or Gafgyt source code, and that Prometei is not typical of that. It never says Prometei ",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text, value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:13:16Z",
+        "ok": false,
+        "note": "tools[1]: The text only says IoT malware is often built on leaked Mirai or Gafgyt source code, and that Prometei is not typical of that. It never says Prometei ",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -137,105 +137,32 @@
     "sha1": "144ff3f73f70ab2e208db4560e9e6562a6ca1ada",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T15:55:57Z",
-    "model": "haiku",
-    "summary": "June 2018 update to an earlier analysis of DDG.Mining.Botnet, a botnet that infects Linux systems, installs XMRig-based cryptocurrency miners and persists through Crontab. Version 3011 drove unusual scanning on Redis-related and SSH ports. Version 3012, detected on 12 June 2018, changed the main C2 server. The report cites about 1,419 XMR paid across two mining pools and says version 3011 may be a testing or transitional release.",
-    "kind": "malware-analysis",
+    "read_at": "2026-11-27T22:19:35Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "13 June 2018",
-          "q": "13 June 2018",
-          "what": "Update posted to the analysis"
-        },
-        {
-          "v": "2018-05-24",
-          "q": "last modified 2018-05-24 15:51:10",
-          "what": "Miner program qW3xT last modified"
-        }
-      ],
-      "tools": [
-        {
-          "v": "XMRig",
-          "q": "XMRig 2.5.2 编译的矿机程序"
-        },
-        {
-          "v": "ddgs.3011",
-          "q": "DDG 新版本 ddgs.3011 的扫描模式"
-        },
-        {
-          "v": "i.sh",
-          "q": "修改用来持久驻留的 i.sh 脚本"
-        },
-        {
-          "v": "msgPack",
-          "q": "用 msgPack 序列化编码后的配置文件数据"
-        },
-        {
-          "v": "Go1.10",
-          "q": "样本的编写语言由旧的 Go1.9.2 换成了 Go1.10"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Crontab",
-          "q": "将 i.sh 脚本写入到 Crontab 中定期更新、运行"
-        },
-        {
-          "v": "SSH Pub Key",
-          "q": "注入以下 SSH Pub Key"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "177.5497873784",
-          "q": "TotalPaid 为 177.5497873784 XMR"
-        },
-        {
-          "v": "150.5194868540",
-          "q": "TotalPaid 为 150.5194868540 XMR"
-        },
-        {
-          "v": "1268.5880545439",
-          "q": "TotalPaid: 1268.5880545439 XMR"
-        },
-        {
-          "v": "1,419",
-          "q": "累计收益已经超过 1,419 枚 XMR"
-        },
-        {
-          "v": "7",
-          "q": "与该扫描相关的关联端口共计 7 个"
-        },
-        {
-          "v": "181,311.3",
-          "q": "按当前市价折合人民币 181,311.3 ￥"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "DDG.Mining.Botnet"
-    },
-    "hedges": [
-      "The report says version 3011 may still be in a testing phase or may only be a transitional version.",
-      "The report says it could not fully decode the configuration data and only roughly restored it with generic deserialization.",
-      "The report says the differences between the two miner files are unclear, though their key information is identical.",
-      "The report says the small overlap between Redis-related and SSH-related scanned ports may be due to honeypot deployment and network configuration.",
-      "The report says the mining earnings on the newly found wallet should come from mining by versions before 3011."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:33Z",
-      "ok": false,
-      "note": "summary: It says version 3011 may be a testing or transitional release, but the 2018.6.1 update says that once the x86_64 sample appeared, 3011 is no longer a t",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote, quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:33Z",
+        "ok": false,
+        "note": "summary: It says version 3011 may be a testing or transitional release, but the 2018.6.1 update says that once the x86_64 sample appeared, 3011 is no longer a t",
+        "by": "auditor"
+      }
+    ]
   },
   "14ed9f4cb898b47864e36e066426fc1ec5b58e46": {
     "sha1": "14ed9f4cb898b47864e36e066426fc1ec5b58e46",

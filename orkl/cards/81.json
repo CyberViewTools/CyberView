@@ -420,158 +420,31 @@
     "sha1": "81e2940328c14c5b89412bb6a133c50179880ef9",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T15:57:14Z",
-    "model": "haiku",
-    "summary": "Aqua's research team, Team Nautilus, describes the Autom cryptomining campaign, tracked for three years against its honeypots. Attackers exploited misconfigured Docker APIs, ran a vanilla alpine image with a malicious command to fetch the autom.sh script, created a privileged user for persistence, and disabled security features such as ufw. By 2021 they used repeated base64 encoding and a cron job to mine every 55 minutes. The report counts 84 attacks in total and 125 in Q3 2021, and notes that a fall in honeypot attacks did not mean the campaign slowed.",
-    "kind": "actor-campaign",
+    "read_at": "2026-11-27T22:19:32Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "the group behind the attack",
-          "q": "It seems that the group behind the attack has developed their skills to expand the attack surface and spread their attack.",
-          "by": "Team Nautilus (Aqua research team), as stated in the report"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "2019",
-          "q": "We first observed the attack in 2019, when a malicious command was executed during the",
-          "what": "first observed the Autom attack"
-        },
-        {
-          "v": "2020",
-          "q": "In 2020, the attackers were evading defense by bypassing security features, while in 2021",
-          "what": "defense evasion relied on bypassing security features"
-        },
-        {
-          "v": "2021",
-          "q": "In 2021, the adversaries added a new technique.",
-          "what": "added obfuscated script download to hide cryptomining"
-        },
-        {
-          "v": "Q3 2021",
-          "q": "During Q3 2021, we observed 125 attacks in the wild using the same server",
-          "what": "125 attacks observed in the wild"
-        },
-        {
-          "v": "December 29, 2021",
-          "q": "December 29, 2021",
-          "what": "report publication date"
-        }
-      ],
-      "tools": [
-        {
-          "v": "Shodan",
-          "q": "the attack using Shodan revealed that it did not slow down."
-        },
-        {
-          "v": "ufw",
-          "q": "At first, they disabled ufw (Uncomplicated Firewall), which enables"
-        },
-        {
-          "v": "sudo",
-          "q": "the adversaries use the sudo prefix"
-        },
-        {
-          "v": "adduser",
-          "q": "adduser is used to add users by setting up the account’s home folder and other"
-        },
-        {
-          "v": "useradd",
-          "q": "useradd is a low-level utility command for adding users."
-        },
-        {
-          "v": "Docker",
-          "q": "exploit misconfigured Docker APIs."
-        },
-        {
-          "v": "alpine:latest",
-          "q": "run of a vanilla image alpine:latest, which downloaded the autom.sh shell script."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "misconfigured Docker APIs",
-          "q": "exploit misconfigured Docker APIs."
-        },
-        {
-          "v": "vanilla images along with malicious commands",
-          "q": "Adversaries commonly use vanilla images along with malicious commands to perform their attacks,"
-        },
-        {
-          "v": "disabled ufw",
-          "q": "At first, they disabled ufw (Uncomplicated Firewall), which enables"
-        },
-        {
-          "v": "base64 five times",
-          "q": "base64 five times to prevent security tools from reading it and understanding the intentions"
-        },
-        {
-          "v": "cron job",
-          "q": "new cron job that will initiate mining every 55 minutes on the compromised host."
-        },
-        {
-          "v": "password login to the SSH server",
-          "q": "the attackers enable password login to the SSH server for"
-        },
-        {
-          "v": "create a backdoor",
-          "q": "create a backdoor that grants the adversaries persistence on the"
-        },
-        {
-          "v": "cryptocurrency mining",
-          "q": "to eventually achieve the goal of the attack: mining cryptocurrency."
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "84",
-          "q": "we’ve seen 84 attacks using the same shell script."
-        },
-        {
-          "v": "125",
-          "q": "During Q3 2021, we observed 125 attacks in the wild using the same server"
-        },
-        {
-          "v": "24",
-          "q": "host in 24 other attacks that occurred in 2020 and 2021."
-        },
-        {
-          "v": "five servers",
-          "q": "Throughout the years, the shell script was downloaded from five servers:"
-        },
-        {
-          "v": "three years",
-          "q": "Over the past three years, we at Team Nautilus have been tracking an ongoing cryptomining"
-        },
-        {
-          "v": "55 minutes",
-          "q": "new cron job that will initiate mining every 55 minutes on the compromised host."
-        },
-        {
-          "v": "five",
-          "q": "base64 five times to prevent security tools from reading it and understanding the intentions"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "Autom"
-    },
-    "hedges": [
-      "The report says the drop in honeypot attacks in 2021 might imply the attackers identified the honeypots and reduced their volume.",
-      "The report says it seems the group behind the attack has developed its skills to expand the attack surface and spread the attack."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:54Z",
-      "ok": false,
-      "note": "summary: It says the report counts 84 attacks in total and 125 in Q3 2021, which reads as if 125 were part of, or comparable to, the 84. The text gives 84 as at",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:54Z",
+        "ok": false,
+        "note": "summary: It says the report counts 84 attacks in total and 125 in Q3 2021, which reads as if 125 were part of, or comparable to, the 84. The text gives 84 as at",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -409,37 +409,33 @@
   },
   "249c26fd265ef866cc2990bcbbac23d2e8eb104e": {
     "sha1": "249c26fd265ef866cc2990bcbbac23d2e8eb104e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T16:22:10Z",
-    "model": "haiku",
-    "summary": "BleepingComputer reports that IT services firm HTC Global Services confirmed a cyberattack after the ALPHV (BlackCat) ransomware gang leaked screenshots of allegedly stolen data, including passports and emails. A cybersecurity professional believes initial access came through the Citrix Bleed vulnerability on a Citrix Netscaler device at business unit CareTech; the report notes little information about the attack is available. The article also gives background on ALPHV as a rebrand of DarkSide and BlackMatter, and mentions Scattered Spider's claimed attack on MGM Resorts.",
+    "read_at": "2026-11-27T22:18:45Z",
+    "model": "sonnet",
+    "summary": "HTC Global Services, a managed service provider, confirmed a cybersecurity incident after the ALPHV (BlackCat) ransomware gang listed it on its leak site with screenshots of allegedly stolen data. Researcher Kevin Beaumont believes initial access came through a vulnerable Citrix Netscaler device (Citrix Bleed) at the CareTech business unit. The report also gives background on ALPHV and its recent victims.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "ALPHV (BlackCat)",
-          "q": "the ALPHV (BlackCat) ransomware gang listed HTC on their data leak site",
+          "q": "This announcement comes after the ALPHV (BlackCat) ransomware gang listed HTC on their data leak site",
           "by": "the report (BleepingComputer)"
         },
         {
           "v": "Scattered Spider",
           "q": "a group of English-speaking affiliates tracked as Scattered Spider claimed responsibility for the attack",
-          "by": "the report (BleepingComputer), relaying the group's own claim"
+          "by": "Scattered Spider's own claim, as relayed by the report"
         }
       ],
       "sectors": [
         {
-          "v": "IT services",
-          "q": "IT services and business consulting company HTC Global Services has confirmed that they suffered a cyberattack after the"
-        },
-        {
           "v": "healthcare",
-          "q": "HTC Global Services is a managed service provider offering technology and business services to the healthcare, automotive,"
+          "q": "offering technology and business services to the healthcare, automotive,"
         },
         {
           "v": "automotive",
-          "q": "HTC Global Services is a managed service provider offering technology and business services to the healthcare, automotive,"
+          "q": "offering technology and business services to the healthcare, automotive,"
         },
         {
           "v": "manufacturing",
@@ -448,57 +444,60 @@
         {
           "v": "financial",
           "q": "manufacturing, and financial industries."
+        },
+        {
+          "v": "electricity provider",
+          "q": "recently attacked a publicly owned electricity provider and a hospital network"
         }
       ],
       "countries": [
         {
           "v": "United States",
-          "q": "critical infrastructure in the United States."
+          "q": "both classified as"
         }
       ],
       "dates": [
         {
           "v": "2023-12-05",
-          "q": "Published: 2023-12-05 · Archived: 2026-04-05 19:39:10 UTC",
-          "what": "Article published"
+          "q": "Published: 2023-12-05",
+          "what": "Publication date of the report"
         },
         {
           "v": "November 2021",
-          "q": "The ALPHV/BlackCat ransomware operation launched in November 2021, is believed to be a rebrand of the DarkSide and",
-          "what": "ALPHV/BlackCat ransomware operation launched"
+          "q": "The ALPHV/BlackCat ransomware operation launched in November 2021",
+          "what": "ALPHV/BlackCat operation launched"
         },
         {
           "v": "July 2021",
-          "q": "After rebranding again as BlackMatter in July 2021, their operations abruptly ceased in November 2021 when authorities",
-          "what": "Group rebranded as BlackMatter"
-        },
-        {
-          "v": "November 2021",
-          "q": "their operations abruptly ceased in November 2021 when authorities",
-          "what": "BlackMatter operations ceased after authorities seized servers"
+          "q": "After rebranding again as BlackMatter in July 2021",
+          "what": "Rebrand as BlackMatter"
         }
       ],
       "tools": [
         {
+          "v": "ALPHV/BlackCat ransomware",
+          "q": "The ALPHV/BlackCat ransomware operation launched in November 2021"
+        },
+        {
           "v": "Citrix Netscaler",
-          "q": "one of HTC's business units, CareTech, operated a vulnerable Citrix Netscaler device, which was"
+          "q": "CareTech, operated a vulnerable Citrix Netscaler device"
         }
       ],
       "techniques": [
         {
-          "v": "Citrix Bleed vulnerability",
-          "q": "company was breached using the Citrix Bleed vulnerability."
+          "v": "Exploitation of vulnerable Citrix Netscaler device for initial access",
+          "q": "operated a vulnerable Citrix Netscaler device, which was"
         },
         {
-          "v": "data leak site",
-          "q": "the ALPHV (BlackCat) ransomware gang listed HTC on their data leak site"
+          "v": "Data theft and leak-site extortion",
+          "q": "listed HTC on their data leak site, along with"
         }
       ],
       "cves": [],
       "figures": [
         {
           "v": "over 100 ESXi hypervisors",
-          "q": "saying they encrypted over 100 ESXi hypervisors during the attack."
+          "q": "saying they encrypted over 100 ESXi hypervisors during the attack"
         }
       ]
     },
@@ -507,18 +506,19 @@
       "name": "HTC Global Services cyberattack"
     },
     "hedges": [
-      "While little information about the attack on HTC is available",
-      "Kevin Beaumont believes the company was breached using the Citrix Bleed vulnerability.",
-      "BleepingComputer contacted HTC with questions, but a response was not immediately available.",
-      "The leaked data is described as allegedly stolen during the attack."
+      "The leaked data is described as 'allegedly stolen'.",
+      "Kevin Beaumont 'believes' the breach used Citrix Bleed; this is not confirmed by HTC.",
+      "BleepingComputer had contacted HTC about whether Citrix Bleed was used; no response was available yet.",
+      "ALPHV/BlackCat is 'believed to be' a rebrand of DarkSide and BlackMatter.",
+      "Little information about the attack on HTC is available."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:37:48Z",
-      "ok": false,
-      "note": "actors[1]: Scattered Spider claimed the MGM Resorts attack, not the HTC attack. The quote is misapplied: the card makes Scattered Spider an actor in the HTC inc",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:37:48Z",
+        "ok": false,
+        "note": "actors[1]: Scattered Spider claimed the MGM Resorts attack, not the HTC attack. The quote is misapplied: the card makes Scattered Spider an actor in the HTC inc",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -957,11 +957,11 @@
   },
   "34630d282ecd14f8396cfeb394c7ec2742f99df2": {
     "sha1": "34630d282ecd14f8396cfeb394c7ec2742f99df2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:57:03Z",
-    "model": "haiku",
-    "summary": "Trend Micro's December 2021 blog reports on IoT Linux malware, mapped to MITRE ATT&CK techniques. It analysed malware found between January 2019 and August 2021 using static and dynamic analysis. The report says the malware is evolving, with botnet families adding and removing capabilities, data theft and lateral movement largely dropped, and propagation moved to centralized command-and-control servers. Brute-force password guessing and external remote services are the most common techniques, and the report stresses changing default passwords.",
+    "read_at": "2026-11-27T22:19:33Z",
+    "model": "sonnet",
+    "summary": "Trend Micro study of IoT Linux malware (samples discovered January 2019 to August 2021), using MITRE ATT&CK to compare capabilities. It finds botnets steadily evolving, with techniques added and dropped. Lateral movement and data exfiltration are rare, as propagation shifted to the C&C server. Ransomware and botnets share brute-force and exposed-service access. Advice: change default passwords, patch, secure configurations.",
     "kind": "overview",
     "facts": {
       "actors": [],
@@ -971,51 +971,51 @@
         {
           "v": "December 9, 2021",
           "q": "December 9, 2021",
-          "what": "Date the blog entry was published"
+          "what": "Publication date of the Trend Micro blog entry"
         },
         {
-          "v": "January 2019",
-          "q": "We selected malware discovered between January 2019 and",
-          "what": "Start of the period in which the analysed malware was discovered"
+          "v": "January 2019 to August 2021",
+          "q": "We selected malware discovered between January 2019 and August 2021.",
+          "what": "Period in which the analysed malware samples were discovered"
         },
         {
           "v": "mid-2020",
           "q": "introduced in a malware discovered in mid-2020",
-          "what": "Malware in which a file permissions modification technique was introduced"
+          "what": "Discovery of malware introducing the file and directory permissions modification technique"
         }
       ],
       "tools": [
         {
-          "v": "Ghidra",
-          "q": "static (Ghidra, IDA Pro)"
-        },
-        {
-          "v": "IDA Pro",
-          "q": "static (Ghidra, IDA Pro)"
-        },
-        {
-          "v": "strace",
-          "q": "dynamic analysis (strace, ltrace, GDB) to discover malware capabilities."
-        },
-        {
-          "v": "ltrace",
-          "q": "dynamic analysis (strace, ltrace, GDB) to discover malware capabilities."
-        },
-        {
-          "v": "GDB",
-          "q": "dynamic analysis (strace, ltrace, GDB) to discover malware capabilities."
-        },
-        {
           "v": "Dark Nexus",
-          "q": "In the Dark Nexus family, for example,"
-        },
-        {
-          "v": "QSnatch",
-          "q": "there is only one malware (QSnatch) that implements typical tactics"
+          "q": "We observed these additions especially in the Dark Nexus malware."
         },
         {
           "v": "StealthWorker GO",
-          "q": "a variant of StealthWorker GO, a"
+          "q": "among the 2021 discovered families, is a variant of StealthWorker GO, a malware written in the Golang language"
+        },
+        {
+          "v": "QSnatch",
+          "q": "there is only one malware (QSnatch) that implements typical tactics for data leakages"
+        },
+        {
+          "v": "Ghidra",
+          "q": "We employed both static (Ghidra, IDA Pro) and dynamic analysis"
+        },
+        {
+          "v": "IDA Pro",
+          "q": "We employed both static (Ghidra, IDA Pro) and dynamic analysis"
+        },
+        {
+          "v": "strace",
+          "q": "dynamic analysis (strace, ltrace, GDB)"
+        },
+        {
+          "v": "ltrace",
+          "q": "dynamic analysis (strace, ltrace, GDB)"
+        },
+        {
+          "v": "GDB",
+          "q": "dynamic analysis (strace, ltrace, GDB)"
         }
       ],
       "techniques": [
@@ -1024,24 +1024,40 @@
           "q": "Discovery File and Directory Discovery (T1083) 10"
         },
         {
-          "v": "Brute Force: Password Guessing (T1110.001)",
-          "q": "Brute Force: Password Guessing (T1110.001) 6"
+          "v": "Application Layer Protocol: Web Protocols (T1071.001)",
+          "q": "both implement Application Layer Protocol: Web protocol (T1071.001)"
         },
         {
           "v": "External Remote Services (T1133)",
-          "q": "Initial Access External Remote Services (T1133) 8"
+          "q": "External Remote Services (T1133) from the Initial Access Tactic"
         },
         {
-          "v": "Match Legitimate Name or Location (T1036.005)",
-          "q": "Match Legitimate Name or Location (T1036.005)."
+          "v": "Brute Force: Password Guessing (T1110.001)",
+          "q": "Brute Force: Password Guessing (T1110.001) is the most common"
+        },
+        {
+          "v": "Masquerading: Match Legitimate Name or Location (T1036.005)",
+          "q": "Masquerading: Match Legitimate Name or Location (T1036.005)"
+        },
+        {
+          "v": "Linux and Mac File and Directory Permissions Modification (T1222.002)",
+          "q": "Linux and Mac File and Directory Permissions Modification (T1222.002)"
         },
         {
           "v": "Scheduled Task/Job: Cron (T1053.003)",
-          "q": "Scheduled Task/Job: Cron (T1053.003)"
+          "q": "we observed the addition of the Scheduled Task/Job: Cron (T1053.003) technique"
         },
         {
           "v": "Exploitation of Remote Services (T1210)",
           "q": "Remote Services (T1021) and Exploitation of Remote Services (T1210)"
+        },
+        {
+          "v": "Remote Services (T1021)",
+          "q": "Remote Services (T1021) and Exploitation of Remote Services (T1210)"
+        },
+        {
+          "v": "System Network Configuration Discovery (T1016)",
+          "q": "System Network Configuration Discovery (T1016), is also no longer enforced."
         }
       ],
       "cves": [],
@@ -1051,29 +1067,29 @@
           "q": "Table 1 shows the 10 most implemented capabilities (or techniques) in our malware data set."
         },
         {
-          "v": "four",
-          "q": "During the observation period, we noted four new techniques added to threat actors’"
+          "v": "four new techniques",
+          "q": "we noted four new techniques added to threat actors’ arsenals"
         },
         {
-          "v": "three",
-          "q": "we found three techniques relating to the lateral movement tactic to have"
+          "v": "three techniques",
+          "q": "we found three techniques relating to the lateral movement tactic to have been dropped"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "It is likely because, from a malware author’s standpoint, the benefits of executing malware that require higher privileges are not worth the effort of implementation.",
-      "This is likely because the market for malware-as-a-service is growing.",
-      "This may be because detection of botnet malware is more mature, so they require more frequent changes to avoid being easily detected.",
-      "The Masquerading technique likely reflect the manufacturers’ increasing interest and efforts in securing these IoT devices or appliances."
+      "Masquerading technique 'likely reflect[s]' manufacturers' increasing efforts to secure IoT devices",
+      "Privilege escalation is absent 'likely' because benefits are not worth the implementation effort",
+      "Web protocol C&C is 'likely' due to the growing malware-as-a-service market",
+      "Botnets innovate more 'maybe' because botnet detection is more mature"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:42Z",
-      "ok": false,
-      "note": "summary: Two claims go beyond the text. (1) It says brute-force password guessing and external remote services are \"the most common techniques\". In Table 1 the ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:42Z",
+        "ok": false,
+        "note": "summary: Two claims go beyond the text. (1) It says brute-force password guessing and external remote services are \"the most common techniques\". In Table 1 the ",
+        "by": "auditor"
+      }
+    ]
   }
 }

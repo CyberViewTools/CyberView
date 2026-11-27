@@ -525,142 +525,31 @@
     "sha1": "67f46c74653725c4e385c800f438eb8fd8805d05",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:17:38Z",
-    "model": "haiku",
-    "summary": "Mandiant reports UNC3524, a suspected espionage actor it has observed since December 2019, which targets the email of staff in corporate development, M&A and IT security. It hides a backdoor, QUIETEXIT, built on open-source Dropbear SSH, on network appliances and IoT cameras that lack security tools, and reads mailboxes through Exchange Web Services. Intrusions lasted up to 18 months. Mandiant cannot link UNC3524 to a group it tracks. Its techniques overlap with Russia-based actors, including APT29 and APT28.",
-    "kind": "actor-campaign",
+    "read_at": "2026-11-27T22:19:49Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "UNC3524",
-          "q": "we introduce UNC3524, a newly discovered suspected espionage threat actor",
-          "by": "Mandiant"
-        },
-        {
-          "v": "APT29",
-          "q": "This follows an approach that Mandiant has previously observed with APT29.",
-          "by": "Mandiant"
-        },
-        {
-          "v": "APT28",
-          "q": "The NSA has previously reported automated password spraying using Kubernetes, Exchange Exploitation, and REGEORG as associated with APT28.",
-          "by": "NSA, as cited by Mandiant"
-        }
-      ],
+      "actors": [],
       "sectors": [],
-      "countries": [
-        {
-          "v": "Russia",
-          "q": "multiple Russia-based espionage threat"
-        }
-      ],
-      "dates": [
-        {
-          "v": "December 2019",
-          "q": "Since December 2019, Mandiant has observed advanced threat actors increase their investment",
-          "what": "Mandiant began observing rising investment in tools for bulk email collection"
-        },
-        {
-          "v": "2021",
-          "q": "average dwell time of 21 days in 2021",
-          "what": "Year of the 21-day average dwell time figure cited from M-Trends 2022"
-        }
-      ],
-      "tools": [
-        {
-          "v": "QUIETEXIT",
-          "q": "deployed a novel backdoor tracked by Mandiant as QUIETEXIT, which is based on the"
-        },
-        {
-          "v": "Dropbear SSH",
-          "q": "open-source Dropbear SSH client-server software"
-        },
-        {
-          "v": "REGEORG",
-          "q": "a REGEORG web shell previously placed on a DMZ web server"
-        },
-        {
-          "v": "WMIEXEC",
-          "q": "a customized version of Impacket’s WMIEXEC"
-        },
-        {
-          "v": "LifeSize",
-          "q": "primarily legacy conference room camera systems sold by LifeSize, Inc."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "bulk email collection",
-          "q": "increase their investment in tools to facilitate bulk email collection"
-        },
-        {
-          "v": "Backdoors on network appliances",
-          "q": "to install backdoors on appliances within victim environments"
-        },
-        {
-          "v": "SOCKS proxying",
-          "q": "including proxying traffic via SOCKS"
-        },
-        {
-          "v": "Dynamic DNS",
-          "q": "All QUIETEXIT C2 domains that Mandiant observed used Dynamic DNS providers."
-        },
-        {
-          "v": "timestomping",
-          "q": "used timestomping to"
-        },
-        {
-          "v": "obfuscated",
-          "q": "heavily obfuscated"
-        },
-        {
-          "v": "live off the land",
-          "q": "The threat actor’s use of the QUIETEXIT tunneler allowed them to largely live off the land"
-        },
-        {
-          "v": "Exchange Web Services (EWS)",
-          "q": "they began making Exchange Web Services (EWS)"
-        },
-        {
-          "v": "Service Principal credentials",
-          "q": "or using Service Principal credentials."
-        },
-        {
-          "v": "T1021.004: SSH",
-          "q": "T1021.004: SSH"
-        }
-      ],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "18 months",
-          "q": "remain undetected in victim environments for at least 18 months."
-        },
-        {
-          "v": "21 days",
-          "q": "average dwell time of 21 days in 2021, as reported in M-Trends 2022"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "UNC3524"
-    },
-    "hedges": [
-      "Mandiant cannot conclusively link UNC3524 to an existing group currently tracked by Mandiant.",
-      "The espionage mandate is inferred from the long dwell time; the targeting alone would suggest a financial motivation.",
-      "Overlap with techniques used by Russia-based espionage actors is noted; it is not a conclusive attribution.",
-      "Mandiant suspects default credentials, rather than an exploit, were the likely way the IoT cameras were compromised.",
-      "The camera exposure was possibly caused by an improper UPnP configuration.",
-      "It is likely the actor targeted the IT security team to determine whether its operation had been detected."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:38:17Z",
-      "ok": false,
-      "note": "summary: The text says that since December 2019 Mandiant has observed advanced threat actors in general increase their investment in bulk email collection tools",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:38:17Z",
+        "ok": false,
+        "note": "summary: The text says that since December 2019 Mandiant has observed advanced threat actors in general increase their investment in bulk email collection tools",
+        "by": "auditor"
+      }
+    ]
   }
 }

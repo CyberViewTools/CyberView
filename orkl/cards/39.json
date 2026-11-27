@@ -305,84 +305,32 @@
     "sha1": "398a6fe21e83f09c3d32e8655c319efc4fd75bb0",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T16:01:36Z",
-    "model": "haiku",
-    "summary": "NSA guidance (December 2022, version 1.0) on APT5, also known as UNC2630 and MANGANESE, which the report says has demonstrated capabilities against Citrix ADC appliances, facilitating access by bypassing normal authentication. It gives file-integrity checks on key executables, log and account indicators (including pb_policy log entries, unauthorized crontab changes and permission changes), and mitigations: place ADCs behind authenticated access, isolate them, restore to a known good state, and keep them updated. The report says it does not cover all TTPs the actors may use.",
-    "kind": "actor-campaign",
+    "read_at": "2026-11-27T22:19:46Z",
+    "model": "sonnet",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "APT5",
-          "q": "This activity has been attributed to APT5, also known as UNC2630 and MANGANESE.",
-          "by": "the report itself (NSA)"
-        },
-        {
-          "v": "UNC2630",
-          "q": "This activity has been attributed to APT5, also known as UNC2630 and MANGANESE.",
-          "by": "the report itself (NSA)"
-        },
-        {
-          "v": "MANGANESE",
-          "q": "This activity has been attributed to APT5, also known as UNC2630 and MANGANESE.",
-          "by": "the report itself (NSA)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "DEC 2022",
-          "q": "U/OO/231762-22 | PP-22-1969 | DEC 2022 Ver. 1.0",
-          "what": "Publication date of version 1.0 of the threat hunting guidance"
-        }
-      ],
-      "tools": [
-        {
-          "v": "pb_policy",
-          "q": "The actors have been seen leveraging tools that run 'pb_policy' twice."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "bypassing normal authentication",
-          "q": "Targeting Citrix ADCs can facilitate illegitimate access to targeted organizations by bypassing normal authentication controls."
-        },
-        {
-          "v": "tampering",
-          "q": "the following command can indicate tampering by one APT5 technique."
-        },
-        {
-          "v": "crontab",
-          "q": "Unauthorized modifications to the crontab file"
-        },
-        {
-          "v": "user permissions",
-          "q": "Unauthorized modification of user permissions."
-        },
-        {
-          "v": "Gaps in logs",
-          "q": "Gaps in logs, or mismatches between logs on the device"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
       "figures": []
     },
     "subject": null,
-    "hedges": [
-      "The guidance does not represent all techniques, tactics, or procedures (TTPs) the actors may use when targeting these environments.",
-      "Artifacts may vary based on the environment and the stage of that activity.",
-      "A malicious actor enabling continued access will likely require modification to legitimate binaries.",
-      "While these files have not been discovered in all environments, their presence may be indicative of actor activity if discovered.",
-      "The attribution to APT5 is stated as 'has been attributed'; the report does not say which party made the attribution."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T16:12:42Z",
-      "ok": false,
-      "note": "hedges[4]: This is not a hedge stated in the text; it is a meta-comment about the report. Moreover, the card's actors[].by says 'the report itself (NSA)', which",
-      "by": "auditor"
-    }
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T16:12:42Z",
+        "ok": false,
+        "note": "hedges[4]: This is not a hedge stated in the text; it is a meta-comment about the report. Moreover, the card's actors[].by says 'the report itself (NSA)', which",
+        "by": "auditor"
+      }
+    ]
   },
   "3935d58c55bf257dff7b3c263f60e35ea2ab736c": {
     "sha1": "3935d58c55bf257dff7b3c263f60e35ea2ab736c",

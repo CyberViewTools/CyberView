@@ -1,130 +1,132 @@
 {
  "label": "exercise",
- "generated_at": "2026-11-24T05:06:43.896Z",
- "date": "2026-11-24",
- "title": "Exercise: a poisoned package release steals cloud and CI credentials from your build pipeline",
+ "generated_at": "2026-11-27T23:43:56.540Z",
+ "date": "2026-11-27",
+ "title": "Exercise: a cloud API gateway flaw may have exposed every secret stored in it",
  "based_on": [
-  "microsoft-agent-framework-pypi-compromise-2026-11"
+  "azure-api-management-secrets-nsm-norway-2026-11"
  ],
- "real_story": "On November 17, 2026, versions 1.26.1 and 1.26.2 of Microsoft's agent-framework package were published on PyPI with a credential stealer. A .pth file ran it at Python startup, even if the package was never imported. It targeted environment variables, credential files, Azure managed-identity and Azure DevOps tokens and, in 1.26.2, GitHub Actions OIDC tokens, and sent them to a webhook.site endpoint. Wiz says both versions were unavailable on PyPI by about 21:30 UTC and that 1.26.0 is the most recent safe version. BleepingComputer says it remains unclear how the attacker gained access to publish; Microsoft had not responded by publication time.",
+ "real_story": "Norway's NSM says an unknown actor has actively gone after access tokens, secrets and named values in Azure API Management (APIM), and names Equinor and Skagerak Energi among the organisations affected. Microsoft says it found the vulnerability on November 18, 2026 and patched it the next day. It says an unauthorized party could have used the issue to reach secrets in Classic instances that were not configured to its security guidelines. Microsoft says the fix does not automatically invalidate credentials that may have been used earlier. NSM tells every APIM user to assume their secrets and named values may be exposed and to rotate all tokens and secrets.",
  "facts": [
   {
-   "text": "Versions 1.26.1 and 1.26.2 of the agent-framework package were published on November 17, 2026 with a stealer that BleepingComputer says executed automatically during normal Python startup in affected environments, even if the package was never imported.",
-   "source_url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+   "text": "NSM says an unknown actor has actively targeted access tokens, secrets and named values in APIM.",
+   "source_url": "https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api-management"
   },
   {
-   "text": "Wiz says 1.26.2 restored the clean __init__.py and used a new trigger (af_runtime_diag.pth), so searching only for 1.26.1 filenames will miss it.",
-   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+   "text": "NSM says Equinor and Skagerak Energi are among the organisations that have been affected.",
+   "source_url": "https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api-management"
   },
   {
-   "text": "Wiz says the stealer targets environment variables matching terms such as token, secret, key, azure, aws, github and npm, credential files, and Azure DevOps and Entra OIDC tokens; 1.26.2 adds GitHub Actions OIDC tokens for workflows with id-token: write.",
-   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+   "text": "NSM says everyone using Azure API Management should assume their secrets and named values may be compromised, and that organisations must rotate all tokens and secrets.",
+   "source_url": "https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api-management"
   },
   {
-   "text": "Socket reports that the collected data is compressed, Base64-encoded and sent by POST to a webhook.site endpoint, and that the reported payloads do not download or execute additional code.",
-   "source_url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer"
+   "text": "NSM says an organisation whose instance has not been updated should contact its supplier directly, and one that sees or confirms a compromise should contact NSM.",
+   "source_url": "https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api-management"
   },
   {
-   "text": "Wiz says its analysis of the 50 requests kept by the webhook found 17 that represent three unique successful victim exfiltrations.",
-   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+   "text": "Microsoft says it found the vulnerability on November 18, 2026 and patched it the next day.",
+   "source_url": "https://www.techzine.eu/news/security/146028/microsoft-patches-actively-exploited-vulnerability-in-azure-api-management/"
   },
   {
-   "text": "Wiz says the most recent safe version is 1.26.0, and advises searching lockfiles, CI logs, virtualenvs and container images for 1.26.1 or 1.26.2.",
-   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+   "text": "Microsoft says the affected tiers are Developer, Basic, Standard and Premium of APIM Classic; it says the Consumption tier of Classic and all v2 tiers were unaffected.",
+   "source_url": "https://www.techzine.eu/news/security/146028/microsoft-patches-actively-exploited-vulnerability-in-azure-api-management/"
   },
   {
-   "text": "BleepingComputer says it remains unclear how the attacker gained access to publish under Microsoft's project.",
-   "source_url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+   "text": "Microsoft says the fix does not automatically invalidate credentials that may have been used before it, and urges customers to change potentially compromised credentials, monitor systems reachable with them and review logs.",
+   "source_url": "https://www.techzine.eu/news/security/146028/microsoft-patches-actively-exploited-vulnerability-in-azure-api-management/"
   },
   {
-   "text": "Wiz advises rotating every secret present in affected hosts and runners and notes that stolen tokens may be valid for up to 24 hours.",
-   "source_url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+   "text": "The Register reports that exposure was linked to Classic configurations that did not follow Microsoft's network security guidance or stored secrets directly in APIM instead of referencing Azure Key Vault.",
+   "source_url": "https://www.theregister.com/security/2026/11/23/norway-links-energy-firm-cyberattacks-to-critical-azure-api-management-flaw/5311598"
   }
  ],
- "scenario": "Hypothetical: Northbridge Components, a 600-person manufacturer, has a six-person platform team and a data team building an internal AI assistant in Python. A popular open-source package used by the data team's notebooks, a build runner and one production container is replaced overnight by a malicious release. Nothing breaks, because the package still works. Your cloud provider and the package index each send notices: the release was malicious, and any Python process in an affected environment may have leaked its secrets. Builds run on a self-hosted CI runner with cloud deploy permissions.",
- "duration_min": 75,
+ "scenario": "Hypothetical: Northwind Freight, a 900-person logistics company, runs a classic-tier API gateway in its cloud tenant that fronts customer tracking APIs and partner integrations. Over the years teams stored subscription keys, identity-provider client secrets and backend tokens directly in the gateway; nobody owns a full inventory, and two old test instances still exist. On Monday morning the national cyber agency publishes a warning that a cloud provider flaw let an unknown actor read secrets in such gateways. The provider says it has already fixed the service, but earlier credentials are not automatically invalidated. Your security lead must decide what to assume and what to do first.",
+ "duration_min": 60,
  "roles": [
-  "Incident commander",
-  "Platform/DevOps engineer",
-  "Cloud/identity administrator",
-  "Data/ML team lead",
-  "Security analyst",
-  "Communications lead",
+  "Security lead (facilitator)",
+  "Cloud/platform engineering lead",
+  "Application owners for API-fronted services",
+  "Identity and access management",
+  "IT operations / on-call",
   "Legal or privacy officer",
-  "IT operations manager"
+  "Communications",
+  "Executive sponsor",
+  "Partner or vendor manager"
  ],
  "injects": [
   {
    "at_min": 0,
-   "title": "A notice arrives",
-   "text": "At 07:45 a package-index notice and a vendor blog say two releases of a package you use were malicious and ran at Python startup. The data team lead says they updated dependencies two days ago but is unsure which environments pulled the new version.",
-   "ask": "Who owns this, and what is your first 30-minute plan to find out where the versions ran?"
+   "title": "Agency warning lands",
+   "text": "A national cyber agency notice says an unknown actor has been going after tokens, secrets and named values in a cloud API gateway. The vendor says the flaw is fixed on its side.",
+   "ask": "Who owns this? What do you check in the first 15 minutes?"
   },
   {
-   "at_min": 12,
-   "title": "Confirmation",
-   "text": "A lockfile search finds the bad version in one CI runner image and two developer laptops. The container registry shows a production image rebuilt that night on the runner. Proxy logs show outbound requests to a public webhook service from the runner at the time of the build.",
-   "ask": "What evidence do you preserve, and do you pause all pipelines now? What does a completed request versus a blocked one tell you?"
+   "at_min": 10,
+   "title": "Inventory turns up surprises",
+   "text": "Engineering finds four gateway instances, including two forgotten test instances. Two are classic tier. Several hold secrets directly instead of referencing a key vault.",
+   "ask": "How do you decide what is in scope, and who confirms the tier and configuration of each?"
   },
   {
-   "at_min": 25,
-   "title": "Which secrets were reachable?",
-   "text": "The runner held a cloud service principal with deploy rights, a container registry token, a repository token and a package-publishing token. Cloud logs show the managed identity requested tokens at an odd hour. Nobody has a full inventory of what the runner could reach.",
-   "ask": "In what order do you rotate secrets, and how do you rotate without breaking production deploys? How long might stolen tokens remain valid?"
+   "at_min": 20,
+   "title": "Suspicious admin activity",
+   "text": "Logs on the production gateway show administrative operations from an unfamiliar address two days before the vendor fix. Retention on the test instances is only 7 days.",
+   "ask": "Do you declare an incident? What evidence do you preserve now?"
   },
   {
-   "at_min": 40,
-   "title": "Customer and auditor pressure",
-   "text": "A key customer's security team heard about the incident from news coverage and asks whether their data or your software releases could be affected. Your auditor asks whether a notification obligation has been triggered.",
-   "ask": "What can you truthfully say now, who says it, and what do you need to find out before you can say more?"
+   "at_min": 35,
+   "title": "Partner and media pressure",
+   "text": "A large partner asks whether its integration keys were exposed. A trade journalist asks if the company is among those affected.",
+   "ask": "What do you tell the partner and the journalist, and who approves it?"
   },
   {
-   "at_min": 52,
-   "title": "Is the build trustworthy?",
-   "text": "The analyst finds that the rebuilt production image was deployed before the notice. Public reports say the stealer did not download more code, but you cannot yet rule out that the stolen deploy credentials were used.",
-   "ask": "Do you roll back, rebuild from a clean environment, or leave it running while you check the cloud audit logs? Who decides?"
+   "at_min": 45,
+   "title": "Hard decision: rotate everything",
+   "text": "Rotating all secrets will break customer tracking and three partner integrations for several hours. The executive sponsor asks whether rotation can wait until the weekend.",
+   "ask": "Decide: rotate now, in stages, or wait? What is your order and your rollback?"
   },
   {
-   "at_min": 65,
-   "title": "Recovery and prevention",
-   "text": "Secrets are rotated and images rebuilt from a pinned known-good version. The executive asks what will stop this happening again and when the incident can be closed.",
-   "ask": "What are your exit criteria, and which controls (pinning, hash-checked installs, a delay before adopting new releases, least-privilege runners, egress filtering) do you commit to, with owners and dates?"
+   "at_min": 55,
+   "title": "Recovery and follow-up",
+   "text": "Rotation is done. A backend service still accepts an old token nobody knew about.",
+   "ask": "How do you confirm old credentials are dead, and what changes so secrets are not stored in the gateway again?"
   }
  ],
  "questions": [
-  "How would you find every place a given package version ran: laptops, runners, containers, notebooks?",
-  "Which of your CI and cloud secrets are reachable by any process on a build runner, and who knows?",
-  "How do you tell a completed exfiltration from a blocked one in your logs?",
-  "What is your order of rotation, and what breaks when you rotate each secret?",
-  "How do you decide whether an image built during the exposure window can stay in production?",
-  "Which cloud and CI audit logs would you review for use of stolen tokens, and how far back?",
-  "Who may pause all pipelines, and how does that decision get made out of hours?",
-  "What do you tell customers and auditors while the scope is still unknown?",
-  "What would make you consider your build pipeline trusted again?"
+  "Who in the organisation can say, within an hour, which cloud API gateways exist, their tier and who owns them?",
+  "What would you assume about secrets stored in the gateway, given the vendor says the fix does not invalidate earlier credentials?",
+  "In what order would you rotate tokens, client secrets and subscription keys, and what breaks?",
+  "Which logs would you review, how far back, and how long are they kept?",
+  "How would you find forgotten development and test instances?",
+  "What do you tell partners whose keys passed through the gateway, and when?",
+  "When would you contact the national cyber agency or a regulator, and who decides?",
+  "How do you prove after rotation that old credentials no longer work?",
+  "Which systems reachable with the exposed credentials need extra monitoring, and for how long?",
+  "What design change would stop secrets living directly in the gateway?"
  ],
  "good_looks_like": [
-  "The team searches lockfiles, CI logs, virtualenvs and container images for the bad versions, and checks for both known file names rather than only the first.",
-  "Affected environments are isolated and rebuilt from a known-clean pinned version, not cleaned in place.",
-  "Every secret present on affected hosts and runners is treated as exposed and rotated, with an owner and an order.",
-  "Proxy, DNS and egress logs are searched for the exfiltration destination and completed transfers are separated from blocked ones.",
-  "Cloud and CI sign-in and activity logs are audited for managed identities and federated credentials reachable from affected resources.",
-  "Workflows that could request OIDC tokens are identified and trusting federated credentials reviewed.",
-  "Communications to customers and auditors state only confirmed facts and name what is still being investigated.",
-  "Follow-up actions with owners: version pinning, least-privilege runners and egress restrictions."
+  "The team assumes secrets stored in the affected service may be exposed, as NSM advises, instead of waiting for proof.",
+  "All tokens and secrets are rotated, with an agreed order and a rollback plan.",
+  "Every gateway instance is found, including development and test ones, and its tier and patch status are checked.",
+  "Logs are reviewed and preserved before they roll off.",
+  "Systems reachable with the exposed credentials are monitored for suspicious activity.",
+  "Unpatched or unclear instances are raised with the supplier, and a confirmed compromise is reported to the national agency.",
+  "One person owns communications to partners and press and the wording is approved before sending.",
+  "Follow-up moves secrets to a managed key vault reference with named owners."
  ],
- "adapt": "Small team: drop the auditor inject, merge roles (one person as commander and cloud admin) and run 45 minutes focusing on the first three injects. Software or regulated sectors: add a question on whether shipped builds could carry the compromise and on notification duties to regulators and customers. Teams with no CI: replace the runner with developer laptops and a shared notebook server.",
+ "adapt": "Small team: drop the partner and media injects, merge roles (one person plays cloud and identity), and focus on inventory and rotation order. Larger or regulated sector (energy, finance): add a regulator-notification inject with a deadline and a supplier-contract question. Not on that cloud provider: swap in any gateway or secrets store that holds credentials for many services.",
  "sources": [
   {
-   "name": "Wiz",
-   "url": "https://www.wiz.io/blog/malicious-version-of-microsofts-agent-framework-published-to-pypi"
+   "name": "NSM: NSM deler tiltak mot sårbarhet i Azure API Management",
+   "url": "https://nsm.no/aktuelt/nsm-deler-tiltak-mot-sarbarhet-i-azure-api-management"
   },
   {
-   "name": "Socket",
-   "url": "https://socket.dev/blog/agent-framework-pypi-package-compromised-with-credential-stealer"
+   "name": "Techzine Europe",
+   "url": "https://www.techzine.eu/news/security/146028/microsoft-patches-actively-exploited-vulnerability-in-azure-api-management/"
   },
   {
-   "name": "BleepingComputer",
-   "url": "https://www.bleepingcomputer.com/news/security/microsofts-agent-framework-pypi-package-compromised-to-steal-credentials/"
+   "name": "The Register",
+   "url": "https://www.theregister.com/security/2026/11/23/norway-links-energy-firm-cyberattacks-to-critical-azure-api-management-flaw/5311598"
   }
  ]
 }

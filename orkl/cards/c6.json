@@ -339,5 +339,101 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "c61886b75dde6cc796b294f11655c0664ec1b281": {
+    "sha1": "c61886b75dde6cc796b294f11655c0664ec1b281",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:25:39Z",
+    "model": "haiku",
+    "summary": "A Medium article by Louis Schürmann (published 2024-12-13) describes a credit card skimmer found hidden in the source code of a webshop during an inspection. The script injects a fake payment form at checkout, captures card details as they are typed, encodes them in Base64 and sends them disguised as an image request. It also tries to block debugging and stores data locally to retry failed transmissions. The author says the skimmer is often linked to Magecart operations, a term for groups that inject scripts into e-commerce sites. The article's list of indicators of compromise is not…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Magecart",
+          "q": "This skimmer is not an isolated example — it’s part of a broader trend in cybercrime, often linked to Magecart operations.",
+          "by": "the report (author Louis Schürmann)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "e-commerce",
+          "q": "Magecart is an umbrella term for groups specializing in injecting malicious scripts into e-commerce"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2024-12-13",
+          "q": "Published: 2024-12-13 · Archived: 2026-04-05 22:04:08 UTC",
+          "what": "Article published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2024-12-13 · Archived: 2026-04-05 22:04:08 UTC",
+          "what": "Article archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "credit card skimmer",
+          "q": "During an inspection of a webshop, I discovered a credit card skimmer hidden within the site’s source code. This"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "injects a fake payment form",
+          "q": "It injects a fake payment form, captures user input, and silently sends the"
+        },
+        {
+          "v": "grabs every keypress as you type",
+          "q": "It grabs every keypress as you type, formatting the card number"
+        },
+        {
+          "v": "encodes it in Base64",
+          "q": "Once the script has the data, it encodes it in Base64 and sends it off to a remote server. The transmission is"
+        },
+        {
+          "v": "disguised as an image request",
+          "q": "disguised as an image request, making it harder to detect in normal traffic monitoring."
+        },
+        {
+          "v": "Console Overrides",
+          "q": "Console Overrides: By replacing native console methods, the script prevents analysts from logging or"
+        },
+        {
+          "v": "Anti-Debugging",
+          "q": "4. Anti-Debugging"
+        },
+        {
+          "v": "Adaptive Field Mapping",
+          "q": "5. Adaptive Field Mapping"
+        },
+        {
+          "v": "Persistence Through Local Storage",
+          "q": "6. Persistence Through Local Storage"
+        },
+        {
+          "v": "supply chain",
+          "q": "These attacks exploit vulnerabilities in third-party code or weak points in the supply chain to"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "millions of users",
+          "q": "like Ticketmaster and British Airways, exposing millions of users to data theft."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Magecart Skimmer"
+    },
+    "hedges": [
+      "Describes the skimmer as 'often linked to Magecart operations', so the Magecart link is stated as a tendency, not a confirmed attribution.",
+      "Analysis covers one skimmer the author found during an inspection of a single webshop."
+    ]
   }
 }

@@ -1,7 +1,7 @@
 {
   "2847d66d5679ee28e006b3eb2a330eebdd20bdcb": {
     "sha1": "2847d66d5679ee28e006b3eb2a330eebdd20bdcb",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T04:08:50Z",
     "model": "haiku",
@@ -118,6 +118,144 @@
         "note": "summary: States that the actor used the hard-coded default Tomcat Manager credentials to deploy the web shell. The text only says requests used the username 'ad",
         "by": "auditor"
       }
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T04:18:53Z",
+      "ok": false,
+      "note": "hedges[2]: The text says GTIG does not consider UNC6201 and UNC5221 to be the same, but the hedge is stated as 'the two clusters' without naming them. It is vag",
+      "by": "auditor"
+    }
+  },
+  "28ca30af74645877c18b6ca1c60a9c8873987815": {
+    "sha1": "28ca30af74645877c18b6ca1c60a9c8873987815",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:32:29Z",
+    "model": "haiku",
+    "summary": "360 Advanced Threat Research Institute reports a campaign by APT-C-28 (also called ScarCruft or APT37), linked to North Korea. Phishing emails carry LNK files that start PowerShell and load the RokRat remote access tool in memory. Targets are government personnel and corporations in South Korea and Asia. The 2024 RokRat variant adds anti-forensic cleanup and process hollowing. The report advises email filtering, PowerShell monitoring and application allowlisting.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT-C-28",
+          "q": "orchestrated by the North Korean-linked threat actor APT-C-28, also known as ScarCruft or APT37.",
+          "by": "360 Advanced Threat Research Institute"
+        },
+        {
+          "v": "ScarCruft",
+          "q": "APT-C-28, also known as ScarCruft or APT37.",
+          "by": "360 Advanced Threat Research Institute"
+        },
+        {
+          "v": "APT37",
+          "q": "also known as ScarCruft or APT37.",
+          "by": "360 Advanced Threat Research Institute"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "targeting government personnel and corporations across South Korea and Asia."
+        },
+        {
+          "v": "aerospace",
+          "q": "cyber operations targeting strategic industries, including aerospace,"
+        },
+        {
+          "v": "chemicals",
+          "q": "chemicals, and healthcare."
+        },
+        {
+          "v": "healthcare",
+          "q": "chemicals, and healthcare."
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "targeting government personnel and corporations across South Korea and Asia."
+        },
+        {
+          "v": "North Korea",
+          "q": "aligns with North Korea’s intensified intelligence-gathering efforts"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2012",
+          "q": "The group, active since 2012, has shifted tactics",
+          "what": "APT-C-28 active since 2012"
+        },
+        {
+          "v": "2016",
+          "q": "Since 2016, RokRat has served as the group’s primary remote access tool (RAT),",
+          "what": "RokRat used as the group's primary remote access tool"
+        },
+        {
+          "v": "2024",
+          "q": "The 2024 iteration of RokRat retains core functionalities but introduces refined evasion techniques.",
+          "what": "2024 RokRat variant described"
+        },
+        {
+          "v": "2025-02-20",
+          "q": "Published: 2025-02-20",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "RokRat",
+          "q": "signature RokRat malware, targeting government personnel and corporations across South Korea and Asia."
+        },
+        {
+          "v": "PowerShell",
+          "q": "The LNK file invokes PowerShell to extract embedded files, including"
+        },
+        {
+          "v": "LNK files",
+          "q": "housing malicious LNK files disguised as documents related to North"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing emails",
+          "q": "Attackers begin by crafting highly tailored phishing emails, leveraging legitimate content from official websites to"
+        },
+        {
+          "v": "fileless malware delivery",
+          "q": "to employ fileless malware delivery mechanisms for deploying its"
+        },
+        {
+          "v": "In-Memory Payload Decryption",
+          "q": "In-Memory Payload Decryption: A malicious batch script executes a secondary PowerShell script,"
+        },
+        {
+          "v": "Process Hollowing",
+          "q": "Process Hollowing: The malware injects decrypted PE files into legitimate processes"
+        },
+        {
+          "v": "Anti-Forensics",
+          "q": "Enhanced Anti-Forensics: Post-execution cleanup scripts now delete startup entries"
+        },
+        {
+          "v": "Modular Payload Retrieval",
+          "q": "Modular Payload Retrieval: New C2 commands"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "RokRat"
+    },
+    "hedges": [
+      "Report says external servers are likely flagged by security systems, which is why the group moved to self-contained LNK files.",
+      "Report says vendor takedowns of malicious domains likely forced the group to minimise external dependencies.",
+      "Attribution to the ScarCruft ecosystem is presented as strengthened by code overlaps with historical samples, not as confirmed.",
+      "Geopolitical analysis only suggests the campaign aligns with North Korea's intensified intelligence-gathering efforts."
     ]
   }
 }

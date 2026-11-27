@@ -111,25 +111,260 @@
   },
   "e66c29589f2d77b18611624a8f1f7ac655ab133e": {
     "sha1": "e66c29589f2d77b18611624a8f1f7ac655ab133e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:24:50Z",
+    "read_at": "2026-11-27T04:21:40Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Kaspersky ICS CERT describes SalmonSlalom, a campaign against government and industrial organisations in the Asia-Pacific region, mostly Chinese-speaking targets. Malicious archives sent by email, WeChat and Telegram start a long chain: loaders fetch configuration from Youdao Cloud Notes and a Chinese cloud CDN, abuse the legitimate PureCodec and DriverAssistant programs through DLL sideloading, and finally run the FatalRAT backdoor. The authors could not link it to a known group; a Chinese-speaking actor is assumed with medium confidence.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Chinese-speaking threat actor",
+          "q": "we can assume with medium confidence that a Chinese-speaking threat actor is behind the attack",
+          "by": "Kaspersky ICS CERT (the report's authors), with medium confidence"
+        },
+        {
+          "v": "Silver Fox",
+          "q": "so they assigned it a new name – Silver Fox.",
+          "by": "Weibu (Chinese research centre), as reported by the Kaspersky report"
+        },
+        {
+          "v": "Purple Fox botnet",
+          "q": "Purple Fox botnet.",
+          "by": "TrendMicro, as cited in the Kaspersky report"
+        },
+        {
+          "v": "APT27",
+          "q": "speaking APT27 group.",
+          "by": "Cofense, as cited in the Kaspersky report (technique similarity only)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government agencies",
+          "q": "the targets included government agencies and industrial enterprises associated with the"
+        },
+        {
+          "v": "industrial enterprises",
+          "q": "the targets included government agencies and industrial enterprises associated with the"
+        },
+        {
+          "v": "manufacturing",
+          "q": "manufacturing, construction, information technology, telecommunications, healthcare, power and"
+        },
+        {
+          "v": "construction",
+          "q": "manufacturing, construction, information technology, telecommunications, healthcare, power and"
+        },
+        {
+          "v": "information technology",
+          "q": "manufacturing, construction, information technology, telecommunications, healthcare, power and"
+        },
+        {
+          "v": "telecommunications",
+          "q": "manufacturing, construction, information technology, telecommunications, healthcare, power and"
+        },
+        {
+          "v": "healthcare",
+          "q": "manufacturing, construction, information technology, telecommunications, healthcare, power and"
+        },
+        {
+          "v": "large-scale logistics and transportation",
+          "q": "energy, and large-scale logistics and transportation."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Taiwan",
+          "q": "primarily from Taiwan, Malaysia, China, Japan,"
+        },
+        {
+          "v": "Malaysia",
+          "q": "primarily from Taiwan, Malaysia, China, Japan,"
+        },
+        {
+          "v": "China",
+          "q": "primarily from Taiwan, Malaysia, China, Japan,"
+        },
+        {
+          "v": "Japan",
+          "q": "primarily from Taiwan, Malaysia, China, Japan,"
+        },
+        {
+          "v": "Thailand",
+          "q": "Thailand, South Korea, Singapore, the Philippines, Vietnam, and Hong Kong."
+        },
+        {
+          "v": "South Korea",
+          "q": "Thailand, South Korea, Singapore, the Philippines, Vietnam, and Hong Kong."
+        },
+        {
+          "v": "Singapore",
+          "q": "Thailand, South Korea, Singapore, the Philippines, Vietnam, and Hong Kong."
+        },
+        {
+          "v": "the Philippines",
+          "q": "Thailand, South Korea, Singapore, the Philippines, Vietnam, and Hong Kong."
+        },
+        {
+          "v": "Vietnam",
+          "q": "Thailand, South Korea, Singapore, the Philippines, Vietnam, and Hong Kong."
+        },
+        {
+          "v": "Hong Kong",
+          "q": "Thailand, South Korea, Singapore, the Philippines, Vietnam, and Hong Kong."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-02-23",
+          "q": "Published: 2025-02-23",
+          "what": "Kaspersky ICS CERT report published"
+        },
+        {
+          "v": "June 28, 2011",
+          "q": "launched on June 28, 2011.",
+          "what": "Youdao Cloud Notes launched"
+        },
+        {
+          "v": "2023-04-05",
+          "q": "DNS history service information on 2023-04-05",
+          "what": "A domain used as a FatalRAT command and control server appeared in DNS history"
+        }
+      ],
+      "tools": [
+        {
+          "v": "FatalRAT",
+          "q": "contained the FatalRAT first-stage loader packed using AsProtect"
+        },
+        {
+          "v": "Gh0st RAT",
+          "q": "such as Gh0st RAT,"
+        },
+        {
+          "v": "DriverAssistant",
+          "q": "The acvb.exe binary is the DriverAssistant utility from a Chinese developer"
+        },
+        {
+          "v": "PureCodec",
+          "q": "PureCodec software that is distributed via various Chinese software distribution sites."
+        },
+        {
+          "v": "Youdao Cloud Notes",
+          "q": "the Youdao Cloud Notes service as part of their attack infrastructure."
+        },
+        {
+          "v": "unrar.dll",
+          "q": "The unpacker utility (unrar.dll) is saved from resource 103"
+        },
+        {
+          "v": "Before.dll",
+          "q": "Configurator (Before.dll)"
+        },
+        {
+          "v": "Fangao.dll",
+          "q": "Second-stage loader (Fangao.dll)"
+        },
+        {
+          "v": "wke.dll",
+          "q": "Third-stage loader (wke.dll)"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "Downloads AnyDesk from"
+        },
+        {
+          "v": "UltraViewer",
+          "q": "Downloads UltraViewer from"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DLL sideloading",
+          "q": "The attackers also used a DLL sideloading technique to hide the"
+        },
+        {
+          "v": "packers",
+          "q": "publicly available packers for sample encryption"
+        },
+        {
+          "v": "dynamically changing control servers",
+          "q": "dynamically changing control servers, placing files on legitimate web resources,"
+        },
+        {
+          "v": "phishing",
+          "q": "about a phishing campaign targeting government agencies"
+        },
+        {
+          "v": "zip archives delivered via email, WeChat and Telegram",
+          "q": "zip archives delivered via email, WeChat and Telegram."
+        },
+        {
+          "v": "SEO optimization",
+          "q": "moved up in search results thanks to SEO optimization."
+        },
+        {
+          "v": "logon script",
+          "q": "policy user logon script and specifying the path to the legitimate PureCodec application file as the program to execute"
+        },
+        {
+          "v": "simulating user actions via the GUI",
+          "q": "simulating user actions via the GUI."
+        },
+        {
+          "v": "shared folders accessible via SMB",
+          "q": "have shared folders accessible via SMB"
+        },
+        {
+          "v": "keylogger",
+          "q": "launches a keylogger."
+        },
+        {
+          "v": "Clears Windows event logs",
+          "q": "Clears Windows event logs: Security, System and Application"
+        },
+        {
+          "v": "virtual machine or sandbox environment",
+          "q": "checks for an indicator that the malware executes in a virtual machine or sandbox environment"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "17 checks",
+          "q": "FatalRAT performs 17 checks for an indicator that the malware executes in a virtual machine"
+        },
+        {
+          "v": "180,000 ticks",
+          "q": "no input events received for more than 180,000 ticks"
+        },
+        {
+          "v": "three types of URLs",
+          "q": "This note contains a JSON with three types of URLs: submit, dll and online."
+        },
+        {
+          "v": "six-character random value",
+          "q": "generates a six-character random value that is used as a"
+        },
+        {
+          "v": "UTC+8",
+          "q": "time zone is set to UTC+8"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "SalmonSlalom"
+    },
+    "hedges": [
+      "The authors could not link the activity to any known group; a Chinese-speaking actor is assumed with only medium confidence.",
+      "ESET does not attribute this activity to any known group, while TrendMicro linked FatalRAT to the Purple Fox botnet.",
+      "Weibu did not attribute its series to a named group and gave it the name Silver Fox.",
+      "Cofense notes technique similarity to APT27 but draws no conclusion about who was behind the activity.",
+      "Reusing the same IP address across campaigns is only speculated; the authors suspect it may be shared.",
+      "The file named in a commented-out script line is described as most likely part of the attack, but no other traces were found.",
+      "The Youdao note contents were updated regularly but were no longer active at the time of writing."
+    ]
   }
 }

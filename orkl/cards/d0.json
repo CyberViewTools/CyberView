@@ -951,9 +951,222 @@
   },
   "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3": {
     "sha1": "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:24:10Z",
+    "model": "haiku",
+    "summary": "Genians Security Center links new activity to the KONNI APT campaign, which the report ties to Kimsuky, APT37 and North Korea. Attackers posed as psychological counselors and North Korean activists, sending malware disguised as stress-relief programs via KakaoTalk. Stolen Google accounts were used to abuse Find Hub, locating and remotely wiping victims' Android phones and tablets. AutoIt-based scripts deliver RemcosRAT, QuasarRAT and RftRAT. Recommended defences include behaviour-based EDR and stronger Find Hub verification.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "KONNI",
+          "q": "KONNI has overlapping targets and infrastructure with Kimsuky and APT37, leading some researchers to classify",
+          "by": "Genians Security Center (the report)"
+        },
+        {
+          "v": "Kimsuky",
+          "q": "Kimsuky and KONNI are assessed as distinct groups associated with the 63",
+          "by": "MSMT report, as cited by Genians"
+        },
+        {
+          "v": "APT37",
+          "q": "is known to be associated with the Kimsuky or APT37 groups.",
+          "by": "Genians Security Center (the report)"
+        },
+        {
+          "v": "63 Research Center",
+          "q": "[Figure 1-1] Kimsuky and KONNI Groups under the 63 Research Center (Source: MSMT)",
+          "by": "MSMT report, as cited by Genians"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "South Korea’s KakaoTalk messenger platform"
+        },
+        {
+          "v": "North Korea",
+          "q": "Attackers impersonated psychological counselors and North Korean human rights activists, distributing"
+        },
+        {
+          "v": "Russia",
+          "q": "in Russia, the United States, and Germany."
+        },
+        {
+          "v": "United States",
+          "q": "in Russia, the United States, and Germany."
+        },
+        {
+          "v": "Germany",
+          "q": "in Russia, the United States, and Germany."
+        },
+        {
+          "v": "Japan",
+          "q": "including Japan and the Netherlands"
+        },
+        {
+          "v": "Netherlands",
+          "q": "including Japan and the Netherlands"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-11-09",
+          "q": "Published: 2025-11-09 · Archived: 2026-04-05 20:49:11 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "October 22, 2025",
+          "q": "Meanwhile, on October 22, 2025, the Multilateral Sanctions Monitoring Team (MSMT) released a report titled",
+          "what": "MSMT released its report on DPRK cyber and IT workers"
+        },
+        {
+          "v": "September 5, 2025",
+          "q": "On September 5, 2025, we conducted a digital forensic examination of several victims’ PCs that had downloaded",
+          "what": "Forensic examination of victim PCs that ran a KakaoTalk-delivered MSI file"
+        },
+        {
+          "v": "September 15",
+          "q": "Just ten days later, on September 15, a separate victim’s KakaoTalk account was used to distribute malicious files",
+          "what": "Malicious files distributed en masse from a second victim's KakaoTalk account"
+        },
+        {
+          "v": "October 23, 2025",
+          "q": "For reference, in a malicious file distributed on October 23, 2025, under the guise of the National Tax Service’s",
+          "what": "Malicious file disguised as a National Tax Service request was distributed"
+        },
+        {
+          "v": "July 2016",
+          "q": "RemcosRAT has been continually updated since its initial 1.0 release in July 2016.",
+          "what": "RemcosRAT first released as version 1.0"
+        },
+        {
+          "v": "August 2015",
+          "q": "GitHub history indicates that around August 2015, with the v1.0.0.0",
+          "what": "Quasar project renamed from xRAT to Quasar"
+        },
+        {
+          "v": "September 2025",
+          "q": "As of September 2025, the",
+          "what": "Latest RemcosRAT version reported as of this date"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AutoIt",
+          "q": "The threat actor used an AutoIt script to launch RemcosRAT (Remote Access Trojan)."
+        },
+        {
+          "v": "RemcosRAT",
+          "q": "The threat actor used an AutoIt script to launch RemcosRAT (Remote Access Trojan)."
+        },
+        {
+          "v": "LilithRAT",
+          "q": "The target code is similar to the AutoIt-based LilithRAT but in a modified form"
+        },
+        {
+          "v": "QuasarRAT",
+          "q": "Analysis shows that QuasarRAT attempts to communicate with a Netherlands-based C2 server"
+        },
+        {
+          "v": "RftRAT",
+          "q": "Analysis shows that RftRAT attempts to communicate with a Japan-based C2 server"
+        },
+        {
+          "v": "Find Hub",
+          "q": "immediately after confirming through Find Hub’s location query that the victim was"
+        },
+        {
+          "v": "KakaoTalk",
+          "q": "Malicious files were delivered through the KakaoTalk messenger, leveraging impersonation of"
+        },
+        {
+          "v": "MSI Package Builder",
+          "q": "Additionally, each MSI file was built using EMCO Software’s MSI Package Builder (versions 11.2.6 and 11.2.8)."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "The threat actors infiltrated specific individuals’ devices through spear-phishing that spoofed organizations such as"
+        },
+        {
+          "v": "remote reset",
+          "q": "The threat actor executed remote reset commands on the registered Android-based smartphones and tablets."
+        },
+        {
+          "v": "abuse of code signing",
+          "q": "This represents an abuse of code signing: the attacker used a legitimate-looking signature to disguise the"
+        },
+        {
+          "v": "fake error dialog",
+          "q": "The error.vbs script displays a fake error dialog (for example, a language pack error) to the user."
+        },
+        {
+          "v": "scheduled task",
+          "q": "Next, it creates a scheduled task set to run every minute to continuously execute the malicious AutoIt script."
+        },
+        {
+          "v": "malicious shortcut file",
+          "q": "a malicious shortcut file (.lnk)"
+        },
+        {
+          "v": "encoding or encrypting",
+          "q": "The threat actor concealed various malware components by encoding or encrypting them within AutoIt scripts."
+        },
+        {
+          "v": "covertly monitor the user’s surroundings",
+          "q": "State-sponsored threat actors can exploit the webcam to covertly monitor the user’s surroundings or identify"
+        },
+        {
+          "v": "multi-stage relays",
+          "q": "using geographic distribution and multi-stage relays to evade or delay law-enforcement log and source-IP tracing"
+        },
+        {
+          "v": "WordPress-based hosting",
+          "q": "The threat actor abused WordPress-based hosting as staging infrastructure and operated primary C2 nodes hosted"
+        },
+        {
+          "v": "secondary distribution channel",
+          "q": "The attacker then exploited the compromised KakaoTalk account as a secondary distribution channel, rapidly"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "7.0.4",
+          "q": "latest version is 7.0.4."
+        },
+        {
+          "v": "11.2.6 and 11.2.8",
+          "q": "Additionally, each MSI file was built using EMCO Software’s MSI Package Builder (versions 11.2.6 and 11.2.8)."
+        },
+        {
+          "v": "ten days",
+          "q": "Just ten days later, on September 15, a separate victim’s KakaoTalk account was used to distribute malicious files"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "KONNI APT campaign"
+    },
+    "hedges": [
+      "Some researchers classify KONNI, Kimsuky and APT37 as the same group; the report says they overlap in targets and infrastructure.",
+      "The MSMT report, as cited, assesses Kimsuky and KONNI as distinct groups associated with the 63 Research Center.",
+      "This campaign is assessed as a typical social-engineering attack that leveraged trust-based communications.",
+      "We assess that the actor repeatedly abused WordPress-based web servers, which are more likely to have security weaknesses.",
+      "This technique is assessed as a strategy to evade security product detection and delay analysis of malicious activity.",
+      "The naming of the development path is said to suggest the threat actor intended to develop a cyberattack weapon; this is the report's inference."
+    ]
+  },
+  "d0e3615e6b8f7e9912f7e220c7c0541d9b8a674d": {
+    "sha1": "d0e3615e6b8f7e9912f7e220c7c0541d9b8a674d",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T03:32:24Z",
+    "read_at": "2026-11-27T04:29:43Z",
     "model": "haiku",
     "summary": "",
     "kind": "",

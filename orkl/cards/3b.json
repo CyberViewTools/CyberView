@@ -106,25 +106,113 @@
   },
   "3b9e03f8439363fdd67cb5cfbcc0f5c2f562410b": {
     "sha1": "3b9e03f8439363fdd67cb5cfbcc0f5c2f562410b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:31:59Z",
+    "read_at": "2026-11-27T04:25:42Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Malpedia family entry, by Fraunhofer FKIE, for the Loki Password Stealer (PWS), also called LokiBot. It describes an infostealer that hashes its library functions, keeps hidden working files under APPDATA, and sets up registry persistence. It sends stored passwords, browser credentials, cryptocurrency wallet data, keylogger data, files and screenshots to a command-and-control server over HTTP POST, and polls that server for commands. The page lists the actor names SWEED, The Gorgon Group and Cobalt, the Suricata signatures, a YARA rule and a long list of references.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "SWEED",
+          "q": "Actor(s): SWEED, The Gorgon Group, Cobalt",
+          "by": "the report itself (Malpedia, by Fraunhofer FKIE)"
+        },
+        {
+          "v": "The Gorgon Group",
+          "q": "Actor(s): SWEED, The Gorgon Group, Cobalt",
+          "by": "the report itself (Malpedia, by Fraunhofer FKIE)"
+        },
+        {
+          "v": "Cobalt",
+          "q": "Actor(s): SWEED, The Gorgon Group, Cobalt",
+          "by": "the report itself (Malpedia, by Fraunhofer FKIE)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 21:18:42 UTC",
+          "what": "Malpedia page archived"
+        },
+        {
+          "v": "20251219",
+          "q": "[TLP:WHITE] win_lokipws_auto (20251219 | Detects win.lokipws.)",
+          "what": "YARA rule win_lokipws_auto dated, detects this family"
+        },
+        {
+          "v": "2017-02-16",
+          "q": "2017-02-16 ⋅ Cysinfo ⋅ Winston M",
+          "what": "Cysinfo article on macro malware dropping Loki Bot, the oldest listed reference"
+        },
+        {
+          "v": "2018-08-02",
+          "q": "2018-08-02 ⋅ Palo Alto Networks Unit 42 ⋅ David Fuertes, Josh Grunzweig, Kyle Wilhoit, Robert Falcone",
+          "what": "Unit 42 report on The Gorgon Group, an actor listed for this family"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Loki-Bot",
+          "q": "Loki-Bot employs function hashing to obfuscate the libraries utilized."
+        },
+        {
+          "v": "LokiBot",
+          "q": "aka: Burkina, Loki, LokiBot, LokiPWS"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "function hashing to obfuscate libraries",
+          "q": "Loki-Bot employs function hashing to obfuscate the libraries utilized."
+        },
+        {
+          "v": "registry persistence",
+          "q": "If the user is privileged, Loki-Bot sets up persistence within the registry under HKEY_LOCAL_MACHINE."
+        },
+        {
+          "v": "Keylogging",
+          "q": ".lck A lock file created when either decrypting Windows Credentials or Keylogging to prevent resource conflicts"
+        },
+        {
+          "v": "credential and wallet theft",
+          "q": "stored passwords, login credential information from Web browsers, and a variety of cryptocurrency wallets."
+        },
+        {
+          "v": "HTTP POST exfiltration to C2",
+          "q": "submit that info to a command and control host via HTTP POST."
+        },
+        {
+          "v": "Triple DES encryption of URL and persistence key",
+          "q": "Loki-Bot encrypts both the URL and the registry key used for persistence using Triple DES encryption."
+        },
+        {
+          "v": "periodic C2 polling for commands",
+          "q": "By default, Loki-Bot will send this request out every 10 minutes after the initial packet it sent."
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "10 seconds",
+          "q": "that simply delays execution (sleeps) for 10 seconds"
+        },
+        {
+          "v": "10 minutes",
+          "q": "By default, Loki-Bot will send this request out every 10 minutes after the initial packet it sent."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Loki Password Stealer (PWS)"
+    },
+    "hedges": [
+      "This might be useful in tracking campaigns or specific threat actors.",
+      "This is likely used as a protection against researchers who wish to poke and prod at Loki-Bot’s C2 infrastructure."
+    ]
   }
 }

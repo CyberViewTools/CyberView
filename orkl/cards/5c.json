@@ -87,5 +87,164 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5c7412f41750686d04fcdc582d97efff5b043a5b": {
+    "sha1": "5c7412f41750686d04fcdc582d97efff5b043a5b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:30:32Z",
+    "model": "haiku",
+    "summary": "AhnLab's ASEC analysis team reports that the RedEyes group (also known as APT37 and ScarCruft) distributed malware in Korea by exploiting the old HWP EPS flaw CVE-2017-8291 in a Hangul document. A shellcode step extracted a payload hidden inside a JPEG image, which then installed a new backdoor named M2RAT. M2RAT takes commands through shared memory and sends keystrokes, documents and screenshots to its server. The report says the group targets individuals such as human rights activists, reporters and North Korean defectors, and that its aim appears to be exfiltration.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "RedEyes",
+          "q": "discovered that the RedEyes threat",
+          "by": "ASEC analysis team (AhnLab)"
+        },
+        {
+          "v": "APT37",
+          "q": "group (also known as APT37, ScarCruft) had been distributing malware",
+          "by": "ASEC analysis team (AhnLab)"
+        },
+        {
+          "v": "ScarCruft",
+          "q": "group (also known as APT37, ScarCruft) had been distributing malware",
+          "by": "ASEC analysis team (AhnLab)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "human rights activists",
+          "q": "individual targets such as human rights activists, reporters, and North Korean defects."
+        },
+        {
+          "v": "reporters",
+          "q": "individual targets such as human rights activists, reporters, and North Korean defects."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Korea",
+          "q": "the RedEyes group’s latest activity in Korea"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-02-13",
+          "q": "Published: 2023-02-13 · Archived: 2026-04-05 14:42:55 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "January 13",
+          "q": "On January 13, an HWP EPS vulnerability (CVE-2017-8291) attack involving the usage of the filename",
+          "what": "HWP EPS exploit attack detected by AhnLab Smart Defense"
+        },
+        {
+          "v": "2019",
+          "q": "In 2019, Kaspersky shared a report saying that the ScarCruft (RedEyes) group’s downloader used the steganography technique",
+          "what": "Kaspersky report on a steganography-based downloader"
+        },
+        {
+          "v": "2021",
+          "q": "report published by Kaspersky in 2021.",
+          "what": "Kaspersky report on a similar registry autorun command"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Chinotto",
+          "q": "The RedEyes group is also known for using Powershell and the Chinotto malware to steal PC information and remote"
+        },
+        {
+          "v": "M2RAT",
+          "q": "named it M2RAT (Map2RAT) after the name found"
+        },
+        {
+          "v": "Map2RAT",
+          "q": "named it M2RAT (Map2RAT) after the name found"
+        },
+        {
+          "v": "Powershell",
+          "q": "is also known for using Powershell and the Chinotto malware"
+        },
+        {
+          "v": "mshta",
+          "q": "the normal Windows utility, mshta,"
+        },
+        {
+          "v": "Winrar",
+          "q": "compressed into a password-protected file with Winrar (RAR.exe), and the"
+        },
+        {
+          "v": ".NET file",
+          "q": "This malware was identified as a .NET file that steals files saved on mobile"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "steganography",
+          "q": "they exploited the HWP EPS vulnerability using the steganography technique"
+        },
+        {
+          "v": "exploiting HWP EPS document flaw",
+          "q": "exploiting the HWP EPS (Encapsulated"
+        },
+        {
+          "v": "payload hidden in JPEG image",
+          "q": "the threat actor used the steganography technique to embed a malware strain within an image"
+        },
+        {
+          "v": "registry Run key autorun",
+          "q": "the RUN key command for autorun registration to"
+        },
+        {
+          "v": "process injection into explorer.exe",
+          "q": "injecting it into explorer.exe"
+        },
+        {
+          "v": "shared memory for commands",
+          "q": "creates a shared memory section to execute the"
+        },
+        {
+          "v": "commands hidden in POST body",
+          "q": "by hiding the command info in the Body of"
+        },
+        {
+          "v": "keylogging",
+          "q": "which include keylogging, data leakage"
+        },
+        {
+          "v": "screenshot capture",
+          "q": "capturing screenshots."
+        },
+        {
+          "v": "data theft from removable storage",
+          "q": "in removable storage devices or shared folders"
+        },
+        {
+          "v": "password-protected archive",
+          "q": "compressed into a password-protected file with Winrar"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-8291",
+          "q": "an HWP EPS vulnerability (CVE-2017-8291) attack involving the usage of the filename"
+        }
+      ],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "M2RAT (Map2RAT)"
+    },
+    "hedges": [
+      "We assume the threat actor initiated the attacks after checking in advance whether targets used an older HWP version that supports EPS.",
+      "We assume the steganography was used to evade network detection.",
+      "Using steganography and the RUN key command is why the analysts believe the group carried out this attack.",
+      "Their aim appears to be exfiltration."
+    ]
   }
 }

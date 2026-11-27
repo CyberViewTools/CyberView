@@ -51,32 +51,32 @@
     "key": "a-4147279a-3c05-4684-8b77-1d2fae28b0b4",
     "kind": "actor",
     "name": "NICKEL FOXCROFT",
-    "headline": "NICKEL FOXCROFT (APT37, ScarCruft): a long-running espionage group focused on Korea",
-    "in_short": "NICKEL FOXCROFT, also tracked as APT37 and ScarCruft, is described by vendors as a North Korea-linked espionage group. Its reported tools reach air-gapped networks, game platforms and Android phones.",
+    "headline": "NICKEL FOXCROFT (APT37, ScarCruft): a long-running Korean-focused espionage group",
+    "in_short": "Vendors describe NICKEL FOXCROFT, also tracked as APT37 and ScarCruft, as a North Korea-linked espionage actor. It mainly targets South Korea and people tied to North Korea, using phishing, cloud-based backdoors and Android spyware.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as NICKEL FOXCROFT. Other names for it include APT37, ScarCruft, Reaper, Group 123, InkySquid, Moldy Pisces, Venus 121 and TA-RedAnt.",
+            "t": "Secureworks tracks the group as NICKEL FOXCROFT. Other names in the catalogue include APT37, ScarCruft, Reaper, InkySquid, Group 123, Venus 121 and RICOCHET CHOLLIMA.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "ESET says ScarCruft, also known as APT37 or Reaper, has operated since at least 2012. ESET suspects it is a North Korean espionage group.",
-            "cites": [
-              "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
-            ]
-          },
-          {
-            "t": "CrowdStrike calls its version of the actor RICOCHET CHOLLIMA and describes it as a DPRK-nexus targeted intrusion adversary. It dates the espionage to at least 2016.",
+            "t": "CrowdStrike describes RICOCHET CHOLLIMA as a DPRK-nexus targeted intrusion adversary that has run espionage operations since at least 2016.",
             "cites": [
               "d05f74add08e022ef631c1d55dac87636f641e08"
             ]
           },
           {
-            "t": "Lookout describes ScarCruft as a North Korean state-sponsored cyber espionage group active since 2012. It also notes that North Korean groups share infrastructure, targeting and techniques, which makes attribution harder.",
+            "t": "ESET says ScarCruft, also known as APT37 or Reaper, has operated since at least 2012 and is suspected to be a North Korean espionage group.",
+            "cites": [
+              "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
+            ]
+          },
+          {
+            "t": "Lookout calls ScarCruft a North Korean state-sponsored group. It attributes the KoSpy Android spyware to APT37 with medium confidence, and notes that North Korean groups share infrastructure and techniques, which makes attribution harder.",
             "cites": [
               "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
             ]
@@ -87,25 +87,25 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "CrowdStrike says the actor's observed operations have almost exclusively targeted the Republic of Korea. It assesses the focus to be government officials, NGOs, academics and journalists.",
+            "t": "CrowdStrike says observed operations have almost exclusively targeted the Republic of Korea. It assesses the focus to be government officials, NGOs, academics and journalists.",
             "cites": [
               "d05f74add08e022ef631c1d55dac87636f641e08"
             ]
           },
           {
-            "t": "ESET says the group primarily focuses on South Korea, though other Asian countries have also been targeted. It says the group seems mainly interested in government and military organisations, and in companies in various sectors.",
+            "t": "Genians reported a March 2025 spear phishing campaign by APT37 against activists focused on North Korea.",
+            "cites": [
+              "6bc8f6928136857afc21813e6ed5c27427f3d106"
+            ]
+          },
+          {
+            "t": "ESET infers that the main targets of a game-platform attack were ethnic Koreans in Yanbian, China, most likely refugees or defectors.",
             "cites": [
               "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
             ]
           },
           {
-            "t": "In a recent case ESET infers the main targets were ethnic Koreans in Yanbian, China, most likely refugees or defectors.",
-            "cites": [
-              "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
-            ]
-          },
-          {
-            "t": "Kudelski Security and Sekoia say a related cluster, Reaper, focuses on DPRK defectors and South Korean activists and NGOs.",
+            "t": "Kudelski Security and Sekoia say the related cluster Reaper focuses on North Korean defectors, South Korean activists and NGOs.",
             "cites": [
               "4f376aac307589092604cf6c83559804e17cb771"
             ]
@@ -116,27 +116,33 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Zscaler ThreatLabz says APT37 has abused shortcut (LNK) files as an initial way in for years.",
+            "t": "One analysis of the RokRat backdoor describes phishing emails with ZIP files that hide shortcut (LNK) files. These start a multi-stage chain that loads the payload in memory.",
             "cites": [
-              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+              "809d2511cc72fc1d1433cc2fa5d9736013637b33"
             ]
           },
           {
-            "t": "Reported tools include ROKRAT, Bluelight, KoSpy and others.",
+            "t": "RokRat uses the cloud services pCloud, Yandex and Dropbox for command and control. It can capture screenshots, run commands and collect files.",
             "cites": [
-              "catalogue"
+              "809d2511cc72fc1d1433cc2fa5d9736013637b33"
             ]
           },
           {
-            "t": "S2W described a 2020 watering-hole attack that ended in a ROKRAT variant. The malware used legitimate cloud services such as pCloud, Yandex, Box, Dropbox and Backblaze B2 for command and control. S2W judges the activity to relate to ScarCruft.",
+            "t": "AhnLab's ASEC, as reported in the press, linked APT37 to phishing attacks from January 2023. These exploited an old Hangul word processor flaw, CVE-2017-8291, and delivered a backdoor called M2RAT that hid its payload in an image.",
             "cites": [
-              "86e496f986f55f6c0b0191ce30111a6769ca7696"
+              "afbbddaea4f11c3657c5de1a201deeccd5c30347"
             ]
           },
           {
-            "t": "Zscaler's report says that, to its knowledge, this was the first time APT37 abused Zoho WorkDrive for command and control.",
+            "t": "Lookout describes KoSpy as Android spyware disguised as utility apps and distributed through Google Play and Firebase Firestore. Samples date from March 2022 to March 2024.",
             "cites": [
-              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+            ]
+          },
+          {
+            "t": "Genians says the actor uses NordVPN and AstrillVPN to hide its network origin.",
+            "cites": [
+              "6bc8f6928136857afc21813e6ed5c27427f3d106"
             ]
           }
         ]
@@ -145,27 +151,27 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In the Ruby Jumper campaign, Zscaler describes malware that spreads over removable media to reach air-gapped networks. A malicious shortcut file starts the chain, and a tool called THUMBSBD carries commands and stolen data over USB media.",
+            "t": "Genians reported Operation ToyBox Story in March 2025. Lures imitated an event from a South Korean national security think tank and delivered the RoKRAT malware.",
             "cites": [
-              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
+              "6bc8f6928136857afc21813e6ed5c27427f3d106"
             ]
           },
           {
-            "t": "ESET reports that ScarCruft trojanized Windows and Android parts of a video game platform aimed at Yanbian, China. The goal was to deliver its BirdCall backdoor, which can collect files, contacts, SMS and voice recordings. ESET says the attack was probably under way since late 2024.",
+            "t": "ESET reports that ScarCruft trojanized Windows and Android parts of a video game platform for Yanbian. It says the attack was probably under way since late 2024 and delivered the BirdCall backdoor.",
             "cites": [
               "68b4b737b3c7a1f57bee8e279500eacaab3b2930"
             ]
           },
           {
-            "t": "Lookout attributes the KoSpy Android spyware to ScarCruft (APT37) with medium confidence. The apps posed as utilities and were distributed through Google Play. Lookout says the samples date from March 2022 to March 2024.",
+            "t": "Zscaler ThreatLabz describes a campaign called Ruby Jumper, published in February 2026. It spreads through removable media to reach air-gapped networks.",
             "cites": [
-              "70e6aaa207a65eed4b4833d0696a7d4e130bda33"
+              "d93d4e91ffcef2852aee0867f487dd1355f684c3"
             ]
           },
           {
-            "t": "Researcher Doron Karmi described 2019 campaigns using the Konni remote administration tool, which Karmi says is potentially linked to APT37. Karmi could not confirm every overlap with related tooling.",
+            "t": "Zscaler also documented infection chains using a shortcut or Windows help file lure. They deliver the Rustonotto and Chinotto backdoors, then the FadeStealer data-theft tool.",
             "cites": [
-              "e82d84cd510e127ea76cb153a175d44ad12d761f"
+              "a7a66566cdd12df0b483f89b2d64103dffa4791e"
             ]
           }
         ]
@@ -174,25 +180,25 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Organisations in the sectors named above should treat unexpected shortcut files and unfamiliar removable media with caution.",
+            "t": "Treat unexpected ZIP, shortcut and help-file attachments with caution, especially if you work with North Korea-related issues.",
             "cites": []
           },
           {
-            "t": "Apps should come only from trusted sources, and software updates should be checked before they are installed.",
+            "t": "Be wary of utility apps from unfamiliar publishers, and check removable media before using it on isolated networks.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "f09d7cbe39b21422d92d9827ff8397f8cc185323",
+    "based_on": "ad547da2feaed9fefbf45ffda45c61614b729498",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T03:19:40Z",
+    "written_at": "2026-11-27T04:20:06Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "bca654d4"
+    "written_run": "65942953"
   }
 }

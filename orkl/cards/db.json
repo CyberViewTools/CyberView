@@ -1,0 +1,137 @@
+{
+  "db623a5ac56c35636f8e7e92a67e3aafa34a6f6d": {
+    "sha1": "db623a5ac56c35636f8e7e92a67e3aafa34a6f6d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:25:52Z",
+    "model": "haiku",
+    "summary": "Elastic Security write-up on in-the-wild exploitation of four Microsoft Exchange Server zero-days (CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, CVE-2021-27065) patched in March 2021. Microsoft attributed the initial activity to HAFNIUM; the report notes opportunistic threats may adopt the same methods. Observed activity included webshells, credential harvesting, mailbox theft and new accounts. Elastic released detection logic on 4 March 2021 and advises patching, Exchange hardening, backups and vulnerability scanning.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "HAFNIUM",
+          "q": "attributed to “HAFNIUM,” which Microsoft describes as a",
+          "by": "Microsoft"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "China-based threat; note general adoption of this methodology by opportunistic threats is likely"
+        }
+      ],
+      "dates": [
+        {
+          "v": "March 2, 2021",
+          "q": "March 2, 2021 - Microsoft released patch",
+          "what": "Microsoft released patch for the Exchange vulnerabilities"
+        },
+        {
+          "v": "March 3, 2021",
+          "q": "March 3, 2021 - Elastic observes post-exploitation activity via telemetry",
+          "what": "Elastic observed post-exploitation activity via telemetry"
+        },
+        {
+          "v": "March 4, 2021",
+          "q": "March 4, 2021 - Elastic releases related public detection logic",
+          "what": "Elastic released public detection logic"
+        }
+      ],
+      "tools": [
+        {
+          "v": "1.bat",
+          "q": "Elastic found that adversaries ran a malicious BATCH script (“1.bat”) which downloaded a legitimate version of the"
+        },
+        {
+          "v": "opera_browser.exe",
+          "q": "Opera browser (“opera_browser.exe”) and a malicious DLL (“opera_browser.dll”) before launching MSIExec"
+        },
+        {
+          "v": "MSIExec",
+          "q": "before launching MSIExec"
+        },
+        {
+          "v": "rundll32.exe",
+          "q": "use of a native application (“rundll32.exe”) to"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "webshells",
+          "q": "adversaries exploiting these vulnerabilities may install webshells that"
+        },
+        {
+          "v": "harvested credentials",
+          "q": "adversaries harvested credentials, conducted reconnaissance,"
+        },
+        {
+          "v": "extracted and stole MailBox content",
+          "q": "extracted and stole MailBox content and created new users."
+        },
+        {
+          "v": "Create Account",
+          "q": "Create Account"
+        },
+        {
+          "v": "Lateral Movement",
+          "q": "Lateral Movement"
+        },
+        {
+          "v": "OS Credential Dumping",
+          "q": "OS Credential Dumping"
+        },
+        {
+          "v": "side-loading",
+          "q": "the Opera browser automatically loaded the malicious DLL due to a side-loading"
+        },
+        {
+          "v": "process memory from LSASS",
+          "q": "This activity may indicate an attempt to obtain process memory from LSASS, which"
+        },
+        {
+          "v": "remote code execution without authentication",
+          "q": "based on remote code execution without authentication"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-26855",
+          "q": "vulnerabilities include CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, and CVE-2021-27065."
+        },
+        {
+          "v": "CVE-2021-26857",
+          "q": "vulnerabilities include CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, and CVE-2021-27065."
+        },
+        {
+          "v": "CVE-2021-26858",
+          "q": "vulnerabilities include CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, and CVE-2021-27065."
+        },
+        {
+          "v": "CVE-2021-27065",
+          "q": "vulnerabilities include CVE-2021-26855, CVE-2021-26857, CVE-2021-26858, and CVE-2021-27065."
+        }
+      ],
+      "figures": [
+        {
+          "v": "CVSS score of 7.8 - 9.1 out of 10",
+          "q": "National Institute of Standards and Technology (NIST) assigned a critical CVSS score of 7.8 - 9.1 out of 10 based"
+        },
+        {
+          "v": "Four published vulnerabilities",
+          "q": "Four published vulnerabilities relate to this activity, for which Microsoft released a patch. The"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "HAFNIUM activity"
+    },
+    "hedges": [
+      "While this activity resembles the HAFNIUM activity group, these observations may represent opportunistic or other threats.",
+      "Note general adoption of this methodology by opportunistic threats is likely.",
+      "The listed IOCs do not represent all IOCs associated with HAFNIUM or HAFNIUM-inspired intrusions."
+    ]
+  }
+}

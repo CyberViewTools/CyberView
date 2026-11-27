@@ -51,35 +51,42 @@
     "key": "a-6e23ce43-e1ab-46e3-9f80-76fccf77682b",
     "kind": "actor",
     "name": "ALPHV",
-    "headline": "ALPHV (BlackCat): a ransomware-as-a-service gang built on leak-site extortion",
-    "in_short": "ALPHV, also called BlackCat, ran a ransomware-as-a-service operation. Reports describe leak-site extortion against firms from software to healthcare, with many figures resting on the gang's own claims.",
+    "headline": "ALPHV (BlackCat): a ransomware-as-a-service gang, its claimed victims and its apparent exit",
+    "in_short": "ALPHV, also called BlackCat, ran a ransomware-as-a-service business from late 2021. It hit firms and local governments, often with only its own claims as proof. In March 2024 BleepingComputer judged it was running an exit scam.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "The catalogue lists ALPHV under several other names: ALPHVM, Ambitious Scorpius, BlackCat Gang and UNC4466.",
+            "t": "ALPHV is also tracked as ALPHVM, Ambitious Scorpius, BlackCat Gang and UNC4466.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Sygnia says the BlackCat group surfaced in November 2021 and uses a ransomware-as-a-service model, in which affiliates carry out attacks.",
+            "t": "Cybernews reports that the ransomware was first observed in late 2021. It was noted for using the Rust programming language.",
             "cites": [
-              "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
+              "9a076bb3cb02af36c7702d3b15c6bc7977c8ba19"
             ]
           },
           {
-            "t": "BleepingComputer reports that the operation is believed to be a rebrand of the DarkSide and BlackMatter gangs.",
+            "t": "Sygnia says the group surfaced in November 2021 and runs a ransomware-as-a-service model. Cybernews describes it as selling malware subscriptions to criminals.",
             "cites": [
-              "985a15506a14dacf708fca376258a3a0f20c94d2",
-              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+              "d01e8492eb25e3a9dfa0218367a708d2d3230c93",
+              "9a076bb3cb02af36c7702d3b15c6bc7977c8ba19"
             ]
           },
           {
-            "t": "BleepingComputer also cites an estimate that BlackCat took in at least $300 million in ransom payments from more than 1,000 victims.",
+            "t": "BleepingComputer reports that ALPHV is believed to be a rebrand of the DarkSide and BlackMatter operations.",
             "cites": [
-              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+              "41fd5536e9c346b97ad8a18075e1d47fb52397d6"
+            ]
+          },
+          {
+            "t": "BleepingComputer cites an estimate that ALPHV took in at least $300 million in ransoms from more than 1,000 victims up to September 2023.",
+            "cites": [
+              "4cc0024b221effc8ae71cd54f6391a929ecbacf1",
+              "41fd5536e9c346b97ad8a18075e1d47fb52397d6"
             ]
           }
         ]
@@ -88,17 +95,32 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "Sygnia describes BlackCat as targeting high-profile organisations across many sectors worldwide.",
+            "t": "Named victims span many sectors. Reports list a mortgage lender (loanDepot), a life insurer (Prudential Financial), a dental and medical distributor (Henry Schein) and a Canadian software group (Constellation Software).",
             "cites": [
-              "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
+              "41fd5536e9c346b97ad8a18075e1d47fb52397d6",
+              "a801794d4e3d424e5e336407406ad9bfb975d934",
+              "985a15506a14dacf708fca376258a3a0f20c94d2"
             ]
           },
           {
-            "t": "Named victims in the reports include Suffolk County's local government, the software firm Constellation Software, and the dental and medical distributor Henry Schein.",
+            "t": "Public bodies were hit too. A report links the 2022 attack on Suffolk County, which disabled its 911 system, to the group. The city of Alexandria, Louisiana, was listed as a victim in 2023.",
             "cites": [
               "ed885645dad7d4f11e5589f4a326465ca3327c43",
+              "2cd48c03de391dcdfe25c29240c97b979cdc9e93"
+            ]
+          },
+          {
+            "t": "Cybernews reports that BlackCat claimed NJVC, an IT firm supporting US government and defense bodies, and then removed the listing. The breach is the gang's own claim.",
+            "cites": [
+              "9a076bb3cb02af36c7702d3b15c6bc7977c8ba19"
+            ]
+          },
+          {
+            "t": "Several reported victim figures are the gang's own claims. It said it took over 1 TB from Constellation Software and over 80 GB from Alexandria. It said it took over 130 GB from Estée Lauder without encrypting the network.",
+            "cites": [
               "985a15506a14dacf708fca376258a3a0f20c94d2",
-              "a801794d4e3d424e5e336407406ad9bfb975d934"
+              "2cd48c03de391dcdfe25c29240c97b979cdc9e93",
+              "bc0570ada4139628d9ed0a72585bf067f5408abb"
             ]
           }
         ]
@@ -107,34 +129,40 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "In a 2023 case Sygnia attributes to BlackCat or one of its affiliates, access came through a compromised third-party vendor. Sygnia does not name a single confirmed actor.",
+            "t": "Sygnia investigated a 2023 attack it attributes to BlackCat or one of its affiliates. Initial access came through a compromised third-party vendor.",
             "cites": [
               "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
             ]
           },
           {
-            "t": "In that case the attacker used Cobalt Strike for lateral movement, and Rclone to copy data out. It then sent extortion emails to dozens of employees.",
+            "t": "In that case the attacker spent weeks moving through the network. Sygnia names Cobalt Strike, the Stowaway proxy tool and Kerberoasting. Data was copied to cloud storage with Rclone, and extortion emails followed.",
             "cites": [
               "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
             ]
           },
           {
-            "t": "The gang posts victims on a leak site with deadlines. DataBreaches reported a 48-hour deadline and a claim of over 800 GB stolen from Hampton-Newport News CSB.",
+            "t": "The usual pressure is to list the victim on a leak site and threaten to publish the data. In the NJVC case the gang said it would release data in stages every 12 hours.",
             "cites": [
-              "de6ff68c9908a3cf753f53848cf5e0171db665a8"
+              "9a076bb3cb02af36c7702d3b15c6bc7977c8ba19",
+              "985a15506a14dacf708fca376258a3a0f20c94d2"
             ]
           },
           {
-            "t": "The catalogue lists tools tied to the group, including Mimikatz, Impacket, PsExec, LaZagne and MEGAsync.",
+            "t": "In the MGM Resorts attack, AlphV said in its own statement that it kept super administrator access to MGM's Okta and launched ransomware against more than 100 ESXi hypervisors. DataBreaches relayed these claims without verifying them.",
             "cites": [
-              "catalogue"
+              "dcb1fb8a500b2bc4515e729a3696cd477b6e0c8d"
             ]
           },
           {
-            "t": "Check Point Research lists BlackCat/ALPHV among the tools noted for Scattered Spider. ReliaQuest says Scattered Spider has alliances with ALPHV and other ransomware operators.",
+            "t": "In the Suffolk County case, DataBreaches noted screenshots posted by BlackCat that appeared to show backup infrastructure. The group's admin said backups should have been removed.",
             "cites": [
-              "a894be235a0f82062b5215e6a4aa1f04d8a5ab89",
-              "cb17cfd4d3c6aa3d991a3d61cbaf8ceb9586447a"
+              "ed885645dad7d4f11e5589f4a326465ca3327c43"
+            ]
+          },
+          {
+            "t": "DataBreaches reported that AlphV claimed it pressured a Viking Therapeutics employee into filing an SEC complaint about the breach. That claim is unconfirmed.",
+            "cites": [
+              "98cab41503c178f8da9bd5a224ab938e28bc6726"
             ]
           }
         ]
@@ -143,57 +171,33 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In September 2022 a ransomware attack disabled Suffolk County's 911 system. DataBreaches reports that BlackCat claimed it and said it held 400 GB of data. DataBreaches could not confirm the leak.",
+            "t": "BleepingComputer reports that an international law enforcement operation seized ALPHV's Tor negotiation and leak sites in December 2023.",
             "cites": [
-              "ed885645dad7d4f11e5589f4a326465ca3327c43"
+              "948b1c05863cec0266517441f5ad68a8bcf7267a"
             ]
           },
           {
-            "t": "In May 2023 ALPHV claimed on its leak site to have stolen more than 1 TB from Constellation Software.",
-            "cites": [
-              "985a15506a14dacf708fca376258a3a0f20c94d2"
-            ]
-          },
-          {
-            "t": "In a statement on the MGM Resorts attack, AlphV said it launched ransomware against more than 100 ESXi hypervisors on September 11. These are the group's own unverified claims.",
-            "cites": [
-              "dcb1fb8a500b2bc4515e729a3696cd477b6e0c8d"
-            ]
-          },
-          {
-            "t": "In July 2023 ALPHV was listed as a victim-poster for Estée Lauder. The report says BlackCat claimed over 130 GB stolen without encrypting the network, which is the hackers' own claim.",
-            "cites": [
-              "bc0570ada4139628d9ed0a72585bf067f5408abb"
-            ]
-          },
-          {
-            "t": "Henry Schein disclosed an incident on October 15, 2023. The report says AlphV claimed it and re-encrypted systems after negotiations broke down.",
-            "cites": [
-              "a801794d4e3d424e5e336407406ad9bfb975d934"
-            ]
-          },
-          {
-            "t": "In December 2023 DataBreaches reported an unconfirmed AlphV claim about Viking Therapeutics. The claim was that an employee was intimidated into filing an SEC complaint.",
-            "cites": [
-              "98cab41503c178f8da9bd5a224ab938e28bc6726"
-            ]
-          },
-          {
-            "t": "In February 2024 unnamed sources told BleepingComputer the Change Healthcare attack was linked to BlackCat. BleepingComputer could not confirm this. UnitedHealth's SEC filing blamed a suspected nation-state actor.",
+            "t": "In February 2024 BleepingComputer cited unnamed sources linking the Change Healthcare attack to BlackCat. It could not confirm this independently, and BlackCat had not claimed the attack at that point.",
             "cites": [
               "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
             ]
           },
           {
-            "t": "BleepingComputer reports the FBI temporarily took down BlackCat's negotiation and leak sites in December.",
+            "t": "In March 2024 BleepingComputer concluded the gang was running an exit scam. Its leak and negotiation sites were offline, and it offered its source code for $5 million.",
             "cites": [
-              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+              "948b1c05863cec0266517441f5ad68a8bcf7267a"
             ]
           },
           {
-            "t": "SecurityScorecard says RansomHub was likely filling the vacuum left by AlphV/BlackCat's disbanding.",
+            "t": "The gang posted a fake FBI seizure banner. Europol and the NCA said they were not involved, and the FBI declined to comment. BleepingComputer says it is unclear whether the group will return under a new name.",
             "cites": [
-              "5b958a4482f454dd88adb14e74a4d30fcdbee3ad"
+              "948b1c05863cec0266517441f5ad68a8bcf7267a"
+            ]
+          },
+          {
+            "t": "The US State Department offered rewards of up to $10 million for information on ALPHV, plus $5 million for people linked to its attacks.",
+            "cites": [
+              "41fd5536e9c346b97ad8a18075e1d47fb52397d6"
             ]
           }
         ]
@@ -202,25 +206,26 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat a leak-site claim as unverified until the victim confirms it.",
+            "t": "Treat a gang's leak-site claim as unverified until the victim or an investigator confirms it.",
             "cites": []
           },
           {
-            "t": "Limit and monitor third-party vendor access, and keep backups that an intruder cannot reach.",
+            "t": "Review the access your outside vendors hold, and keep backups that an intruder cannot reach.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "8c181e28a9df9bde97314d3333e57c5cd0f27b3f",
+    "based_on": "a529fb1a0473b3e300e8c3f412434e43d2e93280",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T03:19:48Z",
+    "written_at": "2026-11-27T04:19:36Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked"
+      "unbacked",
+      "bare-attribution"
     ],
-    "written_run": "bca654d4"
+    "written_run": "450efb4c"
   }
 }

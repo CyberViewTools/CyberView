@@ -51,35 +51,40 @@
     "key": "a-771d9263-076e-4b6e-bd58-92b6555eb739",
     "kind": "actor",
     "name": "NICKEL HYATT",
-    "headline": "NICKEL HYATT (Andariel): a North Korea-linked actor tied to defense-sector intrusions and ransomware",
-    "in_short": "Secureworks calls it NICKEL HYATT. Others say Andariel or APT45. CrowdStrike assesses a North Korean intelligence link. South Korean police and AhnLab describe stolen accounts, hidden backdoor accounts and ransomware use.",
+    "headline": "NICKEL HYATT (Andariel): a North Korea-nexus group that goes after South Korean defense and industry",
+    "in_short": "NICKEL HYATT, also tracked as Andariel, APT45 and Silent Chollima, is a DPRK-nexus actor. Researchers report it targets South Korean firms with stolen accounts, server flaws and ransomware.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "NICKEL HYATT is the Secureworks name for an actor that other vendors track as APT45, Andariel, Onyx Sleet, Jumpy Pisces, Silent Chollima and Stonefly, among other names.",
+            "t": "NICKEL HYATT is the Secureworks name for a group also tracked as APT45, Andariel, Silent Chollima, Onyx Sleet, Jumpy Pisces and Stonefly.",
             "cites": [
-              "catalogue",
-              "cffc1054bd8a80c260664ee07cca1d9712635f5b"
+              "catalogue"
             ]
           },
           {
-            "t": "CrowdStrike describes SILENT CHOLLIMA as a North Korea-nexus adversary that has been active since at least 2007.",
-            "cites": [
-              "cffc1054bd8a80c260664ee07cca1d9712635f5b"
-            ]
-          },
-          {
-            "t": "CrowdStrike assesses the actor is likely affiliated with Lab 110 within Bureau 3 of North Korea's General Reconnaissance Information Bureau. It states this as likely, not confirmed.",
+            "t": "CrowdStrike tracks the group as SILENT CHOLLIMA. It describes it as a DPRK-nexus adversary active since at least 2007.",
             "cites": [
               "cffc1054bd8a80c260664ee07cca1d9712635f5b"
             ]
           },
           {
-            "t": "CrowdStrike lists the actor's objectives as financial gain, intellectual property theft, intelligence gathering and destruction.",
+            "t": "CrowdStrike assesses the group is likely affiliated with Lab 110 within Bureau 3 of North Korea's General Reconnaissance Information Bureau.",
             "cites": [
               "cffc1054bd8a80c260664ee07cca1d9712635f5b"
+            ]
+          },
+          {
+            "t": "AhnLab ASEC says Andariel is either in a cooperative relationship with the Lazarus group or a subsidiary of it. The report does not choose between the two.",
+            "cites": [
+              "cab1d334efc14a7e9238a6349486de0763d4e0ab"
+            ]
+          },
+          {
+            "t": "In September 2019, the US Treasury sanctioned Lazarus, Andariel and Bluenoroff. It cited hacks aimed at stealing funds for the country's weapons programmes, according to a news report.",
+            "cites": [
+              "80579210268b61ff389629fd202a0b1ca0b79eb7"
             ]
           }
         ]
@@ -88,7 +93,19 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "South Korea's National Police Agency warned that North Korean groups, including Andariel, breached South Korean defense companies and their subcontractors to steal defense technology data.",
+            "t": "According to AhnLab ASEC, Andariel usually targets South Korean companies and institutions. Its main targets include national defense, political organisations, shipbuilding, energy and telecommunications.",
+            "cites": [
+              "cab1d334efc14a7e9238a6349486de0763d4e0ab"
+            ]
+          },
+          {
+            "t": "ASEC adds that targets also include universities, logistics firms and ICT companies.",
+            "cites": [
+              "cab1d334efc14a7e9238a6349486de0763d4e0ab"
+            ]
+          },
+          {
+            "t": "South Korea's National Police Agency named Andariel among three North Korean groups that breached defense companies and their subcontractors to steal technology data. Some firms had been compromised since late 2022 without knowing it.",
             "cites": [
               "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
@@ -99,40 +116,63 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "According to the National Police Agency, Andariel stole account details from an employee of a maintenance company. In October 2022 it used that account to install malware on the servers of defense subcontractors.",
+            "t": "AhnLab ASEC says Andariel has used spear phishing, watering hole and supply chain attacks. More recently it has exploited a Log4Shell flaw, targeted poorly managed MS-SQL servers and abused legitimate software.",
+            "cites": [
+              "cab1d334efc14a7e9238a6349486de0763d4e0ab"
+            ]
+          },
+          {
+            "t": "The National Police Agency attributed one case to Andariel. The group stole account details from an employee of a maintenance company, then used them in October 2022 to install malware on subcontractor servers.",
             "cites": [
               "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           },
           {
-            "t": "AhnLab ASEC reports that Andariel used a malicious file to carry out RID Hijacking. This technique changes an account's identifier in the Windows account database so a hidden or low-privilege account is treated as an administrator.",
+            "t": "AhnLab ASEC reports that Andariel used a malicious file for RID Hijacking. The technique changes an account's identifier in the Windows account database so that a hidden or low-privilege account is treated as an administrator.",
             "cites": [
               "37d087169d2bd363bc461552f900cf1b1f854864"
             ]
           },
           {
-            "t": "AhnLab says the steps included gaining SYSTEM privileges with tools such as PsExec and JuicyPotato, creating a hidden account and changing its identifier. It says the account cannot be completely hidden.",
+            "t": "ASEC interprets this behaviour as an effort to limit the account's exposure and keep access. It also says an account made this way cannot be completely hidden.",
             "cites": [
               "37d087169d2bd363bc461552f900cf1b1f854864"
             ]
           },
           {
-            "t": "AhnLab says this behavior can be read as an effort to keep the account's exposure low and to maintain persistence. It also cites an earlier KISA report that Andariel uses RID Hijacking when creating a backdoor account.",
-            "cites": [
-              "37d087169d2bd363bc461552f900cf1b1f854864"
-            ]
-          },
-          {
-            "t": "Sekoia and Kudelski Security note that Andariel is unusual among North Korea-linked clusters because it used custom ransomware, Maui and H0lyGh0st, for financial theft.",
+            "t": "A report by Sekoia and Kudelski Security says Andariel is unusual because it used custom ransomware, Maui and H0lyGh0st, for financial theft.",
             "cites": [
               "4f376aac307589092604cf6c83559804e17cb771",
               "24bb6d01f2508e4001990348616aff2cadc34cd1"
             ]
           },
           {
-            "t": "The catalogue record lists these tools for the actor: ActiveX 0-day, DTrack, HazyLoad, HotCriossant, Rifle, UnitBot and Valefor.",
+            "t": "CrowdStrike Intelligence assesses that SILENT CHOLLIMA has used the Log4Shell flaw.",
+            "cites": [
+              "fcdc48050d4a7d14d7fb3a7d181e8691472925e4"
+            ]
+          },
+          {
+            "t": "The catalogue record lists these tools for the group: ActiveX 0-day, DTrack, HazyLoad, HotCriossant, Rifle, UnitBot and Valefor.",
             "cites": [
               "catalogue"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "operations",
+        "sentences": [
+          {
+            "t": "In November 2023, AhnLab ASEC assumed Andariel was exploiting the Apache ActiveMQ flaw CVE-2023-46604 to install NukeSped and TigerRat backdoors. It stated it had no direct logs confirming this.",
+            "cites": [
+              "cab1d334efc14a7e9238a6349486de0763d4e0ab"
+            ]
+          },
+          {
+            "t": "In April 2024, South Korea's National Police Agency warned that Andariel, Lazarus and Kimsuky had breached defense contractors. It described three cases, one for each group.",
+            "cites": [
+              "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           }
         ]
@@ -141,21 +181,25 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Defenders at defense firms and their suppliers can keep work and personal passwords separate, review vendor and maintenance accounts closely, and check for hidden or unexpected administrator accounts.",
+            "t": "Patch internet-facing servers quickly and keep an up-to-date inventory of them.",
+            "cites": []
+          },
+          {
+            "t": "Do not reuse passwords between personal and work accounts, and watch the accounts that suppliers and maintenance staff hold.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "d86ed3a0eb53328f9b3bf6e8e39aa22f413d73ad",
+    "based_on": "ab840a03088e8c1682901f8e61f0a4088d43263a",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T03:19:36Z",
+    "written_at": "2026-11-27T04:20:08Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "bca654d4"
+    "written_run": "65942953"
   }
 }

@@ -153,7 +153,7 @@
     "sha1": "0cc9bfedc40af5a895c29f2147ec07d0e24b6e2d",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T03:30:11Z",
+    "read_at": "2026-11-27T04:23:46Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -169,7 +169,172 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "value-not-in-quote, quote-not-in-text",
-    "tries": 1
+    "reason": "quote-not-in-text, code",
+    "tries": 2
+  },
+  "0ce1eae63e681b49a35d3d50bcf5b34100b0272f": {
+    "sha1": "0ce1eae63e681b49a35d3d50bcf5b34100b0272f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:29:50Z",
+    "model": "haiku",
+    "summary": "Microsoft Threat Intelligence reports that North Korean actors Diamond Sleet and Onyx Sleet have exploited the TeamCity remote-code execution flaw CVE-2023-42793 since early October 2023. Diamond Sleet uses the ForestTiger backdoor and DLL search-order hijacking loaders (RollSling, FeedLoad) and dumps credentials. Onyx Sleet creates a privileged account, runs system discovery and deploys the HazyLoad proxy tool. Microsoft assesses the actors may be opportunistically compromising vulnerable servers. JetBrains has released an update and a mitigation.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Diamond Sleet",
+          "q": "Diamond Sleet (ZINC) is a North Korean nation-state threat actor that prioritizes espionage, data theft,",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Onyx Sleet",
+          "q": "Onyx Sleet (PLUTONIUM) is a North Korean nation-state threat actor that primarily targets defense and IT",
+          "by": "Microsoft Threat Intelligence"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "media",
+          "q": "The actor typically targets media, IT services, and defense-related entities around"
+        },
+        {
+          "v": "IT services",
+          "q": "The actor typically targets media, IT services, and defense-related entities around"
+        },
+        {
+          "v": "defense",
+          "q": "Onyx Sleet (PLUTONIUM) is a North Korean nation-state threat actor that primarily targets defense and IT"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "Since early October 2023, Microsoft has observed two North Korean nation-state threat actors"
+        },
+        {
+          "v": "South Korea",
+          "q": "services organizations in South Korea, the United States, and India."
+        },
+        {
+          "v": "United States",
+          "q": "services organizations in South Korea, the United States, and India."
+        },
+        {
+          "v": "India",
+          "q": "services organizations in South Korea, the United States, and India."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-10-18",
+          "q": "Published: 2023-10-18 · Archived: 2026-04-02 10:42:45 UTC",
+          "what": "Microsoft blog post on the TeamCity exploitation published"
+        },
+        {
+          "v": "October 2023",
+          "q": "Since early October 2023, Microsoft has observed two North Korean nation-state threat actors",
+          "what": "Start of observed exploitation of CVE-2023-42793 by the two actors"
+        },
+        {
+          "v": "January 2021",
+          "q": "Microsoft reported on Diamond Sleet’s targeting of security researchers in January 2021 and the actor’s",
+          "what": "Microsoft reported Diamond Sleet targeting security researchers"
+        },
+        {
+          "v": "September 2022",
+          "q": "weaponizing of open-source software in September 2022. In August 2023, Diamond Sleet conducted a software",
+          "what": "Diamond Sleet weaponized open-source software"
+        },
+        {
+          "v": "August 2023",
+          "q": "In August 2023, Diamond Sleet conducted a software",
+          "what": "Diamond Sleet software supply chain compromise of a German software provider"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ForestTiger",
+          "q": "Microsoft Defender Antivirus detects this malware as ForestTiger."
+        },
+        {
+          "v": "RollSling",
+          "q": "Microsoft Defender Antivirus detects DSROLE.dll using the family name RollSling."
+        },
+        {
+          "v": "FeedLoad",
+          "q": "Microsoft Defender Antivirus detects Version.dll using the family name FeedLoad."
+        },
+        {
+          "v": "HazyLoad",
+          "q": "Microsoft Defender Antivirus detects this proxy tool as HazyLoad."
+        },
+        {
+          "v": "PowerShell",
+          "q": "Following the successful compromise of TeamCity servers, Diamond Sleet utilizes PowerShell to download two"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote-code execution",
+          "q": "exploiting CVE-2023-42793, a remote-code execution vulnerability affecting multiple versions"
+        },
+        {
+          "v": "supply chain compromise",
+          "q": "supply chain compromise of a German software provider."
+        },
+        {
+          "v": "DLL search-order",
+          "q": "Diamond Sleet attack path 2: Deploying payloads for use in DLL search-order"
+        },
+        {
+          "v": "dump credentials via the LSASS",
+          "q": "Microsoft also observed Diamond Sleet leveraging the ForestTiger backdoor to dump credentials via the LSASS"
+        },
+        {
+          "v": "scheduled task",
+          "q": "Microsoft observed Forest64.exe then creating a scheduled task named Windows TeamCity Settings User Interface"
+        },
+        {
+          "v": "new user account",
+          "q": "Following successful exploitation using the TeamCity exploit, Onyx Sleet creates a new user account on"
+        },
+        {
+          "v": "remote desktop",
+          "q": "Using the attacker-controlled krtbgt account to sign into the compromised device via remote desktop"
+        },
+        {
+          "v": "Stopping the TeamCity service",
+          "q": "Stopping the TeamCity service, likely in an attempt to prevent access by other threat actors"
+        },
+        {
+          "v": "retrieve credentials",
+          "q": "Deploying tools to retrieve credentials and other data stored by browsers"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-42793",
+          "q": "exploiting CVE-2023-42793, a remote-code execution vulnerability affecting multiple versions"
+        }
+      ],
+      "figures": [
+        {
+          "v": "two",
+          "q": "Since early October 2023, Microsoft has observed two North Korean nation-state threat actors"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2023-42793"
+    },
+    "hedges": [
+      "Microsoft assesses the threat actors may be opportunistically compromising vulnerable servers.",
+      "The listed alerts can be triggered by unrelated threat activity.",
+      "The indicators of compromise are not exhaustive for this observed activity.",
+      "The krtbgt account is likely intended to impersonate the legitimate Windows KRBTGT account.",
+      "Stopping the TeamCity service is likely an attempt to prevent access by other threat actors."
+    ]
   }
 }

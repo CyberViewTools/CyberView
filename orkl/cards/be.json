@@ -212,25 +212,270 @@
   },
   "be4069bc5bae6ca8a4f243c99cb65d1de4d4e294": {
     "sha1": "be4069bc5bae6ca8a4f243c99cb65d1de4d4e294",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:25:19Z",
+    "read_at": "2026-11-27T04:20:56Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Red Canary report on three macOS information-stealer families: Atomic Stealer (also called AMOS), Poseidon Stealer, and Odyssey Stealer, which the report describes as a rebrand or evolution of Poseidon. It covers their shared AppleScript base and similar endpoint footprint, the Gatekeeper bypass Apple patched in October 2024, a lull in activity until March 2025, the features Odyssey added (anti-sandboxing, launch daemon persistence, a botnet component), sandbox-evasion checks, ClickFix-style deployment, endpoint indicators for telling the families apart, and remediation advice.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Rodrigo4",
+          "q": "the persona behind Poseidon, known as “Rodrigo4,” reportedly decided to exit the game",
+          "by": "Red Canary (report author)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2025-10-09",
+          "q": "Published: 2025-10-09 · Archived: 2026-04-06 00:17:20 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "fall 2024",
+          "q": "A significant turning point occurred in fall 2024.",
+          "what": "Turning point in the macOS stealer landscape"
+        },
+        {
+          "v": "October 2024",
+          "q": "Apple shipped a crucial update to macOS in October 2024 that successfully patched this critical Gatekeeper vulnerability.",
+          "what": "Apple patched the Gatekeeper bypass in macOS"
+        },
+        {
+          "v": "March 2025",
+          "q": "Stealer activity on macOS started back up again in March 2025,",
+          "what": "macOS stealer activity resumed"
+        },
+        {
+          "v": "September 2025",
+          "q": "From March 2025 until September 2025, Red Canary associated newer Odyssey stealer instances",
+          "what": "Red Canary associated newer Odyssey instances with Poseidon's profile until this point"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Atomic Stealer",
+          "q": "another prevalent stealer, Atomic Stealer (aka AMOS)."
+        },
+        {
+          "v": "AMOS",
+          "q": "Atomic Stealer (aka AMOS)."
+        },
+        {
+          "v": "Poseidon Stealer",
+          "q": "Poseidon Stealer, prominent during 2024 and early 2025, was sold and rebranded"
+        },
+        {
+          "v": "Odyssey Stealer",
+          "q": "Odyssey Stealer brought with it a host of"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "AppleScript",
+          "q": "their shared reliance on AppleScript."
+        },
+        {
+          "v": "ClickFix",
+          "q": "This led to widespread adoption of paste-and-run or “ClickFix” methodologies"
+        },
+        {
+          "v": "right-click",
+          "q": "users could right-click on an executable and"
+        },
+        {
+          "v": "launch daemons",
+          "q": "Persistence with launch daemons: Leveraging macOS"
+        },
+        {
+          "v": "Anti-sandboxing",
+          "q": "Anti-sandboxing mechanisms: Tools and logic to detect and avoid execution within analysis"
+        },
+        {
+          "v": "username checks",
+          "q": "Some stealers, including Odyssey, might include logic to check for specific usernames"
+        },
+        {
+          "v": "Intel processor",
+          "q": "it refuses to run on macOS systems with an Intel processor"
+        },
+        {
+          "v": "botnet component",
+          "q": "Botnet component: Adding functionality for persistent remote execution and control"
+        },
+        {
+          "v": "Homebrew",
+          "q": "Fake Homebrew websites, repositories on GitHub"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Atomic, Odyssey and Poseidon macOS stealers"
+    },
+    "hedges": [
+      "an alleged history of collaboration, code sharing, and, in some cases, outright copying.",
+      "the persona behind Poseidon, known as “Rodrigo4,” reportedly decided to exit the game",
+      "or it could be argued, a tactical rebranding.",
+      "Some stealers, including Odyssey, might include logic to check for specific usernames",
+      "Newer variants of Atomic often have mechanisms in place where it refuses to run on macOS systems with an Intel processor.",
+      "a custom HTTP header likely used to identify the compromised machine",
+      "This suggests the ability for ongoing surveillance or multi-stage attacks."
+    ]
+  },
+  "be033bb6c213f5f93a462e48043ffaa6274b822e": {
+    "sha1": "be033bb6c213f5f93a462e48043ffaa6274b822e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:31:32Z",
+    "model": "haiku",
+    "summary": "Malpedia family page for Zloader, a loader first described in 2016 as DEloader by Fortinet. It downloads Zeus OpenSSL and became known as Zloader aka Terdot after obfuscation was added in January 2017. The page lists vendor and researcher reports from 2016 to 2024 on Zloader campaigns, and a 2022 court order to take down Zloader infrastructure. Groups named in the reference titles include UNC4393 (Mandiant) and NIGHT SPIDER (CrowdStrike).",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Moskalvzapoe Distribution Network",
+          "q": "be related to the Moskalvzapoe Distribution Network, which started the distribution of it at the same time.",
+          "by": "the report itself (hedged: 'may be related')"
+        },
+        {
+          "v": "UNC4393",
+          "q": "UNC4393 Goes Gently into the SILENTNIGHT",
+          "by": "Mandiant (post title)"
+        },
+        {
+          "v": "NIGHT SPIDER",
+          "q": "Falcon OverWatch Threat Hunting Uncovers Ongoing NIGHT SPIDER Zloader Campaign",
+          "by": "CrowdStrike (post title)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banking",
+          "q": "Zeus Delivered by DELoader to Defraud Customers of Canadian Banks"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Canada",
+          "q": "Around the World With Zeus Sphinx: From Canada to Australia and Back"
+        },
+        {
+          "v": "Australia",
+          "q": "Around the World With Zeus Sphinx: From Canada to Australia and Back"
+        },
+        {
+          "v": "Japan",
+          "q": "Campo, a New Attack Campaign Targeting Japan"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 2016",
+          "q": "In June 2016, a new loader was dubbed DEloader by Fortinet.",
+          "what": "A new loader was named DEloader by Fortinet"
+        },
+        {
+          "v": "May 2016",
+          "q": "The initial samples from May 2016 were small (17920 bytes).",
+          "what": "Initial loader samples were observed"
+        },
+        {
+          "v": "September 2016",
+          "q": "e.g. in v1.11.0.0 (September 2016) with size 27648 bytes.",
+          "what": "visualEncrypt/Decrypt was added in v1.11.0.0"
+        },
+        {
+          "v": "January 2017",
+          "q": "In January 2017 with v1.15.0.0, obfuscation was added,",
+          "what": "Obfuscation was added and the loader became known as Zloader"
+        },
+        {
+          "v": "2022-04-13",
+          "q": "Zloader 2022-04-13 ⋅ UNITED STATES DISTRICT COURT FOR THE NORTHERN DISTRICT OF GEORGIA ⋅",
+          "what": "Court order to take down Zloader infrastructure"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Zeus OpenSSL",
+          "q": "This family describes the (initially small) loader, which downloads Zeus OpenSSL."
+        },
+        {
+          "v": "DEloader",
+          "q": "In June 2016, a new loader was dubbed DEloader by Fortinet."
+        },
+        {
+          "v": "Terdot",
+          "q": "and the loader became known as Zloader aka Terdot. These changes may"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Zloader Installs Remote Access Backdoors and Delivers Cobalt Strike"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "obfuscation",
+          "q": "In January 2017 with v1.15.0.0, obfuscation was added,"
+        },
+        {
+          "v": "DNS Tunneling",
+          "q": "Inside Zloader’s Latest Trick: DNS Tunneling"
+        },
+        {
+          "v": "API Hashing",
+          "q": "API Hashing in the Zloader malware"
+        },
+        {
+          "v": "Signed DLL campaigns",
+          "q": "Signed DLL campaigns as a service"
+        },
+        {
+          "v": "malicious ads",
+          "q": "Dismantling ZLoader: How malicious ads led to disabled security tools and ransomware"
+        },
+        {
+          "v": "Excel 4.0 Macro",
+          "q": "Evolution of Excel 4.0 Macro Weaponization"
+        },
+        {
+          "v": "social engineering",
+          "q": "Malsmoke operators abandon exploit kits in favor of social engineering scheme"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "17920 bytes",
+          "q": "The initial samples from May 2016 were small (17920 bytes)."
+        },
+        {
+          "v": "27648 bytes",
+          "q": "e.g. in v1.11.0.0 (September 2016) with size 27648 bytes."
+        },
+        {
+          "v": "roughly 80k",
+          "q": "which blew the size up to roughly 80k, and the loader became known as Zloader aka Terdot. These changes may"
+        },
+        {
+          "v": "v1.15.0.0",
+          "q": "In January 2017 with v1.15.0.0, obfuscation was added,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Zloader"
+    },
+    "hedges": [
+      "The report says the changes 'may be related' to the Moskalvzapoe Distribution Network; this is not stated as fact.",
+      "Naming differs by vendor: IBM X-Force called the family Zeus Sphinx, and the page's 'Zeus XSphinx' alias is its own label."
+    ]
   }
 }

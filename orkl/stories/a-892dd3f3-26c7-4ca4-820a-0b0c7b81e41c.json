@@ -51,32 +51,33 @@
     "key": "a-892dd3f3-26c7-4ca4-820a-0b0c7b81e41c",
     "kind": "actor",
     "name": "NICKEL KIMBALL",
-    "headline": "NICKEL KIMBALL (Kimsuky): a long-running espionage cluster aimed mainly at South Korean targets",
-    "in_short": "NICKEL KIMBALL, widely tracked as Kimsuky or APT43, is linked by several vendors to North Korea. Reports describe phishing, shortcut-file and macro lures, and Android spyware, mostly aimed at South Korean targets.",
+    "headline": "NICKEL KIMBALL (Kimsuky): a long-running spy group aimed mostly at South Korea",
+    "in_short": "NICKEL KIMBALL, better known as Kimsuky, is tied by several vendors and South Korean authorities to North Korea. Reports show phishing, fake documents and Android spyware used against government, defense and policy targets.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "Secureworks tracks this actor as NICKEL KIMBALL. Other vendors use names such as Kimsuky, APT43, Velvet Chollima, Black Banshee, THALLIUM, Emerald Sleet and TA427.",
+            "t": "NICKEL KIMBALL is the Secureworks name for a group that other vendors call Kimsuky, APT43, Velvet Chollima, Emerald Sleet, THALLIUM, TA427 and Black Banshee, among other names.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Breakglass Intelligence attributes Kimsuky (which it lists as APT43, Velvet Chollima and Black Banshee) to North Korea with high confidence.",
+            "t": "The catalogue lists these tools for the group: BabyShark, FastFire, FastSpy, FireViewer, KONNI, KimJongRAT, Kimsuky and ReconShark.",
             "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Microsoft describes Kimsuky as a North Korean state actor. Breakglass Intelligence attributes a command server it studied to Kimsuky and to North Korea with high confidence.",
+            "cites": [
+              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb",
               "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
             ]
           },
           {
-            "t": "ESRC, a South Korean malware analysis team, describes Thallium (also known as Kimsuky) as a North Korea-linked threat.",
-            "cites": [
-              "fdf53fac0af9cced76179fb1b9df0ce009952e36"
-            ]
-          },
-          {
-            "t": "Sekoia and Kudelski Security note that some DPRK experts regard Kimsuky as a mega-cluster made up of several branches, such as TA406 and TA408. The report adds that vendors name and divide clusters differently.",
+            "t": "Sekoia and Kudelski Security note that some North Korea experts regard Kimsuky as a mega-cluster made up of several branches, such as TA406 and TA408. They also say vendors divide and name clusters differently.",
             "cites": [
               "24bb6d01f2508e4001990348616aff2cadc34cd1"
             ]
@@ -87,25 +88,31 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "Genians Security Center assesses with moderate confidence that Kimsuky ran a campaign against South Korean policy and security professionals, using reply-based spearphishing that posed as a National Assembly member's aide.",
+            "t": "Microsoft says the group went after people in international affairs groups, NGOs, government agencies and media companies in its 2025 ClickFix activity.",
             "cites": [
-              "891354fd3fb2b9cf1e86e6c8c4e86ed62b3fe5bd"
+              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb"
             ]
           },
           {
-            "t": "According to South Korea's National Police Agency, Kimsuky exploited an email server flaw at a defense subcontractor between April and July 2023. The flaw let large files be downloaded without authentication.",
+            "t": "South Korea's National Police Agency said Kimsuky exploited an email server flaw at a defense subcontractor. The agency said North Korean groups breached defense firms to steal technology data.",
             "cites": [
               "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           },
           {
-            "t": "AhnLab's ASEC team reported signs of AppleSeed, a backdoor it says Kimsuky mainly uses, being spread to maintenance contractors of a military unit in July 2022.",
+            "t": "AhnLab reported signs of the AppleSeed backdoor being spread to maintenance contractors of a military unit in July 2022. It says Kimsuky mainly uses that backdoor.",
             "cites": [
               "d0d666177b14b04a9202863e5b062a0e5936b161"
             ]
           },
           {
-            "t": "Breakglass Intelligence reports phishing lures aimed at South Korean Naver users.",
+            "t": "Genians Security Center assesses, with moderate confidence, that Kimsuky ran a 2026 campaign against South Korean policy and security professionals.",
+            "cites": [
+              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
+            ]
+          },
+          {
+            "t": "Breakglass Intelligence found phishing lures on Kimsuky infrastructure aimed at South Korean users of the Naver web portal.",
             "cites": [
               "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
             ]
@@ -116,43 +123,43 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "AhnLab reports that Kimsuky uses spear-phishing emails with shortcut files disguised as normal documents. The chain then uses PowerShell, scheduled tasks, and a Dropbox and TCP socket command channel.",
+            "t": "AhnLab says the group spreads the PebbleDash backdoor mainly by spear-phishing. The emails carry shortcut files disguised as ordinary documents, using a double file extension.",
             "cites": [
               "4d612928d40b956cf990c917aca29944d7abb949"
             ]
           },
           {
-            "t": "AhnLab also describes a patched system DLL used to disable Remote Desktop authentication. It says the group has moved away from the open-source RDP Wrapper it used before.",
+            "t": "AhnLab also describes a patched system file used to switch off remote desktop login checks, and a Dropbox and TCP socket channel for commands.",
             "cites": [
               "4d612928d40b956cf990c917aca29944d7abb949"
             ]
           },
           {
-            "t": "ASEC describes a password-protected Excel file with a macro that asks the user to enable content. The macro then fetches a further script that installs AppleSeed.",
+            "t": "Microsoft says Kimsuky adopted the ClickFix trick. A fake South Korean official builds a rapport, sends a PDF, and tells the target to run code in PowerShell as administrator. That code installs a browser-based remote desktop tool.",
             "cites": [
-              "d0d666177b14b04a9202863e5b062a0e5936b161"
+              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb"
             ]
           },
           {
-            "t": "Breakglass Intelligence describes a three-stage chain that starts from a compiled help file disguised as API documentation. It ends in a keylogger with clipboard monitoring and timed data exfiltration.",
+            "t": "Breakglass Intelligence describes a three-stage chain that starts with a help file posing as API documentation. It ends in a keylogger with clipboard monitoring and timed uploads.",
             "cites": [
               "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
             ]
           },
           {
-            "t": "ENKI WhiteHat attributes new Android DOCSWAP variants to Kimsuky, citing shared infrastructure, a known phishing string and Korean-language comments. It says the apps carry a RAT with keylogging through the Accessibility Service.",
+            "t": "ENKI WhiteHat attributes new Android variants of DOCSWAP to Kimsuky, citing shared infrastructure, a known phishing string and Korean comments. It calls this strong evidence, not a definitive confirmation. The apps pose as delivery services and carry a remote access tool with keylogging.",
             "cites": [
               "37114c033cf4dc4e27f0631d4af9be712dbea44b"
             ]
           },
           {
-            "t": "S2W first named DocSwap and suspects a possible connection to Kimsuky. It tracks the actor as puNK-004.",
+            "t": "An earlier S2W analysis of DocSwap only suspected a possible connection to Kimsuky.",
             "cites": [
               "ffaaf49f0ead72966c28858a9674927f78fe951a"
             ]
           },
           {
-            "t": "A technical blog says Kimsuky uses a persistence trick that hijacks the default file association for text files.",
+            "t": "A researcher's blog post says Kimsuky uses a persistence trick that hijacks the default program for .txt files.",
             "cites": [
               "d024ba07693e90631f56e0ccf049775a082516ca"
             ]
@@ -163,27 +170,39 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In April 2024, South Korea's National Police Agency warned that Lazarus, Andariel and Kimsuky had breached South Korean defense companies and their subcontractors to steal technology data. It said some firms had been compromised since late 2022 without knowing it.",
+            "t": "In a 2022 article, South Korean officials said hackers believed to be operating from North Korea breached the nuclear research body KAERI through a VPN server flaw. One of thirteen IP addresses involved was linked to attack infrastructure used by Kimsuky.",
+            "cites": [
+              "80579210268b61ff389629fd202a0b1ca0b79eb7"
+            ]
+          },
+          {
+            "t": "The National Police Agency said Kimsuky exploited a flaw in a defense subcontractor's email server between April and July 2023. The flaw let large files be downloaded without logging in.",
             "cites": [
               "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           },
           {
-            "t": "AhnLab reported a PebbleDash backdoor distribution by Kimsuky in March 2025. The report says CISA earlier tied the backdoor to Lazarus, and that Kimsuky has used it since 2021.",
+            "t": "In February 2022, ESRC analysed a Word file posing as a guide from the Klip digital wallet service. It linked the file to the Smoke Screen campaign and to Thallium, also known as Kimsuky. The command server could not be reached, so analysis stopped early.",
             "cites": [
-              "4d612928d40b956cf990c917aca29944d7abb949"
+              "fdf53fac0af9cced76179fb1b9df0ce009952e36"
             ]
           },
           {
-            "t": "Genians Security Center describes a campaign from June to October 2026 that used a Node.js remote access tool called NodeLinkRAT. Later stages were fetched from a public note service whose contents the operator swapped. Genians assesses it as Kimsuky, with moderate confidence.",
+            "t": "Microsoft says it saw the ClickFix tactic only in limited attacks starting in January 2025.",
             "cites": [
-              "891354fd3fb2b9cf1e86e6c8c4e86ed62b3fe5bd"
+              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb"
             ]
           },
           {
-            "t": "Breakglass Intelligence, in a report dated 11 April 2026, mapped about 79 domains across five IPs tied to a Kimsuky command server.",
+            "t": "In April 2026, Breakglass Intelligence mapped about 79 domains across five IP addresses tied to one Kimsuky command server.",
             "cites": [
               "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+            ]
+          },
+          {
+            "t": "Genians says the 2026 campaign began with reply-based phishing from someone posing as a National Assembly member's aide. It also says a third party imitating the same techniques cannot be fully ruled out.",
+            "cites": [
+              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
             ]
           }
         ]
@@ -192,26 +211,30 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat shortcut files, help files and macro-enabled documents that arrive by email as suspect, even when they look like ordinary paperwork.",
+            "t": "Treat unexpected documents, shortcut files and help files with caution, even when they appear to come from an official or a recruiter.",
             "cites": []
           },
           {
-            "t": "Install Android apps only from trusted sources, and be wary of apps that ask for accessibility permissions.",
+            "t": "Never paste or run commands because a message or web page tells you to.",
+            "cites": []
+          },
+          {
+            "t": "Keep email and VPN servers patched, and use separate passwords for work and personal accounts.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "27c5226f403e89947e707d49ce60f308c85a195b",
+    "based_on": "4a039daaf3b67af48543d6d979ee180ea30e2dfd",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T03:19:01Z",
+    "written_at": "2026-11-27T04:19:38Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked",
-      "bad-cite"
+      "bare-attribution"
     ],
-    "written_run": "be09c809"
+    "written_run": "450efb4c"
   }
 }

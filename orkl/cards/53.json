@@ -231,5 +231,456 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "537e7c37a9c2a7d53f2c9f4406d80841debfd489": {
+    "sha1": "537e7c37a9c2a7d53f2c9f4406d80841debfd489",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:26:35Z",
+    "model": "haiku",
+    "summary": "A Kaspersky GReAT crimeware excerpt on LockBit Green, a LockBit ransomware variant detected from February that borrows code from the defunct Conti gang; the report's attribution engine finds about 25% Conti code. It also describes LockBit samples built for several platforms, which the authors judge to be in testing, and a SwitchSymb phishing kit used in a phishing and business email compromise campaign against German-speaking companies in the DACH region, active since at least Q3 2022.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "LockBit",
+          "q": "LockBit is one of the most prolific ransomware groups currently active, targeting businesses all over the world.",
+          "by": "Kaspersky GReAT (the report itself)"
+        },
+        {
+          "v": "Conti",
+          "q": "the now-defunct Conti gang.",
+          "by": "Kaspersky GReAT (the report itself)"
+        },
+        {
+          "v": "BlackMatter",
+          "q": "Over time, they have adopted code from other ransomware gangs, such as BlackMatter and DarkSide, making it",
+          "by": "Kaspersky GReAT (the report itself)"
+        },
+        {
+          "v": "DarkSide",
+          "q": "Over time, they have adopted code from other ransomware gangs, such as BlackMatter and DarkSide, making it",
+          "by": "Kaspersky GReAT (the report itself)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "businesses",
+          "q": "LockBit is one of the most prolific ransomware groups currently active, targeting businesses all over the world."
+        },
+        {
+          "v": "business users",
+          "q": "At the end of this past January, we observed a spike in phishing email from a campaign targeting business users,"
+        }
+      ],
+      "countries": [
+        {
+          "v": "DACH region",
+          "q": "The attackers target German-speaking companies in the DACH region."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-06-22",
+          "q": "Published: 2023-06-22 · Archived: 2026-04-05 12:40:00 UTC",
+          "what": "Publication of the report"
+        },
+        {
+          "v": "Q3 2022",
+          "q": "Recently we stumbled upon a Business Email Compromise (BEC) case, active since at least Q3 2022. The",
+          "what": "BEC case active since at least this time"
+        },
+        {
+          "v": "end of this past January",
+          "q": "At the end of this past January, we observed a spike in phishing email from a campaign targeting business users,",
+          "what": "Spike in phishing email from a campaign targeting business users"
+        },
+        {
+          "v": "February",
+          "q": "Starting in this past February, we have detected a new variant, named “LockBit Green”, which borrows code from",
+          "what": "LockBit Green variant first detected"
+        }
+      ],
+      "tools": [
+        {
+          "v": "LockBit Green",
+          "q": "we have detected a new variant, named “LockBit Green”"
+        },
+        {
+          "v": "SwitchSymb phishing kit",
+          "q": "of which the SwitchSymb phishing kit"
+        },
+        {
+          "v": "Kaspersky Threat Attribution Engine (KTAE)",
+          "q": "According to the Kaspersky Threat Attribution Engine (KTAE), LockBit incorporates"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "domain name that is similar",
+          "q": "domain name that is similar to that used by the attacked organization"
+        },
+        {
+          "v": "Reply-to field contains a different email address",
+          "q": "the Reply-to field contains a different email address from the From field."
+        },
+        {
+          "v": "serve multiple campaigns at a time",
+          "q": "The phishing kit was designed to serve multiple campaigns at a time while running one instance on the web"
+        },
+        {
+          "v": "encryption scheme from Conti",
+          "q": "adopted the encryption scheme from Conti."
+        },
+        {
+          "v": "encrypt only part of the files",
+          "q": "Functionality to encrypt only part of the files"
+        },
+        {
+          "v": "Binary diffing",
+          "q": "Binary diffing across the two families"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "25%",
+          "q": "25% of Conti code."
+        },
+        {
+          "v": "three private reports",
+          "q": "For this post, we selected three private reports,"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "LockBit Green"
+    },
+    "hedges": [
+      "Further analysis of the samples led us to believe that LockBit were in the process of testing their ransomware on various architectures, instead of deploying it in the wild.",
+      "Our findings suggest that LockBit will target more platforms in the wild in the (near) future.",
+      "For reasons unknown, the Reply-to field contains a different email address from the From field.",
+      "We could not think of a good reason for doing so, but nevertheless, LockBit did it."
+    ]
+  },
+  "53315e70da729b3b9a1a63327b57e27ad402bebb": {
+    "sha1": "53315e70da729b3b9a1a63327b57e27ad402bebb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:30:52Z",
+    "model": "haiku",
+    "summary": "Synacktiv's CSIRT describes three open-source tools used by an attacker after compromising Ivanti Cloud Services Appliance (CSA) devices in incidents it investigated: suo5 and iox for tunnelling traffic, and atexec-pro for remote command execution. It explains how each works and gives YARA and Sigma detection rules the authors wrote for them.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "UNC2980",
+          "q": "active exploitation of the ProxyShell vulnerability by UNC2980",
+          "by": "the report (Synacktiv), citing other attacks"
+        },
+        {
+          "v": "Volt Typhoon",
+          "q": "attack on US critical infrastructure by Volt Typhoon",
+          "by": "the report (Synacktiv), citing another source"
+        },
+        {
+          "v": "HAFNIUM",
+          "q": "This name could be a reference to HAFNIUM-related activities",
+          "by": "the report itself, hedged as could be"
+        },
+        {
+          "v": "Honker's Union of China",
+          "q": "nationalist hacking group called Honker's Union of China (HUC)",
+          "by": "the report (Synacktiv), citing its own source"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "critical infrastructure",
+          "q": "attack on US critical infrastructure by Volt Typhoon"
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "attack on US critical infrastructure by Volt Typhoon"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 9, 2024",
+          "q": "actively chaining these vulnerabilities as early as September 9, 2024",
+          "what": "some threat actors were chaining the Ivanti CSA vulnerabilities before any advisory or patch was public"
+        },
+        {
+          "v": "September and October 2024",
+          "q": "In September and October 2024, Ivanti published multiple",
+          "what": "Ivanti published security advisories on policy bypasses and remote code execution in its CSA product"
+        },
+        {
+          "v": "January 2024",
+          "q": "in January 2024, was based on the Neo-reGeorg tool",
+          "what": "GLASSTOKEN webshell used in intrusions exploiting Ivanti Connect Secure VPN zero-days"
+        },
+        {
+          "v": "March 2021",
+          "q": "in March 2021",
+          "what": "reGeorg used as a commodity webshell in attacks exploiting Microsoft Exchange zero-days"
+        },
+        {
+          "v": "February 2023",
+          "q": "with an initial commit dated February 2023",
+          "what": "initial commit of the suo5 tool on GitHub"
+        },
+        {
+          "v": "2025-05-12",
+          "q": "date: 2025-05-12",
+          "what": "date of the Sigma detection rule published with the article"
+        }
+      ],
+      "tools": [
+        {
+          "v": "suo5",
+          "q": "planted an HTTP proxy tunnel going by the name of suo5"
+        },
+        {
+          "v": "iox",
+          "q": "deploy another tunnel named iox"
+        },
+        {
+          "v": "atexec-pro",
+          "q": "to execute code remotely (atexec-pro)"
+        },
+        {
+          "v": "GLASSTOKEN",
+          "q": "the GLASSTOKEN custom webshell"
+        },
+        {
+          "v": "reGeorg",
+          "q": "the reGeorg tool was used as a commodity webshell"
+        },
+        {
+          "v": "Neo-reGeorg",
+          "q": "was based on the Neo-reGeorg tool"
+        },
+        {
+          "v": "lcx",
+          "q": "The lcx tool is a piece of history"
+        },
+        {
+          "v": "Earthworm",
+          "q": "The Earthworm tool came as a more powerful replacement"
+        },
+        {
+          "v": "Impacket",
+          "q": "leveraging Impacket"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "HTTP proxy tunnel",
+          "q": "planted an HTTP proxy tunnel going by the name of suo5"
+        },
+        {
+          "v": "reverse SOCKS5 proxy",
+          "q": "A reverse SOCKS5 proxy can also be established"
+        },
+        {
+          "v": "port forwarding",
+          "q": "It is a port forwarding tool"
+        },
+        {
+          "v": "credential dumping",
+          "q": "for lateral movement, persistence and credential dumping"
+        },
+        {
+          "v": "lateral movement",
+          "q": "for lateral movement, persistence and credential dumping"
+        },
+        {
+          "v": "Task Scheduler service",
+          "q": "gain remote code execution on an endpoint through the Task Scheduler service"
+        },
+        {
+          "v": "scheduled task",
+          "q": "creates a scheduled task, with a name made up of 8 random characters"
+        },
+        {
+          "v": "XChaCha20",
+          "q": "encrypted with symmetric encryption algorithm XChaCha20"
+        },
+        {
+          "v": "evasion technique against NIDS/NIPS",
+          "q": "an evasion technique against NIDS/NIPS"
+        },
+        {
+          "v": "Randomized TLS Client Hello Fingerprint",
+          "q": "the Randomized TLS Client Hello Fingerprint functionality"
+        },
+        {
+          "v": "User-Agent-based authentication",
+          "q": "User-Agent-based authentication"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "port 445",
+          "q": "only communicates with port 445"
+        },
+        {
+          "v": "port 135",
+          "q": "listening on port 135"
+        },
+        {
+          "v": "1 MB",
+          "q": "only support files up to 1 MB in size"
+        },
+        {
+          "v": "8 random characters",
+          "q": "a name made up of 8 random characters"
+        },
+        {
+          "v": "Event ID 4104",
+          "q": "Event ID 4104 events are generated"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "This name could be a reference to HAFNIUM-related activities during post-exploitation of the Microsoft Exchange vulnerabilities in March 2021.",
+      "A User-Agent check is probably relatively unique, but stealthier attackers can change the string, so it is not guaranteed.",
+      "Careless attackers might leave the default User-Agent value in place.",
+      "The encryption of forwarded traffic is not meant to be bullet-proof; it is an evasion technique against NIDS/NIPS."
+    ]
+  },
+  "53626c1051da5e12ff8b7cade2ef7872314c17b2": {
+    "sha1": "53626c1051da5e12ff8b7cade2ef7872314c17b2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T04:32:25Z",
+    "model": "haiku",
+    "summary": "Sucuri blog post (Dec 2023) on the ATMZOW Magecart skimmer, which abuses Google Tag Manager containers to inject card-skimming scripts into Magento sites. It reports 327 affected sites, 40 newly registered lookalike analytics domains registered via Hostinger in November 2023, base64 and multi-layer obfuscation, two domains picked at random per visit, and CloudFlare-hidden infrastructure. After Google removed a container, the operators created new containers and reinfected sites. Group IB linked the skimmer to a 2015 Guruincsite infection.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "ATMZOW",
+          "q": "40 New Domains of Magecart Veteran ATMZOW Found in Google Tag Manager",
+          "by": "Sucuri (the report itself)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "ecommerce",
+          "q": "take a look at some recent Google Tag Manager containers used in ecommerce malware"
+        },
+        {
+          "v": "Magento website",
+          "q": "track the evolution of the ATMZOW skimmer linked to widespread Magento website infections since 2015"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2023-12-07",
+          "q": "Published: 2023-12-07 · Archived: 2026-04-05 23:18:37 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "2015",
+          "q": "Group IB has linked this skimmer to the 2015 Guruincsite infection",
+          "what": "Guruincsite infection that affected Magento sites"
+        },
+        {
+          "v": "July 11, 2023",
+          "q": "originally created on July 11, 2023",
+          "what": "Malicious script source created"
+        },
+        {
+          "v": "November 8, 10 and 12 of 2023",
+          "q": "registered via Hostinger in three batches on November 8, 10 and 12 of 2023",
+          "what": "Lookalike domains registered in three batches"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Google Tag Manager",
+          "q": "Hackers like Google Tag Manager: millions of sites use it"
+        },
+        {
+          "v": "CloudFlare",
+          "q": "hid these domains behind a CloudFlare firewall"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "credit card skimmers",
+          "q": "We regularly find credit card skimmers planted inside Google Tag Manager scripts"
+        },
+        {
+          "v": "obfuscation",
+          "q": "the obfuscation used in this recently discovered GTM-TVKQ79ZS container"
+        },
+        {
+          "v": "base64 encoding",
+          "q": "They used base64 encoding to hide the domain name and page URL attackers"
+        },
+        {
+          "v": "randomly selects two",
+          "q": "the malicious code randomly selects two of those"
+        },
+        {
+          "v": "firewall",
+          "q": "hid these domains behind a CloudFlare firewall"
+        },
+        {
+          "v": "new containers",
+          "q": "the bad actors created new containers GTM-NTV2JTB4 and GTM-MX7L8F2M"
+        },
+        {
+          "v": "three English words",
+          "q": "attackers used a combination of three English words with the following patterns"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "327 sites",
+          "q": "detected known malicious GTM containers on 327 sites"
+        },
+        {
+          "v": "178 times",
+          "q": "detected a total of 178 times this year"
+        },
+        {
+          "v": "40 newly registered domains",
+          "q": "reveals a list of 40 newly registered domains"
+        },
+        {
+          "v": "11 months",
+          "q": "In the past 11 months of 2023"
+        },
+        {
+          "v": "8 years",
+          "q": "Now, 8 years later, the hacker group that uses this style of obfuscation is still active"
+        },
+        {
+          "v": "thousands of Magento sites",
+          "q": "that affected thousands of Magento sites in the very beginning of"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ATMZOW skimmer"
+    },
+    "hedges": [
+      "The naming patterns are likely used to blend more organically into the digital ecosystem, according to the report.",
+      "The report's analysis indicates the ATMZOW skimmer continues to specifically target Magento sites.",
+      "Resolution details for the domains are given only as at the time of writing.",
+      "The link between the skimmer and the 2015 Guruincsite infection is Group IB's attribution, as reported by Sucuri."
+    ]
   }
 }

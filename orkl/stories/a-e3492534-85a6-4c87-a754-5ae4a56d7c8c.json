@@ -4,20 +4,20 @@
     "key": "a-e3492534-85a6-4c87-a754-5ae4a56d7c8c",
     "kind": "actor",
     "name": "Threat Group-3390",
-    "headline": "Threat Group-3390: a long-tracked China-nexus group with a well-known toolkit",
-    "in_short": "Threat Group-3390 goes by many names, including APT27, Emissary Panda and Iron Tiger. Public reports list a deep toolkit, and Google's threat team describes the group as PRC-nexus.",
+    "headline": "Threat Group-3390: a long-running group known by many names, with a wide malware kit",
+    "in_short": "Threat Group-3390 is tracked as APT27, Iron Tiger, Emissary Panda and more. Reports on file link it to tools like HyperBro and PlugX, a web-shell and downloader trail, and a chat-app campaign aimed at three operating systems.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "MITRE tracks this actor as Threat Group-3390. It is also known as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
+            "t": "Threat Group-3390 is also tracked as Earth Smilodon, TG-3390, Emissary Panda, BRONZE UNION, APT27, Iron Tiger, LuckyMouse and Linen Typhoon.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Google Threat Intelligence Group describes APT27 as a PRC-nexus threat actor.",
+            "t": "Google Threat Intelligence Group describes APT27 as a PRC-nexus threat actor and says it observed APT27-associated activity that used Gemini.",
             "cites": [
               "b2386bef6e70b932af44e6bb3f3d3f1cc3cc69ec"
             ]
@@ -28,34 +28,27 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "The catalogue lists many remote access tools for this group, including PlugX, HyperBro, gh0st RAT, ZxShell, RCSession, SysUpdate and Clambling.",
+            "t": "The catalogue lists many tools for the group, including PlugX, HyperBro, China Chopper, Cobalt Strike, Mimikatz, Impacket and gh0st RAT.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "It also lists the web shells China Chopper and ASPXSpy, and the frameworks Cobalt Strike and Impacket.",
+            "t": "Recorded Future's Insikt Group says LuckyMouse (TG-3390, Emissary Panda, Bronze Union) is among the actors that have historically used Scanbox, a reconnaissance framework that can log keystrokes.",
             "cites": [
-              "catalogue"
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
             ]
           },
           {
-            "t": "For stealing credentials, the catalogue names Mimikatz, gsecdump, pwdump and Windows Credential Editor.",
+            "t": "One analyst's report says the Redosdru downloader is commonly associated with APT27/Iron Tiger. The report says Microsoft reported it as early as July 2009.",
             "cites": [
-              "catalogue"
+              "3770824fad66a3c0254661f0e17ca27b301dafdb"
             ]
           },
           {
-            "t": "The catalogue also lists built-in Windows tools such as Systeminfo, Tasklist, netstat, ipconfig and certutil, along with the scanner NBTscan.",
+            "t": "The Malpedia page for the TwoFace web shell lists APT27 among five associated actors. According to Unit 42, TwoFace has two stages, a loader and a payload, and is written in C#.",
             "cites": [
-              "catalogue"
-            ]
-          },
-          {
-            "t": "Recorded Future's Insikt Group lists LuckyMouse, a name for this group, among the actors that have used Scanbox in the past. Scanbox is a reconnaissance framework written in JavaScript and PHP that can log keystrokes.",
-            "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9",
-              "catalogue"
+              "b0cdf57ffe0f8d7999e42901c8cb1610d98c2c3a"
             ]
           }
         ]
@@ -64,20 +57,13 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "A threat report titled \"Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users\" lists indicators for the campaign. They include HyperBro samples for Windows and Rshell samples for Linux and Mac OS.",
-            "cites": [
-              "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d",
-              "catalogue"
-            ]
-          },
-          {
-            "t": "The page is mostly a list of indicators. It gives no account of who was targeted or when.",
+            "t": "A report titled \"Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users\" lists indicators for HyperBro samples on Windows and Rshell samples on Linux and Mac OS.",
             "cites": [
               "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
           },
           {
-            "t": "Google Threat Intelligence Group says it saw APT27 activity in which the actor used Gemini. It also says an APT27 fleet management application is likely to support an ORB network.",
+            "t": "Google's report says an APT27 fleet management application is likely to support an ORB network. The report was published on 2026-05-11.",
             "cites": [
               "b2386bef6e70b932af44e6bb3f3d3f1cc3cc69ec"
             ]
@@ -88,23 +74,22 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat tool names and indicator lists as a starting point for detection. They do not show the full scope of an intrusion.",
+            "t": "Defenders can use the published indicator lists and tool names to check their own systems for signs of this group.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "dd0511effccfb3d01646a5bd732d91af77ff2df3",
+    "based_on": "80e6be70324d008c78fe9f0ed74d66b58ecf21f6",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T03:19:34Z",
+    "written_at": "2026-11-27T04:19:57Z",
     "writer_model": "sonnet",
     "reasons": [
-      "bare-attribution",
       "unbacked",
       "missing-section"
     ],
-    "written_run": "bca654d4"
+    "written_run": "65942953"
   }
 }

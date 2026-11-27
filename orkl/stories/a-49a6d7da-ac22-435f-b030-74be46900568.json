@@ -4,28 +4,45 @@
     "key": "a-49a6d7da-ac22-435f-b030-74be46900568",
     "kind": "actor",
     "name": "GOLD LOCUST",
-    "headline": "GOLD LOCUST (FIN7, Carbanak): phishing loaders, the Carbanak backdoor and links to ransomware crews",
-    "in_short": "GOLD LOCUST is tracked by Secureworks and also known as FIN7 and Carbanak. Vendors tie it to phishing-led JSSLoader attacks and the Carbanak backdoor. Some reports link its tools or affiliates to ransomware intrusions.",
+    "headline": "GOLD LOCUST: the FIN7 and Carbanak cluster, from card thieves to loaders and ransomware links",
+    "in_short": "Secureworks tracks GOLD LOCUST, whose aliases include FIN7 and Carbanak. Reports describe mailed USB drives, phishing loaders, anti-EDR tools and links to ransomware crews. Several links are vendor assessments.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "The catalogue record, sourced to Secureworks, names the actor GOLD LOCUST.",
+            "t": "Secureworks tracks this actor as GOLD LOCUST. The catalogue lists the aliases Anunak, Carbanak, Carbon Spider, FIN7 and Silicon.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The same record lists the aliases Anunak, Carbanak, Carbon Spider, FIN7 and Silicon, and names Carbanak as its tool.",
+            "t": "The catalogue lists Carbanak as the actor's tool.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Morphisec Labs says it has tracked FIN7 (Carbanak Group) activity for several years.",
+            "t": "Morphisec Labs says it has tracked FIN7, which it also calls the Carbanak Group, for several years.",
             "cites": [
               "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
+          {
+            "t": "An FBI FLASH alert said FIN7 mailed packages through USPS to businesses in the retail, restaurant and hotel industries.",
+            "cites": [
+              "2f159048db296cab9486e7a29595398e82453fb0"
+            ]
+          },
+          {
+            "t": "BleepingComputer reports that in 2018 FIN7 hacked Saks Fifth Avenue and Lord & Taylor to steal payment card information.",
+            "cites": [
+              "0862fc27df0a2f1e905022e214d6071621e9d315"
             ]
           }
         ]
@@ -34,33 +51,33 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Morphisec describes a JSSLoader attack chain it says it intercepted in a customer network in December 2020. It began with a phishing lure and ran VBScript stages in memory.",
+            "t": "In the FBI alert, the mailed USB drives were set up to emulate keystrokes. One package was described as coming from Best Buy, with a gift card as bait.",
+            "cites": [
+              "2f159048db296cab9486e7a29595398e82453fb0"
+            ]
+          },
+          {
+            "t": "Morphisec describes a chain that starts with a phishing invoice lure. VBScript stages run in memory, and a final script loads Carbanak reflectively.",
             "cites": [
               "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
             ]
           },
           {
-            "t": "In that chain, a scheduled task with a timeout delay ran a module, which Morphisec says was meant to get past attack chain monitoring. A Takeout script then loaded Carbanak reflectively.",
-            "cites": [
-              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
-            ]
-          },
-          {
-            "t": "Malwarebytes attributes a late-June malspam campaign to FIN7. In a post dated August 15, 2022, it says the campaign dropped JSSLoader and a secondary .NET payload.",
+            "t": "Malwarebytes attributes a late-June malspam campaign to FIN7. It dropped JSSLoader, which Malwarebytes calls a rewrite with expanded abilities, including data exfiltration, plus a second payload written in .NET.",
             "cites": [
               "34d1144c2183487f403172e7b3c629fdeeb9688a"
             ]
           },
           {
-            "t": "Malwarebytes describes this JSSLoader as a rewrite with expanded capabilities, including data exfiltration.",
+            "t": "Harfanglab says Sentinel Labs links, with high confidence, the sellers of the anti-EDR tool AvNeutralizer to the FIN7 cluster. Harfanglab says the tool relies on vulnerable drivers to kill EDR processes.",
             "cites": [
-              "34d1144c2183487f403172e7b3c629fdeeb9688a"
+              "678ad058b3b1d73fd5e594432cb93c111a03ff26"
             ]
           },
           {
-            "t": "A report on APT28 notes that FIN7 was among several actors that used the DDE document technique, citing DNSMessenger as an example.",
+            "t": "Harfanglab adds that the developers of the PackXOR packer might be connected to FIN7. It says the packer appears to be used for activity unrelated to FIN7.",
             "cites": [
-              "77b6d637bf703fc59d42da667715f8ae0653cece"
+              "678ad058b3b1d73fd5e594432cb93c111a03ff26"
             ]
           }
         ]
@@ -69,25 +86,37 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "IBM Security X-Force reported investigating a Carbanak backdoor associated with a Sodinokibi ransomware attack. Its own text rests the Carbanak link on similarity to tools of the ITG14 group.",
+            "t": "The FBI alert behind the BleepingComputer report was issued in March 2020. It said the USB drives were used to fetch GRIFFON malware.",
             "cites": [
-              "98db93df2c38d13d27ed23f978a9f60980941381"
+              "2f159048db296cab9486e7a29595398e82453fb0"
             ]
           },
           {
-            "t": "A SentinelLABS report published on November 3, 2022 covers Black Basta ransomware attacks. Its title says the custom EDR evasion tools are \"tied to\" FIN7. Only the title page and contents were available, so the detail is thin.",
+            "t": "Morphisec says it intercepted its JSSLoader attack chain in a customer network in December 2020.",
+            "cites": [
+              "a8b545dfb59cd2f81cdbd75dda219aafd80b1a99"
+            ]
+          },
+          {
+            "t": "In November 2022, SentinelLABS published a report on Black Basta attacks. Its title says the custom EDR evasion tools are tied to the FIN7 threat actor.",
             "cites": [
               "88f5a8bd8832f5d326afca713c918e1c856afd18"
             ]
           },
           {
-            "t": "Rapid7, in a report published on June 10, 2025, assesses that the developers of a Java malware family are likely initial access brokers. It says they potentially provided access for Black Basta and/or FIN7 affiliates.",
+            "t": "IBM X-Force investigated a Carbanak backdoor associated with a Sodinokibi ransomware attack. It concluded that ITG14 is at least one affiliate group of Sodinokibi. IBM says the Carbanak link rests on similarity to ITG14 tools.",
             "cites": [
-              "276eef8e2d22f6e225440f49dfeb3de246f91df1"
+              "98db93df2c38d13d27ed23f978a9f60980941381"
             ]
           },
           {
-            "t": "Rapid7 also notes that GData attributes a related python RAT to FIN7, and that GData calls it Anubis. Rapid7 says that name is likely based on the source code.",
+            "t": "Trend Micro's report on Clop describes links between Clop, TA505 and FIN7. It cites news reporting that FIN7 used the POWERTRASH malware.",
+            "cites": [
+              "2e9f7dc10f8b0ceb48f5ae3fa136f59af20e7536"
+            ]
+          },
+          {
+            "t": "Rapid7 assesses that the developers of a Java malware family are likely initial access brokers. It says they potentially provided access to Black Basta or FIN7 affiliates. It also cites GData attributing a python RAT to FIN7.",
             "cites": [
               "276eef8e2d22f6e225440f49dfeb3de246f91df1"
             ]
@@ -98,22 +127,21 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat unexpected invoice emails with care. Monitor script activity and scheduled tasks on endpoints, since the reported chains rely on both.",
+            "t": "Treat unexpected USB drives and invoice attachments as hostile, and keep endpoint protection locked down against tampering.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "7186c9470ca96e6d1bcd21e78955fefcd49aded9",
+    "based_on": "683e56b6aa1180acff8dc35e37eaf04a58862f0e",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T03:18:51Z",
+    "written_at": "2026-11-27T04:19:20Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked",
-      "missing-section"
+      "unbacked"
     ],
-    "written_run": "be09c809"
+    "written_run": "450efb4c"
   }
 }

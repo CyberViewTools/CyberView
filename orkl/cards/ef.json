@@ -68,7 +68,7 @@
     "sha1": "efa6aec67591c9eadc36060479de75e1d3c90321",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T03:29:10Z",
+    "read_at": "2026-11-27T04:22:49Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -85,29 +85,203 @@
     "subject": null,
     "hedges": [],
     "reason": "quote-not-in-text",
-    "tries": 1
+    "tries": 2
   },
   "efcbb14f8ef15621c8601482e2b24e394aa0cf33": {
     "sha1": "efcbb14f8ef15621c8601482e2b24e394aa0cf33",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:32:13Z",
+    "read_at": "2026-11-27T04:23:43Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "ASEC (AhnLab) analyses 2023 attacks it links to the Andariel group, which the report says is affiliated with Lazarus. Targets include Korean universities, national defense and other companies. Initial access used Innorix Agent abuse and likely spear phishing. Malware includes Go-based backdoors such as Goat RAT and DurianBeacon, plus AndarLoader. The report says the initial distribution route is unconfirmed and that the link to past Andariel cases is inferred, not direct.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Andariel",
+          "q": "The Andariel threat group which usually targets Korean corporations and organizations is known to be affiliated",
+          "by": "ASEC (AhnLab), the report"
+        },
+        {
+          "v": "Lazarus",
+          "q": "with the Lazarus threat group or one of its subsidiaries.",
+          "by": "ASEC (AhnLab), the report"
+        },
+        {
+          "v": "Kimsuky",
+          "q": "This is a domain generally used by the Kimsuky threat group.",
+          "by": "ASEC (AhnLab), the report"
+        },
+        {
+          "v": "Hidden Cobra (Lazarus)",
+          "q": "employed in Volgmer used by the Hidden Cobra (Lazarus) threat group",
+          "by": "CISA report, as cited by ASEC"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "national defense",
+          "q": "Major target industries are those related to national security such as national defense, political organizations,"
+        },
+        {
+          "v": "shipbuilding",
+          "q": "shipbuilding, energy, and communications."
+        },
+        {
+          "v": "universities",
+          "q": "Various other companies and institutes in Korea including universities,"
+        },
+        {
+          "v": "ICT companies",
+          "q": "attack cases against Korean ICT companies, electronic device manufacturers, the shipbuilding industry"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Korea",
+          "q": "Various other companies and institutes in Korea including universities,"
+        },
+        {
+          "v": "United States",
+          "q": "as stated in a report by the United States"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-08-21",
+          "q": "Published: 2023-08-21 · Archived: 2026-04-05 13:35:35 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "February 2023",
+          "q": "In February 2023, ASEC shared the case where the Andariel threat group distributed malware to users with a",
+          "what": "ASEC shared a case of Innorix Agent abused to distribute malware"
+        },
+        {
+          "v": "March 2023",
+          "q": "The Andariel group also distributed malware in March 2023 in its attacks against the Korean defense industry and",
+          "what": "Andariel malware distribution against Korean defense industry and an electronics maker"
+        },
+        {
+          "v": "2020",
+          "q": "has been consistently employed by the Andariel threat group since 2020.",
+          "what": "TigerRAT consistently used by the Andariel group since this year"
+        },
+        {
+          "v": "first half of 2023",
+          "q": "Andariel group in the first half of 2023.",
+          "what": "period of Andariel attacks analysed in the report"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Innorix Agent",
+          "q": "The Innorix Agent program abused in distribution is a file transfer solution client program."
+        },
+        {
+          "v": "NukeSped",
+          "q": "so it was categorized as a variant of NukeSped instead."
+        },
+        {
+          "v": "Volgmer",
+          "q": "Volgmer was also used in comparatively recent attacks."
+        },
+        {
+          "v": "Andardoor",
+          "q": "name, it is classified as Andardoor."
+        },
+        {
+          "v": "1th Troy",
+          "q": "1th Troy is a Reverse Shell malware developed in Go."
+        },
+        {
+          "v": "TigerRAT",
+          "q": "as well as TigerRAT [3] and MagicRAT [4] which have been detected for the past few years."
+        },
+        {
+          "v": "Black Rat",
+          "q": "Black Rat is a backdoor-type malware that is likely created by the threat actor."
+        },
+        {
+          "v": "Goat RAT",
+          "q": "other malware strains developed in Go such as Goat RAT and DurianBeacon are being used in attacks."
+        },
+        {
+          "v": "DurianBeacon",
+          "q": "other malware strains developed in Go such as Goat RAT and DurianBeacon are being used in attacks."
+        },
+        {
+          "v": "AndarLoader",
+          "q": "Behaviors performed by the threat actor using AndarLoader include installing Mimikatz in the"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Behaviors performed by the threat actor using AndarLoader include installing Mimikatz in the"
+        },
+        {
+          "v": "Dotfuscator",
+          "q": "It is notable for being obfuscated using the Dotfuscator tool."
+        },
+        {
+          "v": "Ngrok",
+          "q": "the fact that Ngrok was installed for RDP connection during the attack process shows how the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear phishing",
+          "q": "the Andariel threat group usually employs spear phishing, watering hole, and"
+        },
+        {
+          "v": "watering hole",
+          "q": "the Andariel threat group usually employs spear phishing, watering hole, and"
+        },
+        {
+          "v": "supply chain attacks",
+          "q": "supply chain attacks. Additionally, there are cases where the group abuses central management solutions during"
+        },
+        {
+          "v": "Log4Shell vulnerability attacks",
+          "q": "launched Log4Shell vulnerability attacks to install TigerRat."
+        },
+        {
+          "v": "self-deletion",
+          "q": "the Batch script used in the self-deletion process is similar to the one used in NukeSped"
+        },
+        {
+          "v": "evade network detection",
+          "q": "process to evade network detection."
+        },
+        {
+          "v": "RDP connection",
+          "q": "the fact that Ngrok was installed for RDP connection during the attack process shows how the"
+        },
+        {
+          "v": "stealing account credentials",
+          "q": "installed malware strains responsible for stealing account credentials during the attack process"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "9.2.18.450",
+          "q": "INNORIX Agent 9.2.18.450 or earlier, which were advised to be applied with the"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "Andariel's New Attack Activities"
+    },
+    "hedges": [
+      "The method of initial compromise has not yet been identified, but logs of the mshta.exe process installing TigerRat",
+      "Because the initial distribution case could not be identified directly, this post will conduct an analysis based on the malware strains used in the attacks.",
+      "it is not certain whether the attacks are vulnerability attacks or if Innorix Agent was simply abused.",
+      "Note that because the malware strains and C&C servers identified in past attack cases were not used in the aforementioned attacks, there is no direct connection.",
+      "While not confirmed, many logs showed circumstances of spear phishing attacks.",
+      "The system in question is thought to be the threat actor’s test PC",
+      "the attacks might be related to each other",
+      "At the time of analysis, the C&C server was unavailable for access and the part in charge of the actual features could not be investigated"
+    ]
   }
 }

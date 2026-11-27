@@ -261,156 +261,31 @@
     "sha1": "ad56b26eb6144508b32feb518a73707a99247c03",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T11:59:19Z",
+    "read_at": "2026-11-27T12:36:08Z",
     "model": "haiku",
-    "summary": "Cisco Talos reports that the legitimate, validly signed CCleaner 5.33 installer, hosted on the CCleaner download servers and released August 15, 2017, carried a multi-stage malware payload (CCBkdr). The payload used a time-based domain generation algorithm (DGA) fallback for command and control. Talos says an attacker likely compromised the build or development environment, though an insider is also possible. Talos registered and sinkholed the DGA domains. Users were advised to update to version 5.34 or restore from a clean backup.",
-    "kind": "incident",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "attacker",
-          "q": "attacker compromised a portion of their development or build environment and leveraged that",
-          "by": "Cisco Talos (report author)"
-        },
-        {
-          "v": "insider",
-          "q": "It is also possible that an insider with access to either the development or build",
-          "by": "Cisco Talos (report author)"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "software vendor",
-          "q": "Talos recently observed a case where the download servers used by software vendor to distribute"
-        }
-      ],
+      "actors": [],
+      "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "August 15, 2017",
-          "q": "version (5.33) was released on August 15, 2017",
-          "what": "CCleaner 5.33, the version containing the malicious payload, was released"
-        },
-        {
-          "v": "September 1, 2017",
-          "q": "on September 1, 2017 it appears that the DNS activity shifted",
-          "what": "DNS activity shifted to the September DGA domain after the server was taken down"
-        },
-        {
-          "v": "September 11, 2017",
-          "q": "September 11, 2017.",
-          "what": "The malicious CCleaner version was still hosted on the download server"
-        },
-        {
-          "v": "September 12, 2017",
-          "q": "On September 12, 2017 version 5.34 was",
-          "what": "CCleaner 5.34 was released"
-        },
-        {
-          "v": "September 13, 2017",
-          "q": "On September 13, 2017 while conducting customer beta testing of our new exploit detection",
-          "what": "Cisco Talos identified the CCleaner 5.33 installer triggering its malware protection systems"
-        },
-        {
-          "v": "July 2017",
-          "q": "Looking at the DNS related activity observed by Cisco Umbrella for the month of July 2017",
-          "what": "DNS activity for the DGA domain was very low before CCleaner 5.33 was released"
-        }
-      ],
-      "tools": [
-        {
-          "v": "ClamAV",
-          "q": "The following ClamAV signatures have been released to detect this threat: 6336251, 6336252."
-        },
-        {
-          "v": "Advanced Malware Protection",
-          "q": "Advanced Malware Protection (AMP) is ideally suited to prevent the execution of the malware"
-        },
-        {
-          "v": "Umbrella",
-          "q": "Umbrella, our secure internet gateway (SIG), blocks users from connecting to malicious domains"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "Supply chain attacks",
-          "q": "Supply chain attacks are a very effective way to distribute malicious software into target"
-        },
-        {
-          "v": "valid digital signature",
-          "q": "signed using a valid digital signature issued to Piriform"
-        },
-        {
-          "v": "Domain Generation Algorithm",
-          "q": "described in the section 'Domain Generation Algorithm"
-        },
-        {
-          "v": "sinkholed",
-          "q": "registered and sinkholed them to prevent attackers from being able to use them for malicious"
-        },
-        {
-          "v": "evade automated",
-          "q": "likely an attempt to evade automated"
-        },
-        {
-          "v": "evade detection",
-          "q": "was modi ed in an attempt to evade detection"
-        },
-        {
-          "v": "not an administrator",
-          "q": "If the current user running the malicious process is not an administrator the malware will"
-        },
-        {
-          "v": "self-signed SSL",
-          "q": "ignore all security errors as the server currently returns a self-signed SSL"
-        },
-        {
-          "v": "Host header",
-          "q": "The HTTPS communications leverage a hardcoded HTTP Host header that is set to"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "2 billion",
-          "q": "CCleaner boasted over 2 billion total download"
-        },
-        {
-          "v": "5 million",
-          "q": "is reportedly adding new users at a rate of 5 million a week"
-        },
-        {
-          "v": "601 seconds",
-          "q": "delays for 601 seconds before continuing operations"
-        },
-        {
-          "v": "1/64",
-          "q": "The detections are at 1/64 at the time of this writing"
-        },
-        {
-          "v": "6336251",
-          "q": "The following ClamAV signatures have been released to detect this threat: 6336251, 6336252."
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "CCBkdr"
-    },
-    "hedges": [
-      "Talos says it is likely that an external attacker compromised part of the development or build environment.",
-      "Talos says an insider with access to the development or build environments could also have included the code, intentionally or through a compromised account.",
-      "Talos says the valid signature may indicate a larger issue, and that only the incident response process can give the scope.",
-      "Talos says it is unknown what the purpose of one DGA-computed IP address is, as the malware does not appear to use it.",
-      "Talos says the hardcoded legitimate-looking Host header could make dynamic analysis more difficult."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:09:52Z",
-      "ok": false,
-      "note": "dates[1]: The text says the DNS activity shifted on September 1 because the time-based DGA moved from the August domain to the September domain. The server take",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:09:52Z",
+        "ok": false,
+        "note": "dates[1]: The text says the DNS activity shifted on September 1 because the time-based DGA moved from the August domain to the September domain. The server take",
+        "by": "auditor"
+      }
+    ]
   }
 }

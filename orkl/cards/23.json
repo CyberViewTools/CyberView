@@ -345,105 +345,101 @@
   },
   "23e4d67dd76553f78f40f1a30aef6bd88ca7200e": {
     "sha1": "23e4d67dd76553f78f40f1a30aef6bd88ca7200e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:57:45Z",
+    "read_at": "2026-11-27T12:34:45Z",
     "model": "haiku",
-    "summary": "FireEye Mandiant report on FIN7 describing two new tools. BOOSTWRITE is an in-memory dropper that decrypts and loads payloads, including CARBANAK and RDFSNIFFER. RDFSNIFFER hooks Win32 API functions to tamper with NCR Aloha Command Center client sessions. A signed BOOSTWRITE sample, signed with a certificate from MANGO ENTERPRISE LIMITED, showed a 0/68 detection ratio on VirusTotal. The report presents these as FIN7 evasion and evolution.",
+    "summary": "Mandiant (FireEye) report on tools used by the criminal group FIN7: BOOSTWRITE, an in-memory dropper that decrypts and loads payloads and was seen signed with a valid code signing certificate, and RDFSNIFFER, a payload that hooks sessions of the NCR Aloha Command Center Client. The report also covers detection-evasion observations and signature-based hunting ideas.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "FIN7",
-          "q": "The first of FIN7's new tools is BOOSTWRITE",
-          "by": "FireEye Mandiant (the report's authors)"
+          "q": "evidence FIN7 is continuing to evolve in response to security enhancements",
+          "by": "FireEye (the report's authors)"
         }
       ],
       "sectors": [
         {
-          "v": "payment card",
-          "q": "administration toolset designed to manage and troubleshoot systems within payment card"
+          "v": "payment card processing sectors",
+          "q": "designed to manage and troubleshoot systems within payment card processing sectors running the Command Center Agent"
         }
       ],
       "countries": [],
       "dates": [
         {
-          "v": "2019-05-20",
+          "v": "2019-05-20 09:50:55",
           "q": "2019-05-20 09:50:55",
           "what": "PE compilation time of the signed BOOSTWRITE sample"
         },
         {
-          "v": "2019-05-22",
+          "v": "2019-05-22 00:00 UTC",
           "q": "2019-05-22 00:00 UTC",
-          "what": "start of the validity window of the signing certificate"
+          "what": "start of the validity window of the certificate used to sign BOOSTWRITE"
         },
         {
-          "v": "2020-05-21",
-          "q": "2020-05-21 23:59 UTC",
-          "what": "end of the validity window of the signing certificate"
+          "v": "2016",
+          "q": "since at least 2016’s “Chains of Distrust” research",
+          "what": "earlier research on abuse of code signing"
         }
       ],
       "tools": [
         {
           "v": "BOOSTWRITE",
-          "q": "BOOSTWRITE is a loader crafted to be launched via abuse of the DLL search order of"
+          "q": "The first of FIN7's new tools is BOOSTWRITE"
         },
         {
           "v": "RDFSNIFFER",
-          "q": "RDFSNIFFER, a payload of BOOSTWRITE, appears to have been developed to tamper with"
+          "q": "RDFSNIFFER is a newly-identified tool recovered by Mandiant investigators"
         },
         {
           "v": "CARBANAK",
-          "q": "payloads: CARBANAK and RDFSNIFFER."
+          "q": "While CARBANAK has been thoroughly analyzed and"
         },
         {
           "v": "BABYMETAL",
-          "q": "CARBANAK and BABYMETAL, the introduction of new tools and techniques provides further"
-        },
-        {
-          "v": "NCR Aloha Command Center",
-          "q": "NCR Aloha Command Center is a remote"
+          "q": "CARBANAK and BABYMETAL, the introduction of new tools"
         }
       ],
       "techniques": [
         {
-          "v": "DLL search order",
-          "q": "BOOSTWRITE is a loader crafted to be launched via abuse of the DLL search order of"
-        },
-        {
-          "v": "ChaCha stream cipher",
-          "q": "BOOSTWRITE encodes its payloads using a ChaCha stream cipher with a"
-        },
-        {
           "v": "in-memory-only dropper",
-          "q": "The first of FIN7's new tools is BOOSTWRITE – an in-memory-only dropper that decrypts"
+          "q": "BOOSTWRITE – an in-memory-only dropper that decrypts"
+        },
+        {
+          "v": "abuse of the DLL search order",
+          "q": "crafted to be launched via abuse of the DLL search order of"
         },
         {
           "v": "signed by a valid CA",
           "q": "BOOSTWRITE variants were observed signed by a valid CA"
         },
         {
-          "v": "hooks several Win32 API functions",
-          "q": "RDFSNIFFER hooks several Win32 API functions intended to enable it to tamper with"
+          "v": "ChaCha stream cipher",
+          "q": "The encryption algorithm uses the ChaCha stream cipher with a 256-bit key"
         },
         {
-          "v": "loads into the same process",
-          "q": "RDFSNIFFER loads into the same process as the legitimate RDFClient by"
+          "v": "hooks several Win32 API",
+          "q": "When the RDFSNIFFER module is loaded by BOOSTWRITE it hooks several Win32 API"
         },
         {
-          "v": "upload, download, execute",
-          "q": "This backdoor allows an attacker to upload, download, execute and/or"
+          "v": "backdoor component",
+          "q": "This module also contains a backdoor component that enables it to inject commands into an"
         },
         {
-          "v": "change the user's last input time",
-          "q": "Used to change the user's last input time (to avoid timed lock outs)"
+          "v": "deleting local files",
+          "q": "RDFSNIFFER has the capability of deleting local files"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "0/68",
-          "q": "the signed BOOSTWRITE sample had a 0/68 detection ratio when it was"
+          "v": "0/68 detection ratio",
+          "q": "Notably, the signed BOOSTWRITE sample had a 0/68 detection ratio when it was"
+        },
+        {
+          "v": "two payload DLLs",
+          "q": "The malware decrypts and loads two payload DLLs."
         }
       ]
     },
@@ -452,18 +448,19 @@
       "name": "BOOSTWRITE"
     },
     "hedges": [
-      "Report says RDFSNIFFER appears to have been developed to tamper with the NCR Aloha Command Center client.",
-      "Report says the operators may be actively altering BOOSTWRITE to avoid traditional detection.",
-      "Report says VirusTotal detection performance often isn't a comprehensive representation of full security stacks.",
-      "Report says that barring law enforcement action it expects at least a portion of the FIN7 actors to keep conducting campaigns."
+      "RDFSNIFFER appears to have been developed to tamper with NCR Corporation's Aloha Command Center client.",
+      "The operators may be actively altering this malware to avoid traditional detection mechanisms.",
+      "VirusTotal detection performance often isn't a comprehensive representation of encountering full security technology stacks that implement detection-in-depth.",
+      "Barring any further law enforcement actions, we expect at least a portion of the actors who comprise the FIN7 criminal organization to continue conducting campaigns.",
+      "The group's judicious use of resources, potentially limiting their use of these certificates to cases where they have been attempting to bypass particular security controls."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:09:40Z",
-      "ok": false,
-      "note": "summary: States flatly that RDFSNIFFER hooks Win32 API functions to tamper with NCR Aloha Command Center client sessions. The text says the hooks are 'intended ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:09:40Z",
+        "ok": false,
+        "note": "summary: States flatly that RDFSNIFFER hooks Win32 API functions to tamper with NCR Aloha Command Center client sessions. The text says the hooks are 'intended ",
+        "by": "auditor"
+      }
+    ]
   }
 }

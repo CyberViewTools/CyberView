@@ -626,23 +626,23 @@
   },
   "d598c8d247c607deb7db2e3ab72f2d22124f604c": {
     "sha1": "d598c8d247c607deb7db2e3ab72f2d22124f604c",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T11:51:13Z",
+    "read_at": "2026-11-27T12:34:39Z",
     "model": "haiku",
-    "summary": "A US-CERT write-up, as reported by The Register, describes Hoplight, a spyware bundle of nine files used by the Lazarus Group (also called Hidden Cobra). Seven files are proxy applications that disguise traffic, and the ninth connects to a control server to upload stolen files, using a public SSL certificate that appears to belong to Naver. The group is thought to be controlled by the North Korean government and typically uses spear-phishing. US-CERT recommends basic measures such as regular patching and up-to-date malware protection.",
+    "summary": "Article reporting a US-CERT write-up on Hoplight, a nine-file spyware kit used by the Lazarus Group (also called Hidden Cobra), which the article says is thought to be controlled by the North Korean government. Seven of the files are proxy layers that generate fake TLS handshakes, and the final file uses a certificate said to be from Naver to connect to a control server and upload pilfered files. The article says the group typically uses spear-phishing and notes its credited 2014 attack on Sony Pictures. US-CERT recommends routine patching and up-to-date malware protection.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Lazarus Group",
           "q": "The Lazarus Group hacking operation, thought to be controlled by the North Korean",
-          "by": "US-CERT, as reported by The Register"
+          "by": "the report itself (The Register article, which says the group is thought to be state-controlled)"
         },
         {
           "v": "Hidden Cobra",
           "q": "Lazarus/Hidden Cobra was also famously credited with pulling off the high-profile 2014",
-          "by": "US-CERT, as reported by The Register"
+          "by": "the report itself"
         }
       ],
       "sectors": [],
@@ -656,12 +656,12 @@
         {
           "v": "10 Apr 2019",
           "q": "Shaun Nichols in San Francisco Wed 10 Apr 2019 // 23:36 UTC",
-          "what": "Article reporting the US-CERT warning about Hoplight was published"
+          "what": "Article on the US-CERT Hoplight write-up published"
         },
         {
           "v": "2014",
           "q": "Lazarus/Hidden Cobra was also famously credited with pulling off the high-profile 2014",
-          "what": "Sony Pictures attack credited to the Lazarus/Hidden Cobra group"
+          "what": "Attack on Sony Pictures that the group is credited with"
         }
       ],
       "tools": [
@@ -676,12 +676,20 @@
           "q": "The group has typically used spear-phishing techniques to get its malware onto foreign"
         },
         {
-          "v": "proxy applications",
+          "v": "proxy layers masking traffic",
           "q": "Seven of these files are proxy applications that mask traffic between the malware and the"
         },
         {
-          "v": "public SSL cert",
-          "q": "The certificate looks to be a public SSL cert from Naver, a Korean search engine and service provider."
+          "v": "fake TLS handshake sessions",
+          "q": "The proxies have the ability to generate fake TLS handshake sessions using valid public"
+        },
+        {
+          "v": "remote control and spyware activities",
+          "q": "remote control and spyware activities. This includes the ability to read and write local files,"
+        },
+        {
+          "v": "uploading pilfered files",
+          "q": "uploading pilfered files from infected machine."
         }
       ],
       "cves": [],
@@ -691,7 +699,7 @@
           "q": "Known as \"Hoplight,\" the malware is a collection of nine files, though most of those are"
         },
         {
-          "v": "Seven of these files",
+          "v": "Seven",
           "q": "Seven of these files are proxy applications that mask traffic between the malware and the"
         }
       ]
@@ -701,16 +709,17 @@
       "name": "Hoplight"
     },
     "hedges": [
-      "The Lazarus Group is thought to be controlled by the North Korean government.",
-      "The certificate looks to be a public SSL cert from Naver."
+      "thought to be controlled by the North Korean government",
+      "The certificate looks to be a public SSL cert from Naver, a Korean search engine and service provider.",
+      "Lazarus/Hidden Cobra was also famously credited with pulling off the high-profile 2014 attack on Sony Pictures."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T12:10:00Z",
-      "ok": false,
-      "note": "actors[1].by: The quote about the 2014 Sony attack says Lazarus/Hidden Cobra was 'famously credited' and does not say who credited it. The text does not tie thi",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T12:10:00Z",
+        "ok": false,
+        "note": "actors[1].by: The quote about the 2014 Sony attack says Lazarus/Hidden Cobra was 'famously credited' and does not say who credited it. The text does not tie thi",
+        "by": "auditor"
+      }
+    ]
   }
 }

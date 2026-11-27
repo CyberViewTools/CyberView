@@ -55,7 +55,7 @@
   },
   "7cb22a620b8d7f6bb40d570c5b7e4188e316a682": {
     "sha1": "7cb22a620b8d7f6bb40d570c5b7e4188e316a682",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T12:23:43Z",
     "model": "haiku",
@@ -199,6 +199,14 @@
       "The report says the /scan module could not be verified because the request returned nothing at the time of analysis.",
       "The report believes the /scan module will scan IP ranges and spread via exploits, based on previous DreamBus variants.",
       "Zero VirusTotal detections were recorded only at the time of the analysis."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T12:33:50Z",
+      "ok": false,
+      "note": "techniques[10]: The report only says 'We believe this module will scan ... and spread via exploits as seen in previous DreamBus variants', about the unverified ",
+      "by": "auditor"
+    }
   }
 }

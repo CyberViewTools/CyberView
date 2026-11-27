@@ -1,0 +1,37 @@
+{
+  "title": "Luxembourg labour minister says an attack on ADEM's JobBoard exposed JobBoard user email addresses",
+  "category": "incident",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-27",
+  "date_note": "Tageblatt (published 27 November) reports the minister's answers to parliamentary questions; the attack was found on 14 October per the article, and no earlier public statement was read.",
+  "time_basis": "published",
+  "org": "ADEM (Luxembourg employment agency)",
+  "sector": "Government / public employment",
+  "country": "Luxembourg",
+  "place": "Luxembourg",
+  "pin_type": "agency",
+  "geo_basis": "agency: ADEM is Luxembourg's employment agency; pin at the country's capital",
+  "lat": 49.61,
+  "lng": 6.13,
+  "attack": ["Local File Inclusion", "remote code execution"],
+  "products": ["ADEM JobBoard"],
+  "cves": [],
+  "tags": ["data-breach"],
+  "summary": "Tageblatt reports that Labour Minister Marc Spautz, answering parliamentary questions, said an attacker exploited a Local File Inclusion flaw in the ADEM JobBoard application, first on 17 September, and that it was found on 14 October. The attacker obtained technical information, service credentials and logs. ADEM treats at most 69 JobBoard user email addresses as exposed. A GovCERT report found no spread to other ADEM systems.",
+  "plain": "Luxembourg's labour minister says an attacker used a flaw in the old ADEM JobBoard; at most 69 user email addresses are treated as exposed. No spread to other ADEM systems was found.",
+  "exec": "Luxembourg's employment agency says at most 69 email addresses were exposed through an outdated application; the minister calls outdated applications a security risk.",
+  "action": "As Minister Spautz says ADEM plans: regular security tests, updating outdated applications and tighter control of technical credentials; online services are now reached only via MyGuichet.lu with strong authentication.",
+  "sources": [
+    {"name": "tageblatt.lu", "url": "https://www.tageblatt.lu/Nachrichten/ADEM-Bis-zu-69-Nutzer-Adressen-bei-Cyberangriff-offengelegt-115053.html", "published": "2026-11-27", "read_depth": "full"}
+  ],
+  "evidence": [
+    {"url": "https://www.tageblatt.lu/Nachrichten/ADEM-Bis-zu-69-Nutzer-Adressen-bei-Cyberangriff-offengelegt-115053.html", "quote": "ADEM: Bis zu 69 Nutzer-Adressen bei Cyberangriff offengelegt"}
+  ],
+  "validation": {"state": "single_source", "checked_at": "2026-11-27T17:01:44Z", "note": "Only tageblatt.lu was read; it relays the minister's answers. The parliamentary answers themselves were not read."},
+  "source_tier": "established",
+  "sectors": {"values": ["government-facilities"], "basis": "stated"},
+  "surface": {"value": "web-app", "basis": "stated"},
+  "first_seen": "2026-11-27T17:01:44Z",
+  "updated_at": "2026-11-27T17:01:44Z"
+}

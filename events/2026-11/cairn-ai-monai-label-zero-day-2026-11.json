@@ -13,10 +13,10 @@
   "lng": 105,
   "geo_basis": "region named by the source: mainly East Asian educational institutions outside China; no pin for a single organisation",
   "pin_type": "region",
-  "summary": "Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API, BleepingComputer reports. They gained root on a server. Amazon attributes it to a Chinese-nexus actor with moderate confidence. Minuto da Segurança (25 Nov) says advisory GHSA-qc22-rmgc-vg94 is fixed in version 0.8.6.",
+  "summary": "Amazon found AI agents running the Cairn tool exploiting a path traversal zero-day in MONAI Label, a medical imaging application, within 11 minutes of mapping its API, BleepingComputer reports. They gained root on a server. Amazon attributes it to a Chinese-nexus actor with moderate confidence. ThaiCERT (27 Nov) says MONAI Label 0.8.5 and earlier are affected and 0.8.6 or later fixes it.",
   "plain": "Amazon says attackers used an autonomous AI tool to find and exploit a flaw in medical imaging software and take over a server. Minuto da Segurança says a fixed version, 0.8.6, exists.",
   "exec": "AI agents were reported to go from mapping an API to exploiting a flaw in 11 minutes; organisations running MONAI Label should follow the maintainers' advisory.",
-  "action": "Minuto da Segurança advises updating MONAI Label to 0.8.6 after testing, not exposing the server directly to the internet, and checking exposed instances for unexpected files such as sitecustomize.py.",
+  "action": "ThaiCERT advises upgrading MONAI Label to 0.8.6 or later, enabling authentication, not exposing the server directly to the internet, and reviewing logs for requests to the /datastore/image and /datastore/label endpoints.",
   "tags": [
     "zero-day",
     "ai-enabled"
@@ -71,16 +71,22 @@
       "name": "Minuto da Segurança",
       "url": "https://minutodaseguranca.blog.br/monai-label-falha-agentes-ia-correcao/",
       "published": "2026-11-25"
+    },
+    {
+      "name": "ThaiCERT",
+      "url": "https://www.thaicert.or.th/2026/11/27/%e0%b9%81%e0%b8%88%e0%b9%89%e0%b8%87%e0%b9%80%e0%b8%95%e0%b8%b7%e0%b8%ad%e0%b8%99%e0%b8%8a%e0%b9%88%e0%b8%ad%e0%b8%87%e0%b9%82%e0%b8%ab%e0%b8%a7%e0%b9%88%e0%b9%83%e0%b8%99-monai-label-cve-2026-133968/",
+      "published": "2026-11-27",
+      "read_depth": "full"
     }
   ],
   "source_tier": "primary",
   "validation": {
     "state": "corroborated",
-    "note": "BleepingComputer and The Record (independent publishers) both relay Amazon's finding of a path traversal zero-day in a medical imaging application, used against a university and then a second one, since fixed by the maintainers. The Record does not name MONAI Label or give a confidence level; both rely on Amazon, whose own report was not read. Follow-up 23 Nov: Startup Fortune (22 Nov, relaying SecurityWeek and The Hacker News) says the fix is merged in source but not in a release, against BleepingComputer's 18 November security update; the GitHub advisory returned 403 and Amazon's post did not load, so both accounts are given. Follow-up 23 Nov: ENISA's EUVD record (read via its API) gives CVE-2026-133968, affected versions before 0.8.6, and says exploitation in the wild from September 2026. Follow-up 24 Nov: The Hacker News (24 Nov) says CISA added CVE-2026-133968 to KEV on 23 November; it states no fix or affected versions. Follow-up 25 Nov: Minuto da Segurança (25 Nov, relaying Amazon) says GHSA-qc22-rmgc-vg94 is fixed in 0.8.6 and notes no confirmed Brazilian victims; it gives no CVE.",
-    "checked_at": "2026-11-25T12:12:46Z"
+    "note": "BleepingComputer and The Record (independent publishers) both relay Amazon's finding of a path traversal zero-day in a medical imaging application, used against a university and then a second one, since fixed by the maintainers. The Record does not name MONAI Label or give a confidence level; both rely on Amazon, whose own report was not read. Follow-up 23 Nov: Startup Fortune (22 Nov, relaying SecurityWeek and The Hacker News) says the fix is merged in source but not in a release, against BleepingComputer's 18 November security update; the GitHub advisory returned 403 and Amazon's post did not load, so both accounts are given. Follow-up 23 Nov: ENISA's EUVD record (read via its API) gives CVE-2026-133968, affected versions before 0.8.6, and says exploitation in the wild from September 2026. Follow-up 24 Nov: The Hacker News (24 Nov) says CISA added CVE-2026-133968 to KEV on 23 November; it states no fix or affected versions. Follow-up 25 Nov: Minuto da Segurança (25 Nov, relaying Amazon) says GHSA-qc22-rmgc-vg94 is fixed in 0.8.6 and notes no confirmed Brazilian victims; it gives no CVE. Follow-up 27 Nov: ThaiCERT (27 Nov, read) gives CVE-2026-133968, affected 0.8.5 and earlier, fixed 0.8.6 or later, and says CISA added it to KEV.",
+    "checked_at": "2026-11-27T18:41:51Z"
   },
   "first_seen": "2026-11-20T17:43:41Z",
-  "updated_at": "2026-11-25T16:40:28Z",
+  "updated_at": "2026-11-27T18:41:51Z",
   "review": {
     "state": "corrected",
     "at": "2026-11-25T16:40:29Z",

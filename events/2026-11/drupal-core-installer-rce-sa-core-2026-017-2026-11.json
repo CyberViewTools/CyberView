@@ -5,7 +5,8 @@
   ],
   "impact": "",
   "tags": [
-    "rce"
+    "rce",
+    "poc-public"
   ],
   "cves": [
     "CVE-2026-132165",
@@ -31,7 +32,7 @@
     "Drupal core"
   ],
   "first_seen": "2026-11-19T00:14:29Z",
-  "updated_at": "2026-11-26T16:08:23Z",
+  "updated_at": "2026-11-27T13:43:52Z",
   "time_basis": "published",
   "category": "vuln",
   "date": "2026-11-18",
@@ -47,7 +48,7 @@
   "severity": 3,
   "status": "official",
   "source_tier": "primary",
-  "summary": "Drupal rates SA-CORE-2026-017, CVE-2026-132165, highly critical: under specific conditions install.php can be used to reinstall a site, leading to takeover or code execution. Drupal's advisory update says it received a report of exploitation on live sites as early as 2026-11-19 19:00 UTC. Fixed in 10.6.22, 11.3.22 and 11.4.13. CISA added CVE-2026-132165 to its known-exploited catalog on 24 November. Help Net Security (25 November) says Searchlight Cyber published a write-up on 24 November.",
+  "summary": "Drupal rates SA-CORE-2026-017, CVE-2026-132165, highly critical: under specific conditions install.php can be used to reinstall a site, leading to takeover or code execution. Drupal's advisory update says it received a report of exploitation on live sites as early as 2026-11-19 19:00 UTC. Fixed in 10.6.22, 11.3.22 and 11.4.13. CISA added CVE-2026-132165 to its known-exploited catalog on 24 November. NSFOCUS (27 November) says a proof of concept is publicly available.",
   "plain": "Drupal fixed a serious flaw that can let an attacker take over a website by re-running its installer, and says it has a report of the flaw being exploited on live sites.",
   "exec": "Drupal has a report that this highly critical flaw was exploited on live sites; Drupal sites on older versions need its fix.",
   "action": "Drupal advises updating core to 10.6.22, 11.3.22 or 11.4.13; if you cannot upgrade, secure the installer as Drupal describes. Older branches are end of life, per Drupal.",
@@ -71,6 +72,11 @@
       "name": "Help Net Security",
       "url": "https://www.helpnetsecurity.com/2026/11/25/drupal-installer-rce-cve-2026-132165-exploited/",
       "published": "2026-11-25"
+    },
+    {
+      "name": "NSFOCUS",
+      "url": "https://nsfocusglobal.com/drupal-remote-code-execution-vulnerability-cve-2026-132165-advisory/",
+      "published": "2026-11-27"
     }
   ],
   "report": {

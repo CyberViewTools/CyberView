@@ -840,5 +840,113 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "3418dd81fa8625f5538ea3f9f53f8194b50e4b17": {
+    "sha1": "3418dd81fa8625f5538ea3f9f53f8194b50e4b17",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:48Z",
+    "model": "haiku",
+    "summary": "Intezer's April 2021 blog post describes a new Rocke Group malware variant. The report calls Rocke Group a Chinese-based cryptojacking actor active since 2018. The malware spreads via saved SSH keys and weak passwords, exploits Jenkins, Redis and ActiveMQ flaws, hides itself and persists, and runs a Monero XMRig miner. The post also gives detection steps and advertises Intezer products.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Rocke Group",
+          "q": "Rocke Group is a Chinese-based threat actor most known for running cryptojacking malware",
+          "by": "Intezer (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Chinese",
+          "q": "Rocke Group is a Chinese-based threat actor"
+        }
+      ],
+      "dates": [
+        {
+          "v": "April 6, 2021",
+          "q": "April 6, 2021",
+          "what": "Report publication date"
+        },
+        {
+          "v": "2018",
+          "q": "The group has been active since 2018",
+          "what": "Rocke Group active since"
+        },
+        {
+          "v": "2019",
+          "q": "In 2019, we reported that Rocke Group",
+          "what": "Vendor reported Rocke Group competing with Pacha Group for cryptomining"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Monero cryptominer",
+          "q": "Once the victim is infected a Monero cryptominer is executed."
+        },
+        {
+          "v": "XMRig Miner",
+          "q": "One of the compressed modules is an XMRig Miner."
+        },
+        {
+          "v": "UPX",
+          "q": "packed with a modified UPX which can make it harder for some Endpoint Detection and Response (EDR) products"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "public SSH keys",
+          "q": "The malware then uses public SSH keys, which are saved in a file"
+        },
+        {
+          "v": "brute forcing",
+          "q": "Next, the malware attempts to spread in the network by brute forcing SSH, Redis and Jenkins with weak passwords."
+        },
+        {
+          "v": "evasion technique",
+          "q": "To hide the activity of the malware, it implements an evasion technique"
+        },
+        {
+          "v": "scheduled task",
+          "q": "The malware archives persistence using a scheduled task in crontab and bashrc files."
+        },
+        {
+          "v": "DNS over HTTPs (DoH)",
+          "q": "This campaign uses DNS over HTTPs (DoH) to obtain the address of the C2 server"
+        },
+        {
+          "v": "Masquerading (T1036)",
+          "q": "MITRE Technique: Masquerading (T1036)"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-1000861",
+          "q": "vulnerabilities for executing code (CVE-2018-1000861, CVE-2019-1003000) and for"
+        },
+        {
+          "v": "CVE-2019-1003000",
+          "q": "vulnerabilities for executing code (CVE-2018-1000861, CVE-2019-1003000) and for"
+        },
+        {
+          "v": "CVE-2016-3088",
+          "q": "it tries to do an arbitrary file writing (CVE-2016-3088)."
+        }
+      ],
+      "figures": [
+        {
+          "v": "30%",
+          "q": "dropper kills any other process that uses more than 30% of the cloud server"
+        },
+        {
+          "v": "61131",
+          "q": "Check if there is a service that listens on port 61131 for incoming connections."
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": []
   }
 }

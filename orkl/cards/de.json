@@ -148,5 +148,174 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "dea766dd933827008dbafa083e0e49353ca752bf": {
+    "sha1": "dea766dd933827008dbafa083e0e49353ca752bf",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:35Z",
+    "model": "haiku",
+    "summary": "Juniper Threat Labs report (April 2021) on the Sysrv botnet. It spread across Windows and Linux systems by exploiting multiple known vulnerabilities, with the goal of installing a Monero cryptominer (XMRig). Activity surged on March 4, 2021. The worm and miner were merged into one binary, and the loader script was seen adding SSH keys to infected systems for persistence. Exploited software named in the report includes Mongo-Express, XXL-Job, Supervisor, Saltstack, ThinkPHP and Drupal. The report also lists IP, hash and download indicators, which are not recorded here.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actor",
+          "q": "The threat actor’s objective is to install a Monero cryptominer.",
+          "by": "Juniper Threat Labs (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "From Shodan, we’ve enumerated 35 public IPs with this service, almost all of them in China."
+        }
+      ],
+      "dates": [
+        {
+          "v": "April 8, 2021",
+          "q": "April 8, 2021",
+          "what": "Date the report was published"
+        },
+        {
+          "v": "December of 2020",
+          "q": "Juniper Threat Labs monitored the Sysrv botnet since December of 2020.",
+          "what": "Juniper began monitoring the Sysrv botnet"
+        },
+        {
+          "v": "February 2021",
+          "q": "In February 2021, we saw the botnet remove the minexmr mining pool and only use f2pool.",
+          "what": "Botnet dropped one mining pool and used only f2pool"
+        },
+        {
+          "v": "March 4, 2021",
+          "q": "On March 4, 2021, Juniper Threat Labs identified a surge of activity of the Sysrv botnet.",
+          "what": "Juniper identified a surge of Sysrv activity"
+        }
+      ],
+      "tools": [
+        {
+          "v": "sysrv",
+          "q": "It also used multi-component malware wherein the worm binary is installed as sysrv"
+        },
+        {
+          "v": "network01",
+          "q": "the miner binary as network01"
+        },
+        {
+          "v": "XMRig",
+          "q": "The miner is a version of XMRig which mines for the following mining pools:"
+        },
+        {
+          "v": "ldr.sh",
+          "q": "The name of the script is either ldr.sh or ldr.ps1."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "scanning vulnerable systems",
+          "q": "The cryptomining worm spreads by scanning vulnerable systems on the internet."
+        },
+        {
+          "v": "add ssh keys to infected system",
+          "q": "We also identified new development in the loader script where it tries to add ssh keys to infected system."
+        },
+        {
+          "v": "brute force",
+          "q": "Brute force Jenkins"
+        },
+        {
+          "v": "cryptomining",
+          "q": "The second component of the payload is a cryptominer that mines Monero."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-10758",
+          "q": "Mongo Express RCE (CVE-2019-10758)"
+        },
+        {
+          "v": "CVE-2017-11610",
+          "q": "XML-RPC (CVE-2017-11610)"
+        },
+        {
+          "v": "CVE-2020-16846",
+          "q": "CVE-2020-16846 (Saltstack RCE)"
+        },
+        {
+          "v": "CVE-2018-7600",
+          "q": "CVE-2018-7600 (Drupal Ajax RCE)"
+        },
+        {
+          "v": "CVE-2021-3129",
+          "q": "CVE-2021-3129"
+        },
+        {
+          "v": "CVE-2020-14882",
+          "q": "CVE-2020-14882"
+        },
+        {
+          "v": "CVE-2019-3396",
+          "q": "CVE-2019-3396"
+        },
+        {
+          "v": "CVE-2019-0193",
+          "q": "CVE-2019-0193"
+        },
+        {
+          "v": "CVE-2017-9841",
+          "q": "CVE-2017-9841"
+        },
+        {
+          "v": "CVE-2017-12149",
+          "q": "CVE-2017-12149"
+        },
+        {
+          "v": "CVE-2019-7238",
+          "q": "CVE-2019-7238"
+        }
+      ],
+      "figures": [
+        {
+          "v": "six vulnerabilities",
+          "q": "we identified six vulnerabilities actively exploited with a payload"
+        },
+        {
+          "v": "847 public IPs",
+          "q": "there are 847 public IPs in"
+        },
+        {
+          "v": "35 public IPs",
+          "q": "we’ve enumerated 35 public IPs with this service"
+        },
+        {
+          "v": "more than 35,000 public IPs",
+          "q": "there are more than 35,000 public IPs"
+        },
+        {
+          "v": "port 8081",
+          "q": "The attack we’ve seen so far specifically targets port 8081"
+        },
+        {
+          "v": "8 XMR (~1,700 USD)",
+          "q": "this wallet gained 8 XMR (~1,700 USD)"
+        },
+        {
+          "v": "10XMR",
+          "q": "this wallet gained 10XMR from December 2020 to March 2021 (2,000 USD)"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Sysrv"
+    },
+    "hedges": [
+      "Our researchers believe the threat actor will have better control and management with a single binary as the binary is constantly updated.",
+      "We believe this is a way for the threat actor to gain more persistence and may lead to more sophisticated attacks.",
+      "The threat actor’s criteria appears to be top mining pools with high reward rates.",
+      "It appears to be ramping up recently at a pace of 1 XMR per 2 days."
+    ]
   }
 }

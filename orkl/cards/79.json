@@ -154,25 +154,265 @@
   },
   "792c873b87d42b65631625e67338e7a1f53e94a2": {
     "sha1": "792c873b87d42b65631625e67338e7a1f53e94a2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:31:01Z",
+    "read_at": "2026-11-27T14:35:42Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Anomali Threat Research describes China-based cryptomining actor Rocke changing its command-and-control in 2019, moving from Pastebin to self-hosted subdomains and then to DNS TXT records with a DNS-over-HTTPS fallback. Its LSD malware gained exploitation of ActiveMQ via CVE-2016-3088, uses SSH and Redis brute forcing and stored SSH keys, and keeps persistence through cron jobs and systemd. The report warns the group could switch to more damaging payloads such as ransomware or a RAT.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "China-based cryptomining threat actor Rocke has changed its Command and Control (C2) infrastructure away",
+          "by": "Anomali Threat Research"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "China-based cryptomining threat actor Rocke has changed its Command and Control (C2) infrastructure away"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2018-08",
+          "q": "first reported by Cisco Talos[1] in August 2018",
+          "what": "Group first reported by Cisco Talos"
+        },
+        {
+          "v": "summer of 2019",
+          "q": "from Pastebin to a self-hosted solution during the summer of 2019.",
+          "what": "Rocke moved its C2 from Pastebin to a self-hosted solution"
+        },
+        {
+          "v": "April 2019",
+          "q": "In April 2019, Confluence users posted reports on Atlassian’s support forum reporting",
+          "what": "Confluence users reported cryptominer infections"
+        },
+        {
+          "v": "July 29, 2019",
+          "q": "A spike of over 20,000 queries per hour were recorded on July 29, 2019.",
+          "what": "Spike in queries to the lsd subdomain"
+        },
+        {
+          "v": "September 17, 2019",
+          "q": "The “update” subdomain was still being requested until September 17, 2019, when it",
+          "what": "Queries for the update subdomain stopped"
+        },
+        {
+          "v": "September 2019",
+          "q": "In September 2019, the actor moved away from",
+          "what": "Actor moved from dedicated servers to DNS text records"
+        },
+        {
+          "v": "2025-12-18",
+          "q": "Published: 2025-12-18 · Archived: 2026-04-05 22:46:18 UTC",
+          "what": "Report published by Anomali Threat Research"
+        }
+      ],
+      "tools": [
+        {
+          "v": "LSD",
+          "q": "The “LSD” malware has had some updates since it was first reported on by Anomali Threat Research team in"
+        },
+        {
+          "v": "Monero miner",
+          "q": "The LSD malware installs a Monero miner."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploit known vulnerabilities",
+          "q": "Rocke is using exploit known vulnerabilities in public"
+        },
+        {
+          "v": "stored ssh keys",
+          "q": "The LSD malware uses stored ssh keys on the infected"
+        },
+        {
+          "v": "brute forcing",
+          "q": "via credential brute forcing."
+        },
+        {
+          "v": "cron job persistence",
+          "q": "Cron job entries are created to ensure a new version of"
+        },
+        {
+          "v": "systemd service",
+          "q": "The LSD malware creates a systemd service to ensure it"
+        },
+        {
+          "v": "timestamp altered",
+          "q": "Files created have their timestamp altered to appear"
+        },
+        {
+          "v": "filenames similar to common",
+          "q": "The LSD malware use filenames similar to common"
+        },
+        {
+          "v": "DNS TXT records",
+          "q": "The LSD uses HTTP/HTTPs and DNS TXT records for"
+        },
+        {
+          "v": "DNS-over-HTTPs",
+          "q": "or DNS-over-HTTPs (DoH) if the DNS query fails."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2016-3088",
+          "q": "vulnerable to CVE-2016-3088."
+        },
+        {
+          "v": "CVE-2019-3396",
+          "q": "Rocke utilized CVE-2019-3396, which was disclosed the month before, to install its"
+        }
+      ],
+      "figures": [
+        {
+          "v": "20,000 queries per hour",
+          "q": "A spike of over 20,000 queries per hour were recorded on July 29, 2019."
+        },
+        {
+          "v": "75 requests per hour",
+          "q": "around 75 requests per hour."
+        },
+        {
+          "v": "port 65533",
+          "q": "listening on localhost and TCP port 65533."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "LSD"
+    },
+    "hedges": [
+      "As of writing, the report says Rocke is primarily known for cryptomining.",
+      "The report says it is possible the actor could change its payload to something more damaging, such as ransomware or a RAT.",
+      "The report says it is expected the group will continue to exploit more vulnerabilities to mine additional cryptocurrencies."
+    ]
+  },
+  "798281d4a0716e29d71f447aaf819f6b222ae8ea": {
+    "sha1": "798281d4a0716e29d71f447aaf819f6b222ae8ea",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:41Z",
+    "model": "haiku",
+    "summary": "A CrowdStrike Falcon OverWatch blog post dated 17 September 2021 describes four defense evasion techniques seen in 2021 intrusions: signed binary proxy execution via Rundll32, DLL search order hijacking, DLL injection, and BITS jobs. It links two intrusions to the eCrime actor WIZARD SPIDER, which used Cobalt Strike and attempted Ryuk ransomware deployment. It also describes a likely China-nexus adversary that tried to install PlugX. The post says OverWatch identified more than 60 defense evasion techniques and subtechniques in interactive intrusions during 2021.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "WIZARD SPIDER",
+          "q": "WIZARD SPIDER performed host reconnaissance activity under the",
+          "by": "CrowdStrike Falcon OverWatch team (report author)"
+        },
+        {
+          "v": "China-nexus adversary",
+          "q": "OverWatch exposed the use of this technique by a likely China-nexus adversary. The",
+          "by": "CrowdStrike Falcon OverWatch team (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "by a likely China-nexus adversary. The"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2021-09-17",
+          "q": "Falcon OverWatch Team September 17, 2021",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2021",
+          "q": "team has seen in use by adversaries in 2021.",
+          "what": "Techniques described were observed in use by adversaries during this year"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Rundll32",
+          "q": "This example looks at the use of Rundll32."
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "being used to write a Cobalt Strike DLL to disk, allowing"
+        },
+        {
+          "v": "PlugX",
+          "q": "They also attempted to install a PlugX implant using DLL search order hijacking"
+        },
+        {
+          "v": "Ryuk",
+          "q": "OverWatch observed WIZARD SPIDER using BITS jobs during an attempted Ryuk"
+        },
+        {
+          "v": "Certutil",
+          "q": "The adversary used Certutil commands to"
+        },
+        {
+          "v": "BITSadmin",
+          "q": "WIZARD SPIDER scheduled the operation using BITSadmin, the tool"
+        },
+        {
+          "v": "WMI",
+          "q": "WMI is often seen during hunting operations as a way"
+        },
+        {
+          "v": "WMIC",
+          "q": "anomalous administrative tool usage, one of which was WMIC."
+        },
+        {
+          "v": "Process Monitor",
+          "q": "legitimate software such as Process Monitor to"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "signed binary proxy execution",
+          "q": "Signed binary proxy execution leverages legitimate built-in utilities to execute malicious"
+        },
+        {
+          "v": "DLL search order hijacking",
+          "q": "DLL Search Order Hijacking takes advantage of how Windows handles DLLs and the search"
+        },
+        {
+          "v": "DLL injection",
+          "q": "The DLL injection technique enables adversaries to inject code from a malicious DLL and"
+        },
+        {
+          "v": "BITS jobs",
+          "q": "BITS jobs are used to schedule these file transfers and can be used by adversaries to"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "four popular defense evasion techniques",
+          "q": "This blog explores four popular defense evasion techniques that the Falcon OverWatch"
+        },
+        {
+          "v": "more than 60 defense evasion techniques",
+          "q": "So far this year, OverWatch has identified more than 60 defense evasion techniques"
+        },
+        {
+          "v": "up to 90 days",
+          "q": "Hunt regularly, as BITS jobs can be scheduled for up to 90 days, and adversaries"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "The China-nexus adversary is described as 'likely', so the attribution is hedged.",
+      "The report says it is likely that WIZARD SPIDER intended to infect the domain controllers.",
+      "The report notes that any one of the DLL injection indicators on its own may have been dismissed.",
+      "The report says it appeared WIZARD SPIDER focused on a distinct set of objectives in the BITS intrusion."
+    ]
   }
 }

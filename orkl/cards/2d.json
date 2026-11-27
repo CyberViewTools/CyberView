@@ -180,5 +180,147 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "2d0f47c4f874e65006dddfac074d7c8732b12ca9": {
+    "sha1": "2d0f47c4f874e65006dddfac074d7c8732b12ca9",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:45:40Z",
+    "model": "haiku",
+    "summary": "Check Point Research reports SpeakUp, a backdoor Trojan for Linux servers observed in early 2019. It exploits known remote code execution flaws in six Linux distributions, including ThinkPHP (CVE-2018-20062), JBoss, Oracle WebLogic, Hadoop YARN and ActiveMQ bugs, and targets servers in East Asia and Latin America, including AWS-hosted machines. It spreads within and beyond infected subnets, serves XMRig cryptominers, and uses cron for persistence. The author is reported as linked to a developer called Zettabit / zettabithf on a hacker forum, but the report says the actor's identity is…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Zettabit",
+          "q": "Check Point Researchers were able to correlate SpeakUp’s author with malware developer under the name of Zettabit.",
+          "by": "Check Point Research (the report)"
+        },
+        {
+          "v": "zettabithf",
+          "q": "This project was created by a user called zettabithf which is linked to a user with the same name in Hack Forums.",
+          "by": "Check Point Research (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "China",
+          "q": "observed targeting a machine in China"
+        }
+      ],
+      "dates": [
+        {
+          "v": "February 4, 2019",
+          "q": "February 4, 2019",
+          "what": "date of the Check Point Research article"
+        },
+        {
+          "v": "January 9 2019",
+          "q": "on January 9 2019",
+          "what": "sample first submitted to VirusTotal"
+        },
+        {
+          "v": "January 14, 2019",
+          "q": "observed targeting a machine in China on January 14, 2019",
+          "what": "sample observed targeting a machine in China"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SpeakUp",
+          "q": "Dubbed ‘SpeakUp’, the new Trojan exploits known vulnerabilities in six different Linux distributions."
+        },
+        {
+          "v": "liteHTTP",
+          "q": "While liteHTTP is a C# based bot which targets Windows clients, its modules are somewhat similar to our SpeakUp Trojan."
+        },
+        {
+          "v": "XMRig",
+          "q": "At the moment SpeakUp serves XMRig miners to its listening infected servers."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "command injection",
+          "q": "uses command injection techniques"
+        },
+        {
+          "v": "remote code execution",
+          "q": "Try to exploit the following Remote Code Execution vulnerabilities in the targeted servers:"
+        },
+        {
+          "v": "Brute-force",
+          "q": "Brute-force using a pre-defined list of usernames and passwords in an attempt to login to Admin panels."
+        },
+        {
+          "v": "cron",
+          "q": "SpeakUp’s persistence is ensured by using cron and an internal mutex to ensure only one instance remains alive"
+        },
+        {
+          "v": "salted base64",
+          "q": "encrypted with the salted base64"
+        },
+        {
+          "v": "User-Agents",
+          "q": "SpeakUp defines three User-Agents that the infected machine must"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-20062",
+          "q": "a remote command execution vulnerability in ThinkPHP (CVE-2018-20062) is sent to the targeted server"
+        },
+        {
+          "v": "CVE-2012-0874",
+          "q": "CVE-2012-0874: JBoss Enterprise Application Platform Multiple Security Bypass Vulnerabilities"
+        },
+        {
+          "v": "CVE-2010-1871",
+          "q": "CVE-2010-1871: JBoss Seam Framework remote code execution"
+        },
+        {
+          "v": "CVE-2017-10271",
+          "q": "CVE-2017-10271: Oracle WebLogic wls-wsat Component Deserialization RCE"
+        },
+        {
+          "v": "CVE-2018-2894",
+          "q": "CVE-2018-2894: Vulnerability in the Oracle WebLogic Server component of Oracle Fusion Middleware"
+        },
+        {
+          "v": "CVE-2016-3088",
+          "q": "CVE-2016-3088: Apache ActiveMQ Fileserver File Upload Remote Code Execution Vulnerability"
+        }
+      ],
+      "figures": [
+        {
+          "v": "six different Linux distributions",
+          "q": "exploits known vulnerabilities in six different Linux distributions."
+        },
+        {
+          "v": "~107 Monero coins",
+          "q": "total of ~107 Monero coins."
+        },
+        {
+          "v": "1.0.4",
+          "q": "(Currently 1.0.4)"
+        },
+        {
+          "v": "three User-Agents",
+          "q": "SpeakUp defines three User-Agents that the infected machine must"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SpeakUp"
+    },
+    "hedges": [
+      "the exact identity of the threat actor behind this new attack is still unconfirmed",
+      "The description and the file name are the only elements that link SpeakUp to the Ibus framework; the content has no similarities whatsoever.",
+      "This may imply a connection between SpeakUp to East Asia.",
+      "The Hack Forums profile may imply the author of SpeakUp backdoor is Russian speaking, as many of the comments are written in this language.",
+      "The unique User-Agent strings are described as a possible path to the identity of the threat actor behind this campaign."
+    ]
   }
 }

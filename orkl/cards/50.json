@@ -402,5 +402,97 @@
       "note": "summary: It says the C&C server 'sat on a hacked MikroTik router' as fact. The text only says the C&C IP belongs to a MikroTik router, and that researchers beli",
       "by": "auditor"
     }
+  },
+  "508e860c1d92ba3cc84f075ec204b8be1f8d67de": {
+    "sha1": "508e860c1d92ba3cc84f075ec204b8be1f8d67de",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:45:49Z",
+    "model": "haiku",
+    "summary": "A March 24, 2021 blog post by a security assessor describing an incident found during a client assessment. Malware on a cluster of reverse gateways collected personal data (PII) from decoded HTTPS traffic. It was split across a modified NFS-ganesha server, a patched kernel and a hooked Go application. It used NFS-based covert channels for command and control, a self-destruct command and a process watchdog. The author says there is probably a Windows component with an EDR bypass. The attackers remain unidentified, the initial access vector is withheld, and further posts are promised.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "obnoxious attacker",
+          "q": "this is just an obnoxious attacker doing what obnoxious attacker do",
+          "by": "the report author"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "March 24, 2021",
+          "q": "March 24, 2021",
+          "what": "Blog post describing the incident was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NFS-ganesha",
+          "q": "The alternate file was compiled from NFS-ganesha sources, but modified"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "covert channel",
+          "q": "The second covert channel is used for command and control, and is implemented in the VFS"
+        },
+        {
+          "v": "self-destruct",
+          "q": "Lets go back to that awful Saturday I triggered the self-destruct."
+        },
+        {
+          "v": "watchdog",
+          "q": "It appears the malware has a watchdog that iterates over all"
+        },
+        {
+          "v": "EDR bypass",
+          "q": "Definitly, including what we believe is an EDR bypass. Still working on it."
+        },
+        {
+          "v": "obfuscate string",
+          "q": "Reversing malware you always find some feeble attempt to obfuscate string using XOR or"
+        },
+        {
+          "v": "kernel got patched",
+          "q": "How the kernel got patched? and why not the golang app?"
+        },
+        {
+          "v": "hook random GO binaries",
+          "q": "Before this case I did not think there was any nice way to hook random GO binaries, this"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "10 minutes",
+          "q": "Thet restarted daily, staggered one by one, with about 10 minutes"
+        },
+        {
+          "v": "3 month gap",
+          "q": "We noticed a 3 month gap about 5 month ago, and it corresponded with the guy moving the"
+        },
+        {
+          "v": "three months",
+          "q": "It looks as if it took the attackers three months to gain access back into"
+        },
+        {
+          "v": "2 stages",
+          "q": "It had 2 stages: the first"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The author has 'a pretty good idea' of the initial access vector but cannot publish it yet.",
+      "The author suggests the attackers probably have no zero-day for this platform, but says 'Maybe' when asked about zero-days.",
+      "The author says there is no clue who the attackers are and will not make anything beyond unsubstantiated guesses.",
+      "The author thinks the self-destruct signal probably reached the attackers through a different piece of malware.",
+      "The author says the EDR bypass is what they believe it is, and the Windows malware analysis is still in progress.",
+      "The binaries were reconstructed from memory dumps, so they are not in their original form.",
+      "The three-month gap is described as something that looks as if the attackers took that long to regain access."
+    ]
   }
 }

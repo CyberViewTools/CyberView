@@ -494,25 +494,247 @@
   },
   "ef7db37bc011fea9853410fdc8938b9a0b789300": {
     "sha1": "ef7db37bc011fea9853410fdc8938b9a0b789300",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:31:10Z",
+    "read_at": "2026-11-27T14:35:36Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Jamf Threat Labs reports social-engineering attacks on individuals in the crypto industry, in line with an FBI public service announcement of September 3, 2024. Jamf attributes the activity to DPRK (North Korea). Lures use fake recruiter profiles on professional networking platforms and a zipped C# coding challenge whose project build runs hidden scripts. These fetch a second-stage backdoor and infostealer that Jamf tracks as Thiefbucket, also known as Rustdoor. The malware can persist via cron, zshrc and LaunchAgent, and can show a password prompt styled as Visual Studio.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "DPRK",
+          "q": "Democratic People's Republic of Korea (\"DPRK\" aka North Korea)",
+          "by": "FBI public service announcement"
+        },
+        {
+          "v": "DPRK",
+          "q": "Jamf Threat Labs has always attributed this malware to the ongoing DPRK activity",
+          "by": "Jamf Threat Labs"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Crypto Industry",
+          "q": "warn those in the Crypto Industry that the Democratic"
+        },
+        {
+          "v": "decentralized finance",
+          "q": "a tech company that specializes in decentralized finance."
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "Democratic People's Republic of Korea (\"DPRK\" aka North Korea)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 3, 2024",
+          "q": "On September 3, 2024 the Federal Bureau of Investigations (FBI) released a public service announcement set to",
+          "what": "FBI released a public service announcement warning the crypto industry about DPRK targeting"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Thiefbucket",
+          "q": "tracked by Jamf Threat Labs under the name Thiefbucket but is known to some as"
+        },
+        {
+          "v": "Rustdoor",
+          "q": "known to some as “Rustdoor.”"
+        },
+        {
+          "v": "zsh_env",
+          "q": "The other stage two malware that is downloaded (zsh_env) simply sets up persistence via the .zshrc configuration."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "fake recruiter contact via social media",
+          "q": "The majority of attacks begin with an individual reaching out over a social media platform"
+        },
+        {
+          "v": "malicious coding challenge sent as a pre-employment test",
+          "q": "the recruiter sent a zipped coding challenge to the target"
+        },
+        {
+          "v": "hidden build-time scripts in project files",
+          "q": "buried within two separate csproj files are malicious bash commands"
+        },
+        {
+          "v": "infostealer file grabbing",
+          "q": "This setting will cause the malware to act as an infostealer by grabbing a number of different files"
+        },
+        {
+          "v": "fake Visual Studio password prompt",
+          "q": "prompt the user for their password using a prompt window that is tailored to look as though it"
+        },
+        {
+          "v": "persistence via LaunchAgent, cron, dock and zshrc profiles",
+          "q": "Ability to persist via LaunchAgent, cron, dock, and zshrc profiles."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "0 followers",
+          "q": "Note at the bottom of the image that this profile has 0 followers"
+        },
+        {
+          "v": "two executables",
+          "q": "two executables were downloaded and executed by the fake coding challenge"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Thiefbucket"
+    },
+    "hedges": [
+      "Jamf is unfamiliar with a website named in the recruiter's profile and cannot speak to its legitimacy.",
+      "Jamf continues to investigate the differences in features, but at a first glance they appear to be minor.",
+      "Jamf says the zsh persistence technique likely ends up being reliable, given the target probably uses a Terminal.",
+      "Attribution to DPRK is based on the stage one techniques and the manner in which the malware is delivered to targets."
+    ]
+  },
+  "ef1a1866916d19c941f558a4426fdc1d3f56a30a": {
+    "sha1": "ef1a1866916d19c941f558a4426fdc1d3f56a30a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:41:59Z",
+    "model": "haiku",
+    "summary": "Microsoft analyses XorDdos, a Linux trojan that spreads mainly through SSH brute-force attacks and builds botnets for DDoS attacks. It uses daemon processes, XOR-encoded strings, process name spoofing, an optional kernel rootkit and cron/init persistence to stay hidden. The report says activity rose 254% over six months and that devices infected with XorDdos were later infected with the Tsunami backdoor and the XMRig coin miner.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2014",
+          "q": "First discovered in 2014 by the",
+          "what": "XorDdos first discovered by a research group"
+        },
+        {
+          "v": "August 2021",
+          "q": "the 2.4 Tbps DDoS attack Microsoft mitigated in August 2021",
+          "what": "A 2.4 Tbps DDoS attack mitigated by Microsoft"
+        },
+        {
+          "v": "2022-01-25",
+          "q": "First submission in 2022-01-25 05:32:10 UTC",
+          "what": "First submission of the analysed XorDdos payload"
+        },
+        {
+          "v": "May 19, 2022",
+          "q": "May 19, 2022",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XorDdos",
+          "q": "a Linux trojan called XorDdos"
+        },
+        {
+          "v": "Tsunami",
+          "q": "the Tsunami backdoor, which further deploys the XMRig coin miner"
+        },
+        {
+          "v": "XMRig",
+          "q": "the Tsunami backdoor, which further deploys the XMRig coin miner"
+        },
+        {
+          "v": "rooty",
+          "q": "an open-source project called rooty"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "SSH brute force",
+          "q": "XorDdos propagates primarily via SSH brute force"
+        },
+        {
+          "v": "daemon processes",
+          "q": "uses daemon processes, as detailed below, to break process tree-based analysis"
+        },
+        {
+          "v": "XOR-based encryption",
+          "q": "XorDdos uses XOR-based encryption to obfuscate data"
+        },
+        {
+          "v": "spoof its process name",
+          "q": "To spoof its process name, XorDdos zeroes out all argument buffers"
+        },
+        {
+          "v": "kernel rootkit",
+          "q": "Some XorDdos samples install a kernel rootkit"
+        },
+        {
+          "v": "hide its processes and ports",
+          "q": "The malware tries to hide its processes and ports using its kernel rootkit component"
+        },
+        {
+          "v": "persistence mechanisms",
+          "q": "XorDdos uses various persistence mechanisms to support different Linux distributions"
+        },
+        {
+          "v": "overwriting sensitive files with a null byte",
+          "q": "XorDdos hides malicious activities from analysis by overwriting sensitive files with a null byte"
+        },
+        {
+          "v": "hash-based malicious file lookup",
+          "q": "evading rule-based detection mechanisms and hash-based malicious file lookup"
+        },
+        {
+          "v": "DDoS attacks",
+          "q": "Using a botnet to perform DDoS attacks can potentially create significant disruptions"
+        },
+        {
+          "v": "twice the number of processors",
+          "q": "with twice the number of processors found on the device"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "254%",
+          "q": "we observed a 254% increase in activity from a Linux trojan called XorDdos"
+        },
+        {
+          "v": "six months",
+          "q": "In the last six months, we observed a 254% increase"
+        },
+        {
+          "v": "2.4 Tbps",
+          "q": "the 2.4 Tbps DDoS attack Microsoft mitigated in August 2021"
+        },
+        {
+          "v": "thousands of servers",
+          "q": "thousands of servers until finding a match on a target Linux device"
+        },
+        {
+          "v": "65,535",
+          "q": "sends crafted packets 65,535 times to perform a DDoS attack"
+        },
+        {
+          "v": "611.22 KB (625889 bytes)",
+          "q": "File size: 611.22 KB (625889 bytes)"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "XorDdos"
+    },
+    "hedges": [
+      "Only some XorDdos samples install a kernel rootkit.",
+      "The report did not observe XorDdos directly installing secondary payloads such as Tsunami; it is possible the trojan is used as a vector for follow-on activity.",
+      "The rootkit code was likely inspired by an open-source project, based on debug symbols found in the rootkit.",
+      "Findings are based on the payload samples analysed for this research.",
+      "Deletion of installed services appears to fail due to a code flaw, according to the report."
+    ]
   }
 }

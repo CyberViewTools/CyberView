@@ -664,5 +664,124 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "692a073ffd78ce84e263d1c4c47477ffd34c2ca4": {
+    "sha1": "692a073ffd78ce84e263d1c4c47477ffd34c2ca4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:39:23Z",
+    "model": "haiku",
+    "summary": "Cybereason Nocturnus reports an active worm campaign exploiting CVE-2019-10149 in Exim mail servers, first discovered June 5, 2019. The worm gains remote command execution, scans for further vulnerable servers, sets up cron-based persistence and an SSH backdoor, and installs a Monero cryptominer. Payloads are hosted on Tor hidden services reached through translation services, and icon files disguise a zip archive. The report says more than 3.5 million servers are at risk and cites Shodan for 3,683,029 vulnerable Exim servers.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "first hacker group",
+          "q": "The first hacker group began pushing exploits from a C2 server located on the clear web.",
+          "by": "the report (Cybereason Nocturnus)"
+        },
+        {
+          "v": "different attacker",
+          "q": "A second round of attacks by a different attacker have been analyzed by the Nocturnus team.",
+          "by": "the report (Cybereason Nocturnus)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "email servers",
+          "q": "The target of this attack, exim servers, run almost 57% of the Internet's email servers."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "June 13, 2019",
+          "q": "June 13, 2019 | 6 minute read",
+          "what": "Report published"
+        },
+        {
+          "v": "June 5",
+          "q": "CVE-2019-10149, which was first discovered on June 5, is now being used as the",
+          "what": "Vulnerability first discovered"
+        },
+        {
+          "v": "June 9, 2019",
+          "q": "described by Freddie Leeman on June 9, 2019.",
+          "what": "Initial wave of attacks described"
+        }
+      ],
+      "tools": [
+        {
+          "v": "exim servers",
+          "q": "The target of this attack, exim servers, run almost 57% of the Internet's email servers."
+        },
+        {
+          "v": "Monero cryptocurrency miners",
+          "q": "The Cybereason team has discovered Monero cryptocurrency miners installed on Linux"
+        },
+        {
+          "v": "busybox",
+          "q": "The script downloads busybox’s rm, crond, and crontab implementations."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "remote command execution",
+          "q": "This attack leverages a week-old vulnerability to gain remote command execution"
+        },
+        {
+          "v": "cryptojacking",
+          "q": "Monero cryptocurrency miners installed on Linux servers running vulnerable versions of Exim: aka, cryptojacking."
+        },
+        {
+          "v": "worm capabilities",
+          "q": "uses worm capabilities to spread to other vulnerable systems."
+        },
+        {
+          "v": "cron job",
+          "q": "a cron job is generated to continuously download an updated"
+        },
+        {
+          "v": "SSH backdoor access",
+          "q": "Delete the authorized key used for SSH backdoor access."
+        },
+        {
+          "v": "hidden services on the TOR network",
+          "q": "They used hidden services on the TOR network to host their payloads and"
+        },
+        {
+          "v": "deceiving windows icon files",
+          "q": "created deceiving windows icon files in an attempt to throw off researchers and even system"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-10149",
+          "q": "CVE-2019-10149, which was first discovered on June 5, is now being used as the"
+        }
+      ],
+      "figures": [
+        {
+          "v": "3.5 million",
+          "q": "Currently, more than 3.5 million servers are at risk worldwide."
+        },
+        {
+          "v": "57%",
+          "q": "run almost 57% of the Internet's email servers."
+        },
+        {
+          "v": "3,683,029",
+          "q": "(3,683,029 across the globe according to"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2019-10149"
+    },
+    "hedges": [
+      "Some of the things that the script is doing are not documented in this blog post.",
+      "This blog has the highlights of what the script is doing to provide a fast reference guide to this attack."
+    ]
   }
 }

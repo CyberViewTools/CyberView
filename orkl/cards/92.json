@@ -235,25 +235,127 @@
   },
   "92fa8220e78baab4a4e686370664a5d9071678e4": {
     "sha1": "92fa8220e78baab4a4e686370664a5d9071678e4",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:33:53Z",
+    "read_at": "2026-11-27T14:35:34Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Palo Alto Networks' Unit 42 describes P2PInfect, a self-replicating peer-to-peer worm written in Rust. It infects Redis instances on Linux and Windows by exploiting CVE-2022-0543 in the Lua sandbox. Unit 42 first found it on July 11, 2023 in its HoneyCloud honeypots. The worm uses a P2P network to distribute follow-up payloads and scanners. Unit 42 found no definitive evidence of cryptomining, but notes that the network's auto-update features could let its operators push more capable payloads. It recommends monitoring Redis instances and updating them.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "July 11, 2023",
+          "q": "On July 11, 2023, Unit 42 cloud researchers discovered a new peer-to-peer (P2P) worm we call P2PInfect.",
+          "what": "Unit 42 discovered the worm"
+        },
+        {
+          "v": "2023-07-19",
+          "q": "Published: 2023-07-19 · Archived: 2026-04-05 17:59:18 UTC",
+          "what": "Unit 42 article published"
+        },
+        {
+          "v": "March 2022",
+          "q": "The first exploit for this particular vulnerability was published in March 2022",
+          "what": "First public exploit for CVE-2022-0543 published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Muhstik botnet",
+          "q": "infected Redis instance to the Muhstik botnet."
+        },
+        {
+          "v": "Redigo",
+          "q": "This vulnerability has been used in previous attacks such as Muhstik and Redigo"
+        },
+        {
+          "v": "PowerShell script",
+          "q": "We also identified a PowerShell script designed to establish and maintain communication between the"
+        },
+        {
+          "v": "Monitor process",
+          "q": "The Monitor process fulfills the role of maintaining the functionality of the P2PInfect running processes"
+        },
+        {
+          "v": "miner",
+          "q": "The following samples were downloaded from the P2P network in plaintext: linux, miner, winminer and windows"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Lua sandbox escape",
+          "q": "The worm infects vulnerable Redis instances using the Lua sandbox escape vulnerability, CVE-2022-0543."
+        },
+        {
+          "v": "P2P network",
+          "q": "P2PInfect uses its P2P network to distribute follow-up malware to newly infected systems or cloud instances."
+        },
+        {
+          "v": "variable port",
+          "q": "We found that the P2P port was variable – a design choice that allows the"
+        },
+        {
+          "v": "packed with UPX",
+          "q": "Some of the initial payload P2PInfect samples delivered to exploited systems were packed with UPX"
+        },
+        {
+          "v": "obfuscate",
+          "q": "The PowerShell script leveraged the encode command to obfuscate the"
+        },
+        {
+          "v": "local system firewall",
+          "q": "One of the first operations performed by the PowerShell command is to configure the local system firewall to"
+        },
+        {
+          "v": "delete itself",
+          "q": "The initial P2PInfect dropper will attempt to delete itself"
+        },
+        {
+          "v": "exposed Redis hosts",
+          "q": "The scanning operation focuses on exposed Redis hosts."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-0543",
+          "q": "The worm infects vulnerable Redis instances using the Lua sandbox escape vulnerability, CVE-2022-0543."
+        }
+      ],
+      "figures": [
+        {
+          "v": "307,000",
+          "q": "have identified over 307,000 unique Redis systems communicating publicly over the last two weeks, of which 934"
+        },
+        {
+          "v": "934",
+          "q": "of which 934"
+        },
+        {
+          "v": "10.0",
+          "q": "it is rated in the NIST National Vulnerability Database with a Critical CVSS score of 10.0."
+        },
+        {
+          "v": "60102",
+          "q": "Peer-to-peer port is 60102 – this port is variable, as not all nodes use the same port"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text, value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "P2PInfect"
+    },
+    "hedges": [
+      "While not all of the 307,000 Redis instances will be vulnerable, the worm will still target these systems and attempt the compromise.",
+      "Unit 42 believes this P2PInfect campaign is the first stage of a potentially more capable attack that leverages this robust P2P command and control (C2) network.",
+      "researchers did not find any definitive evidence that cryptomining operations ever occurred.",
+      "the P2PInfect worm appears to be associated with a different malicious network, not known to be related to the Muhstik botnet.",
+      "there are no known links to other threat actor groups known for targeting Redis and deploying worms",
+      "While it is not clear why this scanning operation is taking place, as there are no known exploitation attempts by P2PInfect to compromise SSH",
+      "However, we don't have an estimate yet of how many nodes exist or how fast the malicious network associated with P2PInfect is growing.",
+      "its scope is not fully known at this point"
+    ]
   }
 }

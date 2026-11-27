@@ -553,25 +553,196 @@
   },
   "bd9dc8be4650cc39996d9aa5c9f65305dd8ab7de": {
     "sha1": "bd9dc8be4650cc39996d9aa5c9f65305dd8ab7de",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:35:17Z",
+    "read_at": "2026-11-27T14:36:43Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "The Splunk Threat Research Team analyses Linux.Gomir, a Linux backdoor that Symantec named in May 2024 as a Linux version of the GoBear backdoor. The report covers beacon ID generation, persistence through a cron entry and a systemd service, and encrypted command-and-control communication. The GoBear family was used in a February 2024 supply chain campaign by the Kimsuky group, as reported by S2W and ASEC. The C2 server was already down when the report was written. The report also provides detection content and Atomic Red Team tests.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Kimsuky group",
+          "q": "conducted by the Kimsuky group.",
+          "by": "S2W researchers and Ahnlab Security Intelligence Center (ASEC), as reported in the Splunk Threat Research Team blog"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2024-07-15",
+          "q": "Published: 2024-07-15 · Archived: 2026-04-05 14:34:58 UTC",
+          "what": "Splunk Threat Research Team published the Linux.Gomir analysis blog"
+        },
+        {
+          "v": "February 2024",
+          "q": "In February 2024, S2W researchers and Ahnlab Security Intelligence Center (ASEC) reported a notable campaign",
+          "what": "S2W and ASEC reported a Kimsuky campaign that exploited supply chain vulnerabilities and embedded the GoBear backdoor"
+        },
+        {
+          "v": "May 2024",
+          "q": "In May 2024, Symantec released a blog uncovering a Linux version of the GoBear backdoor, which they named",
+          "what": "Symantec published a blog on a Linux version of GoBear, named Linux.Gomir"
+        }
+      ],
+      "tools": [
+        {
+          "v": "GoBear",
+          "q": "embedded with malicious payloads, including the GoBear backdoor."
+        },
+        {
+          "v": "Linux.Gomir",
+          "q": "In this blog, the Splunk Threat Research Team provides an analysis of Linux.Gomir to help security analysts, blue"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "supply chain vulnerabilities",
+          "q": "This APT group exploited supply chain vulnerabilities in various software"
+        },
+        {
+          "v": "Non-Standard Encoding (T1132.002)",
+          "q": "Non-Standard Encoding (T1132.002)"
+        },
+        {
+          "v": "Scheduled Task/Job: Cron (T1053.003)",
+          "q": "Scheduled Task/Job: Cron (T1053.003)"
+        },
+        {
+          "v": "Install Services",
+          "q": "Install Services"
+        },
+        {
+          "v": "Command and Control (TA0011)",
+          "q": "Command and Control (TA0011)"
+        },
+        {
+          "v": "generates a unique beacon or infection ID",
+          "q": "Linux.Gomir generates a unique beacon or infection ID for the compromised host, which it then sends to its"
+        },
+        {
+          "v": "reverse proxy client",
+          "q": "Start reverse proxy client"
+        },
+        {
+          "v": "Execute shell commands",
+          "q": "Execute shell commands"
+        },
+        {
+          "v": "decrypts incoming commands",
+          "q": "This function decrypts incoming commands from the server and"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "first 10 characters",
+          "q": "This beacon ID is created by taking the first 10 characters of the MD5 hash"
+        },
+        {
+          "v": "three backdoor operations",
+          "q": "The shown code snippet pertains to three backdoor operations that retrieve the process's"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Linux.Gomir"
+    },
+    "hedges": [
+      "The C2 server was already down at the time of writing, so its live behaviour was not observed.",
+      "Cron and service detections may also fire on legitimate administrator or automation activity, so filtering is needed to reduce false positives."
+    ]
+  },
+  "bd01bb4be480a9e35f0a0912e497ec006daf6e05": {
+    "sha1": "bd01bb4be480a9e35f0a0912e497ec006daf6e05",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:42:44Z",
+    "model": "haiku",
+    "summary": "Sansec threat research report dated 24 November 2021 on CronRAT, a Linux remote access trojan. It hides in cron scheduled tasks set for February 31st, is undetected by other security vendors, and enables server-side Magecart card skimming on eCommerce servers. It also describes a disguised control channel and a second RAT, NginRAT, which is covered separately.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "eCommerce",
+          "q": "At this time of year we typically see a surge in eCommerce attacks and new malware."
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 24, 2021",
+          "q": "November 24, 2021",
+          "what": "Date of the Sansec report naming CronRAT"
+        },
+        {
+          "v": "February 31st",
+          "q": "they are scheduled to run on February 31st.",
+          "what": "Date on which the CronRAT scheduled tasks are set to run"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CronRAT",
+          "q": "CronRAT malware hides behind February 31st"
+        },
+        {
+          "v": "eComscan",
+          "q": "we had to rewrite part of our eComscan algorithm in order to detect it."
+        },
+        {
+          "v": "NginRAT",
+          "q": "Read about NginRAT."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Fileless execution",
+          "q": "Fileless execution"
+        },
+        {
+          "v": "Timing modulation",
+          "q": "Timing modulation"
+        },
+        {
+          "v": "Anti-tampering checksums",
+          "q": "Anti-tampering checksums"
+        },
+        {
+          "v": "Controlled via binary, obfuscated protocol",
+          "q": "Controlled via binary, obfuscated protocol"
+        },
+        {
+          "v": "Payload hidden in legitimate CRON scheduled task names",
+          "q": "Payload hidden in legitimate CRON scheduled task names"
+        },
+        {
+          "v": "server-side Magecart data theft",
+          "q": "CronRAT enables server-side Magecart data theft which bypasses browser-"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "several cases",
+          "q": "Sansec has studied several cases where the presence of CronRAT lead to the injection of payment skimmers"
+        },
+        {
+          "v": "multiple online stores",
+          "q": "Sansec found CronRAT to be present on multiple online stores, among them a nation’s"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "CronRAT"
+    },
+    "hedges": [
+      "The report says CronRAT is likely to stay undetected on critical infrastructure for the coming months.",
+      "The report marks a host identifier as presumed ('presumably'), so that step is not confirmed."
+    ]
   }
 }

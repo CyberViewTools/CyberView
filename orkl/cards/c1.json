@@ -274,9 +274,143 @@
   },
   "c1f9f0d2d77c1b350c7195058c7ac7bed463957a": {
     "sha1": "c1f9f0d2d77c1b350c7195058c7ac7bed463957a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:39:32Z",
+    "model": "haiku",
+    "summary": "Intezer report (28 July 2020) on the Ngrok Mining Botnet, which abuses publicly exposed Docker API servers in cloud environments. Attackers use a container escape to reach the host, then schedule scanner and downloader scripts via cron. The report also describes Doki, a previously undetected Linux backdoor that finds its C2 through a Dogecoin-blockchain-based domain generation method. Doki was first uploaded to VirusTotal on January 14, 2020.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Ngrok Mining Botnet",
+          "q": "Ngrok Mining Botnet is an active campaign targeting exposed Docker servers in",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cloud platforms",
+          "q": "AWS, Azure, and other cloud platforms."
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "we have seen providers from China, Austria, and the United Kingdom"
+        },
+        {
+          "v": "Austria",
+          "q": "we have seen providers from China, Austria, and the United Kingdom"
+        },
+        {
+          "v": "United Kingdom",
+          "q": "we have seen providers from China, Austria, and the United Kingdom"
+        }
+      ],
+      "dates": [
+        {
+          "v": "28 July 2020",
+          "q": "Written by Nicole Fishbein and Michael Kajiloti - 28 July 2020",
+          "what": "Report published"
+        },
+        {
+          "v": "January 14, 2020",
+          "q": "months despite having been uploaded to VirusTotal on January 14, 2020 and scanned",
+          "what": "Doki first analysed and uploaded to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Doki",
+          "q": "The new malware, dubbed “Doki”, hasn’t been detected by any of the 60"
+        },
+        {
+          "v": "zmap",
+          "q": "The network scanner uses zmap, zgrap, and jq to scan ports associated with Redis,"
+        },
+        {
+          "v": "zgrap",
+          "q": "The network scanner uses zmap, zgrap, and jq to scan ports associated with Redis,"
+        },
+        {
+          "v": "jq",
+          "q": "The network scanner uses zmap, zgrap, and jq to scan ports associated with Redis,"
+        },
+        {
+          "v": "Ngrok",
+          "q": "Ngrok is a service which provides secure tunnels to connect between local servers and the"
+        },
+        {
+          "v": "embedTLS",
+          "q": "Doki is multi-threaded and uses the embedTLS library for cryptographic functions and"
+        },
+        {
+          "v": "Intezer Protect",
+          "q": "Installed on a Linux machine, Intezer Protect recognized unknown code executed"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "abuse of misconfigured Docker API ports",
+          "q": "A technique that has become popular is the abuse of misconfigured Docker API ports,"
+        },
+        {
+          "v": "container escape",
+          "q": "they must use a container escape method."
+        },
+        {
+          "v": "Domain Generation Algorithm",
+          "q": "The malware utilizes the DynDNS service and a unique Domain Generation Algorithm"
+        },
+        {
+          "v": "cron",
+          "q": "The attacker modifies the host’s cron to execute the downloaded payload every minute."
+        },
+        {
+          "v": "network scanner",
+          "q": "deploy a network scanner and use it to scan the cloud providers’ IP ranges for additional"
+        },
+        {
+          "v": "Linux kernel module names",
+          "q": "choosing its name randomly from a predefined list of Linux kernel modules."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "60",
+          "q": "hasn’t been detected by any of the 60"
+        },
+        {
+          "v": "two years",
+          "q": "It has been active for at least two years."
+        },
+        {
+          "v": "six months",
+          "q": "has managed to stay under the radar for over six months despite samples being publicly available in VirusTotal."
+        },
+        {
+          "v": "a few hours",
+          "q": "Our evidence shows that it takes only a few hours from when"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Doki"
+    },
+    "hedges": [
+      "This is probable due to the hackers’ automated and continuous internet-wide scanning for vulnerable victims.",
+      "The malware was likely written entirely from scratch, per the report's genetic analysis of the code.",
+      "This novel method can prove to be quite resilient to both infrastructure takedowns and domain filtering attempts."
+    ]
+  },
+  "c14db9bf31dfd1bafba245842b2117c52989a36c": {
+    "sha1": "c14db9bf31dfd1bafba245842b2117c52989a36c",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T13:40:19Z",
+    "read_at": "2026-11-27T14:43:53Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -292,7 +426,7 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "value-not-in-quote",
+    "reason": "quote-not-in-text",
     "tries": 1
   }
 }

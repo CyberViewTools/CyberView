@@ -657,5 +657,117 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5d62961b48fedcdaf1993d4223f190fe64c29e35": {
+    "sha1": "5d62961b48fedcdaf1993d4223f190fe64c29e35",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:46:44Z",
+    "model": "haiku",
+    "summary": "A DFIR write-up by Compass Security on a ransomware case. An ESXi hypervisor was encrypted by LockBit 2.0, after suspicious SSH logons traced to an end-of-life SonicWall SRA 4600 VPN appliance that was the initial entry point. The authors found an unauthenticated SQL injection that exposed cached VPN passwords, and a command injection in a bookmark feature that gave a reverse shell and root access. Stored Active Directory and admin credentials were found on the appliance. Domain Admin credentials were obtained via Windows credential dumping and were reused on the ESXi root account. The…",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "LockBit 2.0",
+          "q": "encrypted by the Ransomware LockBit 2.0.",
+          "by": "the report (Compass Security DFIR case write-up)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2021-11-26",
+          "q": "2021-11-26 09:28:06:mcd 23888: MCD launched",
+          "what": "A VPN connection was launched, as recorded in the appliance log"
+        },
+        {
+          "v": "2021-11-27",
+          "q": "time=\"2021-11-27 10:07:39\"",
+          "what": "A failed login attempt, followed by a successful admin login"
+        },
+        {
+          "v": "Dec 16 11:40:36 2021",
+          "q": "[Thu Dec 16 11:40:36 2021] [error] [client 10.100.132.55]",
+          "what": "Error entry logged on the appliance web server, used as an indicator"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SonicWall SRA 4600",
+          "q": "End-of-Life VPN Appliance (SonicWall SRA 4600). It turns"
+        },
+        {
+          "v": "John the Ripper",
+          "q": "Bruteforcing it with John the Ripper showed that password was"
+        },
+        {
+          "v": "Detect It Easy",
+          "q": "Detect It Easy :"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "unauthenticated SQL injection",
+          "q": "The used firmware was vulnerable to an unauthenticated SQL injection, that allows to read"
+        },
+        {
+          "v": "authenticated OS command injection",
+          "q": "Authenticated OS Command Injection"
+        },
+        {
+          "v": "command injection vulnerability",
+          "q": "exploit a command injection vulnerability in the MAC address"
+        },
+        {
+          "v": "reverse shell",
+          "q": "Here, a reverse shell is started:"
+        },
+        {
+          "v": "privilege escalation to root",
+          "q": "To overcome this issue, a privilege escalation was performed on the system to obtain root"
+        },
+        {
+          "v": "offline brute force",
+          "q": "can perform offline brute force"
+        },
+        {
+          "v": "Windows credentials dumping",
+          "q": "Through Windows credentials dumping they obtained the Domain Admin credentials"
+        },
+        {
+          "v": "reversible DES encryption",
+          "q": "reversible DES encryption."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "5 minutes",
+          "q": "required 5 minutes to encrypt all files."
+        },
+        {
+          "v": "12800 iterations",
+          "q": "12800 iterations:"
+        },
+        {
+          "v": "256 bit key",
+          "q": "hardcoded salt, 256 bit key and"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "LockBit 2.0"
+    },
+    "hedges": [
+      "it was at first not clear if the attacker obtained credentials through phishing or through a vulnerability in the VPN appliance.",
+      "The vulnerability seems not to be exploitable without prior authentication.",
+      "the appliance is probably not vulnerable for this vulnerability.",
+      "This indicates the attackers were regularly collection plain text passwords over a longer period of time.",
+      "we assumed the attacker did not have access to the cleartext credentials.",
+      "However, we did not perform a thorough analysis of the system."
+    ]
   }
 }

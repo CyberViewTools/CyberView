@@ -918,6 +918,264 @@
         "note": "summary: It lists the cluster as \"UNC5291/Volt Typhoon\", which states the identity as fact. The text only says Mandiant assesses with medium (or moderate) confi",
         "by": "auditor"
       }
+    ],
+    "audit": {
+      "at": "2026-11-27T14:33:16Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
+  },
+  "b333758c4a7b3b88e9d2256494d08ac92b51fec4": {
+    "sha1": "b333758c4a7b3b88e9d2256494d08ac92b51fec4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:07Z",
+    "model": "haiku",
+    "summary": "Aqua Nautilus researchers report three attacks seen on their honeypots in early September 2022 that they associate with the cloud-focused group TeamTNT, which had posted a farewell note in November 2021. The attacks used a misconfigured Docker API, a key-solving routine run on victim machines, cryptojacking, rootkits and cron persistence. The report says it is still assessing whether TeamTNT has resumed its campaigns.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "Threat Alert: New Malware in the Cloud By TeamTNT",
+          "by": "Aqua Nautilus research team (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cloud",
+          "q": "mainly targeting cloud"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020",
+          "q": "In the beginning of 2020, TeamTNT emerged as a threat actor mainly targeting cloud",
+          "what": "TeamTNT emerged as a threat actor"
+        },
+        {
+          "v": "November 6th, 2021",
+          "q": "On November 6th, 2021, TeamTNT communicated via Twitter a farewell note.",
+          "what": "TeamTNT posted a farewell note on Twitter"
+        },
+        {
+          "v": "first week of September",
+          "q": "In the first week of September, our honeypots identified at least three different attacks",
+          "what": "Three attacks identified on honeypots"
+        },
+        {
+          "v": "September 15, 2022",
+          "q": "September 15, 2022",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Diamorphine rootkit",
+          "q": "Makes sure that Diamorphine rootkit is deployed and calls exec_f."
+        },
+        {
+          "v": "prochider rootkit",
+          "q": "Deploys prochider rootkit that hides itself, explained here."
+        },
+        {
+          "v": "Tsunami malware",
+          "q": "is actually a Tsunami malware"
+        },
+        {
+          "v": "masscan",
+          "q": "Downloads zgrab, masscan, pnscan which are scanning applications."
+        },
+        {
+          "v": "zgrab",
+          "q": "Downloads zgrab, masscan, pnscan which are scanning applications."
+        },
+        {
+          "v": "pnscan",
+          "q": "Downloads zgrab, masscan, pnscan which are scanning applications."
+        },
+        {
+          "v": "Monero cryptominer",
+          "q": "Downloading a Monero cryptominer and its configuration file and"
+        },
+        {
+          "v": "Pollard's kangaroo",
+          "q": "specifying that this is a fork of “Pollard's kangaroo for SECPK1”."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "misconfigured Docker API",
+          "q": "exploited a misconfigured Docker API to run the vanilla container"
+        },
+        {
+          "v": "release_agent",
+          "q": "designed to exploit the release_agent"
+        },
+        {
+          "v": "rootkits",
+          "q": "including rootkits to hide"
+        },
+        {
+          "v": "cron jobs",
+          "q": "cron jobs to gain persistence"
+        },
+        {
+          "v": "cryptojacking",
+          "q": "executing a cryptojacking attack."
+        },
+        {
+          "v": "lateral movement",
+          "q": "theft to conduct lateral movement in the local and external network"
+        },
+        {
+          "v": "hijack resources",
+          "q": "cryptominers to hijack resources"
+        },
+        {
+          "v": "security tools",
+          "q": "Deletes history and stops and deletes security tools such as SElinux,"
+        },
+        {
+          "v": "Redis servers",
+          "q": "massively attacked Redis servers to mine cryptocurrency."
+        },
+        {
+          "v": "writing to CPU machine specific registers",
+          "q": "It allows writing to CPU machine specific registers."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "at least three different attacks",
+          "q": "our honeypots identified at least three different attacks"
+        },
+        {
+          "v": "Eleven months",
+          "q": "Eleven months ago they posted a farewell note on Twitter."
+        },
+        {
+          "v": "32 detections in VT",
+          "q": "32 detections in VT"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "TeamTNT"
+    },
+    "hedges": [
+      "The report says it is still assessing whether these three attacks mean TeamTNT has resumed its campaigns.",
+      "The attribution rests on similarity of scripts and tools; the report says it is quite certain the group's activity has renewed.",
+      "The report says a GitHub account is most likely utilized by TeamTNT.",
+      "A Tsunami download is commented out; the report suggests the group's infrastructure may not be fully online."
+    ]
+  },
+  "b3946c45305672fcf0c2e64fd374d2f80c2225a4": {
+    "sha1": "b3946c45305672fcf0c2e64fd374d2f80c2225a4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:43Z",
+    "model": "haiku",
+    "summary": "Splunk Threat Research Team update dated June 23, 2022, on Industroyer2, a new payload that Ukraine's CERT found and that ESET also reported on. The report says it resembles the 2016 Industroyer, which targeted Ukraine's power grid, and that it targets the electric grid, including high-voltage substations. It was reportedly used alongside CaddyWiper against customer premise devices. The post lists Windows and Linux detection analytics covering process termination, crontab changes, file deletion and wiping, service disabling, and scheduled tasks. It points readers to CISA and NSA guidance on…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "electric grid",
+          "q": "is also targeting the electric grid containing commands targeting high-voltage"
+        },
+        {
+          "v": "energy",
+          "q": "to wipe or destroy energy facilities of a targeted"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukraine",
+          "q": "used against the country of Ukraine's power grid in 2016 and allegedly was able to affect a fifth of the"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 23, 2022",
+          "q": "June 23, 2022",
+          "what": "Splunk Threat Research Team published the Industroyer2 threat update"
+        },
+        {
+          "v": "2016",
+          "q": "used against the country of Ukraine's power grid in 2016",
+          "what": "Original Industroyer used against Ukraine's power grid"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Industroyer2",
+          "q": "Industroyer2 resembles the former Industroyer"
+        },
+        {
+          "v": "Industroyer",
+          "q": "references the original \"Industroyer\" malicious payload"
+        },
+        {
+          "v": "CaddyWiper",
+          "q": "It was reported that Industroyer2 was also used along with CaddyWiper, another"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Terminate Process and Rename Process File Path",
+          "q": "Terminate Process and Rename Process File Path"
+        },
+        {
+          "v": "crontab",
+          "q": "This analytic identifies a suspicious cron jobs modification using crontab list parameters."
+        },
+        {
+          "v": "Deleting Critical Directory",
+          "q": "Linux Deleting Critical Directory Using RM Command"
+        },
+        {
+          "v": "wipe or destroy",
+          "q": "to wipe or destroy energy facilities of a targeted"
+        },
+        {
+          "v": "disable a service",
+          "q": "This analytic identifies events that attempt to disable a service."
+        },
+        {
+          "v": "overwrite files",
+          "q": "This analytic identifies a shred process to overwrite files in a linux machine."
+        },
+        {
+          "v": "scheduled task",
+          "q": "The following query utilizes Windows Security EventCode 4698. A scheduled task was created to"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "a fifth",
+          "q": "allegedly was able to affect a fifth of the"
+        },
+        {
+          "v": "2404",
+          "q": "IEC-104 protocol, the next one is the port number (2404), third is the process name"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Industroyer2"
+    },
+    "hedges": [
+      "The 2016 Industroyer is described as having allegedly affected a fifth of the power capacity of Kyiv.",
+      "The report says it was reported that Industroyer2 was also used along with CaddyWiper.",
+      "The customer premise device targeting is said to speak to an intention of overwhelming or degrading the victim's infrastructure."
     ]
   }
 }

@@ -595,5 +595,148 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "6be938a17ffc04b412ca94eeaedd85c7d246b557": {
+    "sha1": "6be938a17ffc04b412ca94eeaedd85c7d246b557",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:03Z",
+    "model": "haiku",
+    "summary": "Trend Micro research on how attackers abuse native Linux utilities (such as curl, wget, chmod, crontab, pkill and base64) after gaining initial access to Linux and container environments. Observations come from honeypots and telemetry. Examples include cryptomining, Mirai delivery after Log4Shell, and discovery steps. The report recommends distroless container images and application control to limit the attack surface.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "This utility has previously been observed to be abused by TeamTNT, as discussed in our white paper, Tracking the Activities of TeamTNT.",
+          "by": "Trend Micro report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Cloud",
+          "q": "Cloud security is further complicated by the fact that patch management can"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "September 8, 2022",
+          "q": "September 8, 2022",
+          "what": "Publication date of the report"
+        },
+        {
+          "v": "2020",
+          "q": "We have been observing cryptocurrency miners named kdevtmpfsi as early as 2020.",
+          "what": "Earliest observation of kdevtmpfsi cryptocurrency miners"
+        }
+      ],
+      "tools": [
+        {
+          "v": "curl",
+          "q": "The curl, or cURL, utility is used to transfer data across different protocols, such as HTTP,"
+        },
+        {
+          "v": "wget",
+          "q": "Using “wget”, “curl”, “chmod” to download and execute Mirai malware"
+        },
+        {
+          "v": "chmod",
+          "q": "The chmod tool is used to change the file mode and granularize access per user or group."
+        },
+        {
+          "v": "chattr",
+          "q": "The chattr utility is used to alter file and folder attributes to control sudden operations like the"
+        },
+        {
+          "v": "ssh",
+          "q": "The ssh utility is the remote client used for accessing systems over Secure Shell (SSH) in a"
+        },
+        {
+          "v": "base64",
+          "q": "The base64 tool is a Linux utility that decodes strings encoded in base64 format."
+        },
+        {
+          "v": "chroot",
+          "q": "Note that chroot is used to change the root to the directory supplied (in this case,"
+        },
+        {
+          "v": "crontab",
+          "q": "Attackers have been known to abuse cron jobs and modify the ‘crontab’ to perform execution, persistence, and"
+        },
+        {
+          "v": "ps",
+          "q": "The ps utility is used to view the status of a process."
+        },
+        {
+          "v": "pkill",
+          "q": "Using “pkill” to kill competing processes/coinminers"
+        },
+        {
+          "v": "XMRig",
+          "q": "In this case, curl is used to download binaries of the XMRig miner from Github."
+        },
+        {
+          "v": "Mirai",
+          "q": "The executable named “runnable” is a Mirai sample delivered after the exploitation of the Log4shell vulnerability tracked under CVE-2021-44228."
+        },
+        {
+          "v": "kdevtmpfsi",
+          "q": "We have been observing cryptocurrency miners named kdevtmpfsi as early as 2020."
+        },
+        {
+          "v": "Kinsing",
+          "q": "Analysis of Kinsing Malware's Use of Rootkit, shows another example of a competing miner"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "base64 encoding to evade detection",
+          "q": "Attackers often obfuscate their payloads and commands using base64 encoding to evade detection"
+        },
+        {
+          "v": "/etc/passwd file",
+          "q": "As a part of the enumeration step, the attacker accesses the /etc/passwd file, which contains"
+        },
+        {
+          "v": "cron jobs",
+          "q": "Attackers have been known to abuse cron jobs and modify the ‘crontab’ to perform execution, persistence, and"
+        },
+        {
+          "v": "hidden directories to evade detection",
+          "q": "Attackers can create hidden directories to evade detection by adding “.” before the file or folder name"
+        },
+        {
+          "v": "Process Discovery",
+          "q": "This information can aid attackers in performing discovery-related techniques (T1057 – Process Discovery)"
+        },
+        {
+          "v": "Mining cryptocurrency by downloading miners",
+          "q": "4. Mining cryptocurrency by downloading miners (Impact)"
+        },
+        {
+          "v": "denial-of-service attack by removing the application",
+          "q": "Performing a denial-of-service attack by removing the application (Impact)"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-44228",
+          "q": "The executable named “runnable” is a Mirai sample delivered after the exploitation of the Log4shell vulnerability tracked under CVE-2021-44228."
+        }
+      ],
+      "figures": [
+        {
+          "v": "93%",
+          "q": "Based on a survey from CNCF, 93% of respondents are currently using or planning"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Attackers 'have been known to' abuse cron jobs and legitimate platforms such as GitHub and Netlify to serve crypto-mining tools.",
+      "Attackers can, 'at times', move from cryptomining to deploying ransomware after exploitation.",
+      "Attackers 'at times' perform privilege escalation, persistence or credential access; the report describes these as possible paths, not confirmed in every case."
+    ]
   }
 }

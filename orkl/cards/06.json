@@ -202,5 +202,107 @@
         "by": "auditor"
       }
     ]
+  },
+  "060e3314734e8774569db473b0b7bcde28a110e4": {
+    "sha1": "060e3314734e8774569db473b0b7bcde28a110e4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:41:43Z",
+    "model": "haiku",
+    "summary": "Cado Security's January 2022 blog post links the Abcbot botnet to Xanthe, a cryptojacking malware family that Cisco Talos reported in late 2020. The report cites shared infrastructure, identical code and function names, reused user-agent strings and backdoor usernames, and it believes one threat actor is behind both. It suggests the actor has moved from mining Monero toward botnet activity such as DDoS attacks, and it notes that the Abcbot sample lacks the mining and Docker-targeting features of Xanthe.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "the same threat actor",
+          "q": "we believe that the same threat actor is responsible for both Xanthe and Abcbot",
+          "by": "Cado Security (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "January 10, 2022",
+          "q": "January 10, 2022",
+          "what": "Blog post on the link between Abcbot and Xanthe published"
+        },
+        {
+          "v": "late 2020",
+          "q": "cryptojacking campaign discovered by Cisco’s Talos security research team in late 2020",
+          "what": "Xanthe campaign discovered by Cisco Talos"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Xanthe",
+          "q": "The malware was named Xanthe and its main purpose is to hijack the resources"
+        },
+        {
+          "v": "Abcbot",
+          "q": "Abcbot, the emerging botnet that we recently analyzed and reported on"
+        },
+        {
+          "v": "XMRig",
+          "q": "Xanthe utilizes XMRig for its mining capabilities"
+        },
+        {
+          "v": "libprocesshider.so",
+          "q": "an open source process hiding library named libprocesshider.so"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exposed Docker API endpoints",
+          "q": "Xanthe spreads through the discovery of exposed Docker API endpoints"
+        },
+        {
+          "v": "known_hosts file",
+          "q": "the method of propagation utilized by Xanthe was via enumeration of the known_hosts file"
+        },
+        {
+          "v": "cron",
+          "q": "responsible for achieving persistence via the cron scheduling utility"
+        },
+        {
+          "v": "rc.local",
+          "q": "persistence is achieved by writing shell commands to the rc.local file"
+        },
+        {
+          "v": "disable security services",
+          "q": "a script to disable security services and remove miners from competing campaigns"
+        },
+        {
+          "v": "process hiding",
+          "q": "the use of an open source process hiding library"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "four additional payloads",
+          "q": "the downloading of four additional payloads"
+        },
+        {
+          "v": "four malicious users",
+          "q": "code used to add four malicious users to the compromised host"
+        },
+        {
+          "v": "over a year",
+          "q": "The Xanthe sample we analyzed is older than the Abcbot sample by over a year"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Abcbot"
+    },
+    "hedges": [
+      "Based on this analysis, we believe that the same threat actor is responsible for both Xanthe and Abcbot",
+      "Linking these two samples based on code style similarities alone would be tenuous, at best.",
+      "This is a common technique used by other cloud-focused malware campaigns so can't be relied upon solely for attribution.",
+      "Whilst it’s common to see cryptojacking malware authors simply copy code from each other",
+      "We suspect this won’t be the last malware campaign we analyze from this actor."
+    ]
   }
 }

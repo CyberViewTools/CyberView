@@ -577,5 +577,160 @@
       "note": "summary: The text says BlackEnergy was sold in the underground \"as early as 2007\". The summary says \"from 2007\", which drops that hedge and reads as a firmer da",
       "by": "auditor"
     }
+  },
+  "4fd6a10ea2117edfa1d0389313d78af2712c8dc6": {
+    "sha1": "4fd6a10ea2117edfa1d0389313d78af2712c8dc6",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:42:22Z",
+    "model": "haiku",
+    "summary": "Lacework Labs (April 22, 2021) describes Sysrv-hello, a multi-architecture cryptojacking botnet first seen in late 2020 that mines Monero with an XMRig miner. It gains access by exploiting public-facing applications and brute forcing MySQL and Tomcat, then moves laterally over SSH using keys found on victim hosts. Its bash loader changes firewall policy, adds cron persistence, and has a Windows variant. The report counts five new botnet controllers since early March, says 26 servers were likely compromised, and puts mined Monero at 12.1 worth ($3,928.46 USD). Its CVE table writes identifiers…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Opportunistic actors",
+          "q": "Opportunistic actors are targeting cloud workloads through remote code injection/remote code execution",
+          "by": "Lacework Labs (the report)"
+        },
+        {
+          "v": "sysrv-hello actors",
+          "q": "so its possible these services were exploited by sysrv-hello actors",
+          "by": "Lacework Labs (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "late 2020",
+          "q": "that first emerged in late 2020",
+          "what": "Sysrv-hello first emerged"
+        },
+        {
+          "v": "early February",
+          "q": "First documented in early February by Aliyun",
+          "what": "Sysrv-hello first documented by Aliyun"
+        },
+        {
+          "v": "early March",
+          "q": "Since early March, five new botnet controllers have been identified",
+          "what": "five new botnet controllers identified"
+        },
+        {
+          "v": "April 22, 2021",
+          "q": "April 22, 2021",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Sysrv-hello",
+          "q": "Sysrv-hello is a multi-architecture Cryptojacking (T1496) botnet that first emerged in late 2020"
+        },
+        {
+          "v": "XMRig",
+          "q": "The malware is equal parts XMRig cryptominer and aggressive botnet-propagator."
+        },
+        {
+          "v": "ldr.sh",
+          "q": "Host infection begins with a bash script (ldr.sh) that performs initial host triage"
+        },
+        {
+          "v": "ldr.ps1",
+          "q": "An alternative to ldr.sh is ldr.ps1 for Windows machines."
+        },
+        {
+          "v": "sys.exe",
+          "q": "prior to downloading and executing sys.exe out of a Windows temp directory"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Cryptojacking",
+          "q": "Sysrv-hello is a multi-architecture Cryptojacking (T1496) botnet"
+        },
+        {
+          "v": "brute forcing",
+          "q": "The propagator leverages MySQL and Tomcat brute forcing (T1110)"
+        },
+        {
+          "v": "exploit public facing applications",
+          "q": "Leveraging CVEs to exploit public facing applications."
+        },
+        {
+          "v": "Lateral movement",
+          "q": "Lateral movement is conducted via SSH keys available on the victim machine"
+        },
+        {
+          "v": "flushing any other firewall rules",
+          "q": "before flushing any other firewall rules that exist"
+        },
+        {
+          "v": "Data Destruction",
+          "q": "T1485 Data Destruction"
+        },
+        {
+          "v": "cron entry",
+          "q": "adding a cron entry (T1053.003)"
+        },
+        {
+          "v": "UPX packed",
+          "q": "2nd stage payloads were UPX packed."
+        },
+        {
+          "v": "Base64",
+          "q": "Base64 was leveraged within ldr.sh scripts"
+        },
+        {
+          "v": "Bash scripts",
+          "q": "Bash scripts were leveraged for spreading their Cryptojacking malware as well"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-3396",
+          "q": "This file is a component used in the template injection stage of the Atlassian Confluence Widget Connector exploit (CVE-2019-3396)."
+        }
+      ],
+      "figures": [
+        {
+          "v": "26 servers",
+          "q": "uncovered a total of 26 servers that were likely compromised by Sysrv-hello"
+        },
+        {
+          "v": "five new botnet controllers",
+          "q": "Since early March, five new botnet controllers have been identified"
+        },
+        {
+          "v": "12.1 worth of monero",
+          "q": "slightly over 12.1 worth of monero worth $3,928.46 USD"
+        },
+        {
+          "v": "$3,928.46 USD",
+          "q": "slightly over 12.1 worth of monero worth $3,928.46 USD"
+        },
+        {
+          "v": "185.76.147.189",
+          "q": "One server – 185.76.147.189, was found to have historically used both SSH keys"
+        },
+        {
+          "v": "194.145.227.21",
+          "q": "IPv4 194.145.227.21"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Sysrv-hello"
+    },
+    "hedges": [
+      "Potential for botnet expansion is likely as time continues.",
+      "The Lacework Labs team assesses with moderate confidence that the ldr.sh scripts are being actively modified while keeping the same filename.",
+      "The report says it is possible these services were exploited by sysrv-hello actors.",
+      "The 26 servers are described as likely compromised at some point.",
+      "The report says the accepted commands for the malware are unclear.",
+      "The report says the SSH keys are likely unique to the botnet's infrastructure."
+    ]
   }
 }

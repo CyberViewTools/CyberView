@@ -70,25 +70,275 @@
   },
   "19fa8e4dfc650a5bcfcb504a8f38920f6061c863": {
     "sha1": "19fa8e4dfc650a5bcfcb504a8f38920f6061c863",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:36:59Z",
+    "read_at": "2026-11-27T14:37:02Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Vendor report from the Aqua Nautilus team on the Kinsing campaign, active since 2019. Kinsing exploits vulnerable or misconfigured applications and exposed Docker APIs, runs a Monero cryptominer often hidden by a rootkit, and keeps control through the Kinsing malware. The report covers 75 targeted applications, the scripts and binaries used, a comparison of malware samples with CyberArk's 2021 analysis, and a MITRE ATT&CK mapping. Its remarks on Russian or Chinese origins are speculation it hedges.",
+    "kind": "overview",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Kinsing threat actor",
+          "q": "Our research indicates that the Kinsing threat actor incorporates new vulnerabilities upon their release.",
+          "by": "the report itself (Aqua Nautilus)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "runtime applications",
+          "q": "While Kinsing mainly targets runtime applications (67%) it also targets various other areas in cloud native environments"
+        },
+        {
+          "v": "cloud native environments",
+          "q": "it also targets various other areas in cloud native environments, such as CI/CD (Jenkins)"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "Russia EuroByte LLC"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2019",
+          "q": "Kinsing first surfaced as a cybersecurity threat in 2019 and quickly became a widespread",
+          "what": "Kinsing first surfaced as a cybersecurity threat"
+        },
+        {
+          "v": "January 15, 2020",
+          "q": "TrustedSec was the first to report on Kinsing, on January 15, 2020, detailing an attack that",
+          "what": "TrustedSec first reported on Kinsing"
+        },
+        {
+          "v": "January 16, 2020",
+          "q": "followed on January 16, 2020, referring to it as h2Miner.",
+          "what": "Alibaba Cloud's security team reported Kinsing, referring to it as h2Miner"
+        },
+        {
+          "v": "April 2020",
+          "q": "Our team, Aqua Nautilus, was the first to name the malware “Kinsing” in a report in April 2020",
+          "what": "Aqua Nautilus first named the malware Kinsing"
+        },
+        {
+          "v": "December 15, 2019",
+          "q": "The first known attack was actually against our misconfigured Docker API on December 15, 2019.",
+          "what": "First known attack, against a misconfigured Docker API honeypot"
+        },
+        {
+          "v": "November 2020",
+          "q": "In November 2020, TrendMicro published a thorough report analyzing Kinsing’s rootkit.",
+          "what": "TrendMicro published an analysis of the Kinsing rootkit"
+        },
+        {
+          "v": "September 2021",
+          "q": "In September 2021, CyberArk published a detailed comparison between the NSPPS malware and",
+          "what": "CyberArk published a comparison of NSPPS and Kinsing malware"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Kinsing malware",
+          "q": "The core components of the attack include the Kinsing malware and a cryptocurrency miner."
+        },
+        {
+          "v": "XMRIG",
+          "q": "It does this by running a version of XMRIG."
+        },
+        {
+          "v": "Tracee",
+          "q": "Using Tracee, an open source runtime"
+        },
+        {
+          "v": "masscan",
+          "q": "While the Kinsing malware includes masscan capabilities, there’s no definitive proof that"
+        },
+        {
+          "v": "kdevtmpfsi",
+          "q": "under the name kdevtmpfsi, which is obviously the cryptominer"
+        },
+        {
+          "v": "NSPPS",
+          "q": "NSPPS seems to be an earlier version with remote access Trojan (RAT) functionality"
+        },
+        {
+          "v": "lifexp.class",
+          "q": "The binary lifexp.class: This is an exploit of the Liferay RCE vulnerability (CVE-2020-7961)."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploits vulnerable or misconfigured applications",
+          "q": "It typically exploits vulnerable or misconfigured applications, executes an infection script, runs"
+        },
+        {
+          "v": "scanning vulnerabilities",
+          "q": "The initial server is responsible for scanning vulnerabilities and"
+        },
+        {
+          "v": "rootkit",
+          "q": "In the Type II scripts, a rootkit is downloaded and executed to conceal the presence of Kinsing’s"
+        },
+        {
+          "v": "Stopping and deleting security tools",
+          "q": "Stopping and deleting security tools (selinux, aegis and apparmor)."
+        },
+        {
+          "v": "eliminating competition",
+          "q": "Type I scripts primarily focus on eliminating competition (76%)"
+        },
+        {
+          "v": "cron job",
+          "q": "Setting up a backdoor, by creating a cron job to download the shell script"
+        },
+        {
+          "v": "mine Monero",
+          "q": "The main goal of Kinsing is to mine Monero."
+        },
+        {
+          "v": "lateral movement",
+          "q": "Kinsing has used SSH for lateral movement."
+        },
+        {
+          "v": "reverse shell",
+          "q": "This is an open-source reverse shell script that can be found on GitHub"
+        },
+        {
+          "v": "encoded (base64)",
+          "q": "The initial script is encoded (base64)."
+        },
+        {
+          "v": "misconfigured Docker API",
+          "q": "our misconfigured Docker API on December 15, 2019."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-19781",
+          "q": "exploited CVE-2019-19781 against Citrix NetScaler for remote code execution"
+        },
+        {
+          "v": "CVE-2020-7961",
+          "q": "This is an exploit of the Liferay RCE vulnerability (CVE-2020-7961)."
+        },
+        {
+          "v": "CVE-2020-14883",
+          "q": "Oracle WebLogic CVE-2020-14883 (Akamai)"
+        },
+        {
+          "v": "CVE-2021-44228",
+          "q": "Log4Shell CVE-2021-44228 (Zscaler)"
+        },
+        {
+          "v": "CVE-2022-26134",
+          "q": "Confluence - CVE-2022-26134 (Lacework)"
+        },
+        {
+          "v": "CVE-2020-11651",
+          "q": "SaltStack - CVE-2020-11651/2 (Red Canary)"
+        },
+        {
+          "v": "CVE-2023-32315",
+          "q": "Openfire vulnerability CVE-2023-32315 details in the Aqua platform"
+        }
+      ],
+      "figures": [
+        {
+          "v": "180,000",
+          "q": "a search for “kinsing” on Google yields over 180,000 results"
+        },
+        {
+          "v": "75",
+          "q": "The campaign targets 75 different applications."
+        },
+        {
+          "v": "91%",
+          "q": "Most targeted applications (91%) are open source."
+        },
+        {
+          "v": "67%",
+          "q": "While Kinsing mainly targets runtime applications (67%) it also targets various other areas"
+        },
+        {
+          "v": "90%",
+          "q": "the top five samples appeared in the various attacks covering more than 90%"
+        },
+        {
+          "v": "1,550",
+          "q": "We found 1,550 distinct binaries that bear the name kinsing"
+        },
+        {
+          "v": "2.5 million",
+          "q": "Our Shodan search revealed 2.5 million instances of the various applications targeted"
+        },
+        {
+          "v": "eight times per day",
+          "q": "On average, honeypots were targeted by Kinsing eight times per day"
+        },
+        {
+          "v": "50",
+          "q": "faced an average of 50 attacks daily"
+        },
+        {
+          "v": "16.87 mb",
+          "q": "CyberArk noted that the binary weighed 16.87 mb."
+        },
+        {
+          "v": "6.02 mb",
+          "q": "while our sample 5d253 was 6.02 mb."
+        },
+        {
+          "v": "18 XMR",
+          "q": "be 18 XMR, or 3,100 USD, which is quite modest for this kind of operation."
+        },
+        {
+          "v": "75%",
+          "q": "Another point of interest is the 75% decrease in the volume of snippets"
+        },
+        {
+          "v": "44",
+          "q": "We analyzed 44 Type I scripts. They are 97% similar"
+        },
+        {
+          "v": "97%",
+          "q": "We analyzed 44 Type I scripts. They are 97% similar"
+        },
+        {
+          "v": "454 lines",
+          "q": "Type II scripts are more succinct, comprising only 454 lines"
+        },
+        {
+          "v": "825 lines",
+          "q": "compared with the 825 lines in Type I scripts"
+        },
+        {
+          "v": "76%",
+          "q": "Type I scripts primarily focus on eliminating competition (76%)"
+        },
+        {
+          "v": "27",
+          "q": "We analyzed 27 type II scripts."
+        },
+        {
+          "v": "12",
+          "q": "These 12 binaries are dropped during different stages and types of attacks."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "Kinsing"
+    },
+    "hedges": [
+      "The report says infrastructure choices may suggest a connection to Russian-speaking countries, which could imply Russian origins for the threat actor.",
+      "The report did not find a single answer on whether Kinsing is one threat actor, a malware name, or leaked source code.",
+      "The report says the C2 website change might be a defense evasion strategy, or that the website may have been compromised.",
+      "The report says there is no definitive proof that the threat actor actively uses masscan.",
+      "The report says it is not sure the operator owns the C2 website domain.",
+      "The report says the list of targeted applications is not exhaustive and some remain unclassified.",
+      "The report says the exact reason for the two script types is known only to the threat actor.",
+      "The report says it may have failed to understand the full scope of the mining operation."
+    ]
   }
 }

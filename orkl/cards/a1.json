@@ -48,5 +48,92 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "a147a8909bbbed7c46e1d99107785f789845c224": {
+    "sha1": "a147a8909bbbed7c46e1d99107785f789845c224",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:41:50Z",
+    "model": "haiku",
+    "summary": "FireEye Mandiant describes an unnamed actor that exploits Citrix NetScaler devices using CVE-2019-19781. The actor removes other known malware and deploys the NOTROBIN utility, which deletes competing exploit files while keeping a backdoor reachable with a secret key. FireEye believes this may be preparation for a later campaign. Nearly 100 hardcoded keys were recovered and are withheld. The report was published on 15 January 2020.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "this actor",
+          "q": "FireEye believes that this actor may be quietly collecting access to NetScaler devices for a",
+          "by": "FireEye"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "Jan 15, 2020",
+          "q": "Jan 15, 2020",
+          "what": "Report published"
+        },
+        {
+          "v": "January 12",
+          "q": "Prior to January 12, before NOTROBIN was installed, we identified successful attacks from multiple actors.",
+          "what": "Before this date NOTROBIN was not yet installed on the engagement device, and attacks from multiple actors had succeeded"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NOTROBIN",
+          "q": "deploys NOTROBIN to block subsequent exploitation attempts! But all is not as it"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "removing other known malware",
+          "q": "Of note, the actor removes malware known to target NetScaler"
+        },
+        {
+          "v": "persistence via the cron daemon",
+          "q": "for persistence via the cron daemon."
+        },
+        {
+          "v": "deleting staged exploit code",
+          "q": "The mitigation works by deleting staged exploit code found within NetScaler templates before it"
+        },
+        {
+          "v": "backdoor access",
+          "q": "NOTROBIN maintains backdoor access for those who know a secret passphrase."
+        },
+        {
+          "v": "Tor exit node",
+          "q": "They issue an HTTP POST request from a Tor exit node to"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2019-19781",
+          "q": "This actor exploits NetScaler devices using CVE-2019-19781 to execute shell commands on"
+        }
+      ],
+      "figures": [
+        {
+          "v": "nearly 100",
+          "q": "we’ve recovered nearly 100 keys from different binaries"
+        },
+        {
+          "v": "more than a dozen",
+          "q": "across the following three days, more than a dozen exploitation attempts were thwarted by NOTROBIN"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "NOTROBIN"
+    },
+    "hedges": [
+      "FireEye believes that this actor may be quietly collecting access to NetScaler devices for a subsequent campaign.",
+      "FireEye believes that NOTROBIN provides backdoor access to the compromised system.",
+      "FireEye has not uncovered a purpose for the unused listener behaviour; a mutex use is only suggested by another vendor.",
+      "The report has not recovered the POST body contents, so how the exploitation request works is unknown.",
+      "FireEye has not yet identified if the actor has returned to NOTROBIN backdoors."
+    ]
   }
 }

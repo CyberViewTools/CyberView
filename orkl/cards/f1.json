@@ -234,5 +234,128 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "f1c6d01a3f24b249a9a01b53f751a2b729aadd4c": {
+    "sha1": "f1c6d01a3f24b249a9a01b53f751a2b729aadd4c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:40:17Z",
+    "model": "haiku",
+    "summary": "Intezer reports on Linux.GreedyAntd, a cryptojacking malware family on compromised Linux servers, classified under a group it calls Pacha Group. The first-stage dropper kills rival miners, disguises its process, persists via a systemd service, and coordinates secondary stagers over a named pipe. The deployed miner is an XMRig variant that uses the Stratum protocol through proxies. The report believes the authors are of Chinese origin and suggests a possible link to Linux.HelloBot through shared static libc code, hedged as potential. Report dated February 28, 2019.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Pacha Group",
+          "q": "classified the threat actor as Pacha Group.",
+          "by": "Intezer (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Chinese origin",
+          "q": "We believe the authors behind this malware are from Chinese origin."
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 18, 2018",
+          "q": "Antd is a miner found in the wild on September 18, 2018.",
+          "what": "Antd miner first found in the wild"
+        },
+        {
+          "v": "January 2019",
+          "q": "MalwareMustDie in January 2019:",
+          "what": "Linux.HelloBot discovered by Intezer along with MalwareMustDie"
+        },
+        {
+          "v": "February 28, 2019",
+          "q": "February 28, 2019",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Linux.GreedyAntd",
+          "q": "labeled the undetected Linux.Antd variants, Linux.GreedyAntd"
+        },
+        {
+          "v": "XMRig",
+          "q": "The deployed miner instance is a XMRig variant."
+        },
+        {
+          "v": "Linux.HelloBot",
+          "q": "amount of code with Linux.HelloBot, a Chinese bot discovered by Intezer along with"
+        },
+        {
+          "v": "xmr-stak",
+          "q": "its main purpose was to drop a xmr-stak json configuration."
+        },
+        {
+          "v": "Korkerds",
+          "q": "is the Korkerds miner reported by"
+        },
+        {
+          "v": "JexBoss",
+          "q": "There is a github project called JexBoss regarding JBOSS serialization vulnerabilities"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "brute-force attack",
+          "q": "opted to launch a brute-force attack against services like WordPress or PhpMyAdmin"
+        },
+        {
+          "v": "known exploit",
+          "q": "used a known exploit for an outdated version of alike services."
+        },
+        {
+          "v": "bot kill",
+          "q": "using a technique similar to that of a ‘bot kill’ approach"
+        },
+        {
+          "v": "fake process",
+          "q": "overwrites them with a fake process"
+        },
+        {
+          "v": "Systemd service",
+          "q": "followed by installing a Systemd service"
+        },
+        {
+          "v": "masquerading",
+          "q": "masquerading the genuine mandb service."
+        },
+        {
+          "v": "timestamp",
+          "q": "the timestamp of the dropped implants will be replaced"
+        },
+        {
+          "v": "named pipe",
+          "q": "executed via a shared named pipe."
+        },
+        {
+          "v": "SIGALRM",
+          "q": "triggering a SIGALRM signal also in"
+        },
+        {
+          "v": "Stratum mining protocol",
+          "q": "It uses the Stratum mining protocol"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Linux.GreedyAntd"
+    },
+    "hedges": [
+      "We believe the authors behind this malware are from Chinese origin.",
+      "The report assumes attackers used brute-force or a known exploit against services such as WordPress or PhpMyAdmin.",
+      "The report assumes the Stratum protocol is used to avoid deploying clients with encoded wallet configurations.",
+      "The shared libc similarity is said to seem relevant enough to consider a potential link between the two threat actors.",
+      "The report says the current system may already be compromised by the same group."
+    ]
   }
 }

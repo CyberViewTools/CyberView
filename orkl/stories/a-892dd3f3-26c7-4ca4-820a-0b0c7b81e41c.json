@@ -51,38 +51,38 @@
     "key": "a-892dd3f3-26c7-4ca4-820a-0b0c7b81e41c",
     "kind": "actor",
     "name": "NICKEL KIMBALL",
-    "headline": "NICKEL KIMBALL (Kimsuky): a North Korea-linked espionage group that favours phishing, trojanised installers and fake…",
-    "in_short": "Vendors and officials link NICKEL KIMBALL, widely known as Kimsuky, to North Korea. Reports describe phishing, trojanised installers and Android spyware aimed mostly at South Korean targets. Attribution varies by source and confidence.",
+    "headline": "NICKEL KIMBALL (Kimsuky): a North Korea-attributed espionage group that mixes phishing, fake installers and mobile…",
+    "in_short": "Vendors and South Korean agencies attribute NICKEL KIMBALL, better known as Kimsuky, to North Korea. It has been tied to spear-phishing, trojanized installers, ClickFix lures and Android spyware, mostly aimed at South Korea.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "The catalogue lists many names for NICKEL KIMBALL, including Kimsuky, APT43, Emerald Sleet, Velvet Chollima, Springtail and THALLIUM.",
+            "t": "Secureworks tracks this actor as NICKEL KIMBALL. The catalogue lists many aliases, including Kimsuky, APT43, THALLIUM, Emerald Sleet, Velvet Chollima, Springtail and Black Banshee.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Symantec describes Springtail, also called Kimsuky, as a North Korean espionage group. Symantec reports that the U.S. government has said the group is a unit of North Korea's military intelligence organization.",
+            "t": "Symantec describes Springtail, also called Kimsuky, as a North Korean espionage group. It writes that the U.S. government has said the group is a unit of North Korea's Reconnaissance General Bureau.",
             "cites": [
               "e8feee3a8be0dcffa6430a826b5193269142b10f"
             ]
           },
           {
-            "t": "Breakglass Intelligence attributes a Kimsuky command server to the group with high confidence and calls it a DPRK actor.",
+            "t": "Microsoft, as reported by BleepingComputer, calls Kimsuky a North Korean state actor.",
             "cites": [
-              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+              "cf6d78e9d3ab7f4a0c5d4a1e3a0c2b6d9e1f8a7b"
             ]
           },
           {
-            "t": "According to a Sekoia and Kudelski Security overview, some DPRK experts regard Kimsuky as a mega-cluster made up of several branches, such as TA406 and TA408.",
+            "t": "Sekoia and Kudelski Security note that some DPRK experts regard Kimsuky as a mega-cluster with several branches, such as TA406 and TA408. They add that vendors divide and name clusters differently.",
             "cites": [
               "24bb6d01f2508e4001990348616aff2cadc34cd1"
             ]
           },
           {
-            "t": "Genians says the KONNI campaign overlaps with Kimsuky and APT37 in targets and infrastructure, and some researchers class them as one group. Genians cites an MSMT report that assesses Kimsuky and KONNI as distinct groups.",
+            "t": "Genians says some researchers class KONNI, Kimsuky and APT37 as one group. It cites the MSMT report, which assesses Kimsuky and KONNI as distinct groups.",
             "cites": [
               "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
             ]
@@ -93,31 +93,27 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "Genians Security Center assesses with moderate confidence that Kimsuky ran a campaign against South Korean policy and security professionals. It notes that a third party imitating the same techniques cannot be ruled out.",
-            "cites": [
-              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
-            ]
-          },
-          {
-            "t": "Microsoft says Kimsuky has targeted people in international affairs organisations, NGOs, government agencies and media companies, in limited attacks since January 2025.",
-            "cites": []
-          },
-          {
-            "t": "AhnLab reported signs of AppleSeed, a backdoor it says Kimsuky mainly uses, being spread to maintenance contractors of a military unit in July 2022.",
-            "cites": [
-              "d0d666177b14b04a9202863e5b062a0e5936b161"
-            ]
-          },
-          {
-            "t": "South Korea's National Police Agency said Kimsuky exploited an email server flaw at a defense subcontractor between April and July 2023. The flaw allowed large files to be downloaded without logging in.",
+            "t": "South Korea's National Police Agency says Kimsuky exploited an email server flaw at a defense subcontractor between April and July 2023. The flaw allowed large files to be downloaded without authentication.",
             "cites": [
               "b7d522acdad578db2e351cd84aad9110b81459bc"
             ]
           },
           {
-            "t": "South Korea's National Cyber Security Center said Kimsuky compromised a construction trade organisation's website in January 2024 to spread trojanised security installers.",
+            "t": "Microsoft says its limited attacks since January 2025 hit people in international affairs organizations, NGOs, government agencies and media companies.",
             "cites": [
-              "1b4ceca6cc6589f8c2b4b1afd0d7e6b5d0b21aed"
+              "cf6d78e9d3ab7f4a0c5d4a1e3a0c2b6d9e1f8a7b"
+            ]
+          },
+          {
+            "t": "AhnLab reported signs in July 2022 that AppleSeed, a backdoor it says Kimsuky mainly uses, was being spread to maintenance contractors of a military unit.",
+            "cites": [
+              "d0d666177b14b04a9202863e5b062a0e5936b161"
+            ]
+          },
+          {
+            "t": "South Korean officials said hackers believed to be operating from North Korea breached the nuclear research body KAERI through a VPN flaw. One of the IP addresses involved was linked to infrastructure used by Kimsuky.",
+            "cites": [
+              "80579210268b61ff389629fd202a0b1ca0b79eb7"
             ]
           }
         ]
@@ -126,31 +122,33 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "AhnLab says Kimsuky distributes shortcut (LNK) files disguised as ordinary documents, attached to spear-phishing emails with double extensions. The chain uses PowerShell and a Dropbox and TCP socket command channel to install the PebbleDash backdoor.",
+            "t": "AhnLab says Kimsuky spreads the PebbleDash backdoor mainly through spear-phishing. The emails carry shortcut (LNK) files disguised as documents, and the chain uses PowerShell and Dropbox. AhnLab says PebbleDash was once tied to Lazarus.",
             "cites": [
               "4d612928d40b956cf990c917aca29944d7abb949"
             ]
           },
           {
-            "t": "Microsoft says Kimsuky has adopted ClickFix-style tactics. A target who has been in contact with a fake South Korean official receives a PDF and is told to run code in PowerShell as administrator, which installs a remote desktop tool.",
-            "cites": []
-          },
-          {
-            "t": "Symantec reports that Springtail has focused on trojanized software installers. It also describes Linux.Gomir, a Linux backdoor that appears to be a version of the Windows GoBear backdoor and supports 17 commands.",
+            "t": "Microsoft says Kimsuky has adopted ClickFix-style tactics. A fake South Korean official builds contact with the target, then tells them to run attacker code in PowerShell. The code installs a browser-based remote desktop tool.",
             "cites": [
-              "e8feee3a8be0dcffa6430a826b5193269142b10f"
+              "cf6d78e9d3ab7f4a0c5d4a1e3a0c2b6d9e1f8a7b"
             ]
           },
           {
-            "t": "ENKI WhiteHat attributes new DOCSWAP Android malware to Kimsuky, citing shared infrastructure, a known phishing string and Korean comments. It says the apps posed as delivery services and carried a remote access tool with keylogging, and that it could not confirm how they were delivered.",
+            "t": "Breakglass Intelligence attributes a three-stage chain to Kimsuky with high confidence. It starts from a CHM help file and ends in a keylogger with clipboard monitoring. The report maps about 79 domains, including Naver-themed lures for South Korean users.",
+            "cites": [
+              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+            ]
+          },
+          {
+            "t": "ENKI WhiteHat attributes new DOCSWAP Android variants to Kimsuky, citing shared infrastructure, a known phishing string and Korean comments. The apps pose as delivery apps and carry a RAT with 57 commands. ENKI calls this strong evidence, not definitive confirmation.",
             "cites": [
               "37114c033cf4dc4e27f0631d4af9be712dbea44b"
             ]
           },
           {
-            "t": "Breakglass Intelligence describes a three-stage chain that starts from a CHM help file disguised as API documentation. It covers reconnaissance, a PowerShell bridge and a keylogger with clipboard monitoring.",
+            "t": "Symantec reports that Springtail built Linux.Gomir, a Linux version of the GoBear backdoor. It links the group to Troll Stealer, delivered in Trojanized software installers aimed largely at South Korean targets.",
             "cites": [
-              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+              "e8feee3a8be0dcffa6430a826b5193269142b10f"
             ]
           }
         ]
@@ -159,21 +157,21 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In December 2022, South Korean officials said hackers believed to be operating from North Korea breached the internal network of the nuclear research body KAERI through a VPN server flaw. One of thirteen IP addresses abusing the flaw was linked to Kimsuky infrastructure.",
-            "cites": [
-              "80579210268b61ff389629fd202a0b1ca0b79eb7"
-            ]
-          },
-          {
-            "t": "In January 2021, ESRC research reported that Thallium altered the installer of a private stock investment messaging app to deliver malicious code. The researchers said the motive was unclear, whether money or espionage on traders.",
+            "t": "A January 2021 article citing ESTsecurity says Thallium altered the installer of a private stock investment messaging app. The researchers said it was unclear whether the aim was money or spying on traders.",
             "cites": [
               "8aceafada32998d60eb1c26278b11140b63fc12d"
             ]
           },
           {
-            "t": "ESRC linked a February 2022 Word lure posing as a Klip wallet customer-center guide to Thallium, also known as Kimsuky. The command server could not be reached, so analysis stopped there.",
+            "t": "South Korea's NCSC says Kimsuky compromised a construction trade website in January 2024. It used the site to push trojanized security installers signed with a valid certificate.",
             "cites": [
-              "fdf53fac0af9cced76179fb1b9df0ce009952e36"
+              "1b4ceca6cc6589f8c2b4b1afd0d7e6b5d0b21aed"
+            ]
+          },
+          {
+            "t": "Genians assesses with moderate confidence that a 2026 campaign using NodeLinkRAT was Kimsuky's work. It began with reply-based spearphishing posing as a National Assembly aide. Genians says a third party imitating the same techniques cannot be ruled out.",
+            "cites": [
+              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
             ]
           }
         ]
@@ -182,22 +180,26 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Treat unexpected shortcut files, help files and macro documents with suspicion, and never paste commands into PowerShell because a message asks you to.",
+            "t": "Treat unexpected replies, shortcut files disguised as documents and requests to paste commands into PowerShell with suspicion, even when the sender seems to be a known official.",
+            "cites": []
+          },
+          {
+            "t": "Install software only from verified sources, and keep VPN and email servers patched.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "f6a4d4b8c8ac5540667b3a54e4ad7d7433ebad56",
+    "based_on": "e74e78ed78120515996952d1b02b715327121a44",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T13:26:59Z",
+    "written_at": "2026-11-27T14:33:46Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked",
-      "uncited"
+      "bad-cite"
     ],
-    "written_run": "b7cfaa17"
+    "written_run": "08fbf24b"
   }
 }

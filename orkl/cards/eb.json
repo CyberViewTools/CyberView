@@ -395,25 +395,405 @@
   },
   "eb7a47f1bbd3a9eb7f9875bb718535aa20f53457": {
     "sha1": "eb7a47f1bbd3a9eb7f9875bb718535aa20f53457",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:37:13Z",
+    "read_at": "2026-11-27T14:38:22Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "CrowdStrike's 2023 threat hunting report covers interactive (hands-on-keyboard) intrusions found by its Falcon OverWatch team from July 2022 to June 2023. Main themes: identity abuse (62% of intrusions used valid accounts), a 583% rise in Kerberoasting, access brokers exploiting public-facing applications, abuse of remote monitoring and management tools, cloud discovery and misconfiguration abuse, and cross-platform attacks including the 3CX double supply chain attack by LABYRINTH CHOLLIMA. Named adversaries include VICE SPIDER, INDRIK SPIDER, SCATTERED SPIDER and PROPHET SPIDER.",
+    "kind": "overview",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "INDRIK SPIDER",
+          "q": "Over the past year, INDRIK SPIDER was at the forefront of this trend, tailoring",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "VICE SPIDER",
+          "q": "VICE SPIDER was the most prolific eCrime adversary,",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "SCATTERED SPIDER",
+          "q": "In one example, Falcon OverWatch observed SCATTERED SPIDER execute a PowerShell script via the",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "ALPHA SPIDER",
+          "q": "Since 2022, Falcon OverWatch has observed SCATTERED SPIDER and ALPHA SPIDER, alongside other eCrime and nation-state adversaries,",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "DISTANT SPIDER",
+          "q": "In one example, DISTANT SPIDER was observed installing ScreenConnect as a service on a Windows endpoint",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "PROPHET SPIDER",
+          "q": "by the notorious access broker PROPHET SPIDER, the most prolific eCrime adversary exploiting public-facing web",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "LABYRINTH CHOLLIMA",
+          "q": "LABYRINTH CHOLLIMA led the charge, highlighting their ability",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "KITTEN",
+          "q": "The diversity of sectors targeted by Iranian (KITTEN) and Chinese (PANDA) state-nexus adversaries are reflective",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "PANDA",
+          "q": "The diversity of sectors targeted by Iranian (KITTEN) and Chinese (PANDA) state-nexus adversaries are reflective",
+          "by": "CrowdStrike (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "technology",
+          "q": "For the sixth consecutive year, the technology vertical topped the list for the most frequently targeted industry"
+        },
+        {
+          "v": "financial",
+          "q": "displaced this year by the financial vertical, which saw a spike in targeting."
+        },
+        {
+          "v": "financial services",
+          "q": "In the past year, the volume of interactive intrusion activity against the financial services industry increased by"
+        },
+        {
+          "v": "telecommunications",
+          "q": "The telecommunications vertical, which normally holds the second spot,"
+        },
+        {
+          "v": "academic",
+          "q": "Falcon OverWatch discovered hands-on-keyboard activity against a victim organization in the academic sector."
+        },
+        {
+          "v": "cryptocurrency",
+          "q": "Notorious for targeting financial technology and cryptocurrency organizations,"
+        },
+        {
+          "v": "retail",
+          "q": "web application at a North American customer in the retail sector."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Democratic People’s Republic of Korea",
+          "q": "LABYRINTH CHOLLIMA is one of the most prolific Democratic People’s Republic of Korea (DPRK) adversaries tracked by CrowdStrike"
+        },
+        {
+          "v": "Iran",
+          "q": "The diversity of sectors targeted by Iranian (KITTEN) and Chinese (PANDA) state-nexus adversaries are reflective"
+        },
+        {
+          "v": "China",
+          "q": "The diversity of sectors targeted by Iranian (KITTEN) and Chinese (PANDA) state-nexus adversaries are reflective"
+        },
+        {
+          "v": "U.S.",
+          "q": "The U.S. Federal Bureau of Investigations, Cybersecurity and Infrastructure Security Agency (CISA), and"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 1, 2022",
+          "q": "In the reporting period from July 1, 2022, through June 30, 2023, Falcon OverWatch observed interactive intrusion",
+          "what": "start of the reporting period covered by the report"
+        },
+        {
+          "v": "June 30, 2023",
+          "q": "In the reporting period from July 1, 2022, through June 30, 2023, Falcon OverWatch observed interactive intrusion",
+          "what": "end of the reporting period covered by the report"
+        },
+        {
+          "v": "March 2022",
+          "q": "since at least March 2022, with increasing operational tempo into late 2022.",
+          "what": "Network provider DLL activity against Exchange servers first observed"
+        },
+        {
+          "v": "March 29, 2023",
+          "q": "On March 29, 2023, Falcon OverWatch observed unexpected malicious activity",
+          "what": "malicious activity observed from the signed 3CXDesktopApp binary"
+        },
+        {
+          "v": "March 7, 2023",
+          "q": "and encryption key match those observed by CrowdStrike in a March 7, 2023, campaign attributed with high confidence to LABYRINTH CHOLLIMA.",
+          "what": "earlier campaign whose beacon structure and key matched the 3CX activity"
+        },
+        {
+          "v": "November 2022",
+          "q": "In November 2022, a victim organization in a CrowdStrike Services case accidentally published its",
+          "what": "cloud provider root access key credentials were published to GitHub and quickly abused"
+        },
+        {
+          "v": "early 2023",
+          "q": "In early 2023, Falcon OverWatch detected an adversary exploiting a custom PHP",
+          "what": "cloud intrusion against a retail customer via a PHP web application"
+        },
+        {
+          "v": "late February 2023",
+          "q": "repeatedly exploited in the wild since late February 2023.",
+          "what": "a variation of CVE-2023-21839 began to be exploited in the wild"
+        },
+        {
+          "v": "2022",
+          "q": "Since 2022, Falcon OverWatch has observed SCATTERED SPIDER and ALPHA SPIDER, alongside other eCrime and nation-state adversaries,",
+          "what": "RustDesk observed in intrusions by SCATTERED SPIDER and ALPHA SPIDER"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Rubeus",
+          "q": "Rubeus is a C# tool that allows an adversary to interact"
+        },
+        {
+          "v": "PowerSploit",
+          "q": "PowerSploit is an exploit framework that contains various"
+        },
+        {
+          "v": "Invoke-Kerberoast",
+          "q": "PowerSploit modules, including Invoke-Kerberoast, a module designed"
+        },
+        {
+          "v": "BloodHound",
+          "q": "BloodHound is a web-based tool that can be used"
+        },
+        {
+          "v": "SharpHound",
+          "q": "SharpHound is a PowerShell-based tool that can be used"
+        },
+        {
+          "v": "Impacket",
+          "q": "Impacket is a toolset of Python-based utilities that can"
+        },
+        {
+          "v": "SharpRoast",
+          "q": "SharpRoast is a C# tool within the SharpTools toolset."
+        },
+        {
+          "v": "GetUserSPNs",
+          "q": "Kerberoasting attacks include GetUserSPNs and"
+        },
+        {
+          "v": "Hashcat",
+          "q": "found the adversary using the Hashcat tool in an attempt to brute-force the"
+        },
+        {
+          "v": "nltest",
+          "q": "The threat actor performed basic host reconnaissance to enumerate domain trusts using nltest,"
+        },
+        {
+          "v": "SystemBC",
+          "q": "The threat actor then executed SystemBC and SocksProxyGo through PowerShell to proxy connections to their C2 infrastructure."
+        },
+        {
+          "v": "SocksProxyGo",
+          "q": "The threat actor then executed SystemBC and SocksProxyGo through PowerShell to proxy connections to their C2 infrastructure."
+        },
+        {
+          "v": "Silver",
+          "q": "A cron job was created to download and run the Silver implant upon reboot."
+        },
+        {
+          "v": "Gopuram",
+          "q": "The resulting compromise led to the delivery of the Gopuram backdoor, which affected both Windows and macOS versions of the software."
+        },
+        {
+          "v": "AppleJeus",
+          "q": "advisories on LABYRINTH CHOLLIMA’s AppleJeus malware, which is a macOS variant"
+        },
+        {
+          "v": "3CXDesktopApp",
+          "q": "3CXDesktopApp, a softphone application from 3CX."
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "compromised hosts received a DLL containing a BlisterLoader-packed Cobalt Strike implant."
+        },
+        {
+          "v": "BlisterLoader",
+          "q": "compromised hosts received a DLL containing a BlisterLoader-packed Cobalt Strike implant."
+        },
+        {
+          "v": "NetSupport RAT",
+          "q": "Falcon OverWatch observed a NetSupport RAT payload being deployed for remote administration."
+        },
+        {
+          "v": "SocGholish",
+          "q": "beginning with the use of the SocGholish tool to opportunistically find victims."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Kerberoasting",
+          "q": "Kerberoasting is a beneficial technique for adversaries because it targets an"
+        },
+        {
+          "v": "valid accounts",
+          "q": "Over the past year, 62% of all interactive intrusions used valid accounts."
+        },
+        {
+          "v": "Pass-the-Hash",
+          "q": "Pass-the-Hash attacks, which rose by 200% year over year"
+        },
+        {
+          "v": "network provider DLL",
+          "q": "Over the past year, Falcon OverWatch observed malicious network provider DLLs"
+        },
+        {
+          "v": "RMM tools",
+          "q": "This past year, Falcon OverWatch observed RMM tools"
+        },
+        {
+          "v": "cloud instance metadata APIs",
+          "q": "Attempts to gather secret keys and other credential materials via cloud instance metadata APIs, which rose by 160% year over year"
+        },
+        {
+          "v": "public-facing applications",
+          "q": "Exploitation of public-facing applications is another common theme across both eCrime"
+        },
+        {
+          "v": "dump credentials",
+          "q": "26% of all intrusions involved attempts to dump credentials,8 and 11% involved attempts to target unsecured credentials.9 All"
+        },
+        {
+          "v": "timestomping",
+          "q": "the touch commands were likely used to conduct timestomping39 to further evade detection."
+        },
+        {
+          "v": "PAM",
+          "q": "replacing Pluggable Authentication Modules (PAM) with malicious modules in Linux, typically for"
+        },
+        {
+          "v": "Environmental keying",
+          "q": "Environmental keying prevents malicious binaries from executing their intended"
+        },
+        {
+          "v": "access brokers",
+          "q": "Access brokers sell their established access to a variety of clientele."
+        },
+        {
+          "v": "theft and extortion without the use of ransomware",
+          "q": "theft and extortion without the use of ransomware — a trend the CrowdStrike"
+        },
+        {
+          "v": "ransomware",
+          "q": "BGH operations continue to rely on ransomware and"
+        },
+        {
+          "v": "password spraying",
+          "q": "including password spraying, accessing existing remote services through valid accounts,"
+        },
+        {
+          "v": "double supply chain attack",
+          "q": "it was a layered exploitation — a double supply chain attack."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2022-41040",
+          "q": "two vulnerabilities: CVE-2022-41040 and CVE-2022-41082 (collectively, these are"
+        },
+        {
+          "v": "CVE-2022-41082",
+          "q": "two vulnerabilities: CVE-2022-41040 and CVE-2022-41082 (collectively, these are"
+        },
+        {
+          "v": "CVE-2023-21839",
+          "q": "associated with Java Network Discovery Interface (JNDI) injection via CVE-2023-21839."
+        }
+      ],
+      "figures": [
+        {
+          "v": "40%",
+          "q": "volumes continue to climb, with a total year-over-year increase of 40%."
+        },
+        {
+          "v": "79 minutes",
+          "q": "interactive eCrime intrusion activity was 79 minutes."
+        },
+        {
+          "v": "seven minutes",
+          "q": "Falcon OverWatch witnessed one adversary breakout time of just seven minutes."
+        },
+        {
+          "v": "215",
+          "q": "CrowdStrike tracking over 215 adversaries today."
+        },
+        {
+          "v": "1.5 million",
+          "q": "an additional 1.5 million malicious events"
+        },
+        {
+          "v": "71%",
+          "q": "Across all malicious activity tracked by CrowdStrike, 71% of intrusions were"
+        },
+        {
+          "v": "80%",
+          "q": "Today, 80% of breaches use compromised identities."
+        },
+        {
+          "v": "62%",
+          "q": "Over the past year, 62% of all interactive intrusions used valid accounts."
+        },
+        {
+          "v": "160%",
+          "q": "Attempts to gather secret keys and other credential materials via cloud instance metadata APIs, which rose by 160% year over year"
+        },
+        {
+          "v": "583%",
+          "q": "Over the past year, Falcon OverWatch observed a staggering 583% increase"
+        },
+        {
+          "v": "410%",
+          "q": "Exploitation of weaknesses in Kerberos security to steal or forge authentication material, which rose by 410%"
+        },
+        {
+          "v": "200%",
+          "q": "Pass-the-Hash attacks, which rose by 200% year over year"
+        },
+        {
+          "v": "27%",
+          "q": "responsible for 27% of all intrusions that involved the Kerberoasting technique."
+        },
+        {
+          "v": "14%",
+          "q": "used in approximately 14% of all intrusions, and the volume"
+        },
+        {
+          "v": "312%",
+          "q": "of intrusions where RMM tools were leveraged by threat actors increased by 312% year over year."
+        },
+        {
+          "v": "147%",
+          "q": "In the past year, there has been a 147% increase in access broker advertisements in criminal or underground"
+        },
+        {
+          "v": "20%",
+          "q": "observed in over 20% of all interactive intrusions.25"
+        },
+        {
+          "v": "triple",
+          "q": "Falcon OverWatch saw its use by eCrime and targeted intrusion adversaries triple."
+        },
+        {
+          "v": "95%",
+          "q": "conscious threat actors coupled with a 95% increase in cloud exploitation from 2021 to 2022."
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "hedges": [
+      "Attribution to a high degree of confidence is not always possible; the heat map does not reflect unattributed activity.",
+      "CrowdStrike assesses LABYRINTH CHOLLIMA is likely affiliated with Bureau 121 of the DPRK's Reconnaissance General Bureau.",
+      "Falcon OverWatch hypothesizes that alternate Linux shells may be used for signature evasion, speed or smaller size.",
+      "The CVE-2023-21839 activity was either opportunistic eCrime or a suspected China-nexus targeted variant; the report calls this suspected.",
+      "The report says valid-account intrusions were likely obtained through credential harvesting, password reuse, phishing, insider threat, session hijacking or purchase.",
+      "The adversary behind the malicious network provider DLL activity was unidentified.",
+      "Figures cover interactive intrusion activity only; the report says targeted adversaries refer to state-nexus adversaries."
+    ]
   }
 }

@@ -284,5 +284,105 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "00e4140ee83e4a98fd9cf2f4df2a4ee1082fadb7": {
+    "sha1": "00e4140ee83e4a98fd9cf2f4df2a4ee1082fadb7",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:45:29Z",
+    "model": "haiku",
+    "summary": "Trend Micro reports a Linux cryptojacking attack, intercepted in November 2022, that added the CHAOS RAT, a remote access trojan based on an open source project, to a routine that kills competing malware and installs a Monero miner. Persistence uses cron, and payloads are fetched from a paste site. The download server appears to be in Russia, and the RAT's command-and-control server is likely in Hong Kong. The RAT offers functions such as reverse shell, file transfer, screenshots and system shutdown. The report links the cryptojacking routine to earlier activity by TeamTNT.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "threat actors active in this space such as TeamTNT",
+          "by": "the report (Trend Micro)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "appears to be located in Russia"
+        },
+        {
+          "v": "Hong Kong",
+          "q": "another C&C server, likely located in Hong Kong (which we determined through IP geolocation)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 12, 2022",
+          "q": "December 12, 2022",
+          "what": "report published"
+        },
+        {
+          "v": "November 2022",
+          "q": "In November 2022, we intercepted a threat that had a slightly different routine",
+          "what": "Trend Micro intercepted a cryptojacking attack incorporating CHAOS RAT"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CHAOS Remote Administrative Tool",
+          "q": "named the CHAOS Remote Administrative Tool"
+        },
+        {
+          "v": "Trojan.Linux.CHAOSRAT",
+          "q": "(Trojan.Linux.CHAOSRAT), which is based on an open source project"
+        },
+        {
+          "v": "Kinsing",
+          "q": "termination of competing malware such as Kinsing and the killing of"
+        },
+        {
+          "v": "XMRig",
+          "q": "This is followed by downloading additional payloads: an XMRig miner, its configuration file"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persistence via scheduled tasks (cron)",
+          "q": "This was followed by routines for persistence and payload execution"
+        },
+        {
+          "v": "killing competing malware and security products",
+          "q": "the initial phase saw attackers trying to kill off competing malware, security products, and other cloud middleware"
+        },
+        {
+          "v": "reverse shell",
+          "q": "Perform reverse shell"
+        },
+        {
+          "v": "use of bulletproof hosting",
+          "q": "also used for cloud bulletproof hosting (a modus operandi"
+        },
+        {
+          "v": "JSON Web Token authorization",
+          "q": "using a JSON Web Token (JTW) for authorization"
+        },
+        {
+          "v": "payload download from paste site",
+          "q": "downloads itself every 10 minutes from Pastebin"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "10 minutes",
+          "q": "downloads itself every 10 minutes from Pastebin"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "CHAOS Remote Administrative Tool"
+    },
+    "hedges": [
+      "the main server appears to be located in Russia",
+      "the command-and-control server is likely located in Hong Kong, determined through IP geolocation"
+    ]
   }
 }

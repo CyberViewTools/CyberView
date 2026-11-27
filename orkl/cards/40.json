@@ -561,5 +561,116 @@
       "note": "summary: In the May case the ZIP archives contained malicious Linux desktop entry files, not a decoy PDF. The desktop file downloads the PDF separately. Also, o",
       "by": "auditor"
     }
+  },
+  "4080fd3fa1acb8cfe0939242f6d2cf32478dccf3": {
+    "sha1": "4080fd3fa1acb8cfe0939242f6d2cf32478dccf3",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:46:38Z",
+    "model": "haiku",
+    "summary": "Aqua's Team Nautilus research team reports fileless malware that runs from memory in container images. Four Docker Hub images were found designed for this, and two Docker Hub accounts are linked to the TeamTNT group. The malware hides processes with a rootkit, runs a crypto miner from memory, and leaves a backdoor. The report names Tsunami malware as a component, describes packing as a way to evade scanners, and recommends image scanning, minimal privileges, runtime detection and log review.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "TeamTNT",
+          "q": "Our research shows that these accounts are linked to TeamTNT, a group whose attacks we’ve seen before.",
+          "by": "Aqua Team Nautilus research team (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2020-12-02",
+          "q": "December 02, 2020",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Aqua DTA",
+          "q": "using our sophisticated Aqua DTA"
+        },
+        {
+          "v": "Tsunami malware",
+          "q": "Tsunami malware enables a remote attacker to download files"
+        },
+        {
+          "v": "Trivy",
+          "q": "vulnerability scanner such as Trivy (open source)."
+        },
+        {
+          "v": "Tracee",
+          "q": "Use Tracee (open source) to detect suspicious or abnormal processes"
+        },
+        {
+          "v": "BusyBox",
+          "q": "BusyBox (provides various Unix utilities) and the rest contained TeamTNT’s malicious"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "rootkit",
+          "q": "This malware is using a rootkit to hide its running processes"
+        },
+        {
+          "v": "execution from memory",
+          "q": "straight from memory in containers, thus evading common defenses and static scanning."
+        },
+        {
+          "v": "packers",
+          "q": "Attackers often use packers as a defensive evasion technique"
+        },
+        {
+          "v": "erases host Cron jobs",
+          "q": "The script erases host Cron jobs and sets to execute"
+        },
+        {
+          "v": "crypto miner",
+          "q": "executing a crypto miner from memory — leaving a backdoor that enables attackers to do"
+        },
+        {
+          "v": "backdoor",
+          "q": "leaving a backdoor that enables attackers to do"
+        },
+        {
+          "v": "denial-of-service attack",
+          "q": "launch a denial-of-service attack from the infected host"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "four container images",
+          "q": "We found four container images in Docker Hub designed to execute fileless"
+        },
+        {
+          "v": "two Docker Hub accounts",
+          "q": "we detected two Docker Hub accounts (‘portaienr’ and ‘lifengyi1323’)"
+        },
+        {
+          "v": "six layers",
+          "q": "was built with six layers. Two of the layers contained"
+        },
+        {
+          "v": "10 times more likely",
+          "q": "Some reports claim that this type of malware attack is 10 times more likely to succeed in infecting a"
+        },
+        {
+          "v": "hundreds of percent",
+          "q": "is increasing — by hundreds of percent. Some reports"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Tsunami"
+    },
+    "hedges": [
+      "The report says the Docker Hub accounts are 'linked to' TeamTNT; it does not state a confirmed identity.",
+      "The 10-times-more-likely figure is attributed to 'Some reports' the research team does not name.",
+      "Low VirusTotal detections are presented as implying the packing is highly effective against antivirus scanners."
+    ]
   }
 }

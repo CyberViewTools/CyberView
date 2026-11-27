@@ -847,5 +847,91 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "6e8205e9ed9d3ec046ac10eb27a68a8d4e453c74": {
+    "sha1": "6e8205e9ed9d3ec046ac10eb27a68a8d4e453c74",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:44:38Z",
+    "model": "haiku",
+    "summary": "ESET's April 2017 analysis of Linux/Shishiga, a Lua-based bot that spreads by brute-forcing weak SSH and Telnet credentials. It is statically linked with Lua, uses BitTorrent to fetch configuration and update files, and serves an HTTP interface on port 8888 that is an indicator of compromise. Censys found about 10 matching hosts that may be infected. ESET describes it as a work in progress with few victims.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April 25, 2017",
+          "q": "April 25, 2017",
+          "what": "ESET published its analysis of the malware"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Lua",
+          "q": "a bot written in Lua"
+        },
+        {
+          "v": "UPX 3.91",
+          "q": "Linux/Shishiga is a binary packed with UPX 3.91"
+        },
+        {
+          "v": "Hajime",
+          "q": "BitTorrent used in a Mirai-inspired worm, Hajime"
+        },
+        {
+          "v": "Censys",
+          "q": "we asked the Censys team to do a mass scan of the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "bruteforcing weak credentials based on a password list",
+          "q": "bruteforcing weak credentials based on a password list"
+        },
+        {
+          "v": "BitTorrent protocol for checking updates",
+          "q": "uses the BitTorrent protocol"
+        },
+        {
+          "v": "packing with UPX",
+          "q": "Linux/Shishiga is a binary packed with UPX 3.91"
+        },
+        {
+          "v": "modular Lua scripts",
+          "q": "scripts for modularity"
+        },
+        {
+          "v": "Linux/Shishiga targets GNU/Linux systems",
+          "q": "Linux/Shishiga targets GNU/Linux systems"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "4 different protocols",
+          "q": "It uses 4 different protocols"
+        },
+        {
+          "v": "about 10 IP addresses",
+          "q": "They found about 10 IP addresses that match this particular"
+        },
+        {
+          "v": "port 8888",
+          "q": "In all samples we have analyzed so far, that is port 8888."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Linux/Shishiga"
+    },
+    "hedges": [
+      "It seems that the malware author was inspired by E.Letov",
+      "These IP addresses are potentially infected machines.",
+      "We can only speculate that it might become more popular in the future",
+      "Possible that Shishiga could still evolve and become more widespread"
+    ]
   }
 }

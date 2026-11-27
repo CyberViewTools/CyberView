@@ -242,5 +242,116 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "c59a9712231310a14b27efe4a03041ca31f67049": {
+    "sha1": "c59a9712231310a14b27efe4a03041ca31f67049",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:42:47Z",
+    "model": "haiku",
+    "summary": "Sysdig blog analysis of the Kinsing malware, which targets misconfigured cloud native environments such as exposed Docker engines. Kinsing acts as a loader: it downloads and runs a Monero crypto miner (kdevtmpfsi), disables security tools, kills rival miners, sets up cronjob persistence, reads SSH keys to move laterally, and contacts command and control servers. Detection advice uses Falco.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 23, 2020",
+          "q": "By Kaizhe Huang November 23, 2020",
+          "what": "Sysdig blog post on the Kinsing attack published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "kdevtmpfsi",
+          "q": "Kdevtmpfsi is the crypto miner that will be created and run by Kinsing in the /tmp directory"
+        },
+        {
+          "v": "Shodan",
+          "q": "According to Shodan, a search engine for internet-connected devices, more than 2,000"
+        },
+        {
+          "v": "Sysdig",
+          "q": "I used Sysdig open source to analyze the syscalls that executed from"
+        },
+        {
+          "v": "Falco",
+          "q": "Falco, a CNCF incubating project, can help detect any anomalous activities in cloud native"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "misconfigured hosts or clusters",
+          "q": "A misconfigured host or cluster could be exploited to run any container desired by the"
+        },
+        {
+          "v": "lateral movement",
+          "q": "be used to perform lateral movement"
+        },
+        {
+          "v": "defense evasion",
+          "q": "attack patterns, as well as defense evasion schemes"
+        },
+        {
+          "v": "disable security services",
+          "q": "Turn off security services"
+        },
+        {
+          "v": "crypto miner",
+          "q": "Kinsing serves as a convoy to a crypto miner"
+        },
+        {
+          "v": "cronjob to download the malicious script",
+          "q": "Create a cronjob to download the malicious script"
+        },
+        {
+          "v": "killing rival mining processes",
+          "q": "Kill other crypto mining processes and their cronjobs"
+        },
+        {
+          "v": "SSH keys",
+          "q": "reading the SSH keys on"
+        },
+        {
+          "v": "Command and Control (C2) servers",
+          "q": "Kinsing did contact Command and Control (C2) servers"
+        },
+        {
+          "v": "restart the miner program",
+          "q": "if kdevtmpfsi is killed, Kinsing will restart the miner program"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "more than 2,000",
+          "q": "According to Shodan, a search engine for internet-connected devices, more than 2,000"
+        },
+        {
+          "v": "Go 1.13.6",
+          "q": "compiled with Go 1.13.6, which is a"
+        },
+        {
+          "v": "Monero(XMR)",
+          "q": "From the login request, we know that the miner actually mines for Monero(XMR)"
+        },
+        {
+          "v": "about every minute",
+          "q": "The heartbeat message was sent about every minute."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Kinsing"
+    },
+    "hedges": [
+      "It looks like the downloaded script is the malicious script that kicks off the Kinsing attacks.",
+      "Given their sizes, it looks like that the crypto miner is baked into Kinsing.",
+      "As a security researcher reported, Kinsing is written in Golang.",
+      "It still doesn't suggest every CPU hike is caused by crypto miners.",
+      "Although we can't rely on a single individual suspicious event to unveil the Kinsing attack completely."
+    ]
   }
 }

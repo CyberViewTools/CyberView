@@ -255,5 +255,175 @@
         "by": "auditor"
       }
     ]
+  },
+  "434bafb13939fd216b92c8e7c67539e3f9caac7f": {
+    "sha1": "434bafb13939fd216b92c8e7c67539e3f9caac7f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:47:01Z",
+    "model": "haiku",
+    "summary": "Cynet's Orion team reports active exploitation of the Log4Shell flaws (CVE-2021-44228 and CVE-2021-45046) against VMware Horizon servers from early January 2022. Attackers used the Horizon Tomcat service to deploy Cobalt Strike beacons, XMRig cryptominers and PowerShell-based reverse shells, and abused a VMware node.exe binary as a LOLBin. The report links some activity to Night Sky ransomware (tracked by Microsoft as DEV-0401) and possibly Memento ransomware, with hedged attribution. Indicators of compromise are omitted here.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Night Sky",
+          "q": "we believe that Chinese-based ransomware operators dubbed Night Sky (and tracked by Microsoft as DEV-0401) is behind on some of the attacks.",
+          "by": "Cynet Orion Threat Research and Intelligence Team (the report)"
+        },
+        {
+          "v": "DEV-0401",
+          "q": "dubbed Night Sky (and tracked by Microsoft as DEV-0401)",
+          "by": "Microsoft, as cited in the report"
+        },
+        {
+          "v": "Memento ransomware",
+          "q": "Additional indicators point to the Night Sky ransomware group and Memento ransomware.",
+          "by": "the report (Cynet Orion team), which says indicators point to it"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "December 9th, 2021",
+          "q": "December 9th, 2021 – Log4j vulnerabilities were discovered and classified with the CVSS score of 10 (Critical).",
+          "what": "Log4j vulnerabilities discovered and classified as critical"
+        },
+        {
+          "v": "December 10th, 2021",
+          "q": "December 10th, 2021 – VMware reported on Apache Log4j Remote Code Execution Vulnerabilities on several products.",
+          "what": "VMware reported the Log4j issues affecting several of its products"
+        },
+        {
+          "v": "January 1st, 2022",
+          "q": "Starting January 1st, 2022 – The Cyber Security community began reporting on threat actors who are actively trying to exploit VMware",
+          "what": "Community began reporting exploitation of VMware Horizon via Log4j"
+        },
+        {
+          "v": "Jan 1th",
+          "q": "The Night Sky ransomware was first spotted by MalwareHunterTeam on Jan 1th.",
+          "what": "Night Sky ransomware first spotted"
+        },
+        {
+          "v": "January 11th",
+          "q": "On January 11th, Bleeping computer reported “Night Sky ransomware uses Log4j bug to hack VMware Horizon servers“.",
+          "what": "Bleeping Computer reported Night Sky using the Log4j bug against Horizon servers"
+        },
+        {
+          "v": "January 14th",
+          "q": "The pool was created on January 14th, it is comprised of 773 infected machines, dedicating parts of their CPU to the threat actors pool",
+          "what": "Mining pool created, reported to involve 773 infected machines"
+        },
+        {
+          "v": "end of 2021",
+          "q": "Night Sky was first observed at the end of 2021 while being distributed by a Chinese-based ransomware operator.",
+          "what": "Night Sky first observed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "by different threat actors who deployed Cobalt Strike beacons, Cryptominers, and fileless reverse shells."
+        },
+        {
+          "v": "XMRig",
+          "q": "Xmrig.exe is part of XMRig open-source CPU/GPU cryptocurrency mining software."
+        },
+        {
+          "v": "node.exe",
+          "q": "one of the binaries being installed as part of “VMware View” is node.exe."
+        },
+        {
+          "v": "ws_tomcatservice.exe",
+          "q": "in all these cases the process ws_tomcatservice.exe was involved."
+        },
+        {
+          "v": "Metasploit",
+          "q": "Inspired by a PowerShell implementation of a reverse shell from the Metasploit framework"
+        },
+        {
+          "v": "Non-Sucking Service Manager",
+          "q": "Non-Sucking Service Manager (NSSM) is a service helper program that assists in installing an application as a service."
+        },
+        {
+          "v": "Windows Defender",
+          "q": "Threat actors disabled Windows Defender real-time monitoring in order to prepare the compromised host for the next stage of payloads."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploit Public-Facing Application",
+          "q": "MITRE reference: TA0001 (Initial Access), T1190 (Exploit Public-Facing Application)"
+        },
+        {
+          "v": "Impair Defenses",
+          "q": "The above command is related to the Impair Defenses technique – MITRE T1562."
+        },
+        {
+          "v": "Log4Shell JNDI attack",
+          "q": "Log4Shell JNDI attack – An attacker can craft the following HTTP header and send it to the target application:"
+        },
+        {
+          "v": "fileless reverse shells",
+          "q": "by different threat actors who deployed Cobalt Strike beacons, Cryptominers, and fileless reverse shells."
+        },
+        {
+          "v": "reverse shell",
+          "q": "We have also responded to an incident where threat actors attempted to establish a reverse shell session through a PowerShell command."
+        },
+        {
+          "v": "Boot or Logon Autostart Execution",
+          "q": "The above activity is related to the MITRE sub-technique “Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder”"
+        },
+        {
+          "v": "double extortion",
+          "q": "The Night Sky ransomware group threatens its victims with the double extortion model."
+        },
+        {
+          "v": "AES-128",
+          "q": "The ransomware encryption method: AES-128 algorithm"
+        },
+        {
+          "v": "LOLBin",
+          "q": "This binary allows threat actors to use it as a LOLBin for the execution flow."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-44228",
+          "q": "The threat actors exploit Log4j CVE-2021-44228 and CVE-2021-45046 on VMware Horizon machines."
+        },
+        {
+          "v": "CVE-2021-45046",
+          "q": "The threat actors exploit Log4j CVE-2021-44228 and CVE-2021-45046 on VMware Horizon machines."
+        }
+      ],
+      "figures": [
+        {
+          "v": "CVSS score of 10",
+          "q": "classified with the CVSS score of 10 (Critical)"
+        },
+        {
+          "v": "773 infected machines",
+          "q": "it is comprised of 773 infected machines, dedicating parts of their CPU"
+        },
+        {
+          "v": "0.5 XMR (Aprox 30$) per day",
+          "q": "it is currently running at a rate of 0.5 XMR (Aprox 30$) per day."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "HorizonBackdoor"
+    },
+    "hedges": [
+      "Attribution to Chinese-based ransomware operators rests on observed IOCs and TTPs and is stated as a belief, not a confirmed finding.",
+      "Additional indicators point to Night Sky and Memento ransomware; the Memento link is described as potential.",
+      "One reverse shell attempt is an assumption: the server may lack host information, so it refuses connections.",
+      "The report says one investigation is still ongoing and more details and IOCs will be published when it is complete.",
+      "A community-linked IP is said to have a bad reputation on VirusTotal and is potentially related to Memento ransomware."
+    ]
   }
 }

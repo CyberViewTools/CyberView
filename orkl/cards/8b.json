@@ -1087,5 +1087,127 @@
     "hedges": [],
     "reason": "value-not-in-quote, quote-not-in-text",
     "tries": 2
+  },
+  "8b1e8d3cdcd1dd87dd0224aca0205cf8adba0c20": {
+    "sha1": "8b1e8d3cdcd1dd87dd0224aca0205cf8adba0c20",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:42:59Z",
+    "model": "haiku",
+    "summary": "FortiGuard Labs reports on the Rocke cryptomining campaign, a Linux coin-mining operation whose malware added a Jenkins exploitation function, an extra loader stage, and redundant scripts hosted on Pastebin. It spreads through SSH known-hosts lateral movement and brute-forcing of SSH and Redis, persists via cron jobs and a service, hides its processes with a preloaded hooking library, and mines with the open-source XMRig miner using an embedded proxy configuration. The report says Fortinet products detect and block the samples.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Rocke",
+          "q": "FortiGuard Labs has been monitoring a Linux coin mining campaign from “Rocke”",
+          "by": "FortiGuard Labs"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "May 28, 2019",
+          "q": "May 28, 2019",
+          "what": "Date of the FortiGuard Labs threat research post"
+        },
+        {
+          "v": "March",
+          "q": "in March of this year, they switched to a “custom” UPX compression",
+          "what": "Malware switched to custom UPX packing"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig",
+          "q": "This campaign uses the open-source XMRig CPU miner."
+        },
+        {
+          "v": "UPX",
+          "q": "at first had been packed with a simple UPX."
+        },
+        {
+          "v": "Pastebin",
+          "q": "The malicious bash script components of the malware are hosted in Pastebin, with the profile"
+        },
+        {
+          "v": "wget",
+          "q": "The sole purpose of the Stage1 script is simply to download the Stage2 script via either wget"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "credential brute-force",
+          "q": "credential brute-force method targeting SSH (port 22) and Redis (port 6379) services."
+        },
+        {
+          "v": "CRON job",
+          "q": "Adds a CRON job that downloads and executes the Stage1 script periodically."
+        },
+        {
+          "v": "spread laterally",
+          "q": "The malware is spread laterally by executing the Stage1 script and accessing the SSH"
+        },
+        {
+          "v": "hooking library",
+          "q": "To hide its mining operation, a hooking library"
+        },
+        {
+          "v": "exploits",
+          "q": "they have added a function that exploits systems running the software development"
+        },
+        {
+          "v": "loader stage",
+          "q": "they decided to add a new loader stage before the actual execution of"
+        },
+        {
+          "v": "cryptomining",
+          "q": "malware threat group specializing in cryptomining"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2018-1000861",
+          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000."
+        },
+        {
+          "v": "CVE-2019-1003000",
+          "q": "by attempting to exploit CVE-2018-1000861 and CVE-2019-1003000."
+        }
+      ],
+      "figures": [
+        {
+          "v": "port 22",
+          "q": "credential brute-force method targeting SSH (port 22) and Redis (port 6379) services."
+        },
+        {
+          "v": "port 6379",
+          "q": "credential brute-force method targeting SSH (port 22) and Redis (port 6379) services."
+        },
+        {
+          "v": "every minute",
+          "q": "means the script will execute every minute."
+        },
+        {
+          "v": "0% CPU usage",
+          "q": "0% CPU usage"
+        },
+        {
+          "v": "Two different download URLs",
+          "q": "Two different download URLs are assigned to each architecture just in case either of"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Rocke"
+    },
+    "hedges": [
+      "Presumably, the redundancy is for operational continuity in case, for some reason, other links are removed.",
+      "most probably running an xmrig-proxy service",
+      "it’s likely that they will be adding more of these in the near future.",
+      "Note that the port may change depending on the variant."
+    ]
   }
 }

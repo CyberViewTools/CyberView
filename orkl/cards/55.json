@@ -461,5 +461,75 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "55c9b6cdaabaa726a627eed38952ae847eff4f6c": {
+    "sha1": "55c9b6cdaabaa726a627eed38952ae847eff4f6c",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:46:37Z",
+    "model": "haiku",
+    "summary": "A January 2021 blog post on Doki, a recent trojan that targets publicly accessible Docker servers and spreads via an Ngrok botnet. Intezer researchers say it gives pervasive code execution on compromised servers. It uses ngrok tunnels for command and control, a Dogecoin API lookup for its C2 address, and a host cron job to keep running. The post says Doki was first discovered in January 2020 and avoided each of the 60 malware platforms checked on VirusTotal. Defence focuses on container and host runtime security.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "January 6, 2021",
+          "q": "January 6, 2021",
+          "what": "Report published on the blog"
+        },
+        {
+          "v": "January 2020",
+          "q": "since it was first discovered in January 2020, it has also managed to avoid each of the 60 malware platforms identified on VirusTotal.",
+          "what": "Doki first discovered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ngrok",
+          "q": "Doki malware is a recent trojan that spreads via the Ngrok botnet using Dogecoin wallets for"
+        },
+        {
+          "v": "curl",
+          "q": "Every container produced during the attack is predicated on an alpine image configured with curl."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "targets publicly accessible Docker servers",
+          "q": "It targets publicly accessible Docker servers."
+        },
+        {
+          "v": "command-and-control connection",
+          "q": "Doki creates a command-and-control connection, using the"
+        },
+        {
+          "v": "Dogecoin API lookup",
+          "q": "Doki requests the Dogecoin API, uses SHA265 protection and generates a run-time URL"
+        },
+        {
+          "v": "host cron job",
+          "q": "The attack creates a host cron job with a network detector and a plugin script that"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "60",
+          "q": "avoid each of the 60 malware platforms identified on VirusTotal"
+        },
+        {
+          "v": "seven months",
+          "q": "Doki has been unrecognized for more than seven months as malware on VirusTotal"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Doki"
+    },
+    "hedges": []
   }
 }

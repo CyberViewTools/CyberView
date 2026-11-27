@@ -652,25 +652,322 @@
   },
   "1fd0393ff8a786d5f2fbc8a4a51f890f6b410993": {
     "sha1": "1fd0393ff8a786d5f2fbc8a4a51f890f6b410993",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:34:02Z",
+    "read_at": "2026-11-27T14:36:14Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "CERT-UA reports that the group it tracks as UAC-0165 breached at least 11 Ukrainian telecommunications providers between 11 May and 27 September 2023, causing service disruptions. Intrusions began with broad port scanning, password guessing on exposed management interfaces and exploitation of vulnerabilities, often routed through compromised relay servers. The group kept access through backdoors, VPN accounts lacking multi-factor authentication and jump-host targeting, removed traces, stole data and account credentials, and destroyed network equipment. CERT-UA urges providers to review their…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "UAC-0165",
+          "q": "відстежується за ідентифікатором UAC-0165, здійснено втручання в інформаційно-комунікаційні системи",
+          "by": "CERT-UA"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "telecommunications",
+          "q": "не менше ніж 11 провайдерів телекомунікацій України"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukraine",
+          "q": "провайдерів телекомунікацій України"
+        }
+      ],
+      "dates": [
+        {
+          "v": "11.05.2023",
+          "q": "за період з 11.05.2023 по 27.09.2023 організованою групою зловмисників",
+          "what": "Start of the period covered by the report, during which the group intruded into telecom providers"
+        },
+        {
+          "v": "27.09.2023",
+          "q": "за період з 11.05.2023 по 27.09.2023 організованою групою зловмисників",
+          "what": "End of the period covered by the report"
+        }
+      ],
+      "tools": [
+        {
+          "v": "masscan",
+          "q": "masscan. Приклад застосованого конфігураційного файлу, а також скрипта для запуску masscan наведено"
+        },
+        {
+          "v": "ffuf",
+          "q": "в тому числі: ffuf, dirbuster, gowitness, nmap тощо."
+        },
+        {
+          "v": "dirbuster",
+          "q": "в тому числі: ffuf, dirbuster, gowitness, nmap тощо."
+        },
+        {
+          "v": "gowitness",
+          "q": "в тому числі: ffuf, dirbuster, gowitness, nmap тощо."
+        },
+        {
+          "v": "nmap",
+          "q": "в тому числі: ffuf, dirbuster, gowitness, nmap тощо."
+        },
+        {
+          "v": "dante",
+          "q": "такі вузли застосовуються проксі-сервери dante, socks5 та інші."
+        },
+        {
+          "v": "socks5",
+          "q": "такі вузли застосовуються проксі-сервери dante, socks5 та інші."
+        },
+        {
+          "v": "POEMGATE",
+          "q": "модуль (відстежується як POEMGATE), що надає можливість автентифікуватися із статично визначеним"
+        },
+        {
+          "v": "WHITECAT",
+          "q": "Видалення ознак несанкціонованого доступу досягається, серед іншого, запуском утиліти WHITECAT."
+        },
+        {
+          "v": "POSEIDON",
+          "q": "Додатково на сервер може встановлюватися варіант програми POSEIDON"
+        },
+        {
+          "v": "Weevely",
+          "q": "завантажуватися бекдор Weevely. Якщо сервер знаходиться в межах ІКС провайдера"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "broad port scanning of provider network ranges",
+          "q": "(автономної системи) провайдера за типовим набором мережевих портів із застосуванням, зокрема,"
+        },
+        {
+          "v": "password guessing against exposed management interfaces",
+          "q": "ініціюється підбір автентифікаційних даних. У разі виявлення ознак вразливостей"
+        },
+        {
+          "v": "exploitation of discovered vulnerabilities",
+          "q": "здійснюється їхня експлуатація. Публічно доступні сервіси (вебдодатки), такі як білінг"
+        },
+        {
+          "v": "VPN accounts without one-time-code multi-factor authentication",
+          "q": "штатних облікових записів VPN (зазначеному сприяє відсутність"
+        },
+        {
+          "v": "malicious PAM module capturing entered logins",
+          "q": "модуль (відстежується як POEMGATE), що надає можливість автентифікуватися із статично визначеним"
+        },
+        {
+          "v": "removing signs of unauthorized access",
+          "q": "Видалення ознак несанкціонованого доступу досягається, серед іншого, запуском утиліти WHITECAT."
+        },
+        {
+          "v": "persistence by modifying a system binary",
+          "q": "персистентність POSEIDON забезпечується шляхом підміни (модифікації) легітимного бінарного файлу"
+        },
+        {
+          "v": "targeting jump hosts and administrator computers",
+          "q": "основні зусилля зосереджуються на ідентифікації так званих джамп-хостів та"
+        },
+        {
+          "v": "exfiltration of documents and drawings to publicize attacks",
+          "q": "присвячується ексфільтрації документів, креслень, схем, договорів."
+        },
+        {
+          "v": "theft of social media and SMS-service account credentials",
+          "q": "викрадення паролів від офіційних облікових записів в Telegram, Facebook, а також токенів для розсилання SMS, тощо."
+        },
+        {
+          "v": "destruction of active network and server equipment and storage",
+          "q": "На заключному етапі кібератаки здійснюється виведення з ладу активного мережевого та серверного"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "11",
+          "q": "не менше ніж 11 провайдерів телекомунікацій України"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "UAC-0165"
+    },
+    "hedges": [
+      "The report says the figures and period come from public sources, and that its technical information is a summary and not exhaustive.",
+      "The report says the group is tracked under the identifier UAC-0165; this identification is the report's own.",
+      "The report says the staging servers were compromised in advance, a conclusion it states was confirmed by detailed analysis."
+    ]
+  },
+  "1f7487abb5b7f175e96b43fdd08d2d151e16bc4e": {
+    "sha1": "1f7487abb5b7f175e96b43fdd08d2d151e16bc4e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:39:24Z",
+    "model": "haiku",
+    "summary": "A technical tutorial, not a report on an observed threat. It explains how to load a shared library into a running Linux process with the GDB debugger, using process attachment. The sample library starts a reverse shell that calls back to a listener at a fixed interval. The author also covers detection artifacts: process listings, files on disk, and service disruption. Tools mentioned include GDB, CobaltStrike (as training inspiration) and pcapknock (used during the author's work). No actors, CVEs, dates, sectors or countries are named.",
+    "kind": "overview",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [],
-      "tools": [],
-      "techniques": [],
+      "tools": [
+        {
+          "v": "GDB",
+          "q": "GDB, for those who’ve never found themselves with a bug unsolvable with lots of well-placed"
+        },
+        {
+          "v": "CobaltStrike",
+          "q": "Inspired by excellent CobaltStrike training, I set out to work out an easy way to inject into"
+        },
+        {
+          "v": "pcapknock",
+          "q": "lot of the fiddling that went into making this blog post was done using pcapknock."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "process injection",
+          "q": "Process injection on Linux is reasonably easy:"
+        },
+        {
+          "v": "ptrace(2)",
+          "q": "We’ll need to be able to attach to the process with ptrace(2) , which GDB uses under the"
+        },
+        {
+          "v": "reverse shell",
+          "q": "In a nutshell, this will spawn an unencrypted, unauthenticated reverse shell to a hardcoded"
+        },
+        {
+          "v": "constructor function",
+          "q": "that is to have the library’s constructor function do whatever we would have done manually"
+        },
+        {
+          "v": "process listing",
+          "q": "A process listing like the one above will show that the process into which we’ve injected"
+        },
+        {
+          "v": "files on disk",
+          "q": "Files on disk"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "every couple of minutes",
+          "q": "every couple of minutes."
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "The author says trading flexibility for ease-of-use restricts where and how code can be injected, though in practice this is not a problem.",
+      "The sample omits much error handling for brevity.",
+      "The example is simplified; a real engagement's injected library would be more complex.",
+      "Detection risk can be reduced to a degree, but without a rootkit some trace of the activity is always visible."
+    ]
+  },
+  "1fa5348b18acafb16216f2b891b00066ddc8e5fd": {
+    "sha1": "1fa5348b18acafb16216f2b891b00066ddc8e5fd",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:43:58Z",
+    "model": "haiku",
+    "summary": "Intezer researchers describe SysJoker, a C++ backdoor that targets Windows, Linux and macOS and is undetected on VirusTotal at the time of writing. The Windows variant uses a DLL dropper and PowerShell. All variants fetch C2 server addresses from a hardcoded Google Drive file, collect system data, and persist via a Run registry key, a cron job or a LaunchAgent. The malware was first seen in December 2021 and the article was published January 11, 2022.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "January 11, 2022",
+          "q": "January 11, 2022",
+          "what": "Article published"
+        },
+        {
+          "v": "December 2021",
+          "q": "first saw signs of its activity in December 2021",
+          "what": "Researchers first saw signs of SysJoker activity"
+        },
+        {
+          "v": "H2 2021",
+          "q": "The first uploads of the malware sample on VirusTotal occurred in H2 2021",
+          "what": "First malware sample uploads to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SysJoker",
+          "q": "named 'SysJoker' has emerged in the wild,"
+        },
+        {
+          "v": "PowerShell",
+          "q": "uses PowerShell commands to do the following:"
+        },
+        {
+          "v": "Google Drive",
+          "q": "it uses a hardcoded Google Drive link."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Living off the Land",
+          "q": "gather information about the machine using Living off the Land (LOtL)"
+        },
+        {
+          "v": "evade detection",
+          "q": "with the ability to evade detection on all three"
+        },
+        {
+          "v": "persistence",
+          "q": "will create persistence by adding a new registry key"
+        },
+        {
+          "v": "cron job",
+          "q": "persistence is established by creating the following cron job"
+        },
+        {
+          "v": "LaunchAgent",
+          "q": "LaunchAgent under the path"
+        },
+        {
+          "v": "first-stage dropper",
+          "q": "SysJoker employs a first-stage dropper in the form of a DLL"
+        },
+        {
+          "v": "constantly changes",
+          "q": "This list constantly changes to avoid detection and blocking."
+        },
+        {
+          "v": "install additional malware",
+          "q": "the C2 may instruct the backdoor to install additional malware, run commands"
+        },
+        {
+          "v": "Random sleep times",
+          "q": "Random sleep times are interposed between all functions leading to this point."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "57",
+          "q": "an online malware scanning site that uses 57"
+        },
+        {
+          "v": "two minutes",
+          "q": "sleeps for up to two minutes before creating a new directory"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "SysJoker"
+    },
+    "hedges": [
+      "Those last two instructions haven't been implemented yet, though."
+    ]
   }
 }

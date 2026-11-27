@@ -52,5 +52,70 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "90b8e4b988602558099b66a5ec8bfd4f4767f745": {
+    "sha1": "90b8e4b988602558099b66a5ec8bfd4f4767f745",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:42:41Z",
+    "model": "haiku",
+    "summary": "Analysis of the rootkit component of Kinsing, a Golang-based Linux malware that targets misconfigured Docker Daemon API ports to drop cryptocurrency miners. Shell scripts install a backdoor, a miner and a rootkit, which uses library preloading to hook system functions and hide the malware's files, processes and TCP connections. The report says the threat actor reuses the public beurk rootkit with custom changes, and that Kinsing remains highly active and keeps evolving. Dated 24 November 2020.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actor",
+          "q": "Further searching revealed that the threat actor reuses the publicly available beurk rootkit",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "November 24, 2020",
+          "q": "November 24, 2020",
+          "what": "Date the report was published"
+        },
+        {
+          "v": "April 2020",
+          "q": "We last discussed the Kinsing malware in April 2020, when we analyzed the Golang-based Linux agent",
+          "what": "Earlier analysis of the Kinsing malware was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Kinsing",
+          "q": "We last discussed the Kinsing malware in April 2020, when we analyzed the Golang-based Linux agent"
+        },
+        {
+          "v": "beurk",
+          "q": "Further searching revealed that the threat actor reuses the publicly available beurk rootkit"
+        },
+        {
+          "v": "Trident",
+          "q": "Similar to how the Trident malware uses a rootkit to hide the"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "library preloading",
+          "q": "Kinsing also adapted the method integrating user-mode rootkits that use library preloading."
+        },
+        {
+          "v": "cron",
+          "q": "Another level of persistence is achieved via cron, where the installation script is repeatedly downloaded and executed."
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Kinsing"
+    },
+    "hedges": [
+      "This blog post will focus on the rootkit component; the shell scripts and other parts are covered only briefly."
+    ]
   }
 }

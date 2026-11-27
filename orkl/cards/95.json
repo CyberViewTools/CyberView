@@ -140,5 +140,115 @@
       "note": "summary: States as fact that the attacker keeps modifying its scripts. The report only says this is 'suspected' because the commands in Table 1 differ from thos",
       "by": "auditor"
     }
+  },
+  "9576cb014691594b4883416c6d08b77d3186e73f": {
+    "sha1": "9576cb014691594b4883416c6d08b77d3186e73f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:47:43Z",
+    "model": "haiku",
+    "summary": "Juniper Threat Labs reports ongoing attacks, observed from August 2021, that exploit CVE-2021-35395 in firmware built with the Realtek Jungle SDK. The flaw is a command injection in a management interface. The payloads download shell scripts that install Mirai botnet malware, set up a cron job for persistence, and block reinfection.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "threat actors",
+          "q": "threat actors continue to utilize new Realtek",
+          "by": "Juniper Threat Labs (the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "IoT",
+          "q": "observed a new set of attacks in the wild on IoT firmware"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 16",
+          "q": "disclosed on August 16 by IoT Inspector",
+          "what": "CVE-2021-35395 was disclosed by IoT Inspector"
+        },
+        {
+          "v": "August 19th",
+          "q": "Starting on August 19th, Juniper Threat Labs observed a new set of attacks",
+          "what": "Juniper Threat Labs observed new attacks targeting CVE-2021-35395"
+        },
+        {
+          "v": "August 24th",
+          "q": "In one set of observed attacks, starting on August 24th, the attackers sent POST requests",
+          "what": "Attackers sent POST requests exploiting the vulnerability"
+        },
+        {
+          "v": "September 2, 2021",
+          "q": "By September 2, 2021",
+          "what": "The report was published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mirai",
+          "q": "As before, the final payload is Mirai botnet malware."
+        },
+        {
+          "v": "lolol.sh",
+          "q": "The lolol.sh script starts by deleting logs and killing a large number of named processes"
+        },
+        {
+          "v": "rh",
+          "q": "which downloads and executes a script named ‘rh’:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "command injection",
+          "q": "Among these vulnerabilities is a command injection on the “formWsc” page"
+        },
+        {
+          "v": "persistence",
+          "q": "To ensure persistence, the script downloads the latest version of lolol.sh and sets it to run"
+        },
+        {
+          "v": "firewall rules",
+          "q": "the script adds firewall rules to prevent the device from being reinfected"
+        },
+        {
+          "v": "killing processes",
+          "q": "then specifically finding and killing processes using a significant amount of CPU"
+        },
+        {
+          "v": "deleting logs",
+          "q": "The lolol.sh script starts by deleting logs and killing a large number of named processes"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-35395",
+          "q": "targeting CVE-2021-35395, which was just disclosed on"
+        }
+      ],
+      "figures": [
+        {
+          "v": "v3.4.14B",
+          "q": "(versions v2.x up to v3.4.14B) that utilize an SDK-provided management interface over"
+        },
+        {
+          "v": "10 minutes",
+          "q": "sets it to run every 10 minutes as a cron job."
+        },
+        {
+          "v": "44842",
+          "q": "it opens a listening port on port 44842"
+        }
+      ]
+    },
+    "subject": {
+      "type": "vulnerability",
+      "name": "CVE-2021-35395"
+    },
+    "hedges": [
+      "Line 60 appears to be an error in the script."
+    ]
   }
 }

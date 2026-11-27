@@ -798,25 +798,172 @@
   },
   "1391f10eb893f4c3853f113bf29fe8ea7aba8e77": {
     "sha1": "1391f10eb893f4c3853f113bf29fe8ea7aba8e77",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:34:10Z",
+    "read_at": "2026-11-27T14:35:44Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "SEQRITE Labs reports multiple SideCopy campaigns in 2023 targeting Indian government and defence entities. The group exploited the WinRAR flaw CVE-2023-38831 to deploy AllaKore RAT and DRat, and also used a Linux variant of the open-source Ares RAT, whose stager shares code with Transparent Tribe (APT36). The report attributes these campaigns to SideCopy with high confidence and notes shared code and infrastructure between SideCopy and APT36.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "SideCopy",
+          "q": "SideCopy is a Pakistan-linked Advanced Persistent Threat group",
+          "by": "SEQRITE Labs (the report)"
+        },
+        {
+          "v": "SideCopy",
+          "q": "these campaigns are attributed to SideCopy with high confidence",
+          "by": "SEQRITE Labs (the report)"
+        },
+        {
+          "v": "Transparent Tribe (APT36)",
+          "q": "This group is associated as a sub-division of Transparent Tribe (APT36)",
+          "by": "the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Government",
+          "q": "targeting Indian government"
+        },
+        {
+          "v": "Defense",
+          "q": "primarily the Indian Defense and Afghanistan government entities"
+        }
+      ],
+      "countries": [
+        {
+          "v": "India",
+          "q": "both SideCopy and APT36 share infrastructure and code to aggressively target India"
+        },
+        {
+          "v": "Pakistan",
+          "q": "SideCopy is a Pakistan-linked Advanced Persistent Threat group"
+        },
+        {
+          "v": "Afghanistan",
+          "q": "primarily the Indian Defense and Afghanistan government entities"
+        },
+        {
+          "v": "Germany",
+          "q": "All the C2 servers are registered in Germany to Contabo GmbH"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2019",
+          "q": "since at least 2019",
+          "what": "Report says SideCopy has targeted South Asian countries since at least this year"
+        },
+        {
+          "v": "2021",
+          "q": "Back in 2021, SideCopy was linked to the same RAT by QiAnXin",
+          "what": "Ares-related RAT was linked to SideCopy by QiAnXin's Red Raindrop Team, per the report"
+        },
+        {
+          "v": "2023-11-06",
+          "q": "Published: 2023-11-06",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AllaKore RAT",
+          "q": "to deploy AllaKore RAT, DRat and additional payloads"
+        },
+        {
+          "v": "DRat",
+          "q": "The final payload DRat connects with the IP"
+        },
+        {
+          "v": "Ares RAT",
+          "q": "It has also deployed a Linux variant of open-source agent called Ares RAT"
+        },
+        {
+          "v": "Action RAT",
+          "q": "Its arsenal includes Action RAT"
+        },
+        {
+          "v": "Key RAT",
+          "q": "A new payload for Windows, named Key RAT, is deployed in this case"
+        },
+        {
+          "v": "Poseidon",
+          "q": "updated its Linux malware arsenal this year with Poseidon"
+        },
+        {
+          "v": "Crimson RAT",
+          "q": "continuously used payloads such as Crimson RAT"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploiting a WinRAR vulnerability",
+          "q": "exploiting the recent WinRAR vulnerability"
+        },
+        {
+          "v": "Phishing link delivering archive",
+          "q": "The first campaign of SideCopy observed is spread via a phishing link"
+        },
+        {
+          "v": "Shortcut file launching a remote HTA",
+          "q": "that triggers a remote HTA file as:"
+        },
+        {
+          "v": "DLL side-loading",
+          "q": "beside the target to sideload the DLL"
+        },
+        {
+          "v": "Registry run key persistence",
+          "q": "Persistence is maintained via Startup (or) Run registry key"
+        },
+        {
+          "v": "Cron-based persistence on Linux",
+          "q": "Create a crontab to maintain persistence through system reboot"
+        },
+        {
+          "v": "Keylogging and screen capture",
+          "q": "keylogging, take screenshots, upload & download files"
+        },
+        {
+          "v": "PowerShell remote execution",
+          "q": "TTPs where PowerShell remote execution has been uncovered"
+        },
+        {
+          "v": "Honey-trap lures against defence personnel",
+          "q": "Pakistani agents have used honey traps to lure defense personnel"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-38831",
+          "q": "Exploitation of the recent WinRAR vulnerability CVE-2023-38831 is done via"
+        }
+      ],
+      "figures": [
+        {
+          "v": "13 commands",
+          "q": "It supports the following 13 commands for C2"
+        },
+        {
+          "v": "two embedded files",
+          "q": "It contains two embedded files that are base64 encoded"
+        },
+        {
+          "v": "Almost every month",
+          "q": "Almost every month, a new attack campaign has been observed this year"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "SideCopy multi-platform campaigns"
+    },
+    "hedges": [
+      "these campaigns are attributed to SideCopy with high confidence",
+      "possibly with terrorist groups for recruitment",
+      "expect them to continue as the Israel-Hamas conflict intensifies"
+    ]
   }
 }

@@ -197,5 +197,79 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "d9a01c14a3faa157447874fbe0170d84e8427641": {
+    "sha1": "d9a01c14a3faa157447874fbe0170d84e8427641",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T14:43:57Z",
+    "model": "haiku",
+    "summary": "A Russian-language blog post (2014) analyses a Linux botnet called BillGates, found on a CentOS home server. The author describes cron and init-script persistence, a 'Gates' control module, a 'Bill' DDoS module, and reporting binaries such as ksapdd. Cleanup removed the infection, and no rootkit was seen. The author says the command servers stopped issuing commands to the samples.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "26 February 2014",
+          "q": "ValdikSS 26 February 2014 at 17:51",
+          "what": "Analysis post published by ValdikSS"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BillGates",
+          "q": "Исследуем Linux Botnet «BillGates»"
+        },
+        {
+          "v": "Gates",
+          "q": "Итак, cupsdd — модуль «Gates»."
+        },
+        {
+          "v": "Bill",
+          "q": "Модуль «Bill» — DDoS модуль."
+        },
+        {
+          "v": "ksapdd",
+          "q": "Файл ksapdd — какой-то модуль, который отправляет статистику и информацию на"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DDoS attacks over TCP, UDP, ICMP and DNS amplification",
+          "q": "Умеет атаковать хосты по TCP, UDP, ICMP и методом DNS-амплификации."
+        },
+        {
+          "v": "autostart via sysvinit init script",
+          "q": "Добавляет распакованный модуль «Bill» в автозагрузку sysvinit путем создания"
+        },
+        {
+          "v": "host reconnaissance of system information",
+          "q": "Читает основную информацию о системе, процессоре, оперативной памяти,"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "183КБ",
+          "q": "Ох. Размером он был 183КБ, 4036 строчек."
+        },
+        {
+          "v": "7 часов",
+          "q": "Что означает, что ботнет был на компьютере примерно 7 часов. Не так много, но и не"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "BillGates"
+    },
+    "hedges": [
+      "The author describes the write-up as somewhat superficial.",
+      "The author assumed no rootkit was used because the processes were not hidden, so the system was judged clean with some confidence.",
+      "Module details are described as 'in my case', so they reflect one infected machine.",
+      "The author says the control servers refused to send commands to the author's copies, so the botnet's tasking was not observed."
+    ]
   }
 }

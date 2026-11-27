@@ -1082,26 +1082,425 @@
   },
   "1ce9acc49e43e4837d23f8ea8a1d27097f686b23": {
     "sha1": "1ce9acc49e43e4837d23f8ea8a1d27097f686b23",
-    "status": "unread",
-    "partial": false,
-    "read_at": "2026-11-27T09:23:52Z",
+    "status": "read",
+    "partial": true,
+    "read_at": "2026-11-27T09:35:24Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "CrowdStrike's 2022 Falcon OverWatch threat hunting report covers interactive intrusions observed from July 2021 to June 2022. It reports a 50% rise in interactive intrusion activity, eCrime as the largest attributed threat type, and an average eCrime breakout time of 1 hour 24 minutes. It profiles four LockBit affiliate intrusions, the AQUATIC PANDA campaign, two healthcare ransomware affiliate cases (Phobos and ALPHV), ISO-file phishing trends, and exploitation of ProxyShell and a Confluence vulnerability. It also reviews emerging, trending and mainstay tools.",
+    "kind": "overview",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "PROPHET SPIDER",
+          "q": "PROPHET SPIDER is likely an access broker",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "CARBON SPIDER",
+          "q": "the next most active eCrime actor, CARBON SPIDER.",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "WICKED PANDA",
+          "q": "WICKED PANDA was the most prolific",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "NEMESIS KITTEN",
+          "q": "followed closely by NEMESIS KITTEN",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "FRONTLINE JACKAL",
+          "q": "Hacktivist actor group FRONTLINE JACKAL was highly active",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "AQUATIC PANDA",
+          "q": "the China-nexus threat actor AQUATIC PANDA",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "COZY BEAR",
+          "q": "Beginning in Q4 2021, COZY BEAR initiated a new wave of phishing",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "WIZARD SPIDER",
+          "q": "deliver WIZARD SPIDER’s BazarLoader.",
+          "by": "CrowdStrike OverWatch (report)"
+        },
+        {
+          "v": "LUNAR SPIDER",
+          "q": "delivering LUNAR SPIDER’s BokBot trojan.",
+          "by": "CrowdStrike OverWatch (report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "technology",
+          "q": "Technology, telecommunications, healthcare, manufacturing and academia were the top 5 industries"
+        },
+        {
+          "v": "telecommunications",
+          "q": "Technology, telecommunications, healthcare, manufacturing and academia were the top 5 industries"
+        },
+        {
+          "v": "healthcare",
+          "q": "in the healthcare industry were predominantly carried out by eCrime adversaries"
+        },
+        {
+          "v": "manufacturing",
+          "q": "Technology, telecommunications, healthcare, manufacturing and academia were the top 5 industries"
+        },
+        {
+          "v": "academic",
+          "q": "universities and academic institutions often possess intellectual property"
+        },
+        {
+          "v": "government",
+          "q": "a range of industry verticals including government, healthcare, and manufacturing"
+        },
+        {
+          "v": "mining",
+          "q": "impacted the technology, healthcare, mining and media verticals"
+        },
+        {
+          "v": "media",
+          "q": "impacted the technology, healthcare, mining and media verticals"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "BEAR (Russia), CHOLLIMA (North Korea)"
+        },
+        {
+          "v": "North Korea",
+          "q": "BEAR (Russia), CHOLLIMA (North Korea)"
+        },
+        {
+          "v": "Iran",
+          "q": "KITTEN (Iran), PANDA (China), SPIDER (eCrime) and WOLF (Turkey)"
+        },
+        {
+          "v": "China",
+          "q": "KITTEN (Iran), PANDA (China), SPIDER (eCrime) and WOLF (Turkey)"
+        },
+        {
+          "v": "Turkey",
+          "q": "KITTEN (Iran), PANDA (China), SPIDER (eCrime) and WOLF (Turkey)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 1, 2021 to June 30, 2022",
+          "q": "the period from July 1, 2021 to June 30, 2022.",
+          "what": "reporting period covered by the report"
+        },
+        {
+          "v": "Q3 2021",
+          "q": "In Q3 2021, OverWatch observed an interactive intrusion stemming from",
+          "what": "VPN-based LockBit affiliate intrusion (Scenario 1)"
+        },
+        {
+          "v": "Q4 2021",
+          "q": "During Q4 2021, OverWatch hunters discovered an affiliate carrying",
+          "what": "ransomware affiliate intrusion on a single workstation (Scenario 2)"
+        },
+        {
+          "v": "Q1 2022",
+          "q": "In Q1 2022, OverWatch uncovered a LockBit intrusion that had",
+          "what": "second VPN-based LockBit intrusion (Scenario 3)"
+        },
+        {
+          "v": "June 2, 2022",
+          "q": "On June 2, 2022, a newly discovered Confluence vulnerability,",
+          "what": "Confluence vulnerability publicly disclosed"
+        },
+        {
+          "v": "first half of 2021",
+          "q": "the ProxyShell vulnerabilities were disclosed in the first half of 2021",
+          "what": "ProxyShell vulnerabilities disclosed"
+        },
+        {
+          "v": "April 2022",
+          "q": "planned patches that began rolling out in April 2022",
+          "what": "Microsoft patches disabling internet-enabled macros began rolling out"
+        },
+        {
+          "v": "Q2 2022",
+          "q": "During Q2 2022, OverWatch threat hunters observed ISO image files",
+          "what": "ISO image abuse by a suspected RaaS affiliate observed"
+        },
+        {
+          "v": "late 2021",
+          "q": "In late 2021, shortly after the rollout of the Falcon sensor across a new environment,",
+          "what": "pre-existing intrusion found on a Microsoft Exchange server"
+        },
+        {
+          "v": "early 2022",
+          "q": "In early 2022, OverWatch threat hunters observed a campaign",
+          "what": "BokBot campaign delivered using ISO files observed"
+        },
+        {
+          "v": "first half of 2022",
+          "q": "This trend continued into the first half of 2022, when OverWatch uncovered",
+          "what": "AQUATIC PANDA intrusion campaign uncovered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "fscan",
+          "q": "Developed in the first half of 2021, fscan is an open-source Windows tool"
+        },
+        {
+          "v": "IceApple",
+          "q": "IceApple is a sophisticated .NET-based post-exploitation framework"
+        },
+        {
+          "v": "Sweet Potato",
+          "q": "More recently in 2020, a script called “Sweet Potato” was written to bundle"
+        },
+        {
+          "v": "ngrok",
+          "q": "Reverse proxy tools like ngrok, fatedier and others are used to make internal hosts"
+        },
+        {
+          "v": "fatedier",
+          "q": "Reverse proxy tools like ngrok, fatedier and others are used to make internal hosts"
+        },
+        {
+          "v": "VNC",
+          "q": "leveraging applications such as VNC, AnyDesk, Atera, TeamViewer"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "leveraging applications such as VNC, AnyDesk, Atera, TeamViewer"
+        },
+        {
+          "v": "Atera",
+          "q": "leveraging applications such as VNC, AnyDesk, Atera, TeamViewer"
+        },
+        {
+          "v": "TeamViewer",
+          "q": "leveraging applications such as VNC, AnyDesk, Atera, TeamViewer"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike is an extremely powerful and robust penetration-testing tool"
+        },
+        {
+          "v": "GMER",
+          "q": "GMER was originally designed to be a defensive tool for the purpose of detecting and removing rootkits"
+        },
+        {
+          "v": "LockBit",
+          "q": "the LockBit RaaS program has attracted"
+        },
+        {
+          "v": "StealBit",
+          "q": "OverWatch observed an affiliate attempting data theft using the StealBit"
+        },
+        {
+          "v": "BazarLoader",
+          "q": "deliver WIZARD SPIDER’s BazarLoader."
+        },
+        {
+          "v": "BokBot",
+          "q": "delivering LUNAR SPIDER’s BokBot trojan."
+        },
+        {
+          "v": "Shindig",
+          "q": "Shindig (also known publicly as Bumblebee), is a downloader"
+        },
+        {
+          "v": "Bumblebee",
+          "q": "Shindig (also known publicly as Bumblebee), is a downloader"
+        },
+        {
+          "v": "ALPHV",
+          "q": "an affiliate of the ALPHV ransomware"
+        },
+        {
+          "v": "Phobos",
+          "q": "and finally a Phobos ransomware binary."
+        },
+        {
+          "v": "ShadowPad",
+          "q": "associated with ShadowPad, a malware family commonly associated with China-nexus"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Dynamic Linker Hijacking",
+          "q": "The Dynamic Linker Hijacking technique"
+        },
+        {
+          "v": "pass-the-hash",
+          "q": "modified the registry to enable RDP pass-the-hash"
+        },
+        {
+          "v": "exploit chaining",
+          "q": "OverWatch observed adversary use of exploit chaining."
+        },
+        {
+          "v": "web shell",
+          "q": "suspicious files indicative of likely web shell activity"
+        },
+        {
+          "v": "brute-force",
+          "q": "indicative of a potential brute-force attack"
+        },
+        {
+          "v": "Reflective Code Loading",
+          "q": "The shellcode ultimately led to Reflective Code Loading activity"
+        },
+        {
+          "v": "keylogging",
+          "q": "The keylogging binary was executed by way of a scheduled task"
+        },
+        {
+          "v": "LSASS",
+          "q": "Additionally, the actor used the Windows Task Manager to dump the contents of LSASS"
+        },
+        {
+          "v": "double extortion",
+          "q": "dubbed “double extortion,” involves the exfiltration of data prior to ransomware"
+        },
+        {
+          "v": "deleting volume shadow copies",
+          "q": "deleting volume shadow copies, modifying the boot loader"
+        },
+        {
+          "v": "RDP",
+          "q": "the exploitation of remote access services and the use of RDP"
+        },
+        {
+          "v": "ISO files",
+          "q": "phishing attacks specifically leveraging ISO files for delivery"
+        },
+        {
+          "v": "Living off the Land",
+          "q": "Living off the Land for Data Theft"
+        },
+        {
+          "v": "valid credentials",
+          "q": "leveraged valid credentials to carry out their"
+        },
+        {
+          "v": "registry settings",
+          "q": "modified registry settings to enable inbound RDP and allow PowerShell remoting."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-34473",
+          "q": "CVE-2021-34473"
+        },
+        {
+          "v": "CVE-2021-34523",
+          "q": "CVE-2021-345239"
+        },
+        {
+          "v": "CVE-2021-31207",
+          "q": "CVE-2021-3120710"
+        }
+      ],
+      "figures": [
+        {
+          "v": "77,000",
+          "q": "more than 77,000 potential intrusions, or approximately one potential"
+        },
+        {
+          "v": "every seven minutes",
+          "q": "intrusion every seven minutes."
+        },
+        {
+          "v": "1 million",
+          "q": "direct prevention of over 1 million malicious events"
+        },
+        {
+          "v": "50%",
+          "q": "OverWatch tracked a 50% increase in interactive intrusion"
+        },
+        {
+          "v": "1 hour 24 minutes",
+          "q": "the average was just 1 hour 24 minutes"
+        },
+        {
+          "v": "30%",
+          "q": "in 30% of those eCrime intrusions, the adversary"
+        },
+        {
+          "v": "71%",
+          "q": "Malware-free activity accounted for 71% of all detections"
+        },
+        {
+          "v": "37 distinct industries",
+          "q": "interactive intrusion activity spanning 37 distinct industries"
+        },
+        {
+          "v": "36",
+          "q": "conducted by 36 distinct named threat actors"
+        },
+        {
+          "v": "12",
+          "q": "OverWatch tracked 12 named eCrime (aka"
+        },
+        {
+          "v": "43%",
+          "q": "eCrime accounted for 43% of"
+        },
+        {
+          "v": "18%",
+          "q": "targeted intrusions increased to 18%"
+        },
+        {
+          "v": "38%",
+          "q": "the remaining 38% of intrusions were unattributed"
+        },
+        {
+          "v": "1%",
+          "q": "hacktivist activity made up 1%"
+        },
+        {
+          "v": "75%",
+          "q": "While approximately 75% of these observed"
+        },
+        {
+          "v": "three times",
+          "q": "OverWatch tracked more than three times the"
+        },
+        {
+          "v": "doubled year-over-year",
+          "q": "sector has doubled year-over-year"
+        },
+        {
+          "v": "20,000",
+          "q": "The number of new vulnerabilities reported in 2021 exceeded 20,000,"
+        },
+        {
+          "v": "10,000",
+          "q": "over 10,000 new vulnerabilities reported as of the start of June"
+        },
+        {
+          "v": "18 modules",
+          "q": "There are 18 modules that can be used within the IceApple framework."
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote, quote-not-in-text",
-    "tries": 1,
+    "hedges": [
+      "Findings relate to interactive (hands-on) targeted and eCrime intrusions OverWatch tracks and do not necessarily represent the full spectrum of attacks stopped.",
+      "Intrusion is not synonymous with a breach and does not mean the threat actor achieved its objectives.",
+      "CrowdStrike does not rush to attribution; high-confidence attribution was often not possible, so 38% of intrusions were unattributed.",
+      "PROPHET SPIDER is described as likely an access broker.",
+      "AQUATIC PANDA activity was attributed with high confidence; multiple actors were present in the victim network.",
+      "CrowdStrike Intelligence has recently assessed that affiliates are likely beginning to move toward ALPHV and AvosLocker RaaS programs.",
+      "Figure 1 figures differ from past reporting due to inclusion of unattributed intrusion data.",
+      "The heat map counts distinct actors per vertical, not total intrusion attempts, and excludes unattributed activity."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T09:09:06Z",

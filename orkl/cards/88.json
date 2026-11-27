@@ -431,26 +431,103 @@
   },
   "881012ca3fd522f51e6cb92b15f40807b4072573": {
     "sha1": "881012ca3fd522f51e6cb92b15f40807b4072573",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T09:23:01Z",
+    "read_at": "2026-11-27T09:34:07Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Objective-See's Patrick Wardle analyses UpdateAgent, the second-stage macOS payload of the 3CX supply chain attack. The post attributes the campaign to North Korean actors, aka Lazarus Group, as cited by the author. The x86_64 binary is ad-hoc signed and not notarised. It forks, self-deletes, reads a 3CX config file and a victim identifier, and prepares a request to a remote server that was offline during analysis. The author suggests it mainly reports victim information. Detection with BlockBlock, DNSMonitor and LuLu is described.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Lazarus Group",
+          "q": "attributed to the North Koreans, aka Lazarus Group",
+          "by": "the report (cites an attribution without naming its source)"
+        }
+      ],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "attributed to the North Koreans, aka Lazarus Group"
+        }
+      ],
+      "dates": [
+        {
+          "v": "March 31, 2023",
+          "q": "Patrick Wardle (@patrickwardle) March 31, 2023",
+          "what": "Wardle tweeted his initial analysis of UpdateAgent"
+        },
+        {
+          "v": "April 1, 2023",
+          "q": "by: Patrick Wardle / April 1, 2023",
+          "what": "Blog post part II on UpdateAgent published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "UpdateAgent",
+          "q": "Analyzing UpdateAgent, the 2nd-stage macOS payload of the 3CX supply chain attack"
+        },
+        {
+          "v": "BlockBlock",
+          "q": "First, BlockBlock (running in “Notarization” mode) will both detect and block UpdateAgent"
+        },
+        {
+          "v": "DNSMonitor",
+          "q": "Via my DNSMonitor, we can observe"
+        },
+        {
+          "v": "LuLu",
+          "q": "Finally LuLu can also detect the malware’s unauthorized network access."
+        },
+        {
+          "v": "WhatsYourSign",
+          "q": "WhatsYourSign shows other hashes (MD5, etc):"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Forks itself",
+          "q": "Forks itself via fork"
+        },
+        {
+          "v": "Self-deletes",
+          "q": "Self-deletes via ulink"
+        },
+        {
+          "v": "anti-analysis logic",
+          "q": "code the malware contain some basic anti-analysis logic."
+        },
+        {
+          "v": "report information about its victims",
+          "q": "maybe the purpose of UpdateAgent is simply to report information about its victims"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "9e9a5f8d86356796162cee881c843cde9eaedfb3",
+          "q": "9e9a5f8d86356796162cee881c843cde9eaedfb3"
+        },
+        {
+          "v": "v2.4.3",
+          "q": "Make sure you are running the latest version of LuLu (v2.4.3) that improved the handling of"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "UpdateAgent"
+    },
+    "hedges": [
+      "The attacker's server was offline during analysis, so the binary could only be studied statically past the network step.",
+      "The Lazarus attribution is cited in parentheses as made by others; the author does not name the source.",
+      "The author says the purpose of UpdateAgent may simply be reporting victim information, using the word maybe.",
+      "The config file is described as appearing to be legitimate; the author created a dummy file to keep dynamic analysis running.",
+      "The victim identifier is described as likely uniquely identifying the victim.",
+      "The author notes the attackers could swap in a different UpdateAgent payload each time the first stage runs."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T09:10:09Z",

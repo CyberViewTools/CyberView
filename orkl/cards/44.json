@@ -134,26 +134,151 @@
   },
   "44528d153681a19a67e9f595deaeaf3dff38e485": {
     "sha1": "44528d153681a19a67e9f595deaeaf3dff38e485",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T09:22:13Z",
+    "read_at": "2026-11-27T09:33:04Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "WithSecure Intelligence reports late-March 2023 intrusions against internet-facing Veeam Backup & Replication servers, overlapping with FIN7 tradecraft or a threat actor using it. Initial access is likely via CVE-2023-27532, a low-to-medium confidence assessment. The attackers used PowerShell loaders (POWERTRASH, POWERHOLD), the DICELOADER backdoor and DUBLOADER, which side-loads through a Notepad++ binary. They then moved laterally and likely deployed Cobalt Strike. The report judges the scope limited and the goal unclear.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "FIN7 is a financially motivated cybercrime group with roots dating back to mid-2010s. The group has been",
+          "by": "WithSecure Intelligence"
+        },
+        {
+          "v": "FIN7 or a threat actor",
+          "q": "WithSecure Intelligence has so far identified two instances of such attacks conducted by FIN7 or a threat actor",
+          "by": "WithSecure Intelligence"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "28-04-2023",
+          "q": "28-04-2023 1100 UTC - We have reviewed and updated this blogpost to reflect our latest findings:",
+          "what": "The report was updated to reflect later findings, including broadened attribution."
+        },
+        {
+          "v": "late March 2023",
+          "q": "WithSecure Intelligence identified attacks which occurred in late March 2023 against internet-facing servers",
+          "what": "Intrusions against internet-facing Veeam Backup & Replication servers occurred."
+        },
+        {
+          "v": "23rd March 2023",
+          "q": "23rd March 2023. The POC contains remote command execution functionality.",
+          "what": "A proof-of-concept exploit for the Veeam vulnerability was made publicly available."
+        },
+        {
+          "v": "24th March 2023",
+          "q": "On 24th March 2023, the SQL server process for Veeam backup instances executed another shell command to copy",
+          "what": "Earlier suspicious activity was observed on the servers, with unknown purpose."
+        },
+        {
+          "v": "28th March 2023",
+          "q": "On 28th March 2023, initial activity was observed across internet-facing servers running Veeam Backup &",
+          "what": "Initial activity was observed across internet-facing Veeam Backup & Replication servers."
+        }
+      ],
+      "tools": [
+        {
+          "v": "POWERTRASH",
+          "q": "Our analysis found that all instances of these PowerShell scripts were POWERTRASH. POWERTRASH is an"
+        },
+        {
+          "v": "DICELOADER",
+          "q": "The embedded payload in the incidents we observed in March was DICELOADER, also known"
+        },
+        {
+          "v": "Carbanak",
+          "q": "In the past[2], POWERTRASH has been used to execute various payloads, including Carbanak, DICELOADER,"
+        },
+        {
+          "v": "CobaltStrike",
+          "q": "CobaltStrike beacon). The command line patterns were previously seen in activity associated with FIN7[4]."
+        },
+        {
+          "v": "DUBLOADER",
+          "q": "unique loader has not been previously seen in FIN7’s attack arsenal, and we are now tracking it as DUBLOADER."
+        },
+        {
+          "v": "POWERHOLD",
+          "q": "arsenal of FIN7, and we are now tracking it as POWERHOLD."
+        },
+        {
+          "v": "GUP.exe",
+          "q": "gup.exe – Legitimate GUP.exe binary (part of the Notepad++ application)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "exploitation of a vulnerability",
+          "q": "achieved through a recently patched Veeam Backup & Replication vulnerability, CVE-2023-27532[1]."
+        },
+        {
+          "v": "host and network discovery",
+          "q": "The threat actor used a series of commands as well as custom scripts to gather host and network information from"
+        },
+        {
+          "v": "stored credential retrieval",
+          "q": "The threat actor also used a PowerShell script to retrieve stored credentials. The script content is identical to a"
+        },
+        {
+          "v": "lateral movement",
+          "q": "Lateral tool transfer was achieved through the usage of SMB to drop two PowerShell scripts into the remote host’s"
+        },
+        {
+          "v": "remote service creation",
+          "q": "ADMIN$ share. Execution was achieved through remote service creation."
+        },
+        {
+          "v": "reflective PE injection",
+          "q": "payload that is executed through reflective PE injection. The filenames (e.g. icsnd16_64refl.ps1,"
+        },
+        {
+          "v": "side-loading",
+          "q": "libcurl.dll, which is side-loaded by gup.exe, is a simple .NET loader that decodes and executes an on-disk payload"
+        },
+        {
+          "v": "persistence",
+          "q": "by creating a persistence mechanism to execute DICELOADER on device startup. This script was hosted on an"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-27532",
+          "q": "achieved through a recently patched Veeam Backup & Replication vulnerability, CVE-2023-27532[1]."
+        }
+      ],
+      "figures": [
+        {
+          "v": "two instances",
+          "q": "WithSecure Intelligence has so far identified two instances of such attacks conducted by FIN7 or a threat actor"
+        },
+        {
+          "v": "9401",
+          "q": "The affected servers had TCP open port 9401 exposed to the internet. This port is used for communication"
+        },
+        {
+          "v": "7 files",
+          "q": "The PowerShell script drops 7 files, which are embedded in the script content, into a unique folder in"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "FIN7 tradecraft attacks against Veeam backup servers"
+    },
+    "hedges": [
+      "Initial access and execution are likely via CVE-2023-27532, but this is a low-to-medium confidence assessment with no concrete indicators confirming it.",
+      "Attribution is broadened from FIN7 to FIN7 or a threat actor utilizing FIN7 tradecraft.",
+      "No strong evidence links the earlier suspicious activity of 24 March 2023 to the intrusions; its reason remains unknown.",
+      "The payload of the secondary script could not be fully retrieved; the report believes it was likely a Cobalt Strike beacon.",
+      "The goal of these attacks was unclear at the time of writing, as they were mitigated before fully materializing.",
+      "The report believes the scope of the attack is limited, given the probable rarity of exposed Veeam servers on port 9401."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T09:09:33Z",

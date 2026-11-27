@@ -64,7 +64,7 @@
   },
   "2abc6b757313f2b4c868fa2c960b7a06d7cab880": {
     "sha1": "2abc6b757313f2b4c868fa2c960b7a06d7cab880",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T00:52:13Z",
     "model": "haiku",
@@ -210,6 +210,14 @@
       "Either the server kept handing out an older build or the operator rolled back.",
       "That fits one operator running both, or a shared loader service with several customers. We can't tell which from our data.",
       "The key exchange and cipher behind the ANCT handshake are open questions; the bot's upload content is unknown."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T01:09:14Z",
+      "ok": false,
+      "note": "summary: It says flatly that the bot 'stays dormant while traced'. Section 3 hedges this: 'The bot appears to stay idle while being ptraced.' The hedge is dropp",
+      "by": "auditor"
+    }
   }
 }

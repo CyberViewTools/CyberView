@@ -1,219 +1,85 @@
 {
-  "generated_at": "2026-11-26T11:04:53Z",
+  "generated_at": "2026-11-27T20:05:00Z",
   "items": [
+    {
+      "event_id": "tolmin-cooperative-fridges-cyberattack-2026-11",
+      "basis": "inferred",
+      "direct": ["Attackers changed temperature settings at a Slovenian meat plant, setting a freezer chamber to 100°C and locking a technician out; staff prevented damage and disconnected all cooling systems from the network (stated). Similar cases were reported the same days at a Bern butcher, Swiss Volg branches and an Italian supermarket, where technicians said they had about thirty similar problems (stated)."],
+      "downstream": ["Food spoilage, recalls and store closures if a change goes unnoticed, as at the Bern butcher that closed temporarily (stated for Bern; wider effect is an inference).", "More attempts against internet-reachable refrigeration and building controllers across Europe while default accounts remain (inference; Danfoss AK-SM 800A flaws are in CISA KEV, but no source names the brand in these incidents)."],
+      "watch_for": ["A national CERT advisory naming the controller product used in these incidents", "Reports from more retail chains or cold-storage operators", "Scanning reports for refrigeration controller web interfaces"],
+      "who_should_care": ["Supermarkets, butchers, food processors and cold-chain logistics", "Refrigeration and HVAC service contractors who manage controllers remotely"]
+    },
     {
       "event_id": "drupal-core-sa-core-2026-019-access-bypass-exploited-2026-11",
       "basis": "stated",
-      "direct": [
-        "Drupal says the core access bypass CVE-2026-136716 (SA-CORE-2026-019) is exploited in the wild; fixed in 10.6.23, 11.3.23 and 11.4.14. It comes a week after SA-CORE-2026-017 (install.php reinstall), exploited from Nov 19 and in CISA KEV since Nov 24."
-      ],
-      "downstream": [
-        "Drupal says sites whose installer stayed reachable after 017 may already be compromised, so updating now does not clean a site that was taken over (stated).",
-        "Government, university and media sites run Drupal widely; defacement, data theft or use as phishing hosts are likely follow-ons (inference)."
-      ],
-      "watch_for": [
-        "A CISA KEV entry for CVE-2026-136716",
-        "Unexpected admin accounts or a reinstalled site",
-        "Mass-scanning reports for install.php and the 019 path"
-      ],
-      "who_should_care": [
-        "Drupal site owners and hosting providers",
-        "Public-sector web teams"
-      ]
-    },
-    {
-      "event_id": "babidighost-deepseek-flemish-municipalities-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Secutec and SOCRadar say an operator (BabidiGhost) used a DeepSeek-driven agent to take identity data of about 1.2 million people in 82 Flemish municipalities from a service provider's server; the CCB was told on Nov 16 and a prosecutor is investigating."
-      ],
-      "downstream": [
-        "Residents of the 82 municipalities can expect targeted phishing using their identity data (inference).",
-        "SOCRadar says the same operator also went after European banks, insurers and payment providers, so other victims may follow (stated by SOCRadar; victims not named).",
-        "Shows a low-skill operator reaching large data sets with an AI agent, as the Swiss NCSC also reports (inference from both)."
-      ],
-      "watch_for": [
-        "CCB confirmation of scope",
-        "Named victims from SOCRadar's list",
-        "Data offered for sale"
-      ],
-      "who_should_care": [
-        "Belgian municipalities and their IT providers",
-        "European financial firms",
-        "SOC teams"
-      ]
-    },
-    {
-      "event_id": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Palo Alto Networks says Fragnesia (CVE-2026-46300), a Linux kernel privilege-escalation flaw, was exploited against PAN-OS management interfaces exposed to the internet, after attackers first exploited PHP2Shell; fixed PAN-OS builds are listed in PAN-SA-2026-0015."
-      ],
-      "downstream": [
-        "PHP2Shell was already used to root and in some cases wipe unpatched Check Point gateways from Oct 30, so the same entry point now reaches two firewall vendors (stated by each vendor).",
-        "A firewall rooted through its management interface can expose VPN credentials, configuration and traffic policy for the whole network (our inference from how the product works).",
-        "Any other appliance that bundles PHP with the PHP2Shell or phpAfterShell flaws may be reachable the same way (inference; no other vendor has said so)."
-      ],
-      "watch_for": [
-        "A CISA KEV entry for CVE-2026-46300",
-        "Other appliance vendors naming PHP2Shell or phpAfterShell in their products",
-        "Unexpected admin sessions or files on PAN-OS management interfaces",
-        "Victim reports or counts from Palo Alto Networks"
-      ],
-      "who_should_care": [
-        "Palo Alto Networks customers with management interfaces reachable from the internet",
-        "Check Point and F5 customers",
-        "Network security teams",
-        "MSSPs"
-      ]
+      "direct": ["Drupal says core access bypass CVE-2026-136716 (SA-CORE-2026-019) is exploited in the wild, a week after the exploited installer flaw SA-CORE-2026-017."],
+      "downstream": ["Drupal says sites whose installer stayed reachable after 017 may already be compromised, so updating does not clean a site that was taken over (stated).", "Government, university and media sites run Drupal widely; defacement, data theft or use as phishing hosts are likely follow-ons (inference)."],
+      "watch_for": ["A CISA KEV entry for CVE-2026-136716", "Unexpected admin accounts or a reinstalled site", "Mass-scanning reports for install.php and the 019 path"],
+      "who_should_care": ["Drupal site owners and hosting providers", "Public-sector web teams"]
     },
     {
       "event_id": "plaid-karte-unauthorized-access-2026-11",
       "basis": "stated",
-      "direct": [
-        "PLAID suspended all KARTE services after a vulnerability was exploited on Nov 13; its own account emails and contacts were taken, and customer data of several hundred companies was affected in each data category. It plans a phased restart in mid-January 2027."
-      ],
-      "downstream": [
-        "Customers report the scale: DHC about 19.11 million records, ZOZO about 15.18 million, SMBC up to about 14 million, Marui about 8.83 million, MUFG Bank about 6.5 million; this week JCB (up to about 150,000 management codes), Shikoku Bank's Mikatano and GO added notices.",
-        "Leaked profiles (names, emails, dates of birth, purchase attributes, and for some Marui card members income) make convincing phishing in Japanese; integration credentials held by the service may open customers' own systems.",
-        "Companies that ended their KARTE contract are included, so former customers should check too."
-      ],
-      "watch_for": [
-        "Further KARTE customers announcing leaks",
-        "Phishing that uses shop names, member IDs and dates of birth",
-        "Use of integration keys connected to KARTE",
-        "Regulator action by Japan's Personal Information Protection Commission"
-      ],
-      "who_should_care": [
-        "Japanese retailers and banks",
-        "Marketing technology owners",
-        "Vendor management"
-      ]
+      "direct": ["A vulnerability in PLAID's KARTE platform was exploited on Nov 13; customer firms keep publishing counts, now including Peach Aviation (up to about 9.44 million records), New Balance Japan (up to about 3.74 million), Shueisha, Athenia and Kokubu."],
+      "downstream": ["Peach's case, per ITmedia, involved data PLAID still held after the contract ended, which puts supplier data-retention terms in question (stated for Peach).", "Phishing in Japanese naming the affected brands, using leaked names, birth dates and contact details (inference)."],
+      "watch_for": ["Further customer notices and revised counts", "A regulator (PPC) statement on PLAID", "Brand-impersonation phishing citing the KARTE leak"],
+      "who_should_care": ["KARTE customers and other Japanese SaaS buyers", "Customers of the named brands"]
+    },
+    {
+      "event_id": "sap-suspicious-activity-spiegel-report-2026-11",
+      "basis": "inferred",
+      "direct": ["SAP confirmed suspicious activity and says it found no evidence so far of access to customer business data; Der Spiegel reports stolen employee tokens let attackers copy and modify source code in SAP's GitHub environment (reported, not confirmed by SAP)."],
+      "downstream": ["If source code was modified, customers would need assurance that shipped code and build pipelines were not altered (inference).", "Attackers with SAP source code can look for flaws faster, so later SAP patches may be reverse-engineered more quickly (inference)."],
+      "watch_for": ["SAP's account of what repositories were accessed and whether any code was changed", "Out-of-band SAP security notes", "Phishing that uses the incident to target SAP customers"],
+      "who_should_care": ["SAP customers and SAP security teams", "Any organisation using GitHub with long-lived employee tokens"]
+    },
+    {
+      "event_id": "switzerland-bacs-five-ai-agent-attacks-2026-11",
+      "basis": "stated",
+      "direct": ["Switzerland's BACS says five attacks used AI agents; four compromised systems and three targets were critical-infrastructure operators (SRF names electricity, water and telecoms)."],
+      "downstream": ["Agencies now confirm agent-run intrusions against infrastructure, not only researchers; time from exposure to compromise shrinks (stated by BACS in urging fast patching; scale is an inference).", "Other national CERTs are likely to publish similar counts (inference)."],
+      "watch_for": ["BACS details on the flaws used", "Similar statements from other European agencies", "Reports of agent-driven scanning bursts against utilities"],
+      "who_should_care": ["Energy, water and telecom operators", "SMEs with internet-facing systems and slow patch cycles"]
     },
     {
       "event_id": "binance-co-ceos-describe-october-29-theft-2026-11",
       "basis": "stated",
-      "direct": [
-        "Binance says about $6.34 billion was affected and about $2.85 billion frozen or intercepted; the way in was malware in a coding assignment given to an engineer through a recruitment platform. The FBI attributes the theft to North Korea."
-      ],
-      "downstream": [
-        "Fake job tests aimed at developers are a proven route to exchange infrastructure; Socket reports the same lure in NuGet packages (no stated link).",
-        "UK FCA reportedly presses ahead with DeFi authorization rules, citing the theft (stated).",
-        "Laundering through coinjoin and DeFi continues, and US forfeiture covers over $1.1 billion (stated)."
-      ],
-      "watch_for": [
-        "More seizures or freezes",
-        "Recruiter approaches with take-home coding tests",
-        "Other exchanges disclosing the same lure"
-      ],
-      "who_should_care": [
-        "Crypto exchanges and custodians",
-        "Engineering managers and recruiters",
-        "Financial regulators"
-      ]
+      "direct": ["Binance says about $6.34 billion was affected and about $2.85 billion frozen or intercepted; the FBI attributes the theft to North Korea's TraderTraitor. Reuters reports more than $600 million laundered through THORChain."],
+      "downstream": ["Regulators cite the theft: the UK FCA reportedly presses ahead with DeFi authorization rules (stated).", "Pressure on THORChain and coinjoin services, and on exchanges that receive their outputs (inference)."],
+      "watch_for": ["Further US forfeiture filings", "Exchange freezes of laundered funds", "More fake-job coding tests aimed at crypto engineers"],
+      "who_should_care": ["Exchanges, bridges and DeFi protocols", "Crypto firms' engineering and hiring teams"]
     },
     {
-      "event_id": "1password-github-account-breach-2026-11",
-      "basis": "stated",
-      "direct": [
-        "1Password says an attacker used an employee's corporate GitHub account to push malicious code to backend services, which downloaded account records for a subset of users (names, emails, tokens in some invitation and recovery emails); source code was copied. Vaults were not affected, it says."
-      ],
-      "downstream": [
-        "Affected users may get phishing that quotes real account details or recovery flows (inference).",
-        "Copied source code may be studied for flaws (inference).",
-        "Todoist reported a stolen development credential reaching production the day before; no link is stated."
-      ],
-      "watch_for": [
-        "1Password's final count and token revocations",
-        "Phishing posing as 1Password recovery",
-        "Other firms reporting GitHub account takeover"
-      ],
-      "who_should_care": [
-        "1Password business admins",
-        "Engineering and CI/CD owners"
-      ]
+      "event_id": "usaf-cloud-one-breach-reuters-2026-11",
+      "basis": "inferred",
+      "direct": ["Reuters, citing anonymous sources, reports hackers breached the US Air Force's Cloud One platform, reportedly reaching its control plane through a software flaw; NBC says a US official confirmed the breach. Scope and attacker are unknown."],
+      "downstream": ["Workloads and contractors hosted on Cloud One may need credential and access reviews (inference).", "Adds to a week of reported US national-security system intrusions; no link stated (timing only)."],
+      "watch_for": ["Air Force or DoD statement on scope", "Which software flaw was used and whether it is in commercial products", "Advisories to defence contractors"],
+      "who_should_care": ["US defence contractors and DoD cloud tenants", "Teams running cloud control planes"]
     },
     {
-      "event_id": "microsoft-salt-typhoon-artex-2026-11",
+      "event_id": "korea-pipc-emergency-response-breach-reports-2026-11",
       "basis": "stated",
-      "direct": [
-        "Microsoft says China-linked Salt Typhoon and Crystal Typhoon use the ARTEX AI attack framework and that North Korean and Chinese groups have adopted it; its best signal is a large volume of anomalous traffic from one source."
-      ],
-      "downstream": [
-        "State groups with telecom focus (Salt Typhoon) can now scan and exploit at agent speed (inference).",
-        "Shadowserver counts about 4,200 exposed AI attack-framework instances, mostly ARTEX, which can feed blocklists (stated by Shadowserver; not all are proven attackers)."
-      ],
-      "watch_for": [
-        "Detection rules for ARTEX traffic",
-        "Telecom intrusions attributed to agent tooling",
-        "Updates to the FBI ARTEX FLASH"
-      ],
-      "who_should_care": [
-        "Telecom operators",
-        "SOC teams",
-        "Edge-device owners"
-      ]
+      "direct": ["South Korea's PIPC activated an emergency response after 1,019 breach reports in January to October 2026 against 447 in all of 2025, with three months of inspection support from December."],
+      "downstream": ["Inspections and penalties for firms with weak controls; more breach notices as checks begin (inference).", "Korean users face phishing using data from Korea Post, Olive Young, banks and others leaked this week (inference)."],
+      "watch_for": ["PIPC inspection findings and fines", "Further disclosures from financial firms such as E9Pay", "Korean-language smishing using leaked delivery data"],
+      "who_should_care": ["Organisations processing personal data in Korea", "Korean financial and logistics firms"]
     },
     {
-      "event_id": "deichmann-online-store-data-theft-2026-11",
+      "event_id": "dwp-cyber-incident-services-offline-2026-11",
       "basis": "stated",
-      "direct": [
-        "Deichmann says hackers accessed customer data in its online shop (names, addresses, invoices, emails, phones; no passwords or card numbers); Snipes, Ochsner Sport and Dosenbach are also affected per dpa and bluewin."
-      ],
-      "downstream": [
-        "Customers in Germany, Austria and Switzerland are likely to get fake order and delivery messages before Black Friday (inference).",
-        "vanHaren reported the same data fields the same week; whether it is the same incident is not stated."
-      ],
-      "watch_for": [
-        "A combined customer count",
-        "The cause (shop platform or supplier)",
-        "Phishing using Deichmann-group invoices"
-      ],
-      "who_should_care": [
-        "European retail security teams",
-        "E-commerce platform operators"
-      ]
+      "direct": ["The UK DWP took some online services offline after identifying what its secretary called a serious cyber incident; the NCSC is investigating and the government says there is no evidence of customer data loss so far."],
+      "downstream": ["Benefit claimants may face delays in online services while systems are restored (inference; DWP says regular payments continue).", "Scammers often impersonate an agency during its outage (inference)."],
+      "watch_for": ["DWP and NCSC updates on cause", "Phishing posing as DWP or Universal Credit", "Any ransomware claim naming DWP or a supplier"],
+      "who_should_care": ["UK public-sector bodies and their IT suppliers", "Benefit advice organisations"]
     },
     {
-      "event_id": "threatdown-booba-water-plant-local-government-2026-11",
+      "event_id": "palo-alto-pan-os-fragnesia-cve-2026-46300-exploited-2026-11",
       "basis": "stated",
-      "direct": [
-        "ThreatDown says Booba ransomware started on an East Coast US water treatment plant's network and spread toward the local government that oversees it; it stopped it at the edge it monitored."
-      ],
-      "downstream": [
-        "Where a utility and its municipality share networks but not monitoring, an attack crosses unseen (stated by ThreatDown as the lesson).",
-        "Other small utilities with outsourced IT may face the same ransomware (inference)."
-      ],
-      "watch_for": [
-        "The utility named or an EPA or CISA notice",
-        "Booba indicators in other utilities",
-        "Any effect on water treatment"
-      ],
-      "who_should_care": [
-        "Small water utilities",
-        "Municipal IT",
-        "MSPs serving utilities"
-      ]
-    },
-    {
-      "event_id": "planzer-digitec-galaxus-data-theft-2026-11",
-      "basis": "stated",
-      "direct": [
-        "Swiss carrier Planzer says delivery data and customer-portal credentials (encrypted) were stolen; Digitec Galaxus says its customers' parcel numbers, names, addresses, emails and some phone numbers were affected, though its own systems were not."
-      ],
-      "downstream": [
-        "Delivery-notice phishing in Switzerland during peak parcel season (inference).",
-        "Other shippers' customers of Planzer may be affected; none named yet."
-      ],
-      "watch_for": [
-        "Other retailers naming Planzer",
-        "Planzer portal password resets",
-        "Parcel-tracking phishing"
-      ],
-      "who_should_care": [
-        "Swiss retailers and logistics firms",
-        "Consumers expecting parcels"
-      ]
+      "direct": ["Palo Alto Networks says PAN-OS management interfaces were compromised through PHP2Shell then Fragnesia (CVE-2026-46300)."],
+      "downstream": ["Firewalls with exposed management planes may be backdoored even after patching (inference).", "Check Point and Palo Alto management planes under attack in the same weeks; no shared actor stated."],
+      "watch_for": ["Vendor indicators of compromise", "Wiper activity on gateways", "KEV deadlines"],
+      "who_should_care": ["Network security teams running PAN-OS or Check Point", "MSSPs managing firewalls"]
     }
   ]
 }

@@ -1,0 +1,33 @@
+{
+  "job": "analysis",
+  "started_at": "2026-11-27T19:42:10Z",
+  "finished_at": "2026-11-27T20:08:00Z",
+  "model": "claude-opus-5-5",
+  "searches": [
+    "q.mjs find \"\" --since 2026-11-20 --limit 300",
+    "q.mjs find TONARIWA|Brevo|Planet IC|Volg|refrigerat|Cloud One|City Ticketing|SmartPLAY|Douzone|THORChain|LostTrust|Dentsu --since 2026-11-10"
+  ],
+  "pages_read": [],
+  "added": [],
+  "updated": [
+    "plaid-karte-unauthorized-access-2026-11",
+    "tolmin-cooperative-fridges-cyberattack-2026-11",
+    "polinrider-malware-github-pull-requests-2026-11",
+    "binance-co-ceos-describe-october-29-theft-2026-11",
+    "elliptic-binance-theft-coinjoin-laundering-2026-11"
+  ],
+  "skipped": [
+    {"title": "Persol Career / Dentsu Digital TONARIWA edge", "url": "https://www.dentsudigital.co.jp/news/updates/services/2026-1112-001112", "reason": "No Dentsu Digital TONARIWA event on file, so the stated supplier link cannot be drawn as an arc; Persol is listed in the contractor pattern instead."},
+    {"title": "Freezer attacks linked to Danfoss controllers", "url": "https://www.watson.ch/wirtschaft/digital/710558028-nach-cyberangriffen-gefahr-fuer-industrieanlagen-haelt-an", "reason": "No source on file names the controller product in the Tolmin, Bern or Graffignana cases; kept as inferred, not stated."},
+    {"title": "Swiss freezer attacks as BACS AI-agent cases", "url": "https://thehackernews.com/2026/11/switzerland-confirms-ai-assisted.html", "reason": "No source ties the freezer attacks to the five BACS AI-agent cases; not linked."}
+  ],
+  "open_leads": [
+    {"title": "Product and access path in the European refrigeration tampering cases (Tolmin, Bern, Volg, Graffignana)", "url": "https://www.watson.ch/wirtschaft/digital/710558028-nach-cyberangriffen-gefahr-fuer-industrieanlagen-haelt-an", "note": "Watson mentions three Volg branches and failed Coop attempts, not yet events on file; check SI-CERT, BACS or CSIRT Italia for a named product or advisory.", "priority": "high"},
+    {"title": "Planet IC (Schwerin) attack: other affected customers", "url": "https://www.finanzen.net/nachricht/aktien/roundup-hackerangriff-seite-von-nrw-bank-vorsorglich-abgeschaltet-16088928", "note": "IT provider attack may affect other public or financial clients in Germany; only NRW.Bank on file.", "priority": "medium"},
+    {"title": "Dentsu Digital TONARIWA breach as its own event", "url": "https://www.dentsudigital.co.jp/news/updates/services/2026-1112-001112", "note": "Supplier notice of Nov 12; other TONARIWA customers may follow, like KARTE.", "priority": "medium"},
+    {"title": "Likely duplicate records for the review desk", "url": "", "note": "danawa-connectwave-security-incident-2026-11 / danawa-security-incident-outage-2026-11; switzerland-bacs-first-ai-agent-attacks-2026-11 / switzerland-bacs-five-ai-agent-attacks-2026-11 / switzerland-bacs-ai-agent-attacks-critical-infrastructure-2026-11 / switzerland-ncsc-first-ai-agent-attacks-2026-11; tolmin-cooperative-fridges-cyberattack-2026-11 / slovenia-tolmin-meat-plant-freezer-setting-2026-11; several korea-pipc-* records of 27 Nov; weavelotus-redops-* / socradar-redops-*; us-investigates-iran-ship-* / thaicert-us-probe-*. Not merged here because this job does not edit events beyond links.", "priority": "medium"},
+    {"title": "Whether SmartPLAY and City Ticketing share an LCSD contractor", "url": "https://www.news.gov.hk/chi/2026/11/20261127/20261127_193618_305.html", "note": "Would turn an inferred edge into a stated one.", "priority": "low"}
+  ],
+  "failed_sites": [],
+  "notes": "Rewrote data/analysis.json (12 patterns) and data/ripples.json (10 items); snapshot at data/snapshots/analysis/2026-11-27.json. Carried yesterday's patterns forward, dropped events dated before 2026-11-21 except three sequence anchors (PLAID KARTE Nov 13, Drupal SA-CORE-2026-017 Nov 18, Damyang Douzone Nov 20), which are named in the caveats. New patterns: refrigeration-ot (freezer tampering in SI/CH/IT plus Danfoss KEV, inferred) and asia-breach-waves (Korea PIPC emergency, Hong Kong breaches, inferred). Merged account-takeover into identity-and-developer-access to stay within 12; us-federal-intrusions renamed government-intrusions (timing only, adds USAF Cloud One and DWP). Added 9 stated links to earlier events (5 PLAID->KARTE customers, Tolmin same incident, PolinRider, Binance->THORChain report x2), each with the URL of the page stating it. No web pages were opened in this run; all reasoning used records on file. No instructions found in data."
+}

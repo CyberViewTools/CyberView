@@ -1,0 +1,48 @@
+{
+  "job": "followup",
+  "started_at": "2026-11-27T21:38:00Z",
+  "finished_at": "2026-11-27T21:46:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [
+    "WP Rocket 3.24.2 CVE-2026-125812 WP Media",
+    "Cybernews POS terminals CVE-2024-49138"
+  ],
+  "pages_read": [
+    {
+      "url": "https://patchstack.com/articles/critical-wp-rocket-rce-cve-2026-125812-under-active-attack/",
+      "title": "Patchstack blog",
+      "used_in": "wp-rocket-cve-2026-125812-rce-2026-11"
+    },
+    {
+      "url": "https://www.it-finanzmagazin.de/?p=254361",
+      "title": "IT Finanzmagazin (relays Cybernews)",
+      "used_in": "pos-terminals-cve-2024-49138-card-theft-2026-11"
+    }
+  ],
+  "updated": [
+    "wp-rocket-cve-2026-125812-rce-2026-11"
+  ],
+  "unchanged_checked": [
+    {
+      "id": "pos-terminals-cve-2024-49138-card-theft-2026-11",
+      "url": "https://www.it-finanzmagazin.de/?p=254361"
+    }
+  ],
+  "unfinished": [],
+  "added": [],
+  "skipped": [],
+  "open_leads": [
+    {
+      "title": "Cybernews original on POS campaign",
+      "url": "https://cybernews.com/security/windows-bug-pos-terminals-stolen-credit-cards/",
+      "note": "403 to reader; no Microsoft or CERT.br statement found",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "cybernews.com (403)"
+  ],
+  "notes": "WP Rocket: added tens of thousands of blocked attempts on 26 Nov (Patchstack); no WP Media statement found. Build currently fails on another event (alpija-tolmin-cold-store-hack-2026-11, figure-no-evidence), not touched by this run.",
+  "worker_role": "followup-deep",
+  "worker_model": "sonnet"
+}

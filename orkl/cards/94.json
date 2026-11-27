@@ -339,38 +339,46 @@
   },
   "94cf359a01b554eb46edd83952e99930d114046c": {
     "sha1": "94cf359a01b554eb46edd83952e99930d114046c",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:33:38Z",
+    "read_at": "2026-11-27T09:19:02Z",
     "model": "haiku",
-    "summary": "A FireEye threat research blog from June 2017 says targeted attackers increasingly use command-line evasion and obfuscation to get past application whitelisting and signature-based detection. It describes FIN8 (environment variables, WMI and StdIn tricks, linked to PUNCHTRACK activity), APT19 and APT32 (regsvr32 bypass with obfuscated arguments), and FIN7 (obfuscated JavaScript and cmd.exe commands hidden in LNK files in phishing documents). It urges defenders to layer detection methods rather than rely on one.",
+    "summary": "FireEye's June 2017 threat research blog post says targeted attackers, including FIN8, FIN7, APT19 and APT32, increasingly used command-line obfuscation and application whitelisting bypass techniques in phishing lures and macros during 2017. Examples include PowerShell commands passed via environment variables and standard input, WMI-spawned command processes, and shortcut files hidden in phishing documents. The report links FIN8 to the PUNCHTRACK POS-scraping malware and urges defenders not to rely on a single detection method.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "FIN8",
           "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via",
-          "by": "FireEye (this report)"
-        },
-        {
-          "v": "APT19",
-          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms.",
-          "by": "FireEye (this report)"
-        },
-        {
-          "v": "APT32",
-          "q": "The cyber espionage group APT32 heavily obfuscates their backdoors and scripts",
-          "by": "FireEye (this report)"
+          "by": "FireEye, in this threat research blog post"
         },
         {
           "v": "FIN7",
           "q": "Meanwhile, FIN7 has continued to wreak havoc on the restaurant, hospitality, and financial services sectors in",
-          "by": "FireEye (this report)"
+          "by": "FireEye, in this threat research blog post"
+        },
+        {
+          "v": "APT19",
+          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms.",
+          "by": "FireEye, in this threat research blog post"
+        },
+        {
+          "v": "APT32",
+          "q": "The cyber espionage group APT32 heavily obfuscates their backdoors and scripts, and Mandiant consultants observed",
+          "by": "FireEye, in this threat research blog post"
         }
       ],
       "sectors": [
         {
-          "v": "restaurant, hospitality, and financial services",
+          "v": "restaurant",
+          "q": "Meanwhile, FIN7 has continued to wreak havoc on the restaurant, hospitality, and financial services sectors in"
+        },
+        {
+          "v": "hospitality",
+          "q": "Meanwhile, FIN7 has continued to wreak havoc on the restaurant, hospitality, and financial services sectors in"
+        },
+        {
+          "v": "financial services",
           "q": "Meanwhile, FIN7 has continued to wreak havoc on the restaurant, hospitality, and financial services sectors in"
         },
         {
@@ -383,17 +391,22 @@
         {
           "v": "2017-06-30",
           "q": "Published: 2017-06-30 · Archived: 2026-04-05 14:48:57 UTC",
-          "what": "Blog post published"
+          "what": "Report published"
         },
         {
           "v": "early 2017",
           "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via",
-          "what": "FIN8 began using environment-variable command hiding"
+          "what": "FIN8 began using environment variables to hide command arguments"
         },
         {
           "v": "February 2017",
           "q": "In the February 2017",
-          "what": "FIN8 phishing document containing a macro"
+          "what": "FIN8 phishing document with a macro was observed"
+        },
+        {
+          "v": "April 2017",
+          "q": "in April 2017 FIN7 shifted to using wscript.exe to run JavaScript",
+          "what": "FIN7 shifted to running JavaScript payloads via wscript.exe"
         },
         {
           "v": "April 2017",
@@ -401,74 +414,61 @@
           "what": "APT32 added command argument obfuscation"
         },
         {
-          "v": "April 2017",
-          "q": "To ensure their arsenal did not grow stale, in April 2017 FIN7 shifted to using wscript.exe to run JavaScript",
-          "what": "FIN7 shifted to wscript.exe running JavaScript payloads"
-        },
-        {
           "v": "2017",
-          "q": "Throughout 2017 we have observed a marked increase in the use of command line evasion and obfuscation by a",
-          "what": "Report observed rising command-line evasion through 2017"
+          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms.",
+          "what": "APT19 campaign against law firms"
         }
       ],
       "tools": [
-        {
-          "v": "PowerShell",
-          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via"
-        },
         {
           "v": "PUNCHTRACK",
           "q": "launch their PUNCHTRACK POS-scraping malware, and the 2017 activity is an implementation of these evasion"
         },
         {
+          "v": "PowerShell",
+          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via"
+        },
+        {
+          "v": "cmd.exe",
+          "q": "spawn the cmd.exe execution."
+        },
+        {
           "v": "wscript.exe",
-          "q": "To ensure their arsenal did not grow stale, in April 2017 FIN7 shifted to using wscript.exe to run JavaScript"
+          "q": "in April 2017 FIN7 shifted to using wscript.exe to run JavaScript"
         },
         {
           "v": "regsvr32.exe",
           "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms."
         },
         {
-          "v": "cmd.exe",
-          "q": "they used a little-known character replacement functionality supported by cmd.exe."
-        },
-        {
           "v": "WMI",
-          "q": "FIN8 crafted this macro to use WMI to"
+          "q": "FIN8 has regularly used obfuscation and WMI to remotely"
         }
       ],
       "techniques": [
-        {
-          "v": "environment variables",
-          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via"
-        },
-        {
-          "v": "application whitelisting bypass",
-          "q": "regsvr32.exe application whitelisting bypass, including APT19 in their 2017 campaign against law firms."
-        },
-        {
-          "v": "parent-child process",
-          "q": "To evade many detections based on parent-child process relationships"
-        },
-        {
-          "v": "WMI",
-          "q": "FIN8 crafted this macro to use WMI to"
-        },
         {
           "v": "command line evasion and obfuscation",
           "q": "Throughout 2017 we have observed a marked increase in the use of command line evasion and obfuscation by a"
         },
         {
-          "v": "LNK files",
+          "v": "application whitelisting bypass",
+          "q": "edge application whitelisting bypass techniques and introduce innovative obfuscation into their phishing lures."
+        },
+        {
+          "v": "environment variables",
+          "q": "In early 2017, FIN8 began using environment variables paired with PowerShell’s ability to receive commands via"
+        },
+        {
+          "v": "WMI",
+          "q": "To evade many detections based on parent-child process relationships, FIN8 crafted this macro to use WMI to"
+        },
+        {
+          "v": "command argument obfuscation",
+          "q": "APT32 implement additional command argument obfuscation in April 2017."
+        },
+        {
+          "v": "shortcut files (LNK files)",
           "q": "These methods rely on FIN7’s preferred method of hiding shortcut files (LNK files) in their"
-        },
-        {
-          "v": "character replacement",
-          "q": "they used a little-known character replacement functionality supported by cmd.exe."
-        },
-        {
-          "v": "StdIn",
-          "q": "StdIn (standard input) to evade detection based on process command line arguments."
         }
       ],
       "cves": [],
@@ -481,17 +481,18 @@
     },
     "subject": null,
     "hedges": [
-      "The 0-engine detection figure applies only 'at the time of this blog'.",
-      "Says these techniques 'often' bypass static and dynamic analysis methods, a general rather than absolute claim."
+      "The report says these techniques 'often' bypass static and dynamic analysis methods: \"These techniques often bypass static and dynamic analysis methods\".",
+      "The APT32 argument obfuscation is described as an attempt to break signature-based detection: \"APT32 used cmd.exe obfuscation techniques to attempt to break signature-based detection of this…",
+      "The 0 antivirus engines figure applies only at the time of the blog post: \"At the time of this blog, the files implementing this\"."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:10:28Z",
-      "ok": false,
-      "note": "summary: The grouping \"APT19 and APT32 (regsvr32 bypass with obfuscated arguments)\" implies APT19 also obfuscated its arguments. The text says only that APT19 u",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:10:28Z",
+        "ok": false,
+        "note": "summary: The grouping \"APT19 and APT32 (regsvr32 bypass with obfuscated arguments)\" implies APT19 also obfuscated its arguments. The text says only that APT19 u",
+        "by": "auditor"
+      }
+    ]
   },
   "9461daa2fdf5bd49d6b684ea0ce4ffb4a7a32774": {
     "sha1": "9461daa2fdf5bd49d6b684ea0ce4ffb4a7a32774",

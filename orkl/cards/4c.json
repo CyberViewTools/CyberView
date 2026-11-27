@@ -594,70 +594,47 @@
   },
   "4c92ec27cabd70f496bfc1ea21b7b85dd24ba9bc": {
     "sha1": "4c92ec27cabd70f496bfc1ea21b7b85dd24ba9bc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:45:01Z",
+    "read_at": "2026-11-27T09:23:14Z",
     "model": "haiku",
-    "summary": "Insikt Group (Recorded Future) reports new infrastructure linked to GrayAlpha, a threat actor that overlaps with the financially motivated group FIN7. The report describes two custom PowerShell loaders, PowerNet and MaskBat, which lead to NetSupport RAT infections, and three infection vectors: fake browser update pages, fake 7-Zip download sites, and the TAG-124 traffic distribution system. At the time of writing only the fake 7-Zip pages appeared active, with domains as recent as April 2025. The report links an individual to the 7-Zip pages and gives defender advice on application…",
+    "summary": "Insikt Group (Recorded Future) reports new infrastructure linked to GrayAlpha, a cluster overlapping with the financially motivated group FIN7. Three infection vectors were observed: fake browser update pages, fake 7-Zip download sites and the TAG-124 traffic distribution system. All ultimately resulted in NetSupport RAT infections, delivered through custom PowerShell loaders named PowerNet and MaskBat. Only the fake 7-Zip download pages appeared still active at the time of writing. The report identifies an individual who may be connected to the operation.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "GrayAlpha",
           "q": "Insikt Group identified new infrastructure associated with GrayAlpha, a threat actor that overlaps with the",
-          "by": "Insikt Group, in the report"
+          "by": "Insikt Group"
         },
         {
           "v": "FIN7",
           "q": "FIN7 has been active since at least 2013 and is considered one of the most prolific and technically sophisticated",
-          "by": "Insikt Group, in the report"
-        },
-        {
-          "v": "Dmytro Fedorov",
-          "q": "— Dmytro Fedorov, Fedir Hladyr, and Andrii Kolpakov — highlighting the group’s extensive operations against",
-          "by": "US Department of Justice, as cited in the report"
-        },
-        {
-          "v": "Fedir Hladyr",
-          "q": "— Dmytro Fedorov, Fedir Hladyr, and Andrii Kolpakov — highlighting the group’s extensive operations against",
-          "by": "US Department of Justice, as cited in the report"
-        },
-        {
-          "v": "Andrii Kolpakov",
-          "q": "— Dmytro Fedorov, Fedir Hladyr, and Andrii Kolpakov — highlighting the group’s extensive operations against",
-          "by": "US Department of Justice, as cited in the report"
+          "by": "Insikt Group"
         }
       ],
       "sectors": [
         {
-          "v": "retail",
-          "q": "particularly within the retail, hospitality, and financial sectors."
-        },
-        {
-          "v": "hospitality",
-          "q": "particularly within the retail, hospitality, and financial sectors."
-        },
-        {
-          "v": "financial",
+          "v": "retail, hospitality, and financial sectors",
           "q": "particularly within the retail, hospitality, and financial sectors."
         }
       ],
       "countries": [
         {
           "v": "US",
-          "q": "businesses across 47 US states and multiple countries."
+          "q": "the US Department of Justice (US DOJ) unsealed indictments against three high-ranking FIN7 members"
         }
       ],
       "dates": [
         {
           "v": "2013",
           "q": "FIN7 has been active since at least 2013 and is considered one of the most prolific and technically sophisticated",
-          "what": "FIN7 active since at least this year"
+          "what": "FIN7 described as active since at least this year"
         },
         {
           "v": "2018",
           "q": "In 2018, the US Department of Justice (US DOJ) unsealed indictments against three high-ranking FIN7 members",
-          "what": "US DOJ unsealed indictments against FIN7 members"
+          "what": "US DOJ unsealed indictments against three FIN7 members"
         },
         {
           "v": "2023",
@@ -667,7 +644,7 @@
         {
           "v": "April 2024",
           "q": "Since at least April 2024, GrayAlpha has been observed leveraging fake browser update websites as part of its",
-          "what": "GrayAlpha observed using fake browser update websites"
+          "what": "GrayAlpha observed using fake browser update sites from this point"
         },
         {
           "v": "September 2024",
@@ -677,55 +654,64 @@
         {
           "v": "April 2025",
           "q": "with newly registered domains appearing as recently as April 2025.",
-          "what": "Newly registered domains appeared in the fake 7-Zip pages"
+          "what": "Newest registered domains seen on the fake 7-Zip pages"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 13:12:07 UTC",
+          "what": "Report page archived"
         }
       ],
       "tools": [
         {
-          "v": "PowerNet",
+          "v": "NetSupport RAT",
           "q": "Insikt Group discovered a custom PowerShell loader named PowerNet, which decompresses and executes NetSupport RAT."
         },
         {
-          "v": "NetSupport RAT",
-          "q": "Insikt Group discovered a custom PowerShell loader named PowerNet, which decompresses and executes NetSupport RAT."
+          "v": "PowerNet",
+          "q": "Insikt Group discovered a custom PowerShell loader named PowerNet"
         },
         {
           "v": "MaskBat",
           "q": "Insikt Group identified another custom loader, referred to as MaskBat, that has similarities to FakeBat"
         },
         {
-          "v": "TAG-124",
-          "q": "Notably, the use of TAG-124 had not been publicly documented prior to this report."
+          "v": "FakeBat",
+          "q": "Insikt Group identified another custom loader, referred to as MaskBat, that has similarities to FakeBat"
         },
         {
           "v": "Carbanak",
-          "q": "including variants of Carbanak,"
+          "q": "leveraged its then-proprietary Carbanak backdoor as the primary command-and-control framework, enabling"
         },
         {
           "v": "POWERTRASH",
           "q": "POWERTRASH — a uniquely obfuscated, PowerShell-based, in-memory loader adapted from the PowerSploit framework"
         },
         {
-          "v": "AuKill",
-          "q": "FIN7 also developed AuKill (also known as"
-        },
-        {
-          "v": "Anubis backdoor",
-          "q": "deploying the Python-based Anubis backdoor, which provides full system control via in-"
-        },
-        {
           "v": "DiceLoader",
           "q": "used to deploy payloads such as DiceLoader and cracked Core Impact"
         },
         {
-          "v": "REvil",
-          "q": "groups such as REvil and Maze, while also managing its own RaaS programs, including the now-retired Darkside"
+          "v": "Core Impact",
+          "q": "used to deploy payloads such as DiceLoader and cracked Core Impact"
+        },
+        {
+          "v": "AuKill",
+          "q": "FIN7 also developed AuKill (also known as AvNeutralizer), a custom EDR evasion utility"
+        },
+        {
+          "v": "AvNeutralizer",
+          "q": "FIN7 also developed AuKill (also known as AvNeutralizer), a custom EDR evasion utility"
+        },
+        {
+          "v": "Anubis backdoor",
+          "q": "observed deploying the Python-based Anubis backdoor"
         }
       ],
       "techniques": [
         {
           "v": "spearphishing emails",
-          "q": "gains initial access through spearphishing emails containing malicious attachments or links hosted on"
+          "q": "The group typically gains initial access through spearphishing emails containing malicious attachments or links hosted on"
         },
         {
           "v": "callback phishing",
@@ -733,59 +719,67 @@
         },
         {
           "v": "fake browser update websites",
-          "q": "observed leveraging fake browser update websites as part of its"
+          "q": "Since at least April 2024, GrayAlpha has been observed leveraging fake browser update websites as part of its"
         },
         {
           "v": "malicious 7-Zip download pages",
           "q": "Infection Vector 2: Malicious 7-Zip download pages"
         },
         {
-          "v": "fake software updates",
-          "q": "Infection Vector 1: Fake software updates impersonating legitimate products such as Concur"
-        },
-        {
           "v": "malvertising",
-          "q": "MSIX application packages, delivered via fake update sites and malvertising."
+          "q": "delivered via fake update sites and malvertising."
         },
         {
-          "v": "EDR evasion",
-          "q": "AvNeutralizer), a custom EDR evasion utility designed to disable endpoint security solutions, which was later"
+          "v": "TAG-124",
+          "q": "Notably, the use of TAG-124 had not been publicly documented prior to this report."
+        },
+        {
+          "v": "malicious MSIX application packages",
+          "q": "embedded within malicious MSIX application packages"
+        },
+        {
+          "v": "ransomware through affiliations with RaaS",
+          "q": "In 2023, FIN7 expanded its operations to include the deployment of ransomware through affiliations with RaaS"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "three distinct infection vectors",
-          "q": "Over the past year, Insikt Group has identified three distinct infection vectors associated with GrayAlpha,"
-        },
-        {
           "v": "47 US states",
-          "q": "businesses across 47 US states and multiple countries."
+          "q": "businesses across 47 US states and multiple countries"
         },
         {
           "v": "thousands of point-of-sale systems",
           "q": "to compromise thousands of point-of-sale systems and exfiltrate over 15"
+        },
+        {
+          "v": "three primary infection methods",
+          "q": "Overall, Insikt Group found three primary infection methods:"
+        },
+        {
+          "v": "three high-ranking FIN7 members",
+          "q": "the US Department of Justice (US DOJ) unsealed indictments against three high-ranking FIN7 members"
         }
       ]
     },
     "subject": {
-      "type": "campaign",
-      "name": "GrayAlpha"
+      "type": "malware",
+      "name": "PowerNet"
     },
     "hedges": [
-      "Additional IP addresses are described as believed to be tied to GrayAlpha.",
-      "Active domain resolution does not necessarily indicate ongoing use by threat actors.",
-      "Only the fake 7-Zip download pages appear to remain active at the time of writing.",
-      "The individual identified through the 7-Zip pages may be involved in the GrayAlpha operation.",
-      "GrayAlpha is said to overlap with FIN7, sharing infrastructure, tooling and tradecraft; the report does not say they are the same group."
+      "The report describes GrayAlpha as overlapping with FIN7 rather than stating it is the same group.",
+      "Additional IP addresses are only described as believed to be tied to GrayAlpha, not confirmed.",
+      "Active domain resolution does not necessarily indicate ongoing use by threat actors, according to the report.",
+      "An individual is described as one who may be involved in or connected to the GrayAlpha operation.",
+      "Only the fake 7-Zip download pages appear to remain active at the time of writing."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:09:43Z",
-      "ok": false,
-      "note": "summary: It says the report 'links an individual to the 7-Zip pages' and drops the hedge. The text says only that Insikt Group identified an individual who 'may",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:09:43Z",
+        "ok": false,
+        "note": "summary: It says the report 'links an individual to the 7-Zip pages' and drops the hedge. The text says only that Insikt Group identified an individual who 'may",
+        "by": "auditor"
+      }
+    ]
   }
 }

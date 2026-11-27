@@ -57,108 +57,32 @@
     "sha1": "695d2bdf9c103cd607cdab89cffb8d32bd111f3c",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T08:34:13Z",
+    "read_at": "2026-11-27T09:18:49Z",
     "model": "haiku",
-    "summary": "Research paper and project page describing 'Cloak & Dagger', Android attacks that abuse the draw-on-top and accessibility permissions to take control of the UI feedback loop. The authors say that when an app is installed from Google Play, these permissions may be granted without user notice, enabling clickjacking, keystroke recording, PIN stealing, device unlock, two-factor token theft and silent installation of a god-mode app. A 20-person user study found no user noticed. The bugs were reported to Google from August 2016 to May 2017, and several were marked won't fix. The authors say the…",
-    "kind": "vulnerability",
+    "summary": "",
+    "kind": "",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "August 22nd, 2016",
-          "q": "August 22nd, 2016 — We opened several issues on the bug tracker for the Android Open Source Project (AOSP).",
-          "what": "Researchers opened several issues on the AOSP bug tracker."
-        },
-        {
-          "v": "November 28th, 2016",
-          "q": "November 28th, 2016 — Android security team downgrades this bug as \"not a security issue\" and marks it",
-          "what": "Google downgraded one reported bug as not a security issue."
-        },
-        {
-          "v": "June 19th, 2017",
-          "q": "Here is the current status (as of June 19th, 2017). Previous versions are very likely to be vulnerable as well.",
-          "what": "Status of the attacks on Android versions as recorded by the authors."
-        },
-        {
-          "v": "May 22nd, 2017",
-          "q": "May 22nd, 2017 — This website and our research paper at IEEE S&P are made public.",
-          "what": "The website and research paper were made public."
-        }
-      ],
-      "tools": [
-        {
-          "v": "SYSTEM_ALERT_WINDOW",
-          "q": "These attacks abuse one or both of the SYSTEM_ALERT_WINDOW (\"draw on top\") and"
-        },
-        {
-          "v": "BIND_ACCESSIBILITY_SERVICE",
-          "q": "BIND_ACCESSIBILITY_SERVICE (\"a11y\")."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "clickjacking",
-          "q": "The possible attacks include advanced clickjacking, unconstrained keystroke recording, stealthy phishing,"
-        },
-        {
-          "v": "keystroke recording",
-          "q": "Unconstrained keystroke recording, including passwords. According to the documentation, this should not"
-        },
-        {
-          "v": "Invisible Grid Attack",
-          "q": "Invisible Grid Attack, allowing unconstrained keystroke recording, including password, private messages,"
-        },
-        {
-          "v": "Device unlock",
-          "q": "Device unlock through PIN injection + perform arbitrary actions while keeping the screen off!"
-        },
-        {
-          "v": "Stealthy phishing",
-          "q": "Stealthy phishing (for which the user finds herself logged in, as she would expect)"
-        },
-        {
-          "v": "Silent installation of God-mode app",
-          "q": "Silent installation of God-mode app (with all permissions enabled)"
-        },
-        {
-          "v": "Stealing two-factor authentication tokens",
-          "q": "Stealing two-factor authentication tokens (SMS-based, Google Authenticator, and other app-based tokens)"
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "20 human subjects",
-          "q": "These attacks are practical: we performed a user study (with 20 human subjects), and no user understood"
-        },
-        {
-          "v": "32.0%",
-          "q": "(32.0%*) (31.2%) (7.1%)"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "vulnerability",
-      "name": "Cloak & Dagger"
-    },
-    "hedges": [
-      "Most of these attacks are due to design issues, and they are thus challenging to prevent.",
-      "Some functionality may work 'as intended'; the report says this functionality can still be abused.",
-      "Google's partial fix applies only on Android 7.1.2 and only to normal permissions, per the report.",
-      "Whether automatic grant of draw-on-top is deliberate is stated only 'to the best of our understanding'.",
-      "Previous Android versions are said to be 'very likely' vulnerable; the report did not test them.",
-      "Some bugs were marked 'won't fix' and the report says they will not be fixed."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:09:52Z",
-      "ok": false,
-      "note": "hedges[4]: The text says previous versions are 'very likely' vulnerable, but it never says the authors did not test them. The claim 'the report did not test the",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:09:52Z",
+        "ok": false,
+        "note": "hedges[4]: The text says previous versions are 'very likely' vulnerable, but it never says the authors did not test them. The claim 'the report did not test the",
+        "by": "auditor"
+      }
+    ]
   },
   "69d206c444ba7b11ad515448394172916ac6c6e8": {
     "sha1": "69d206c444ba7b11ad515448394172916ac6c6e8",

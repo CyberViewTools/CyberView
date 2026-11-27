@@ -1,65 +1,51 @@
 {
   "360394f33e3e2f99029aa4cd8fae22bad3ef8ae2": {
     "sha1": "360394f33e3e2f99029aa4cd8fae22bad3ef8ae2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:34:13Z",
+    "read_at": "2026-11-27T09:18:56Z",
     "model": "haiku",
-    "summary": "An Eclectic Light article, published 2020-11-16, sets out a first draft of how macOS 10.15 and 11.0 check executable code before loading and running it. It covers code signing on Intel and Apple Silicon Macs, a local security database of code hashes, hash lookups sent to Apple, and online developer certificate revocation checks. The author says Apple has stated its privacy position and plans to add an opt-out. The article names no specific malware family, campaign, vulnerability or incident.",
+    "summary": "A first-draft technical article from a personal Mac blog, published 2020-11-16, that explains how macOS 10.15 Catalina and 11.0 Big Sur check executable code before loading it. The checks described are a hash lookup against a local security database, reporting of unseen hashes to Apple, a known-malware check by XProtect, and online OCSP certificate revocation checks. It also covers Apple's stated privacy position and planned opt-out changes, and options for muting these checks. It is not a report on a specific malware family, campaign or incident.",
     "kind": "overview",
     "facts": {
-      "actors": [
+      "actors": [],
+      "sectors": [
         {
-          "v": "Apple",
-          "q": "Apple appears to have changed this system over a year ago",
-          "by": "the report itself (author's reading)"
-        },
-        {
-          "v": "state security services",
-          "q": "where state security services may be monitoring them",
-          "by": "the report itself"
+          "v": "journalists",
+          "q": "such as journalists who work in hostile environments where state security services may be monitoring them"
         }
       ],
-      "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "2020-11-16",
-          "q": "Published: 2020-11-16 · Archived: 2026-04-05 17:48:08 UTC",
-          "what": "article published"
+          "q": "Published: 2020-11-16",
+          "what": "Article first published"
         },
         {
           "v": "2026-04-05",
           "q": "Archived: 2026-04-05 17:48:08 UTC",
-          "what": "page archived"
+          "what": "Page archived"
         }
       ],
       "tools": [
         {
           "v": "XProtect",
-          "q": "checks in XProtect to see if it is known malware and should be blocked"
+          "q": "checks in XProtect to see if it is known malware and should be blocked."
         },
         {
           "v": "Gatekeeper",
-          "q": "‘Gatekeeper’ database. However, that was only updated periodically"
-        },
-        {
-          "v": "codesign",
-          "q": "codesign , and used only on specific apps"
+          "q": "this appears to have been handled locally by lookup in the ‘Gatekeeper’ database."
         }
       ],
       "techniques": [
         {
-          "v": "hash lookup in local security database",
-          "q": "this is looked up in the local security database, which establishes"
+          "v": "Muting the OCSP query",
+          "q": "Muting the OCSP query is just as simple."
         },
         {
-          "v": "OCSP",
-          "q": "macOS sends an OCSP"
-        },
-        {
-          "v": "certificate revocation checks",
-          "q": "certificate revocation checks will change in the next year to feature:"
+          "v": "checks the validity of certificates online",
+          "q": "now checks the validity of certificates online with its"
         }
       ],
       "cves": [],
@@ -74,36 +60,27 @@
         },
         {
           "v": "a couple of weeks",
-          "q": "for a couple of weeks after they were known to have been compromised"
-        },
-        {
-          "v": "macOS 10.15 and 11.0",
-          "q": "in macOS 10.15 and 11.0"
-        },
-        {
-          "v": "macOS 10.14",
-          "q": "Before macOS 10.14, this appears to have been handled locally"
+          "q": "accepted for a couple of weeks after they were known to have been compromised."
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "This is my first draft, so please bear with my errors and help me correct them to build a more accurate picture.",
-      "This has been thought to relate to notarization, but I don't think has anything to do with that.",
-      "At the least, Apple collects hashes as they're encountered, and appears to look them up in a database of known malware.",
-      "Apple appears to have changed this system over a year ago.",
-      "This appears to have been extended to 12 hours now.",
-      "For a very few Mac users, such as journalists who work in hostile environments, the OCSP exchange and transmission of new hashes could conceivably be used against them.",
-      "Apple's statement that the new opt-out preference presumably means both hash lookup and certificate revocation checks is the author's inference."
+      "The author calls this a first draft and asks readers to help correct its errors.",
+      "The author does not think the sending of new hashes has anything to do with notarization.",
+      "The hash lookup appears to check code against a database of known malware.",
+      "Earlier certificate checking appears to have been local; the author says Apple appears to have changed this.",
+      "The author says the OCSP exchange and hash transmission could conceivably be used against some journalists.",
+      "The author presumes Apple's planned opt-out would cover both hash lookup and certificate revocation checks."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:09:25Z",
-      "ok": false,
-      "note": "actors[1]: The text only says state security services 'may be monitoring' a very few users such as journalists, as a hypothetical. It does not report them as an",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:09:25Z",
+        "ok": false,
+        "note": "actors[1]: The text only says state security services 'may be monitoring' a very few users such as journalists, as a hypothetical. It does not report them as an",
+        "by": "auditor"
+      }
+    ]
   },
   "36306e003905c18244827376abe525ad46e1a655": {
     "sha1": "36306e003905c18244827376abe525ad46e1a655",

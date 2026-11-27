@@ -177,92 +177,104 @@
   },
   "b61e4c6ba0bf6f9658599075cdee2c82a340f909": {
     "sha1": "b61e4c6ba0bf6f9658599075cdee2c82a340f909",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:34:43Z",
+    "read_at": "2026-11-27T09:19:28Z",
     "model": "haiku",
-    "summary": "Ransom-ISAC, working with Bridewell, analyses the command-and-control infrastructure behind a September 2025 cryptocurrency and data theft intrusion that targeted developers through a weaponised private GitHub repository. Servers are clustered by fingerprints such as the EmbedIO web server, a shared RDP certificate name and hosting networks. The report links some indicators to a May 2025 NPM supply-chain campaign described by Aikido. It assesses with low to medium confidence that two cooperating actors were involved, possibly a DPRK-linked group and Russia-facing pre-attack infrastructure,…",
+    "summary": "Ransom-ISAC, working with Bridewell, analysed command-and-control infrastructure from an intrusion. The intrusion began as an apparent phishing campaign using a private GitHub repository and aimed at developers, with cryptocurrency and data theft as the goal. Infrastructure was clustered by hosting provider, server fingerprint and RDP certificate. Cluster overlap with Aikido's reporting on an npm supply-chain campaign is assessed with moderate to high confidence. Ransom-ISAC assesses with low to medium confidence that two threat actors work together, with a possible DPRK link and…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "DPRK",
-          "q": "a potentially attributed DPRK campaign where novel tradecraft",
-          "by": "Ransom-ISAC (its own assessment, described as potentially attributed)"
+          "q": "a potentially attributed DPRK campaign",
+          "by": "Ransom-ISAC (the report)"
+        },
+        {
+          "v": "DPRK",
+          "q": "pre-attack infrastructure is being facilitated in Russia to then later be used by a DPRK aligned",
+          "by": "Ransom-ISAC (the report)"
+        },
+        {
+          "v": "two distinct threat actors",
+          "q": "that there are two distinct threat actors working with one another that are actively or passively involved in the intrusion.",
+          "by": "Ransom-ISAC (the report)"
         },
         {
           "v": "Russian APT",
           "q": "they are leaning towards a Russian APT behind the operations which is also one of our stronger",
-          "by": "Aikido, as reported by Ransom-ISAC"
+          "by": "Aikido, as cited by Ransom-ISAC"
         },
         {
           "v": "Famous Chollima",
-          "q": "with North Korea (Famous Chollima). Vast majority of ASNs linked to the IP addresses mentioned in the article are on",
-          "by": "Ransom-ISAC, citing historic reporting"
+          "q": "cybercrime activities aligned with North Korea (Famous Chollima).",
+          "by": "historic reporting, as cited by Ransom-ISAC"
         }
       ],
       "sectors": [
         {
-          "v": "cryptocurrency",
-          "q": "to investigate a cryptocurrency and data theft"
-        },
-        {
           "v": "developers",
-          "q": "especially considering the targets are developers."
+          "q": "considering the targets are developers."
         }
       ],
       "countries": [
         {
+          "v": "Russia",
+          "q": "Of the 17 IP addresses, 9 were hosted in Russia and hosted on ASN-62005 BlueVPS OU"
+        },
+        {
           "v": "United Kingdom",
           "q": "Source Location: United Kingdom"
-        },
-        {
-          "v": "Russia",
-          "q": "Location: Russia, hosted on ASN 31213, PJSC Megafon"
-        },
-        {
-          "v": "North Korea",
-          "q": "with North Korea (Famous Chollima)."
         }
       ],
       "dates": [
         {
           "v": "2025-11-13",
           "q": "Published: 2025-11-13 · Archived: 2026-04-05 17:33:44 UTC",
-          "what": "report published"
+          "what": "Report published"
         },
         {
           "v": "September 2025",
           "q": "In September 2025, Ransom-ISAC was brought in by Crystal Intelligence to investigate a cryptocurrency and data theft",
-          "what": "Ransom-ISAC engaged to investigate the intrusion"
+          "what": "Ransom-ISAC brought in to investigate the theft attempt"
         },
         {
           "v": "6th August 2025",
           "q": "First C2 Configuration Seen: 6th August 2025",
-          "what": "first C2 configuration seen on one C2 IP address"
+          "what": "First C2 configuration seen for the dropper C2 address"
+        },
+        {
+          "v": "6th Nov 2024",
+          "q": "First Seen X-302 IP address: 6th Nov 2024",
+          "what": "First seen for the HTTP 302 redirect cluster"
+        },
+        {
+          "v": "31st Dec 2024",
+          "q": "Last Seen X-302 IP address: 31st Dec 2024",
+          "what": "Last seen for the HTTP 302 redirect cluster"
         },
         {
           "v": "15th October 2025",
-          "q": "quite recent (from 15th October 2025 onwards). This observation is further validated when cross-",
-          "what": "C2 IP addresses shifted to a new hosting network"
+          "q": "WorkTitans B.V is quite recent (from 15th October 2025 onwards).",
+          "what": "Hosting shift to WorkTitans B.V began"
         }
       ],
       "tools": [
-        {
-          "v": "EmbedIO",
-          "q": "EmbedIO is a lightweight open-source web server by Unosquare which is available for users to download from the GitHub."
-        },
         {
           "v": "Cobalt Strike",
           "q": "Majority of the sightings were for Cobalt Strike C2 framework spanning across different Cobalt Strike Watermarks."
         },
         {
-          "v": "Orlan:DCAP",
-          "q": "deploying legitimate Orlan:DCAP licences on compromised victim networks to automate the identification of high-value"
+          "v": "EmbedIO",
+          "q": "EmbedIO is a lightweight open-source web server by Unosquare which is available for users to download from the GitHub."
         },
         {
-          "v": "SocketIO",
-          "q": "_V-Selected C2: SocketIO"
+          "v": "socket.io",
+          "q": "secondary C2 infrastructure leveraging WebSocket via socket.io"
+        },
+        {
+          "v": "Orlan Security's DCAP system",
+          "q": "represent legitimate licensed deployments of Orlan Security's DCAP system"
         }
       ],
       "techniques": [
@@ -272,62 +284,50 @@
         },
         {
           "v": "private weaponised GitHub repository",
-          "q": "via a private weaponised GitHub repository."
+          "q": "attempt via a private weaponised GitHub repository."
         },
         {
           "v": "Cross-Chain TxDataHiding",
-          "q": "such as Cross-Chain TxDataHiding techniques combined with the subsequent creation of a takedown-proof Command and"
+          "q": "such as Cross-Chain TxDataHiding techniques"
         },
         {
           "v": "OPSEC 302 Redirection",
           "q": "Alternate HTTP Status Code: OPSEC 302 Redirection"
         },
         {
-          "v": "data exfiltration",
-          "q": "large-scale data exfiltration operations."
-        },
-        {
-          "v": "RDP remote access",
-          "q": "Russian Remote Access: Evidence of RDP activity originating from Russian servers"
+          "v": "database-designated ports",
+          "q": "database-designated ports is noteworthy, especially considering the targets are developers."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "84",
-          "q": "A total of 84 unique sightings of malware and known threat groups were identified using this ASN over the last three years."
+          "v": "4 unique C2 IP addresses",
+          "q": "Analysis from parts 1 and 2 identified 4 unique C2 IP addresses discovered either"
         },
         {
-          "v": "4",
-          "q": "Analysis from parts 1 and 2 identified 4 unique C2 IP addresses discovered either, directly through tracing the complex"
-        },
-        {
-          "v": "11",
+          "v": "11 unique IP addresses",
           "q": "Fingerprint 1 results in 11 unique IP addresses (inclusive of the 4 identified previously)."
         },
         {
-          "v": "300",
-          "q": "currently, at the time of writing this, there are only 300 servers deployed in the wild with"
+          "v": "300 servers",
+          "q": "there are only 300 servers deployed in the wild with"
         },
         {
-          "v": "50,000",
+          "v": "roughly 20,000 servers",
+          "q": "There are roughly 20,000 servers with this date value, which is low"
+        },
+        {
+          "v": "50,000 servers",
           "q": "At the time of writing this, 50,000 servers globally are configured"
         },
         {
-          "v": "1500",
-          "q": "Currently, there are over 1500 servers with this RDP TLS certificate"
+          "v": "over 1500 servers",
+          "q": "Currently, there are over 1500 servers with this RDP TLS certificate with a vast"
         },
         {
-          "v": "17",
-          "q": "Historically, there are only 17 IP"
-        },
-        {
-          "v": "18",
-          "q": "The newly formed Cluster-4 provides total of 18 IP addresses which were reduced down to 8 unique IP addresses by"
-        },
-        {
-          "v": "22 domains",
-          "q": "(except the dropper C2 which had 22 domains)"
+          "v": "84 unique sightings",
+          "q": "A total of 84 unique sightings of malware and known threat groups were identified using this ASN over the last three years."
         }
       ]
     },
@@ -336,21 +336,22 @@
       "name": "Cross-Chain TxDataHiding Crypto Heist"
     },
     "hedges": [
-      "Attribution to a DPRK campaign is described as potential; the report says there is not enough evidence to name a known specific threat group.",
-      "Assessed with low to medium confidence that two distinct threat actors worked together, actively or passively.",
-      "Pre-attack infrastructure being facilitated in Russia is assessed with low confidence.",
-      "Aikido did not attribute its campaign to known threat groups; the overlap with the observed intrusion is assessed with moderate to high confidence.",
-      "Link between Orlan DCAP login pages and DPRK operators is a plausible hypothesis with moderate-to-high confidence; the tool's role is not known.",
-      "Russian APT lean is Aikido's view and is described as one of the stronger hypotheses; the report's own hypothesis is about pre-attack infrastructure.",
-      "First-seen dates are estimates because internet scanner intervals created blind spots."
+      "Two distinct threat actors working together is assessed with low to medium confidence.",
+      "The Russia-hosted pre-attack infrastructure link to a DPRK-aligned cluster is assessed with low confidence.",
+      "Overlap with Aikido's reporting is assessed with moderate to high confidence; Aikido itself did not attribute the campaign to a known group.",
+      "Aikido's Russian APT lean rests on hosting ASN and sophistication of the infection chain.",
+      "Orlan DCAP use by DPRK actors is a plausible hypothesis with moderate-to-high confidence, not a confirmed finding.",
+      "Not enough evidence yet to attribute the activity to a known specific threat group.",
+      "First-seen dates are estimates because scanner intervals created blind spots.",
+      "The service hibernation score is an informal measure whose accuracy depends on the scanning interval."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:10:51Z",
-      "ok": false,
-      "note": "summary: 'Russia-facing pre-attack infrastructure' misstates the text. The report says pre-attack infrastructure is assessed with low confidence as facilitated ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:10:51Z",
+        "ok": false,
+        "note": "summary: 'Russia-facing pre-attack infrastructure' misstates the text. The report says pre-attack infrastructure is assessed with low confidence as facilitated ",
+        "by": "auditor"
+      }
+    ]
   }
 }

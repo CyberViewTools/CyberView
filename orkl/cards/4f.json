@@ -443,18 +443,18 @@
   },
   "4f7d2d053d55258a57a09c6e72eda4909318222e": {
     "sha1": "4f7d2d053d55258a57a09c6e72eda4909318222e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:35:42Z",
+    "read_at": "2026-11-27T09:20:12Z",
     "model": "haiku",
-    "summary": "Malpedia entry for the BlackEnergy malware family. It began as crimeware sold in the Russian underground from 2007 and was used for DDoS attacks. Later versions added a kernel-mode rootkit (BE2, 2008) and a lighter footprint (BE3, 2014). The report links the family to the actor Sandworm and to power outages in Ukraine on 23 December 2015, which it says the Ukrainian government confirmed.",
+    "summary": "Malpedia-style page on BlackEnergy, a malware family first sold as crimeware in the Russian underground from 2007 as a DDoS botnet toolkit. BE2 (2008) added plugins and banking theft; BE3 (2014) used spear-phishing and the CVE-2014-4114 PowerPoint exploit. The page lists Sandworm as the actor and says BlackEnergy attackers caused power outages in Ukraine on 23 December 2015, a sabotage the Ukrainian government confirmed.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Sandworm",
           "q": "Actor(s): Sandworm",
-          "by": "the report itself"
+          "by": "Fraunhofer FKIE (page header)"
         }
       ],
       "sectors": [
@@ -463,64 +463,80 @@
           "q": "This cyber sabotage against three energy companies has been confirmed by"
         },
         {
-          "v": "critical infrastructure",
-          "q": "Advantech/Broadwin WebAccess, and Siemens WinCC to gain access to critical infrastructure networks."
+          "v": "banking",
+          "q": "two banking authentication plugins to steal from Russian nad Ukrainian banks"
+        },
+        {
+          "v": "government",
+          "q": "government websites in Georgia three weeks before Russo-Georgian War"
+        },
+        {
+          "v": "industrial control systems",
+          "q": "leveraging the human-machine interfaces of industrial control systems like GE CIMPLICITY"
         }
       ],
       "countries": [
         {
-          "v": "Ukraine",
-          "q": "hours in different regions of Ukraine. This cyber sabotage against three energy companies has been confirmed by"
+          "v": "Georgia",
+          "q": "government websites in Georgia three weeks before Russo-Georgian War"
         },
         {
-          "v": "Georgia",
-          "q": "websites in Georgia three weeks before Russo-Georgian War."
+          "v": "Ukraine",
+          "q": "hours in different regions of Ukraine."
         }
       ],
       "dates": [
         {
           "v": "2007",
-          "q": "underground as early as 2007. Initially, it was designed as a toolkit for creating botnets for conducting DDoS",
-          "what": "BlackEnergy first sold as crimeware in the Russian underground"
+          "q": "underground as early as 2007.",
+          "what": "BlackEnergy first appeared as crimeware sold in the Russian cyber underground"
         },
         {
           "v": "2008",
-          "q": "Version 2 of BlackEnergy, BE2, came in 2008 with a complete code rewrite that introduced a protective layer, a",
-          "what": "BE2 version released with a complete code rewrite"
+          "q": "Version 2 of BlackEnergy, BE2, came in 2008 with a complete code rewrite",
+          "what": "BE2, the second version, was released"
         },
         {
           "v": "2014",
-          "q": "In 2014, the BlackEnergy toolkit, BE3, switched to a lighter footprint with no kernel-mode driver component. Its",
-          "what": "BE3 version released with a lighter footprint and no kernel-mode driver"
+          "q": "In 2014, the BlackEnergy toolkit, BE3, switched to a lighter footprint",
+          "what": "BE3, the third version, was released with a lighter footprint"
         },
         {
           "v": "23 December 2015",
           "q": "On 23 December 2015, attackers behind the BlackEnergy malware successfully caused power outages for several",
-          "what": "Power outages in several regions of Ukraine"
+          "what": "Power outages in several regions of Ukraine caused by attackers behind BlackEnergy"
         }
       ],
       "tools": [
         {
-          "v": "BlackEnergy",
-          "q": "BlackEnergy, its first version shortened as BE1, started as a crimeware being sold in the Russian cyber"
+          "v": "BE3",
+          "q": "In 2014, the BlackEnergy toolkit, BE3, switched to a lighter footprint"
         }
       ],
       "techniques": [
         {
-          "v": "spear-phishing email",
-          "q": "Typical for distribution of BE3 was heavy use of spear-phishing emails containing Microsoft Word or Excel"
+          "v": "DDoS",
+          "q": "toolkit for creating botnets for conducting DDoS"
         },
         {
-          "v": "DDoS attacks via botnets",
-          "q": "Initially, it was designed as a toolkit for creating botnets for conducting DDoS"
+          "v": "spear-phishing",
+          "q": "heavy use of spear-phishing emails containing Microsoft Word or Excel"
+        },
+        {
+          "v": "zero-day exploit",
+          "q": "a PowerPoint presentation with zero-day exploit CVE-2014-4114."
         },
         {
           "v": "kernel-mode rootkit",
-          "q": "kernel-mode rootkit and a modular architecture."
+          "q": "a kernel-mode rootkit and a modular architecture"
         },
         {
-          "v": "keylogging and password theft",
+          "v": "keylogging",
           "q": "spying features like keylogging, screenshoots or a robust password stealer"
+        },
+        {
+          "v": "destroying the system",
+          "q": "destroying the system"
         }
       ],
       "cves": [
@@ -536,7 +552,7 @@
         },
         {
           "v": "three weeks",
-          "q": "websites in Georgia three weeks before Russo-Georgian War."
+          "q": "government websites in Georgia three weeks before Russo-Georgian War"
         }
       ]
     },
@@ -545,13 +561,13 @@
       "name": "BlackEnergy"
     },
     "hedges": [],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:09:43Z",
-      "ok": false,
-      "note": "summary: The text says BlackEnergy was sold in the Russian underground \"as early as 2007\". The summary says \"from 2007\", which drops that hedge and states the d",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:09:43Z",
+        "ok": false,
+        "note": "summary: The text says BlackEnergy was sold in the Russian underground \"as early as 2007\". The summary says \"from 2007\", which drops that hedge and states the d",
+        "by": "auditor"
+      }
+    ]
   }
 }

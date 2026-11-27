@@ -248,47 +248,72 @@
   },
   "11fcd89425219e6f04a62fc062c9284bbb39ac82": {
     "sha1": "11fcd89425219e6f04a62fc062c9284bbb39ac82",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:40:53Z",
+    "read_at": "2026-11-27T09:21:21Z",
     "model": "haiku",
-    "summary": "Huntress analyses a macOS intrusion that began on June 11, 2025 at a cryptocurrency foundation. A fake Zoom meeting with deepfakes led to a malicious Zoom extension download. The report attributes the intrusion with high confidence to North Korea's TA444 (BlueNoroff). Eight malicious binaries were recovered: a Nim persistence implant, a Go backdoor (Root Troy V4), a loader, a keylogger with screen and clipboard capture, a Nim command implant, and a Go cryptocurrency wallet infostealer. Techniques include AppleScript delivery, process injection, shell history removal and sleep-time command…",
+    "summary": "Huntress analyses a macOS intrusion that began on June 11, 2025 at a cryptocurrency foundation. The attack used a fake Zoom meeting with deepfakes and a malicious AppleScript. Huntress attributes it with high confidence to the North Korean subgroup BlueNoroff, also tracked as TA444. Eight malicious binaries were recovered: a Go backdoor, Nim implants, a process-injection loader, an Objective-C keylogger that also captures screens and clipboard, and a Go crypto-wallet infostealer.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
-          "v": "TA444 aka BlueNoroff",
+          "v": "BlueNoroff",
+          "q": "TA444 aka BlueNoroff, Sapphire Sleet, COPERNICIUM, STARDUST CHOLLIMA, or CageyChameleon",
+          "by": "Huntress (the report)"
+        },
+        {
+          "v": "TA444",
+          "q": "TA444 aka BlueNoroff, Sapphire Sleet, COPERNICIUM, STARDUST CHOLLIMA, or CageyChameleon",
+          "by": "Huntress (the report)"
+        },
+        {
+          "v": "Sapphire Sleet",
+          "q": "TA444 aka BlueNoroff, Sapphire Sleet, COPERNICIUM, STARDUST CHOLLIMA, or CageyChameleon",
+          "by": "Huntress (the report)"
+        },
+        {
+          "v": "COPERNICIUM",
+          "q": "TA444 aka BlueNoroff, Sapphire Sleet, COPERNICIUM, STARDUST CHOLLIMA, or CageyChameleon",
+          "by": "Huntress (the report)"
+        },
+        {
+          "v": "STARDUST CHOLLIMA",
+          "q": "TA444 aka BlueNoroff, Sapphire Sleet, COPERNICIUM, STARDUST CHOLLIMA, or CageyChameleon",
+          "by": "Huntress (the report)"
+        },
+        {
+          "v": "CageyChameleon",
           "q": "TA444 aka BlueNoroff, Sapphire Sleet, COPERNICIUM, STARDUST CHOLLIMA, or CageyChameleon",
           "by": "Huntress (the report)"
         }
       ],
       "sectors": [
         {
-          "v": "cryptocurrency foundation",
+          "v": "cryptocurrency",
           "q": "An employee at a cryptocurrency foundation received a message from an external contact on their Telegram."
         }
       ],
       "countries": [
         {
           "v": "North Korea",
-          "q": "We attribute with high confidence that this intrusion was conducted by the North Korean (DPRK) APT subgroup tracked as"
+          "q": "the North Korean (DPRK) APT subgroup tracked as"
         }
       ],
       "dates": [
         {
           "v": "June 11, 2025",
           "q": "On June 11, 2025, Huntress received contact from a partner saying that an end user had downloaded, potentially, a",
-          "what": "Huntress received contact about a possibly malicious Zoom extension download"
+          "what": "Huntress received first contact about the intrusion from a partner"
         },
         {
           "v": "2017",
-          "q": "sponsored threat actor known for targeting cryptocurrencies stemming back to at least 2017.",
-          "what": "The actor's known cryptocurrency targeting goes back to at least this year"
+          "q": "known for targeting cryptocurrencies stemming back to at least 2017.",
+          "what": "earliest activity of the actor cited in the report"
         },
         {
           "v": "2022",
-          "q": "intrusions like the one covered by Kasperksy in 2022.",
-          "what": "A prior BlueNoroff intrusion covered in another vendor's report"
+          "q": "the one covered by Kasperksy in 2022",
+          "what": "earlier intrusion of this kind covered by another security firm"
         }
       ],
       "tools": [
@@ -297,19 +322,19 @@
           "q": "Telegram 2: the persistent binary, written in Nim, responsible for starting the primary backdoor."
         },
         {
-          "v": "Root Troy V4 (remoted)",
+          "v": "Root Troy V4",
           "q": "Root Troy V4 (remoted): fully featured backdoor, written in Go, and used to download the other payloads as well"
         },
         {
-          "v": "InjectWithDyld (a)",
+          "v": "InjectWithDyld",
           "q": "InjectWithDyld (a): a binary loader written in C++ that is downloaded by Root Troy V4. It will decrypt two"
         },
         {
-          "v": "XScreen (keyboardd)",
+          "v": "XScreen",
           "q": "XScreen (keyboardd): a keylogger written in Objective-C that has capability to monitor keystrokes, the clipboard,"
         },
         {
-          "v": "CryptoBot (airmond)",
+          "v": "CryptoBot",
           "q": "CryptoBot (airmond): an infostealer written in Go that is designed to collect cryptocurrency related files from the"
         },
         {
@@ -317,89 +342,85 @@
           "q": "NetChk: an almost empty binary that will generate random numbers forever."
         },
         {
-          "v": "Nim Implant (Trojan 1)",
-          "q": "Decrypted Payloads: Nim Implant (Trojan 1) & Base App"
+          "v": "Nim implant",
+          "q": "The Nim implant is primarily used to interactively send commands to and from the infected host."
         }
       ],
       "techniques": [
         {
-          "v": "Process injection",
-          "q": "Process injection"
+          "v": "AppleScript",
+          "q": "This AppleScript first opens a legitimate webpage for Zoom SDKs, but after over 10,500 blank lines, it downloads a"
         },
         {
-          "v": "AppleScript",
-          "q": "The file downloaded in turn was an AppleScript (Apple’s built-in scripting language) named"
+          "v": "process injection",
+          "q": "familiar with the technique of process injection, in which a process will write code into another process’"
+        },
+        {
+          "v": "keylogging",
+          "q": "This binary is used for keylogging, screen recording, and clipboard retrieval."
+        },
+        {
+          "v": "screen recording",
+          "q": "This binary is used for keylogging, screen recording, and clipboard retrieval."
+        },
+        {
+          "v": "clipboard retrieval",
+          "q": "This binary is used for keylogging, screen recording, and clipboard retrieval."
+        },
+        {
+          "v": "wallet plugins",
+          "q": "they iterate over installed browser extensions looking for wallet plugins."
+        },
+        {
+          "v": "shell history",
+          "q": "Lastly, it removes the shell history, so users are unaware of what ran."
+        },
+        {
+          "v": "overwrite",
+          "q": "will overwrite all files in the current"
+        },
+        {
+          "v": "social engineering",
+          "q": "start off with social engineering related to remote meeting software:"
+        },
+        {
+          "v": "deepfakes",
+          "q": "it contained several deepfakes of known senior leadership within their company"
+        },
+        {
+          "v": "persistence",
+          "q": "Telegram 2 was used as the persistence mechanism and starting hourly, with the following plist:"
         },
         {
           "v": "Remote code execution",
           "q": "Capability: Remote code execution"
         },
         {
-          "v": "Execution during sleep",
-          "q": "Capability: Execution during sleep"
-        },
-        {
-          "v": "Persistent implant",
-          "q": "Persistent implant: Telegram 2"
-        },
-        {
-          "v": "Keylogging functionality",
-          "q": "Keylogging functionality"
-        },
-        {
-          "v": "Screencapture functionality",
-          "q": "Screencapture functionality"
-        },
-        {
-          "v": "Clipboard functionality",
-          "q": "Clipboard functionality"
-        },
-        {
-          "v": "removes the shell history",
-          "q": "Lastly, it removes the shell history, so users are unaware of what ran."
-        },
-        {
-          "v": "Payload cleanup",
-          "q": "Payload cleanup"
-        },
-        {
-          "v": "deepfakes",
-          "q": "Several weeks later, when the employee joined what ended up being a group Zoom meeting, it contained several deepfakes"
-        },
-        {
-          "v": "fake Zoom domain",
-          "q": "The Calendly link was for a Google Meet event, but when clicked, the URL redirects the end user to a fake Zoom domain controlled by the threat actor."
-        },
-        {
-          "v": "Meeting application social engineering",
-          "q": "Identifying and mitigating Meeting application social engineering"
+          "v": "password",
+          "q": "Then attempt to get the user’s password and verify it using sudo."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "8",
-          "q": "By the end of our investigation, we recovered 8 different malicious binaries from the victim host."
-        },
-        {
-          "v": "4 personas",
-          "q": "There were 4 personas responsible for different tooling:"
-        },
-        {
-          "v": "10,500 blank lines",
+          "v": "over 10,500 blank lines",
           "q": "This AppleScript first opens a legitimate webpage for Zoom SDKs, but after over 10,500 blank lines, it downloads a"
         },
         {
+          "v": "8 different malicious binaries",
+          "q": "we recovered 8 different malicious binaries from the victim host"
+        },
+        {
+          "v": "4 personas",
+          "q": "There were 4 personas responsible for different tooling"
+        },
+        {
           "v": "6 times",
-          "q": "This command was run 6 times from when the customer was onboarded to when the host was"
+          "q": "This command was run 6 times from when the customer was onboarded"
         },
         {
           "v": "3.37 seconds",
           "q": "The main method just runs a simple task on a loop (every 3.37 seconds)."
-        },
-        {
-          "v": "3 asynchronous loops",
-          "q": "The overall way this binary works is by starting 3 asynchronous loops, one for each type of collection."
         }
       ]
     },
@@ -408,19 +429,19 @@
       "name": "BlueNoroff Web3 macOS intrusion"
     },
     "hedges": [
-      "Attribution to TA444 (BlueNoroff) is stated with high confidence, not as certain.",
-      "The second-stage download was not recovered; a version found on VirusTotal was used for insight instead.",
-      "Analysis of the Nim implant (Trojan 1) was still in progress when the post was written, and the post was to be updated later.",
-      "Some configuration files could not be recovered, and the report notes the reason for one failure is unknown.",
-      "No data was found at the screen capture save location during the investigation."
+      "The report attributes the intrusion with high confidence, not certainty.",
+      "While we weren’t able to recover this second stage from the intrusion, a version was found on VirusTotal that gives insight into it.",
+      "Unfortunately, the configuration file written by the Telegram 2 binary could not be recovered.",
+      "Analysis is still in progress on the Nim implant; the post will be updated when complete.",
+      "During our investigation, we did not find any data stored at the file save location."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:08:56Z",
-      "ok": false,
-      "note": "summary: It says the intrusion 'began on June 11, 2025'. That is the date Huntress was contacted by a partner. The text says the lure reached the victim several",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:08:56Z",
+        "ok": false,
+        "note": "summary: It says the intrusion 'began on June 11, 2025'. That is the date Huntress was contacted by a partner. The text says the lure reached the victim several",
+        "by": "auditor"
+      }
+    ]
   }
 }

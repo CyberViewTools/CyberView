@@ -313,23 +313,18 @@
   },
   "3d761dea89536bf0c182f222cbed4ca34fa59848": {
     "sha1": "3d761dea89536bf0c182f222cbed4ca34fa59848",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:41:24Z",
+    "read_at": "2026-11-27T09:22:23Z",
     "model": "haiku",
-    "summary": "eSentire TRU reports April 2024 incidents in which FIN7, a financially motivated group active since 2013, used sponsored Google Ads and fake brand websites to deliver signed MSIX installers. The installers dropped NetSupport RAT, which led to a Python-based loader that injected DiceLoader and set up scheduled-task persistence. The report says these cases resemble earlier FIN7 MSIX activity described by Microsoft and Red Canary, citing a similar PowerShell script and similar infrastructure patterns. Recommended controls include EDR, phishing awareness training, and AppLocker controls on MSIX…",
+    "summary": "eSentire's Threat Response Unit reports FIN7, a financially motivated group it says is based in Russia, using sponsored Google Ads and fake brand websites to push fake MSIX installers, with cases observed in April 2024. The installers carried PowerShell or dropped NetSupport RAT. One chain used a Python loader to unpack DiceLoader, then scheduled-task persistence and process injection. The report says the cases resemble earlier FIN7 activity reported by Microsoft and Red Canary, and that a request was sent to GlobalSign to revoke the signing certificates.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "FIN7",
-          "q": "In April 2024, eSentire’s Threat Response Unit (TRU) observed multiple incidents involving FIN7, a financially",
+          "q": "These cases bear several similarities to previously reported FIN7 activity",
           "by": "eSentire Threat Response Unit (TRU)"
-        },
-        {
-          "v": "FIN7",
-          "q": "These cases bear several similarities to previously reported FIN7 activity by Microsoft and Red Canary",
-          "by": "Microsoft and Red Canary, as cited by eSentire TRU"
         }
       ],
       "sectors": [],
@@ -341,42 +336,29 @@
       ],
       "dates": [
         {
-          "v": "2013",
-          "q": "that has been active since 2013",
-          "what": "FIN7 described as active since this year"
-        },
-        {
           "v": "April 2024",
-          "q": "In April 2024, eSentire’s Threat Response Unit (TRU) observed multiple incidents involving FIN7",
-          "what": "eSentire observed multiple FIN7 incidents"
+          "q": "In April 2024, eSentire",
+          "what": "Threat Response Unit observed multiple incidents involving FIN7"
         },
         {
           "v": "2024-05-13",
-          "q": "2024-05-13 - This blog has been updated with additional details connecting it to previously observed",
-          "what": "Blog updated to connect the report to previously observed FIN7 activity"
+          "q": "2024-05-13 - This blog has been updated",
+          "what": "Blog updated to connect it to previously observed FIN7 activity"
         },
         {
           "v": "November 2023",
-          "q": "This tool and version were used to create November 2023 samples linked to FIN7 such as",
-          "what": "Samples linked to FIN7 created with the packaging tool"
+          "q": "in November 2023. The MSIX payload",
+          "what": "Microsoft-provided MSIX payload used for comparison with the April 2024 script"
         }
       ],
       "tools": [
         {
           "v": "NetSupport RAT",
-          "q": "delivering NetSupport RAT via MSIX app installer"
+          "q": "cases delivering NetSupport RAT via MSIX app installer"
         },
         {
           "v": "DiceLoader",
           "q": "The decrypted output would contain the encrypted DiceLoader payload"
-        },
-        {
-          "v": "PowerShell",
-          "q": "it contains the malicious PowerShell script"
-        },
-        {
-          "v": "MSIX Packaging Tool",
-          "q": "Recent samples discussed below were created with MSIX Packaging Tool version 1.2023.1005.0."
         },
         {
           "v": "csvde.exe",
@@ -385,62 +367,83 @@
         {
           "v": "curl",
           "q": "The threat actors used curl to retrieve csvde.exe"
+        },
+        {
+          "v": "MSIX Packaging Tool",
+          "q": "were created with MSIX Packaging Tool version 1.2023.1005.0"
         }
       ],
       "techniques": [
         {
-          "v": "social engineering through brand impersonation",
-          "q": "The malicious websites impersonating reputable brands demonstrate the effectiveness of social engineering."
+          "v": "malicious websites impersonating well-known brands",
+          "q": "The threat actors used malicious websites to impersonate well-known brands"
         },
         {
-          "v": "sponsored Google Ads lure with fake download pop-up",
+          "v": "sponsored Google Ads",
+          "q": "Users visiting the malicious website via sponsored Google Ads"
+        },
+        {
+          "v": "fake pop-up",
           "q": "Users visiting the malicious website via sponsored Google Ads would receive a fake pop-up prompting them to"
         },
         {
-          "v": "signed MSIX packages",
-          "q": "The deceptive use of signed MSIX files underscores the need for vigilance even with seemingly legitimate"
+          "v": "signed MSIX files",
+          "q": "The deceptive use of signed MSIX files underscores the need for vigilance"
         },
         {
-          "v": "persistence via scheduled tasks",
-          "q": "The host's persistence is achieved via scheduled tasks."
+          "v": "scheduled tasks",
+          "q": "persistence is achieved via scheduled tasks"
         },
         {
           "v": "process injection",
           "q": "effectively performing a process injection"
         },
         {
-          "v": "host fingerprinting",
-          "q": "Both scripts contained similar host fingerprinting instructions"
+          "v": "computer objects",
+          "q": "The command exports data about computer objects into a text file"
+        },
+        {
+          "v": "reconnaissance",
+          "q": "The threat actor then performed additional reconnaissance"
+        },
+        {
+          "v": "obfuscated",
+          "q": "Notably the variable names have been obfuscated in the latest sample"
+        },
+        {
+          "v": "certificate misuse",
+          "q": "Report certificate misuse."
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "1.2023.1005.0",
-          "q": "created with MSIX Packaging Tool version 1.2023.1005.0."
-        },
-        {
           "v": "approximately three hours",
           "q": "The threat actor connected to the machine approximately three hours later via NetSupport RAT."
+        },
+        {
+          "v": "2013",
+          "q": "motivated threat group based in Russia that has been active since 2013"
         }
       ]
     },
     "subject": {
-      "type": "campaign",
-      "name": "FIN7 Uses Trusted Brands and Sponsored Google Ads to Distribute MSIX Payloads"
+      "type": "malware",
+      "name": "NetSupport RAT"
     },
     "hedges": [
-      "These cases bear several similarities to previously reported FIN7 activity by Microsoft and Red Canary",
-      "The fake browser extension payload appears to be an MSIX file, a Windows app packaging format.",
-      "Notably the variable names have been obfuscated in the latest sample."
+      "Says the cases bear several similarities to previously reported FIN7 activity, rather than stating the link outright.",
+      "Links the infrastructure to earlier activity through similar URL structure, host fingerprinting and a JARM fingerprint match.",
+      "Notes that variable names in the latest PowerShell script were obfuscated, so the comparison rests on the remaining similarities.",
+      "Says the blog was updated on 2024-05-13 with additional details connecting it to previously observed FIN7 activity."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:09:25Z",
-      "ok": false,
-      "note": "actors[1].by: The similarity claim is eSentire TRU's own comparison. Microsoft and Red Canary only authored the earlier reports it is compared with, so they are",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:09:25Z",
+        "ok": false,
+        "note": "actors[1].by: The similarity claim is eSentire TRU's own comparison. Microsoft and Red Canary only authored the earlier reports it is compared with, so they are",
+        "by": "auditor"
+      }
+    ]
   }
 }

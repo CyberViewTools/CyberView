@@ -175,18 +175,18 @@
   },
   "71e6e667e19aa1e3fa3806e352442b214a4b67cc": {
     "sha1": "71e6e667e19aa1e3fa3806e352442b214a4b67cc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:36:25Z",
+    "read_at": "2026-11-27T09:20:12Z",
     "model": "haiku",
-    "summary": "Blog entry describing SepSys, a ransomware whose activity is dated to the second half of February 2020. It encrypts user files with AES, appends the .sepsys extension and demands a $100 Bitcoin payment to a recipient named Silicon Venom, with README.html as the ransom note. The entry says it spreads through insecure RDP configurations, email spam, malicious attachments and fake updates, and that it uses Windows PowerShell. Prevalence is described as low. Antivirus vendors use varied detection names. The family lineage lists Silvertor (July 2020) and RedRoman (November 2020).",
+    "summary": "Blog entry on the SepSys ransomware, active from the second half of February 2020. It encrypts user files with AES and demands a $100 Bitcoin payment to a named recipient, Silicon Venom. Dropped files include README.html and destructy-1.0.exe, and the sample is said to masquerade as SMBGhoster_1.2.exe. Several security vendors detect it. The entry rates prevalence as low and lists the related Silvertor and RedRoman families.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "Silicon Venom",
           "q": "To regain access to your files, please make a $100 donation to Silicon Venom",
-          "by": "the report"
+          "by": "the report itself (quoting the ransom note)"
         }
       ],
       "sectors": [],
@@ -195,53 +195,58 @@
         {
           "v": "second half of February 2020",
           "q": "Активность этого крипто-вымогателя пришлась на вторую половину февраля 2020 г.",
-          "what": "Activity of the ransomware fell in the second half of February 2020"
+          "what": "Activity of the SepSys ransomware peaked"
         },
         {
           "v": "25 April 2020",
           "q": "Обновление от 25 апреля 2020:",
-          "what": "Update block recorded the .sepsys extension and the SMBGhoster_1.2.exe masquerade"
+          "what": "Blog update: .sepsys extension, disguised as SMBGhoster_1.2.exe"
         },
         {
           "v": "July 2020",
           "q": "Silvertor Ransomware - июль 2020",
-          "what": "Silvertor follow-on family listed in the family history"
+          "what": "Related Silvertor ransomware family listed"
+        },
+        {
+          "v": "November 2020",
+          "q": "RedRoman Ransomware - ноябрь 2020",
+          "what": "Related RedRoman ransomware family listed"
         }
       ],
       "tools": [
         {
-          "v": "SepSys ransomware",
-          "q": "SepSys Ransomware - февраль 2020"
+          "v": "sepSys",
+          "q": "Оригинальное название: sepSys."
         },
         {
-          "v": "Windows PowerShell",
-          "q": "Использует Windows PowerShell для атаки."
+          "v": "destructy-1.0.exe",
+          "q": "destructy-1.0.exe"
         },
         {
           "v": "SMBGhoster_1.2.exe",
           "q": "Выдает себя за SMBGhoster_1.2.exe"
         },
         {
-          "v": "README.html",
-          "q": "Записка с требованием выкупа называется: README.html"
+          "v": "Windows PowerShell",
+          "q": "Использует Windows PowerShell для атаки."
         }
       ],
       "techniques": [
         {
-          "v": "RDP",
-          "q": "Может распространяться путём взлома через незащищенную конфигурацию RDP"
+          "v": "exploiting insecure RDP configuration",
+          "q": "Может распространяться путём взлома через незащищенную конфигурацию RDP, с помощью email-спама"
         },
         {
-          "v": "email",
-          "q": "с помощью email-спама"
+          "v": "email spam with malicious attachments",
+          "q": "и вредоносных вложений, обманных загрузок, ботнетов, эксплойтов, вредоносной рекламы, веб-инжектов,"
         },
         {
-          "v": "AES",
-          "q": "Этот крипто-вымогатель шифрует данные пользователей с помощью AES"
+          "v": "AES encryption of user files",
+          "q": "Этот крипто-вымогатель шифрует данные пользователей с помощью AES, а затем требует выкуп в 100$ в"
         },
         {
-          "v": "PowerShell",
-          "q": "Использует Windows PowerShell для атаки."
+          "v": "Bitcoin ransom payment demand",
+          "q": "We only accept payments in Bitcoin (BTC)."
         }
       ],
       "cves": [],
@@ -254,19 +259,20 @@
     },
     "subject": {
       "type": "malware",
-      "name": "SepSys ransomware"
+      "name": "SepSys"
     },
     "hedges": [
-      "Prevalence is described as low.",
-      "Later update variants may differ from the original version of the ransomware."
+      "The report says details of later variants may differ from the original: new extensions, emails and ransom texts may appear in later updates.",
+      "Distribution methods are described as possible ('may spread'), not confirmed for this sample.",
+      "The report says detailed information is collected regularly and asks readers to submit samples."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:10:01Z",
-      "ok": false,
-      "note": "summary: The text says the ransomware 'Может распространяться' (may spread) through RDP, spam, attachments and fake updates, and lists these as generic possible",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:10:01Z",
+        "ok": false,
+        "note": "summary: The text says the ransomware 'Может распространяться' (may spread) through RDP, spam, attachments and fake updates, and lists these as generic possible",
+        "by": "auditor"
+      }
+    ]
   }
 }

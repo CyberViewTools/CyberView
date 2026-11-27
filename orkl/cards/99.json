@@ -1,45 +1,45 @@
 {
   "9958dcfe79c7dcfa9657bf6710ac6433077bb4fa": {
     "sha1": "9958dcfe79c7dcfa9657bf6710ac6433077bb4fa",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:39:28Z",
+    "read_at": "2026-11-27T09:21:07Z",
     "model": "haiku",
-    "summary": "Silent Push reports that FIN7 (also called Sangria Tempest), a financially motivated group with ties to Russia, is running fake AI adult-image generator sites. Visitors are lured by free download and free trial offers that deliver Redline Stealer, D3F@ck Loader and Lumma Stealer. Separately, FIN7 runs NetSupport RAT malvertising using .MSIX files. The report says the AI generator sites were taken down after escalations, and it expects new sites to follow similar patterns.",
+    "summary": "Silent Push Threat Team blog (published 2024-10-02) on FIN7, described as a financially motivated group with ties to Russia. FIN7 is said to run at least seven fake 'AI deepnude' generator sites and 'free download' and 'free trial' honeypots that deliver Redline Stealer, D3F@ck Loader and Lumma Stealer. A separate malvertising campaign pushes NetSupport RAT through fake browser-extension pages that lead to .MSIX malware. The report describes SEO tactics and shell websites, and says the sites found were taken offline after takedown requests. Silent Push counts 4,000+ FIN7 domains and IPs.…",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "FIN7",
-          "q": "Silent Push Threat Analysts have observed the FIN7 group (aka Sangria Tempest) using new tactics in their",
-          "by": "Silent Push Threat Team (the report)"
+          "q": "Silent Push Threat Analysts have observed the FIN7 group (aka Sangria Tempest) using new tactics",
+          "by": "Silent Push (vendor)"
         },
         {
           "v": "Sangria Tempest",
-          "q": "Silent Push Threat Analysts have observed the FIN7 group (aka Sangria Tempest) using new tactics in their",
-          "by": "Silent Push Threat Team (the report)"
+          "q": "Silent Push Threat Analysts have observed the FIN7 group (aka Sangria Tempest) using new tactics",
+          "by": "Silent Push (vendor)"
         }
       ],
       "sectors": [
         {
           "v": "retail",
-          "q": "The group targets a broad spectrum of industries, from retail and tech to financial,"
+          "q": "The group targets a broad spectrum of industries, from retail and tech to financial, media, utilities, and more."
         },
         {
           "v": "tech",
-          "q": "The group targets a broad spectrum of industries, from retail and tech to financial,"
+          "q": "The group targets a broad spectrum of industries, from retail and tech to financial, media, utilities, and more."
         },
         {
           "v": "financial",
-          "q": "The group targets a broad spectrum of industries, from retail and tech to financial,"
+          "q": "The group targets a broad spectrum of industries, from retail and tech to financial, media, utilities, and more."
         },
         {
           "v": "media",
-          "q": "media, utilities, and more."
+          "q": "The group targets a broad spectrum of industries, from retail and tech to financial, media, utilities, and more."
         },
         {
           "v": "utilities",
-          "q": "media, utilities, and more."
+          "q": "The group targets a broad spectrum of industries, from retail and tech to financial, media, utilities, and more."
         }
       ],
       "countries": [
@@ -51,29 +51,29 @@
       "dates": [
         {
           "v": "2024-10-02",
-          "q": "Published: 2024-10-02 · Archived: 2026-04-05 20:06:38 UTC",
+          "q": "Published: 2024-10-02",
           "what": "Silent Push blog post published"
         },
         {
-          "v": "2013",
-          "q": "It has been associated with sophisticated cyber attacks since at least 2013.",
-          "what": "FIN7 associated with sophisticated cyber attacks since this year"
-        },
-        {
           "v": "July 2024",
-          "q": "In July 2024, Silent Push unearthed 4,000+ IOFA domains and IPs, the largest group of FIN7 domains ever",
-          "what": "Silent Push found 4,000+ FIN7 domains and IPs"
+          "q": "In July 2024, Silent Push unearthed 4,000+ IOFA domains and IPs",
+          "what": "Silent Push unearthed FIN7 domains and IPs"
         },
         {
           "v": "August 5, 2024",
           "q": "The FIN7 campaign related to D3F@ck Loader started on August 5, 2024, according to VirusTotal upload dates.",
-          "what": "D3F@ck Loader campaign started, per VirusTotal upload dates"
+          "what": "D3F@ck Loader campaign start per VirusTotal upload dates"
+        },
+        {
+          "v": "2013",
+          "q": "It has been associated with sophisticated cyber attacks since at least 2013.",
+          "what": "FIN7 associated with sophisticated cyber attacks since"
         }
       ],
       "tools": [
         {
           "v": "NetSupport RAT",
-          "q": "FIN7’s NetSupport RAT malware is served to visitors of specific honeypots—mostly websites"
+          "q": "FIN7’s NetSupport RAT malware is served to visitors of specific honeypots"
         },
         {
           "v": "Redline Stealer",
@@ -90,79 +90,67 @@
         {
           "v": "Inno Setup",
           "q": "The Deepnude Generator .EXE uses “Inno Setup” for the initial payload packing."
-        },
-        {
-          "v": "Launch4j",
-          "q": "The 225.zip file consists of the Java Virtual Machine and an EXE file, which is written in Launch4j."
         }
       ],
       "techniques": [
         {
           "v": "malvertising",
-          "q": "Silent Push is also tracking the FIN7 NetSupport RAT malvertising campaign, which continues to use a"
-        },
-        {
-          "v": "spear-phishing",
-          "q": "Previous Silent Push research identified thousands of FIN7 domains used in spear-phishing emails,"
+          "q": "promoted via FIN7 malvertising search campaigns"
         },
         {
           "v": "SEO tactics",
-          "q": "it is likely FIN7 may be using SEO tactics to get their honeypots ranked higher in search results."
+          "q": "FIN7 using SEO tactics to spread honeypots"
         },
         {
           "v": "DLL side-loading",
           "q": "This other FIN7 payload is a more classic “Lumma Stealer” and uses a DLL side-loading technique for execution."
         },
         {
-          "v": "string obfuscation",
-          "q": "Heavy string obfuscation"
+          "v": "lateral movement",
+          "q": "From there, the malware seeks to obtain elevated privileges, including lateral movement and access to Active Directory."
         },
         {
           "v": "infostealers",
-          "q": "These files may directly compromise credentials via infostealers or be used for follow-on campaigns that deploy"
+          "q": "These files may directly compromise credentials via infostealers or be used for follow-on campaigns"
         },
         {
-          "v": "ransomware",
-          "q": "Organizations compromised with the .MSIX browser extension can be targeted with ransomware since the"
+          "v": "Heavy string obfuscation",
+          "q": "Heavy string obfuscation"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "at least seven websites",
+          "v": "4,000+",
+          "q": "In July 2024, Silent Push unearthed 4,000+ IOFA domains and IPs, the largest group of FIN7 domains ever discovered"
+        },
+        {
+          "v": "seven",
           "q": "We found that FIN7 has created at least seven websites serving malware to visitors"
         },
         {
-          "v": "4,000+ IOFA domains and IPs",
-          "q": "In July 2024, Silent Push unearthed 4,000+ IOFA domains and IPs, the largest group of FIN7 domains ever"
-        },
-        {
           "v": "more than doubled",
-          "q": "a figure that we have since more than doubled for our Enterprise customers."
-        },
-        {
-          "v": "hundreds",
-          "q": "Scanner, hundreds of these “File is ready for download…” websites have been found."
+          "q": "a figure that we have since more than doubled for our Enterprise customers"
         }
       ]
     },
     "subject": {
       "type": "campaign",
-      "name": "FIN7 AI deepfake honeypots"
+      "name": "FIN7 AI deepnude honeypot campaign"
     },
     "hedges": [
-      "it is likely FIN7 may be using SEO tactics to get their honeypots ranked higher in search results.",
-      "While we haven't definitively determined that all of these are used by FIN7 exclusively, they appear to be malicious and likely part of similar user flows.",
-      "we believe it's likely new sites will be launched that follow similar patterns.",
+      "While we haven’t definitively determined that all of these are used by FIN7 exclusively, they appear to be malicious and likely part of similar user flows.",
+      "we believe it’s likely new sites will be launched that follow similar patterns.",
+      "It is likely FIN7 may be using SEO tactics to get their honeypots ranked higher in search results.",
       "Some of the information in this public blog has been omitted for operational security."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:10:28Z",
-      "ok": false,
-      "note": "summary: The report says \"we believe it's likely new sites will be launched that follow similar patterns\". The summary says Silent Push \"expects\" new sites to f",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:10:28Z",
+        "ok": false,
+        "note": "summary: The report says \"we believe it's likely new sites will be launched that follow similar patterns\". The summary says Silent Push \"expects\" new sites to f",
+        "by": "auditor"
+      }
+    ]
   }
 }

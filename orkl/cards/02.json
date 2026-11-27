@@ -317,23 +317,23 @@
   },
   "02ddb0f91d9998840a475540ca2a07d9827e8613": {
     "sha1": "02ddb0f91d9998840a475540ca2a07d9827e8613",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:33:27Z",
+    "read_at": "2026-11-27T09:18:53Z",
     "model": "haiku",
-    "summary": "S2W analysis of the BlackCat ransomware. Its configuration fields match those of BlackMatter, but S2W found it difficult to conclude the two are the same group. BlackCat is written in Rust, unlike DarkSide and BlackMatter, which were written in C/C++. Five onion sites were identified, including negotiation, public and private leak sites, later consolidated on the Alphv leak site. Two victims were posted there. The operator sought pentesters and affiliates on two forums. After public exposure, the operator deleted the victim information and posted a warning.",
+    "summary": "S2W analysis of BlackCat, a ransomware family written in Rust and published 10 Dec 2021. Its configuration fields match those of BlackMatter, but S2W found it difficult to conclude they are the same group. The report describes negotiation and leak sites, two victims posted on the leak site, and recruitment of pentesters and affiliates on underground forums. After public attention, the operator deleted the victim information and posted a warning.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "BlackCat ransomware operator",
           "q": "The BlackCat ransomware operator has been using the “alphv” as a username in XSS and Exploit, but using",
-          "by": "S2W (the report)"
+          "by": "S2W (report author)"
         },
         {
           "v": "FIN7",
-          "q": "When Darkside, known to be used by the FIN7 group, was rebranded to BlackMatter, it did not use the same",
-          "by": "S2W (the report)"
+          "q": "Darkside, known to be used by the FIN7 group, was rebranded to BlackMatter",
+          "by": "S2W (report author)"
         }
       ],
       "sectors": [],
@@ -347,7 +347,7 @@
         {
           "v": "August 2020 to May 2021",
           "q": "Darkside: from August 2020 to May 2021",
-          "what": "DarkSide active period"
+          "what": "DarkSide ransomware active period"
         },
         {
           "v": "August 2021 to November 2021",
@@ -357,65 +357,65 @@
         {
           "v": "Late November",
           "q": "BlackCat: from Late November (PE timestamp based)",
-          "what": "BlackCat activity start, per PE timestamp"
+          "what": "start of BlackCat activity, based on PE timestamp"
         },
         {
           "v": "12/04/2021",
           "q": "Posted on 12/04/2021",
-          "what": "Exploit forum post recruiting pentesters"
+          "what": "recruitment post seeking pentesters on an exploit forum"
         },
         {
           "v": "12/09/2021",
           "q": "Posted on 12/09/2021",
-          "what": "RAMP forum post advertising ALPHV-ng RaaS"
+          "what": "ALPHV-ng RaaS recruitment post on a RAMP forum"
         }
       ],
       "tools": [
         {
-          "v": "BlackCat ransomware",
-          "q": "BlackCat ransomware performs malicious actions by referring to the internal configuration like other RaaS"
+          "v": "BlackCat",
+          "q": "The BlackCat ransomware is based on Rust programming language."
         },
         {
           "v": "BlackMatter",
-          "q": "and the configuration field like “credentials” is also used by BlackMatter V1 and Darkside."
+          "q": "Darkside, known to be used by the FIN7 group, was rebranded to BlackMatter"
         },
         {
-          "v": "Darkside",
-          "q": "and the configuration field like “credentials” is also used by BlackMatter V1 and Darkside."
+          "v": "DarkSide",
+          "q": "both DarkSide ransomware and BlackMatter were written in C/C++."
         },
         {
-          "v": "Rust",
-          "q": "The BlackCat ransomware is based on Rust programming language."
+          "v": "RustyBuer",
+          "q": "Rust-based MaaS(Malware-as-a-service) such as RustyBuer and FickerStealer"
+        },
+        {
+          "v": "FickerStealer",
+          "q": "Rust-based MaaS(Malware-as-a-service) such as RustyBuer and FickerStealer"
         }
       ],
       "techniques": [
         {
-          "v": "configuration-driven behaviour",
-          "q": "BlackCat ransomware performs malicious actions by referring to the internal configuration like other RaaS"
+          "v": "configuration",
+          "q": "However, we have confirmed the values of the following BlackCat’s configuration fields completely match"
         },
         {
-          "v": "victim domain credentials kept in configuration",
-          "q": "In this field, it includes the victim’s domain credentials."
+          "v": "victim credentials",
+          "q": "We have confirmed that the configuration within the BlackCat ransomware contains the victim’s credentials."
         },
         {
-          "v": "private leak site for victims",
+          "v": "execution options",
+          "q": "4) Lots of execution options"
+        },
+        {
+          "v": "private leak site",
           "q": "BlackCat has added a private leak site, probably a pre-published leak site."
         },
         {
-          "v": "victim name embedded in ransomware filename",
-          "q": "the victim was included in the filename of the BlackCat ransomware"
-        },
-        {
-          "v": "deleting victim listings after public exposure",
-          "q": "they deleted all information of both two victims and added their warning message"
+          "v": "pentesters and affiliates",
+          "q": "3.2. Looking for pentesters and affiliates"
         }
       ],
       "cves": [],
       "figures": [
-        {
-          "v": "Five onion domains",
-          "q": "Five onion domains used by BlackCat have been identified so far."
-        },
         {
           "v": "Two victims",
           "q": "Two victims were posted on the Alphv leak site recently."
@@ -427,21 +427,21 @@
       "name": "BlackCat"
     },
     "hedges": [
-      "we found it difficult to conclude that they are the same group",
-      "malware developers are also probably trying to develop malware using Rust",
+      "we found it difficult to conclude that they are the same group.",
+      "probably a pre-published leak site.",
       "It seems that they initially operated a private preview page, and then moved it to the Alphv leak site.",
-      "Unfortunately, private leak site was not accessible at the time",
-      "probably a pre-published leak site",
+      "(Unfortunately, private leak site was not accessible at the time)",
+      "it seems to have been active since November.",
       "Two victims on the Alphv leak site seems to be attacked by the BlackCat ransomware",
-      "it seems to have been active since November."
+      "malware developers are also probably trying to develop malware using Rust."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T09:08:56Z",
-      "ok": false,
-      "note": "summary: The claim that the five onion sites were 'later consolidated on the Alphv leak site' is not what the text says. It says only that the operator seems to",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T09:08:56Z",
+        "ok": false,
+        "note": "summary: The claim that the five onion sites were 'later consolidated on the Alphv leak site' is not what the text says. It says only that the operator seems to",
+        "by": "auditor"
+      }
+    ]
   }
 }

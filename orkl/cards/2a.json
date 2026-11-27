@@ -291,26 +291,135 @@
   },
   "2a4321fdcddd7640c9c4c60ed54d73d030eaefe5": {
     "sha1": "2a4321fdcddd7640c9c4c60ed54d73d030eaefe5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:11:32Z",
+    "read_at": "2026-11-27T10:23:57Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Describes North Korean-aligned actors targeting macOS and their RustBucket and KandyKorn campaigns. The report finds RustBucket SwiftLoader droppers now delivering KandyKorn RAT payloads. The KandyKorn chain starts with social engineering over Discord, using a fake cryptocurrency arbitrage bot, and ends with a backdoor RAT loaded in memory. It also links ObjCShellz to SwiftLoader and reports shared infrastructure. Indicators (hashes, IP addresses, file paths) are listed by the vendor.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "North Korean-aligned threat actors",
+          "q": "North Korean-aligned threat actors targeting macOS have had a busy 2023",
+          "by": "SentinelOne (this report)"
+        },
+        {
+          "v": "DPRK-aligned threat actors",
+          "q": "Research by Elastic published in early November 2023 described a sophisticated intrusion by DPRK-aligned threat actors",
+          "by": "Elastic (research cited by the report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "crypto exchange",
+          "q": "targeting blockchain engineers of a crypto exchange"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "North Korean-aligned threat actors targeting macOS have had a busy 2023"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-11-27",
+          "q": "Published: 2023-11-27 · Archived: 2026-04-05 18:37:53 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "November 2023",
+          "q": "Research by Elastic published in early November 2023 described a sophisticated intrusion",
+          "what": "Elastic published research on the KandyKorn intrusion"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SwiftLoader",
+          "q": "used a second-stage malware, dubbed ‘SwiftLoader’"
+        },
+        {
+          "v": "RustBucket",
+          "q": "The initial RustBucket campaign used a second-stage malware"
+        },
+        {
+          "v": "KandyKorn",
+          "q": "delivered a backdoor RAT written in C++ dubbed ‘KandyKorn’"
+        },
+        {
+          "v": "SUGARLOADER",
+          "q": "a Mach-O binary, dubbed SUGARLOADER"
+        },
+        {
+          "v": "HLOADER",
+          "q": "downloads a Mach-O payload dubbed HLOADER"
+        },
+        {
+          "v": "ObjCShellz",
+          "q": "The researchers dubbed the malware ObjCShellz"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "social engineering via Discord",
+          "q": "The compromise involved a five-stage attack that began with social engineering via Discord to trick"
+        },
+        {
+          "v": "disguised as a cryptocurrency arbitrage bot",
+          "q": "downloading a malicious Python application disguised as a cryptocurrency arbitrage bot, a popular"
+        },
+        {
+          "v": "hijacked the host’s installed Discord app",
+          "q": "malware that hijacked the host’s installed Discord app"
+        },
+        {
+          "v": "in-memory execution",
+          "q": "retrieve and execute the KANDYKORN remote access trojan in-memory"
+        },
+        {
+          "v": "persistence mechanism",
+          "q": "persistence mechanism that will not be detected by Apple’s monitoring of background login items"
+        },
+        {
+          "v": "signed and notarized",
+          "q": "This application was signed and notarized by Apple (since revoked)"
+        },
+        {
+          "v": "mixing and matching",
+          "q": "DPRK threat actors are now ‘mixing and matching’ components"
+        },
+        {
+          "v": "multi-stage operation",
+          "q": "an elaborate multi-stage operation targeting blockchain engineers"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "TCP port 44",
+          "q": "communicating over TCP port 44"
+        },
+        {
+          "v": "five-stage",
+          "q": "The compromise involved a five-stage attack"
+        },
+        {
+          "v": "macOS 12.6",
+          "q": "requires at least macOS 12.6 (Monterey)"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "KandyKorn"
+    },
+    "hedges": [
+      "The link between the .pld file and the KandyKorn RAT is assessed with medium confidence.",
+      "ObjCShellz is highly likely a later stage of a SwiftLoader stager.",
+      "RustBucket droppers and KandyKorn payloads are likely being shared as part of the same infection chain.",
+      "The command-and-control server did not respond with a download during the report's test."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T10:04:29Z",

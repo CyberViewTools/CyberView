@@ -108,26 +108,210 @@
   },
   "f57f1bde5e9e4b6c2eea46bb6bae72501b7be4e3": {
     "sha1": "f57f1bde5e9e4b6c2eea46bb6bae72501b7be4e3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:11:52Z",
+    "read_at": "2026-11-27T10:24:03Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Microsoft Threat Intelligence reports that financially motivated actors, including Storm-0569, Storm-1113, Sangria Tempest and Storm-1674, abused the App Installer (ms-appinstaller) protocol handler from mid-November 2023 to distribute malware, often leading to ransomware. Lures included spoofed software download pages, malicious MSIX packages and phishing through Microsoft Teams. Microsoft disabled the handler by default and published mitigations and detection names.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Storm-0569",
+          "q": "Storm-0569 is an access broker that focuses on downloading post-compromise payloads, such as BATLOADER,",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-1113",
+          "q": "Storm-1113 is a threat actor that acts both as an access broker focused on malware distribution through search",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Sangria Tempest",
+          "q": "Sangria Tempest (previously ELBRUS, also tracked as Carbon Spider, FIN7) is a financially motivated",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-1674",
+          "q": "Storm-1674 is an access broker known for using tools based on the publicly available TeamsPhisher tool to",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-0506",
+          "q": "culminating in a handoff to ransomware operators like Storm-0846 and Storm-0506.",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Lace Tempest",
+          "q": "affiliated with the threat actor Lace Tempest",
+          "by": "Microsoft Threat Intelligence"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "mid-November 2023",
+          "q": "Since mid-November 2023, Microsoft Threat Intelligence has observed threat actors, including financially",
+          "what": "Threat actors began abusing App Installer to distribute malware"
+        },
+        {
+          "v": "December 2023",
+          "q": "At the beginning of December 2023, Microsoft observed Storm-0569 distributing BATLOADER through search",
+          "what": "Storm-0569 distributed BATLOADER through spoofed software download sites"
+        },
+        {
+          "v": "September 2023",
+          "q": "In September 2023, Microsoft observed handoffs from Storm-1674 to ransomware operators that have led to Black",
+          "what": "Handoffs from Storm-1674 to ransomware operators observed"
+        },
+        {
+          "v": "November 2022",
+          "q": "developer of EugenLoader, a commodity malware first observed around November 2022.",
+          "what": "EugenLoader first observed"
+        },
+        {
+          "v": "2023-12-28",
+          "q": "Published: 2023-12-28 · Archived: 2026-04-02 10:56:59 UTC",
+          "what": "Microsoft blog post published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "App Installer",
+          "q": "URI scheme (App Installer) to distribute malware."
+        },
+        {
+          "v": "BATLOADER",
+          "q": "Storm-0569 then uses PowerShell and batch scripts that lead to the download of BATLOADER."
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "dropped a Cobalt Strike Beacon followed by data exfiltration using the"
+        },
+        {
+          "v": "Rclone",
+          "q": "Rclone data exfiltration tools and Black Basta ransomware deployment by Storm-0506."
+        },
+        {
+          "v": "Black Basta",
+          "q": "Rclone data exfiltration tools and Black Basta ransomware deployment by Storm-0506."
+        },
+        {
+          "v": "EugenLoader",
+          "q": "developer of EugenLoader, a commodity malware first observed around November 2022."
+        },
+        {
+          "v": "Gozi",
+          "q": "previously observed malware installs, such as Gozi, Redline stealer, IcedID, Smoke Loader, NetSupport"
+        },
+        {
+          "v": "IcedID",
+          "q": "previously observed malware installs, such as Gozi, Redline stealer, IcedID, Smoke Loader, NetSupport"
+        },
+        {
+          "v": "NetSupport Manager",
+          "q": "NetSupport Manager (also referred to as NetSupport RAT), Sectop RAT, and Lumma stealer."
+        },
+        {
+          "v": "SectopRAT",
+          "q": "likely drop SectopRAT or DarkGate."
+        },
+        {
+          "v": "DarkGate",
+          "q": "distribute DarkGate malware."
+        },
+        {
+          "v": "Carbanak",
+          "q": "Sangria Tempest then drops Carbanak, a backdoor used by the actor since"
+        },
+        {
+          "v": "Gracewire",
+          "q": "that in turn delivers the Gracewire malware implant."
+        },
+        {
+          "v": "POWERTRASH",
+          "q": "leading to the delivery of POWERTRASH, a highly obfuscated PowerShell script."
+        },
+        {
+          "v": "TeamsPhisher",
+          "q": "Storm-1674 is an access broker known for using tools based on the publicly available TeamsPhisher tool to"
+        },
+        {
+          "v": "Pikabot",
+          "q": "ultimately drops DarkGate and Pikabot."
+        },
+        {
+          "v": "Lumma stealer",
+          "q": "NetSupport Manager (also referred to as NetSupport RAT), Sectop RAT, and Lumma stealer."
+        },
+        {
+          "v": "Clop ransomware",
+          "q": "such as Clop ransomware."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "social engineering tactic",
+          "q": "Spoofing and impersonating popular legitimate software is a common social engineering tactic."
+        },
+        {
+          "v": "malvertising",
+          "q": "through malvertising and phishing emails containing malicious links to download sites."
+        },
+        {
+          "v": "phishing lures sent over Teams",
+          "q": "Storm-1674 campaigns have typically relied on phishing lures sent over Teams with"
+        },
+        {
+          "v": "signed malicious MSIX application packages",
+          "q": "distribute signed malicious MSIX application packages using websites accessed through malicious advertisements"
+        },
+        {
+          "v": "bypass mechanisms",
+          "q": "because it can bypass mechanisms"
+        },
+        {
+          "v": "PowerShell and batch scripts",
+          "q": "Storm-0569 then uses PowerShell and batch scripts that lead to the download of BATLOADER."
+        },
+        {
+          "v": "spoofing legitimate applications",
+          "q": "spoofing legitimate applications, luring users into installing malicious MSIX packages posing as"
+        },
+        {
+          "v": "evading detections on the initial installation files",
+          "q": "and evading detections on the initial installation files."
+        },
+        {
+          "v": "Google ads to lure",
+          "q": "In other cases, Sangria Tempest uses Google ads to lure"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-43890",
+          "q": "CVE-2021-43890"
+        }
+      ],
+      "figures": [
+        {
+          "v": "1.21.3421.0",
+          "q": "The ms-appinstaller URI scheme handler has been disabled by default in App Installer build 1.21.3421.0."
+        },
+        {
+          "v": "1.403.520.0",
+          "q": "select the detection build 1.403.520.0 or newer and deploy it across their environments."
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "hedges": [
+      "Threat actors have likely chosen the ms-appinstaller protocol handler vector",
+      "Microsoft assesses this technique was used to avoid the accept/block screen shown in one-on-one and group chats.",
+      "Sangria Tempest's Google-ads MSIX delivery possibly relies on Storm-1113 infrastructure.",
+      "Spoofed applications will likely drop SectopRAT or DarkGate."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T10:05:37Z",

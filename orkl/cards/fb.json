@@ -24,26 +24,120 @@
   },
   "fb5b7d0c9e7d404e653b723c08858a5ef1766150": {
     "sha1": "fb5b7d0c9e7d404e653b723c08858a5ef1766150",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:14:12Z",
+    "read_at": "2026-11-27T10:24:47Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "AT&T Alien Labs analysed sample families of OS X malware from 2014 and 2015 in a sandbox: Flashback, KitM, LaoShu, Mask/Careto, CoinThief, WireLurker and OceanLotus. For each it records persistence mechanisms, C&C details and IDS detections. Most C&C servers were offline at publication. It also gives Open Threat Exchange statistics for the most-seen OS X threats.",
+    "kind": "overview",
     "facts": {
       "actors": [],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "attacking Chinese government infrastructure"
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "March 21, 2016",
+          "q": "March 21, 2016 | AT&T Alien Labs",
+          "what": "Report published by AT&T Alien Labs"
+        },
+        {
+          "v": "2015",
+          "q": "2015 marked “the most prolific year in history for OS X malware”",
+          "what": "Year described by the report, citing Bit9+Carbon Black, as the most prolific for OS X malware"
+        },
+        {
+          "v": "Feb 6, 2014",
+          "q": "(As of Feb 6, 2014, the above C&C domains have been suspended by Apple.)",
+          "what": "Apple suspended the Mask/Careto C&C domains"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Flashback",
+          "q": "Flashback, one of the most infamous pieces of OS X malware"
+        },
+        {
+          "v": "KitM",
+          "q": "KitM is a signed malware that can take screenshots"
+        },
+        {
+          "v": "LaoShu",
+          "q": "LaoShu is a data stealing RAT."
+        },
+        {
+          "v": "Careto",
+          "q": "Appetite/Mask-Careto"
+        },
+        {
+          "v": "CoinThief",
+          "q": "We also looked into CoinThief malware that"
+        },
+        {
+          "v": "WireLurker",
+          "q": "the WireLurker malware that is capable of"
+        },
+        {
+          "v": "OceanLotus",
+          "q": "OceanLotus that was discovered May last year"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "launch agents",
+          "q": "mechanisms: launch agents, launch daemons, login items, and browser extensions."
+        },
+        {
+          "v": "launch daemons",
+          "q": "mechanisms: launch agents, launch daemons, login items, and browser extensions."
+        },
+        {
+          "v": "browser extensions",
+          "q": "CoinThief installs browser extensions to steal credentials to popular Bitcoin"
+        },
+        {
+          "v": "DGA",
+          "q": "Uses DGA for CnC domain names and twitter hashtags to decode"
+        },
+        {
+          "v": "Adobe Flash player update",
+          "q": "Flashback masquerades as Adobe Flash player update or a signed-java"
+        },
+        {
+          "v": "Web Traffic Interception",
+          "q": "Downloads/installs Web Traffic Interception component to inject ads into"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "49.5%",
+          "q": "OSX/Flashback User-Agent (49.5%)"
+        },
+        {
+          "v": "26.6%",
+          "q": "OSX ADWARE/Mackeeper (26.6%)"
+        },
+        {
+          "v": "23.7%",
+          "q": "OSX/WireLurker (23.7%)"
+        },
+        {
+          "v": "20k events",
+          "q": "This represents slightly over 20k events"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "hedges": [
+      "includes only data prior to us enhancing our detection capabilities, so it doesn't include hits for OceanLotus, LaoShu, CoinThief, or KitM.",
+      "most of the C&C servers have been taken offline, so the risk associated with these samples is not high.",
+      "we expect more malware will take advantage of those flaws."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T10:05:37Z",

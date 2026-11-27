@@ -191,26 +191,223 @@
   },
   "54e84f877ecf6fe1002d484bdf32634d394bc293": {
     "sha1": "54e84f877ecf6fe1002d484bdf32634d394bc293",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:11:55Z",
+    "read_at": "2026-11-27T10:24:02Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "ReliaQuest reports on Scattered Spider, an English-speaking collective it says works as an affiliate of the RansomHub ransomware group. In an October 2024 manufacturing-sector intrusion, the attacker social-engineered the help desk twice, reached ESXi through a privileged account, created a VM to avoid endpoint detection, and encrypted systems within six hours. The report also covers RansomHub's rise, its 90/10 affiliate profit split, English-speaking callers used by ransomware affiliates, and defensive recommendations.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Scattered Spider",
+          "q": "the incident with high confidence to “Scattered Spider,” an English-speaking collective acting as an affiliate for",
+          "by": "ReliaQuest"
+        },
+        {
+          "v": "RansomHub",
+          "q": "the ransomware group “RansomHub.”",
+          "by": "ReliaQuest"
+        },
+        {
+          "v": "ALPHV",
+          "q": "as an affiliate for ransomware group “ALPHV” and now partners with “RansomHub.”",
+          "by": "ReliaQuest"
+        },
+        {
+          "v": "UNC3944",
+          "q": "Active since at least May 2022, Scattered Spider (aka “UNC3944,” “Octo Tempest”) is a collective of at least one",
+          "by": "ReliaQuest"
+        },
+        {
+          "v": "Sprite Spider",
+          "q": "ransomware variants deployed by “Sprite Spider” and “Carbon Spider,” respectively.",
+          "by": "ReliaQuest"
+        },
+        {
+          "v": "Carbon Spider",
+          "q": "ransomware variants deployed by “Sprite Spider” and “Carbon Spider,” respectively.",
+          "by": "ReliaQuest"
+        },
+        {
+          "v": "Black Basta",
+          "q": "affiliates of the “Black Basta” ransomware group made calls as IT",
+          "by": "ReliaQuest"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "manufacturing",
+          "q": "In October 2024, ReliaQuest responded to an intrusion affecting a manufacturing sector customer. We"
+        },
+        {
+          "v": "telecommunications",
+          "q": "Scattered Spider previously targeted telecommunications firms, likely to support its SIM-swapping activities that"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "now using them alongside Russia-linked ransomware groups to target organizations for financial gain."
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 2022",
+          "q": "Active since at least May 2022, Scattered Spider (aka “UNC3944,” “Octo Tempest”) is a collective of at least one",
+          "what": "Scattered Spider reported as active since this date"
+        },
+        {
+          "v": "August 2023",
+          "q": "Since at least August 2023, Scattered Spider has been collaborating with ransomware-as-a-service (RaaS) groups.",
+          "what": "Scattered Spider began collaborating with ransomware-as-a-service groups"
+        },
+        {
+          "v": "February 2024",
+          "q": "In February 2024, ALPHV conducted an exit scam against its affiliates and disbanded, leaving",
+          "what": "ALPHV conducted an exit scam and disbanded"
+        },
+        {
+          "v": "Q1 2024",
+          "q": "Although RansomHub only became active in Q1 2024, it quickly gained dominance—surpassing previously",
+          "what": "RansomHub became active"
+        },
+        {
+          "v": "June 2024",
+          "q": "90%. Since June 2024, security researchers have detected intrusions leading to the deployment of the RansomHub",
+          "what": "Intrusions deploying RansomHub malware were detected"
+        },
+        {
+          "v": "October 2024",
+          "q": "In October 2024, ReliaQuest responded to an intrusion affecting a manufacturing sector customer. We",
+          "what": "ReliaQuest responded to an intrusion at a manufacturing-sector customer"
+        },
+        {
+          "v": "May 2024",
+          "q": "in May 2024, we identified an ongoing social engineering campaign in which affiliates of the “Black Basta”",
+          "what": "Black Basta affiliates made calls as IT in a social engineering campaign"
+        },
+        {
+          "v": "2021",
+          "q": "Adversaries have targeted ESXi servers since at least 2021, as demonstrated by the “Defray777” and “Darkside”",
+          "what": "Adversaries began targeting ESXi servers"
+        }
+      ],
+      "tools": [
+        {
+          "v": "ESXi",
+          "q": "Scattered Spider leveraged the organization’s ESXi environment to create a virtual"
+        },
+        {
+          "v": "RansomHub encryptor",
+          "q": "They then deployed a RansomHub encryptor to impact a critical ESXi"
+        },
+        {
+          "v": "Okta",
+          "q": "The attacker now had access to the user’s Okta account."
+        },
+        {
+          "v": "Thycotic",
+          "q": "Next, the threat actor set their sights on Thycotic—a password vault housing organizational secrets (passwords),"
+        },
+        {
+          "v": "SentinelOne",
+          "q": "The attacker specifically targeted SentinelOne, an EDR application, but"
+        },
+        {
+          "v": "VeraCrypt",
+          "q": "For the local data backup server, the attacker used the open-source disk encryption tool VeraCrypt."
+        },
+        {
+          "v": "Cohesity",
+          "q": "they used Okta to access Cohesity, an enterprise data backup and security solution, and"
+        },
+        {
+          "v": "Microsoft Teams",
+          "q": "the attacker sent a Microsoft Teams message from the compromised domain admin account,"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Social Engineering",
+          "q": "Persistent Social Engineering: Consistent with Scattered Spider’s typical initial access method"
+        },
+        {
+          "v": "disabled secondary MFA",
+          "q": "The attacker disabled secondary MFA for several critical applications"
+        },
+        {
+          "v": "reset MFA",
+          "q": "The attacker reset MFA on three additional accounts in the environment to perform"
+        },
+        {
+          "v": "created a new VM on the ESXi host",
+          "q": "They then created a new VM on the ESXi host, likely to evade endpoint-based detection, as the new VM wouldn’t have any logging available."
+        },
+        {
+          "v": "credential dumping",
+          "q": "such as lateral movement, credential dumping, and data exfiltration."
+        },
+        {
+          "v": "double extortion",
+          "q": "The threat actor carried out a double extortion attack: they encrypted the ESXi environment and exfiltrated data."
+        },
+        {
+          "v": "targeting backup solutions",
+          "q": "They further targeted the organization’s backup solutions, encrypting on-premises backups and deleting cloud"
+        },
+        {
+          "v": "SIM-swapping",
+          "q": "Scattered Spider previously targeted telecommunications firms, likely to support its SIM-swapping activities that"
+        },
+        {
+          "v": "Telecom Infrastructure Abuse",
+          "q": "Telecom Infrastructure Abuse: The threat actor used Verizon IPv6 addresses to access the network,"
+        },
+        {
+          "v": "ESXi Defense Evasion",
+          "q": "ESXi Defense Evasion: The threat actor spun up their own VM in the victim’s ESXi environment to carry"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "two employee accounts",
+          "q": "gained initial access to two employee accounts by carrying out social engineering attacks on"
+        },
+        {
+          "v": "six hours",
+          "q": "Within six hours, the attacker began encrypting the organization’s"
+        },
+        {
+          "v": "10%",
+          "q": "RansomHub offered an enticing deal, keeping just 10% of attack profits for malware developers and leaving affiliates with"
+        },
+        {
+          "v": "90%",
+          "q": "90%. Since June 2024, security researchers have detected intrusions leading to the deployment of the RansomHub"
+        },
+        {
+          "v": "three",
+          "q": "Despite the arrests of three alleged Scattered Spider members in 2024, Russia-aligned adversaries continue to see"
+        },
+        {
+          "v": "ten hours",
+          "q": "maintained access for roughly ten hours by moving from the organization’s identity and cloud solutions to"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "hedges": [
+      "The attribution of the October 2024 incident to Scattered Spider is stated with high confidence.",
+      "The assessment that multiple individuals facilitated the attack is made with high confidence.",
+      "Scattered Spider's affiliation with RansomHub is suggested by the deployment of tactics typical of the group.",
+      "Use of cellular hotspots is assessed with medium confidence.",
+      "It is unclear why the Verizon IPv4 addresses appeared initially in the logs.",
+      "The report theorises that EDR did not alert because the events occurred at the hypervisor level.",
+      "The NTDS.dit sequence of events is a hypothesised narrative formed from the available facts.",
+      "Russia-linked involvement is described as likely, not confirmed."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T10:04:49Z",

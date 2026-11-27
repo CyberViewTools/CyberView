@@ -1,18 +1,23 @@
 {
   "5949f8c8dd13eac437f545b420d27f200974df27": {
     "sha1": "5949f8c8dd13eac437f545b420d27f200974df27",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:26:11Z",
+    "read_at": "2026-11-27T03:49:17Z",
     "model": "haiku",
-    "summary": "Barracuda Networks reports that the North Korean APT group Kimsuky exploits weak or misconfigured DMARC email policies to run spear-phishing campaigns that spoof legitimate domains. The targets described are experts in think tanks, media and academia, and the report says the FBI and NSA issued a joint advisory on these campaigns. In some cases the attackers reportedly access legitimate email systems. The report advises setting DMARC to quarantine or reject rather than monitor only, and recommends training staff.",
+    "summary": "Barracuda Networks' blog post (published 2024-10-02) says the North Korean group Kimsuky spoofs legitimate domains by exploiting weak or misconfigured DMARC policies to run spear-phishing against experts in think tanks, media and academia. It cites a joint FBI and NSA advisory on these campaigns. It recommends setting DMARC to quarantine or reject, using AI-driven email protection, and training staff.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Kimsuky",
-          "q": "the North Korean cybercrime group Kimsuky has shown just how dangerous those vulnerabilities can",
-          "by": "Barracuda Networks, in the report"
+          "q": "Recently, the North Korean cybercrime group Kimsuky has shown just how dangerous those vulnerabilities can",
+          "by": "Barracuda Networks (report author)"
+        },
+        {
+          "v": "Reconnaissance General",
+          "q": "Kimsuky is an advanced persistent threat (APT) group acting under North Korea’s Reconnaissance General",
+          "by": "Barracuda Networks (report author)"
         }
       ],
       "sectors": [
@@ -45,37 +50,43 @@
       "tools": [],
       "techniques": [
         {
-          "v": "spoofing",
-          "q": "Spoofing legitimate domains by bypassing weak or misconfigured DMARC protocols."
+          "v": "Spoofing legitimate domains",
+          "q": "Their strategy? Spoofing legitimate domains by bypassing weak or misconfigured DMARC protocols."
         },
         {
-          "v": "spear-phishing",
+          "v": "spear-phishing campaigns",
           "q": "policies to run spear-phishing campaigns."
         },
         {
-          "v": "legitimate email systems",
-          "q": "legitimate email systems, making their phishing attempts even more convincing."
+          "v": "two-stage email lure",
+          "q": "Once that trust is established, a second email comes in with a malicious attachment or link."
         },
         {
-          "v": "malicious attachment or link",
-          "q": "second email comes in with a malicious attachment or link."
+          "v": "monitor policy",
+          "q": "Even when they do, a \"monitor\" policy (which logs threats without taking"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "three",
+          "q": "Here are three key steps to take:"
+        }
+      ]
     },
     "subject": null,
     "hedges": [
-      "The report says attackers access legitimate email systems only \"in some cases\".",
-      "The report says the first email \"might seem harmless\" and is designed to build trust."
+      "In some cases, attackers even manage to access legitimate email systems, making their phishing attempts even more convincing.",
+      "The first email might seem harmless, designed to build trust.",
+      "DMARC alone may not be enough."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:26Z",
-      "ok": false,
-      "note": "summary: The summary says the FBI and NSA issued a joint advisory 'on these campaigns', but the text says the advisory warned about these campaigns. It also say",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:26Z",
+        "ok": false,
+        "note": "summary: The summary says the FBI and NSA issued a joint advisory 'on these campaigns', but the text says the advisory warned about these campaigns. It also say",
+        "by": "auditor"
+      }
+    ]
   }
 }

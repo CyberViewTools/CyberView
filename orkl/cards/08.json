@@ -700,33 +700,29 @@
   },
   "0862fc27df0a2f1e905022e214d6071621e9d315": {
     "sha1": "0862fc27df0a2f1e905022e214d6071621e9d315",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:27:23Z",
+    "read_at": "2026-11-27T03:49:27Z",
     "model": "haiku",
-    "summary": "The Clop ransomware gang claimed an attack on Saks Fifth Avenue on its leak site. The report links it to Clop's campaign exploiting CVE-2023-0669 in GoAnywhere MFT servers, a flaw Fortra disclosed. Saks says only mock customer data was taken, with no real customer or payment card data, and is investigating. It did not say whether corporate or employee data was affected. The report also notes Clop claimed 130+ breached organizations in February, and that Fin7 hacked Saks in 2018.",
+    "summary": "BleepingComputer reports that the Clop ransomware gang listed Saks Fifth Avenue on its leak site, as part of Clop attacks exploiting the GoAnywhere MFT flaw CVE-2023-0669. Saks says mock customer data was taken via vendor Fortra, with no real customer or payment card data, but did not say whether corporate or employee data was affected. Clop had earlier claimed 130+ organisations were breached in ten days.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
-          "v": "Clop",
+          "v": "Clop ransomware gang",
           "q": "The Clop ransomware gang claims to have attacked Saks Fifth Avenue on its dark web leak site.",
-          "by": "the report itself (BleepingComputer article), citing the Clop leak site claim"
+          "by": "BleepingComputer (report)"
         },
         {
-          "v": "Fin7",
+          "v": "Fin7 cybercrime syndicate",
           "q": "In 2018, the Fin7 cybercrime syndicate had hacked Saks Fifth Avenue and Lord & Taylor to steal payment card information",
-          "by": "the report itself (BleepingComputer article)"
+          "by": "BleepingComputer (report)"
         }
       ],
       "sectors": [
         {
-          "v": "luxury",
-          "q": "Saks Fifth Avenue remains among prominent luxury"
-        },
-        {
           "v": "retail",
-          "q": "brand retailers serving the U.S., Canada and parts of the Middle East."
+          "q": "While the retail giant states no \"real\" customer data or payment information was stolen,"
         }
       ],
       "countries": [
@@ -746,30 +742,30 @@
           "what": "Article published reporting the Clop claim against Saks Fifth Avenue"
         },
         {
-          "v": "February",
-          "q": "In February, Clop reached out to BleepingComputer and claimed it had breached 130+ organizations and stolen their data",
-          "what": "Clop claimed to have breached 130+ organizations via the GoAnywhere flaw"
-        },
-        {
           "v": "2018",
           "q": "In 2018, the Fin7 cybercrime syndicate had hacked Saks Fifth Avenue and Lord & Taylor to steal payment card information",
           "what": "Fin7 hacked Saks Fifth Avenue and Lord & Taylor to steal payment card information"
+        },
+        {
+          "v": "February",
+          "q": "In February, Clop reached out to BleepingComputer and claimed it had breached 130+ organizations and stolen their data",
+          "what": "Clop claimed to have breached 130+ organizations"
         }
       ],
       "tools": [
         {
-          "v": "GoAnywhere MFT",
-          "q": "GoAnywhere MFT's developer Fortra (formerly HelpSystems) had previously disclosed to its customers that the"
+          "v": "Clop ransomware",
+          "q": "The Clop ransomware gang claims to have attacked Saks Fifth Avenue on its dark web leak site."
         }
       ],
       "techniques": [
         {
-          "v": "remote code execution via unpatched flaw",
-          "q": "The flaw, now tracked as CVE-2023-0669, enables attackers to gain remote code execution on unpatched GoAnywhere"
+          "v": "remote code execution",
+          "q": "enables attackers to gain remote code execution on unpatched GoAnywhere"
         },
         {
-          "v": "zero-day exploitation",
-          "q": "vulnerability had been exploited as a zero-day in the wild and urged customers to patch their systems."
+          "v": "zero-day",
+          "q": "had been exploited as a zero-day in the wild and urged customers to patch their systems"
         }
       ],
       "cves": [
@@ -780,35 +776,36 @@
       ],
       "figures": [
         {
-          "v": "130+",
-          "q": "In February, Clop reached out to BleepingComputer and claimed it had breached 130+ organizations and stolen their data"
+          "v": "130+ organizations",
+          "q": "claimed it had breached 130+ organizations and stolen their data"
         },
         {
           "v": "ten days",
-          "q": "over the course of ten days by exploiting this particular vulnerability on enterprise servers."
+          "q": "stolen their data over the course of ten days by exploiting this particular vulnerability"
         },
         {
-          "v": "5 million",
-          "q": "of 5 million customers. Nearly a year prior to that, BuzzFeed News had reported that Saks Fifth Avenue was storing personal"
+          "v": "5 million customers",
+          "q": "of 5 million customers."
         }
       ]
     },
     "subject": {
       "type": "campaign",
-      "name": "Clop GoAnywhere exploit spree"
+      "name": "Clop attacks on GoAnywhere MFT servers"
     },
     "hedges": [
-      "The threat actor has not yet disclosed any additional information, such as what all data it stole from the luxury brand retailer's systems, or details about any ongoing ransom negotiations.",
-      "While the retail giant states no \"real\" customer data or payment information was stolen, it did not answer our follow up question as to whether corporate or employee data was compromised.",
-      "Saks says it is conducting an ongoing investigation into the incident alongside outside experts and law enforcement."
+      "The threat actor has not disclosed what data it stole or any details of ransom negotiations.",
+      "Saks did not answer whether corporate or employee data was compromised; it says an ongoing investigation is underway with outside experts and law enforcement.",
+      "The Clop claim of 130+ breached organisations was made to BleepingComputer by the gang itself.",
+      "BleepingComputer confirmed the Saks incident is linked to Clop's GoAnywhere attacks; Fortra's official advisory remains hidden to the public."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:08Z",
-      "ok": false,
-      "note": "summary: \"Saks says only mock customer data was taken\" is stronger than the text. Saks said mock customer data was taken and that it contains no real customer o",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:08Z",
+        "ok": false,
+        "note": "summary: \"Saks says only mock customer data was taken\" is stronger than the text. Saks said mock customer data was taken and that it contains no real customer o",
+        "by": "auditor"
+      }
+    ]
   }
 }

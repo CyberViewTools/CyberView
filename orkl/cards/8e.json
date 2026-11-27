@@ -103,165 +103,31 @@
     "sha1": "8eb1aad0a59cc87d75b72ef46861567e73b13c00",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T03:32:11Z",
+    "read_at": "2026-11-27T03:50:02Z",
     "model": "haiku",
-    "summary": "Palo Alto Networks' Cortex Threat Research blog (published 14 June 2023) describes espionage attacks on governmental entities in the Middle East and Africa by a cluster it tracks as CL-STA-0043, suspected to be a nation-state actor. It reports an in-memory VBScript implant, network provider credential theft, the Yasso penetration toolset, Potato-suite privilege escalation, and abuse of the Exchange Management Shell to export targeted email. Attribution is tentative and research is ongoing.",
-    "kind": "actor-campaign",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "CL-STA-0043",
-          "q": "We currently track the activity group behind the attacks as CL-STA-0043.",
-          "by": "Palo Alto Networks (Cortex Threat Research)"
-        },
-        {
-          "v": "nation-state threat actor",
-          "q": "it is suspected to be a nation-state threat actor",
-          "by": "Palo Alto Networks (Cortex Threat Research)"
-        },
-        {
-          "v": "highly capable APT threat actor",
-          "q": "suggest a highly capable APT threat actor",
-          "by": "Palo Alto Networks (Cortex Threat Research)"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "governmental entities",
-          "q": "espionage attacks targeting governmental entities in the"
-        },
-        {
-          "v": "ministries of foreign affairs",
-          "q": "specifically related to politicians, military activities, and ministries of foreign affairs."
-        }
-      ],
+      "actors": [],
+      "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "2023-06-14",
-          "q": "Published: 2023-06-14",
-          "what": "Report published"
-        },
-        {
-          "v": "January 2022",
-          "q": "although this tool has been publicly available since January 2022, and at the time of this",
-          "what": "Yasso toolset became publicly available"
-        },
-        {
-          "v": "August 2022",
-          "q": "it was only first reported as a POC (Proof of Concept) in August 2022",
-          "what": "Network provider credential theft technique first reported as a proof of concept"
-        }
-      ],
-      "tools": [
-        {
-          "v": "Yasso",
-          "q": "Yasso, authored by a Mandarin-speaking pentester nicknamed Sairson"
-        },
-        {
-          "v": "Ladon",
-          "q": "Ladon web scanning tool (authored by “k8gege”)"
-        },
-        {
-          "v": "JuicyPotatoNG",
-          "q": "JuicyPotatoNG - a local privilege escalation tool"
-        },
-        {
-          "v": "SharpEfsPotato",
-          "q": "SharpEfsPotato - a local privilege escalation tool using EfsRpc, built from SweetPotato."
-        },
-        {
-          "v": "Iislpe.exe",
-          "q": "used a privilege escalation tool “Iislpe.exe”, which is an IIS privilege escalation tool"
-        },
-        {
-          "v": "Mimikatz",
-          "q": "such as Mimikatz, Dumping the Sam key"
-        },
-        {
-          "v": "ntos.dll",
-          "q": "set to execute a malicious DLL, ntos.dll, dropped by the attacker"
-        },
-        {
-          "v": "Samba SMBclient",
-          "q": "Samba SMBclient for lateral movement was observed in some instances"
-        }
-      ],
-      "techniques": [
-        {
-          "v": "in-memory VBS implant running webshell",
-          "q": "an in-memory VBS implant to run webshell clandestinely"
-        },
-        {
-          "v": "Sticky Keys privilege escalation",
-          "q": "Sticky Keys Attack is Making a Comeback"
-        },
-        {
-          "v": "credential theft via a network provider",
-          "q": "Credential Theft: Using Network Providers To Steal Credentials"
-        },
-        {
-          "v": "dumping NTDS.dit from Active Directory",
-          "q": "Dumping NTDS.dit file from the Active Directory using ntdsutil.exe"
-        },
-        {
-          "v": "Potato-suite privilege escalation",
-          "q": "they made use of different tools from the trending Potato suite"
-        },
-        {
-          "v": "network reconnaissance for critical assets",
-          "q": "they performed reconnaissance activity, mapping out the network"
-        },
-        {
-          "v": "NTLM spray attack",
-          "q": "perform a NTLM spray attack"
-        },
-        {
-          "v": "abuse of the Exchange Management Shell to export mail",
-          "q": "Abusing of the Exchange Management Shell"
-        },
-        {
-          "v": "PowerShell snap-in mailbox export",
-          "q": "Add PowerShell snap-in (PSSnapins) to steal emails"
-        },
-        {
-          "v": "native Windows tools for lateral movement",
-          "q": "The tools observed were mostly native Windows tools such as WMI, Scheduled task, Winrs and Net"
-        },
-        {
-          "v": "password-protected archives sent to C2 server",
-          "q": "password-protected and sent to the attacker’s C2 server as well."
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "100",
-          "q": "scored this incident a 100 score - the highest level of risk"
-        },
-        {
-          "v": "over 30 targeted mailboxes",
-          "q": "originally contained over 30 targeted mailboxes of individuals"
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "CL-STA-0043"
-    },
-    "hedges": [
-      "The report says the group is suspected to be a nation-state threat actor, and the authors describe the activity as a highly capable APT.",
-      "While the research is still ongoing, the full identity of the threat actor or actors is still being studied.",
-      "The authors believe the activity bears the hallmarks of an advanced persistent threat, potentially operating on behalf of nation-state interests.",
-      "The Exchange email exfiltration technique was used only on a few selected targets, according to the vendor's telemetry."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:44Z",
-      "ok": false,
-      "note": "hedges[0]: The text says the group's sophistication, adaptiveness and victimology 'suggest' a highly capable APT. The hedge says the authors 'describe the activ",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "quote-not-in-text",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:44Z",
+        "ok": false,
+        "note": "hedges[0]: The text says the group's sophistication, adaptiveness and victimology 'suggest' a highly capable APT. The hedge says the authors 'describe the activ",
+        "by": "auditor"
+      }
+    ]
   }
 }

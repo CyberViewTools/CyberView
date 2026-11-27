@@ -109,24 +109,29 @@
   },
   "c267080d9a999024efcf6e8080055569dd842f42": {
     "sha1": "c267080d9a999024efcf6e8080055569dd842f42",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:21:54Z",
+    "read_at": "2026-11-27T03:48:41Z",
     "model": "haiku",
-    "summary": "Ransomware attack on Cadre Services, a Wisconsin staffing firm, which the report attributes to the AlphV group. The attackers say they took about 100 GB of employee, applicant and management personal data and leaked part of it after talks stalled at a $35,000 offer against a $300,000 demand. The report relies on screenshots of the negotiations and on leaked sample files, including about 4,400 applicant records with identity details. Many leaked records are over a decade old.",
+    "summary": "DataBreaches reports that the AlphV ransomware group attacked Cadre Services, a Wisconsin employment and staffing firm, in 2023. AlphV claimed to have taken 100 GB of files and demanded $300,000. After talks stalled at a $35,000 offer, it leaked files containing personal and identity data. The report says some of its own claims could not be verified.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "AlphV",
           "q": "In a listing on AlphV’s site, the threat actors claim that they acquired 100 GB of files including:",
-          "by": "the report itself"
+          "by": "The report, relaying AlphV’s own claims"
+        },
+        {
+          "v": "AlphV affiliate",
+          "q": "AlphV affiliate. From the screenshots, it appears they first contacted Cadre on or about September 19 and",
+          "by": "The report (DataBreaches), based on screenshots it was shown"
         }
       ],
       "sectors": [
         {
-          "v": "staffing services",
-          "q": "and staffing services for office professionals."
+          "v": "Employment",
+          "q": "Cadre Services (previously known as Premier Staffing) is a Wisconsin-based company providing employment"
         }
       ],
       "countries": [],
@@ -137,38 +142,39 @@
           "what": "Report published"
         },
         {
+          "v": "1994",
+          "q": "They have been in business since 1994.",
+          "what": "Cadre Services in business since this year"
+        },
+        {
           "v": "September 19",
-          "q": "From the screenshots, it appears they first contacted Cadre on or about September 19 and",
-          "what": "Attacker first contacted Cadre (per screenshots)"
+          "q": "AlphV affiliate. From the screenshots, it appears they first contacted Cadre on or about September 19 and",
+          "what": "AlphV affiliate first contacted Cadre (approximate date, per screenshots)"
         },
         {
           "v": "September 22",
           "q": "someone from the firm first responded on September 22.",
-          "what": "Cadre first responded to the negotiation"
+          "what": "Cadre first responded to the contact"
         },
         {
           "v": "September 29",
-          "q": "By September 29, when that email exchange took place, Cadre had already had one",
-          "what": "Cadre email to a client said SSNs were likely not compromised; the report questions this"
+          "q": "“Likely not compromised? By September 29, when that email exchange took place, Cadre had already had one",
+          "what": "Cadre told a client that SSNs were likely not compromised"
         },
         {
           "v": "October 4",
-          "q": "And that’s where things have remained since October 4.",
-          "what": "Negotiations stuck at Cadre's highest offer of $35,000"
+          "q": "things have remained since October 4.",
+          "what": "Negotiations stalled at Cadre’s highest offer of $35,000"
         }
       ],
       "tools": [],
       "techniques": [
         {
-          "v": "ransomware",
+          "v": "Ransomware",
           "q": "Another small firm suffers a serious ransomware attack: Cadre Services gets mauled by AlphV"
         },
         {
-          "v": "locked data",
-          "q": "for the data AlphV had locked."
-        },
-        {
-          "v": "data dump",
+          "v": "leaked data",
           "q": "AlphV then leaked what they describe as the first part of the data dump because:"
         }
       ],
@@ -180,7 +186,7 @@
         },
         {
           "v": "$300,000",
-          "q": "after the negotiator insisted the firm could not afford to pay $300,000."
+          "q": "after the negotiator insisted the firm could not afford to pay $300,000. [Note: DataBreaches has no idea if there"
         },
         {
           "v": "$35,000",
@@ -197,10 +203,6 @@
         {
           "v": "4,400 files",
           "q": "4,400 files with detailed personal and identity information on people seeking work."
-        },
-        {
-          "v": "1994",
-          "q": "They have been in business since 1994."
         }
       ]
     },
@@ -209,19 +211,19 @@
       "name": "Cadre Services ransomware attack"
     },
     "hedges": [
-      "The report says it has no way to confirm whether the CFO's files contained pornography, and some of the CFO's files were locked in the leak.",
-      "The report notes it is always possible Cadre never intended to pay and was only stalling by appearing to negotiate.",
-      "Many of the 4,400 leaked files are more than a decade old, so some of the information may now be inaccurate.",
-      "The 100 GB acquisition is presented as the threat actors' claim, not something the report independently verified."
+      "From the screenshots, it appears they first contacted Cadre on or about September 19.",
+      "DataBreaches has no idea if there really was pornography in the files of the CFO.",
+      "Some of the information may now be inaccurate because many of these 4,400 files are more than a decade old.",
+      "DataBreaches notes that it’s always possible that Cadre never intended to pay at all and was just stalling for time by appearing to negotiate."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:40:07Z",
-      "ok": false,
-      "note": "actors[0].by: The quote is AlphV's own listing, where the threat actors claim the 100 GB. The text attributes that claim to the threat actors, not to the report",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:40:07Z",
+        "ok": false,
+        "note": "actors[0].by: The quote is AlphV's own listing, where the threat actors claim the 100 GB. The text attributes that claim to the threat actors, not to the report",
+        "by": "auditor"
+      }
+    ]
   },
   "c25723243d7822fcf5999f7a964a1b0315a2c6f6": {
     "sha1": "c25723243d7822fcf5999f7a964a1b0315a2c6f6",

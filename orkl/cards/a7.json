@@ -59,18 +59,18 @@
   },
   "a7a66566cdd12df0b483f89b2d64103dffa4791e": {
     "sha1": "a7a66566cdd12df0b483f89b2d64103dffa4791e",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:28:32Z",
+    "read_at": "2026-11-27T03:49:59Z",
     "model": "haiku",
-    "summary": "Zscaler ThreatLabz describes APT37 activity that starts with Windows shortcut or help-file lures. The lures deliver a PowerShell backdoor called Chinotto, the Rust backdoor Rustonotto, and the FadeStealer data-theft tool, which is injected into a legitimate process. FadeStealer collects files, keystrokes, screenshots and audio into password-protected RAR archives and sends them to C2 servers, often compromised web servers. The report was published 2025-09-08.",
-    "kind": "actor-campaign",
+    "summary": "ThreatLabz (Zscaler) analyses APT37 infection chains that start with a Windows shortcut or a Windows help file lure. The chains drop a decoy document, the Rust backdoor Rustonotto and the PowerShell backdoor Chinotto. A later stage delivers the FadeStealer data-theft tool, which runs inside a legitimate Windows process, collects files, keystrokes, screenshots and audio, and sends archives to C2 servers. The report says one PHP C2 script controlled all three tools.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "APT37",
-          "q": "In one campaign, APT37 utilizes a Windows shortcut file.",
-          "by": "Zscaler ThreatLabz (the report)"
+          "q": "ThreatLabz reconstructed the APT37 infection chain that begins with an initial compromise via a Windows",
+          "by": "ThreatLabz (Zscaler), report author Seongsu Park"
         }
       ],
       "sectors": [],
@@ -78,24 +78,29 @@
       "dates": [
         {
           "v": "2025-09-08",
-          "q": "Published: 2025-09-08",
-          "what": "Report published"
+          "q": "Published: 2025-09-08 · Archived: 2026-04-05 21:47:32 UTC",
+          "what": "report published"
+        },
+        {
+          "v": "2024-11-22",
+          "q": "In this case, the victim was sent a RAR file named 2024-11-22.rar.",
+          "what": "RAR file named 2024-11-22.rar sent to a victim"
         },
         {
           "v": "June 11, 2025",
           "q": "which was last modified on June 11, 2025.",
-          "what": "Decoy document last modified"
+          "what": "decoy document last modified"
         },
         {
           "v": "2025-04-01",
-          "q": "The compiled Python module, created on 2025-04-01 05:42:03",
-          "what": "Compiled Python module created"
+          "q": "The compiled Python module, created on 2025-04-01 05:42:03, is internally named TransactedHollowing.py,",
+          "what": "compiled Python module created"
         }
       ],
       "tools": [
         {
           "v": "Chinotto",
-          "q": "followed by Chinotto dropping FadeStealer through a sophisticated infection"
+          "q": "The backdoor known as Chinotto is capable of"
         },
         {
           "v": "Rustonotto",
@@ -104,44 +109,36 @@
         {
           "v": "FadeStealer",
           "q": "The decrypted malware is FadeStealer, the same data-theft tool previously documented by AhnLab."
-        },
-        {
-          "v": "RAR.exe",
-          "q": "employs a custom RAR.exe tool extracted from its"
         }
       ],
       "techniques": [
         {
-          "v": "Windows shortcut file lure",
+          "v": "Windows shortcut file used for initial compromise",
           "q": "In one campaign, APT37 utilizes a Windows shortcut file."
         },
         {
-          "v": "Windows help file (CHM) delivery",
+          "v": "Windows help file (CHM) used for delivery",
           "q": "the threat actor used a Windows help file (CHM) to deliver malware"
-        },
-        {
-          "v": "Registry Run key persistence",
-          "q": "under the Run key to trigger the download and execution of an HTML Application (HTA) file"
         },
         {
           "v": "Process Doppelgänging injection",
           "q": "the Python script employs the Process Doppelgänging technique to inject"
         },
         {
-          "v": "HTTP-based command and control",
-          "q": "Makes HTTP requests to the C2 server to fetch commands."
+          "v": "Scheduled task persistence",
+          "q": "Creates a scheduled task named"
         },
         {
-          "v": "Password-protected archive exfiltration",
-          "q": "compresses them into password-protected RAR archives"
+          "v": "Keystroke, screenshot and audio capture",
+          "q": "to capture keystrokes, screenshots, audio recordings, and file content"
         },
         {
-          "v": "Keylogging, screenshots and audio capture",
-          "q": "capture keystrokes, screenshots, audio recordings, and file content from connected devices."
+          "v": "Password-protected archives for exfiltration",
+          "q": "compresses them into password-protected RAR archives, and transmits them to a C2 server."
         },
         {
-          "v": "Compromised web servers used as C2",
-          "q": "The threat actor leveraged vulnerable web servers to act as C2 servers for managing malware operations."
+          "v": "Vulnerable web servers used as C2",
+          "q": "The threat actor leveraged vulnerable web servers to act as C2 servers"
         }
       ],
       "cves": [],
@@ -151,26 +148,33 @@
           "q": "size (6,032,787 bytes) to ensure the correct file is processed."
         },
         {
-          "v": "5 seconds",
+          "v": "every 5 minutes",
+          "q": "every 5 minutes"
+        },
+        {
+          "v": "every 5 seconds",
           "q": "Every 5 seconds, Chinotto checks the threat actor’s C2"
         },
         {
-          "v": "10 seconds",
-          "q": "identifies archived RAR files every 10 seconds,"
+          "v": "every 10 seconds",
+          "q": "monitors and identifies archived RAR files every 10 seconds,"
         }
       ]
     },
-    "subject": null,
+    "subject": {
+      "type": "campaign",
+      "name": "APT37: Rust Backdoor & Python Loader"
+    },
     "hedges": [
-      "suggesting the use of a technique for stealthily injecting and executing arbitrary code within a legitimate Windows process."
+      "The internal name TransactedHollowing.py is said to suggest a technique for stealthily injecting code, so the injection use is an inference from that name."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:52Z",
-      "ok": false,
-      "note": "summary: It says C2 servers are 'often compromised web servers'. The text says only that the actor 'leveraged vulnerable web servers' as C2. It never says 'comp",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:52Z",
+        "ok": false,
+        "note": "summary: It says C2 servers are 'often compromised web servers'. The text says only that the actor 'leveraged vulnerable web servers' as C2. It never says 'comp",
+        "by": "auditor"
+      }
+    ]
   }
 }

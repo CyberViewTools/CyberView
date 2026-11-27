@@ -55,56 +55,67 @@
   },
   "caea65bb7f902811d98ae257c767274fee58b95a": {
     "sha1": "caea65bb7f902811d98ae257c767274fee58b95a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:26:16Z",
+    "read_at": "2026-11-27T03:49:32Z",
     "model": "haiku",
-    "summary": "Kaspersky GReAT report, published 2017-02-08, on fileless attacks against enterprise networks, found during incident response at a bank. Attackers ran Metasploit Meterpreter in memory, used Windows SC and NETSH to install a service and set up tunnelling, and used Mimikatz to collect administrator passwords. Kaspersky found more than 100 enterprise networks infected with malicious PowerShell scripts in the registry, but could not confirm they shared one attacker. The report says attribution is almost impossible and names Carbanak and GCMAN only as the closest groups with similar techniques.",
+    "summary": "Kaspersky GReAT report (published 2017-02-08) on fileless attacks against enterprise networks. After an incident response at a bank, it describes memory-resident Meterpreter and Mimikatz use, PowerShell scripts stored in the registry, and Windows SC and NETSH utilities used to install a service and build tunnels. Admin credentials were collected. Over 100 enterprise networks were found infected with related PowerShell scripts, but the report cannot confirm they share one attacker. The closest matching groups are Carbanak and GCMAN, and the report says attribution is almost impossible.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
           "v": "Carbanak",
           "q": "This closest groups with the same TTPs are GCMAN and Carbanak.",
-          "by": "the report (Kaspersky GReAT)"
+          "by": "GReAT (the report)"
         },
         {
           "v": "GCMAN",
           "q": "This closest groups with the same TTPs are GCMAN and Carbanak.",
-          "by": "the report (Kaspersky GReAT)"
+          "by": "GReAT (the report)"
         }
       ],
       "sectors": [
         {
           "v": "banking industry",
-          "q": "Techniques like those described in this report are becoming more common, especially against relevant targets in the banking industry."
+          "q": "especially against relevant targets in the banking industry"
         }
       ],
       "countries": [],
       "dates": [
         {
           "v": "2017-02-08",
-          "q": "Published: 2017-02-08",
-          "what": "report published"
-        },
-        {
-          "v": "2 to 6 April, 2017",
-          "q": "Security Analyst Summit, to be held on St. Maarten from 2 to 6 April, 2017.",
-          "what": "further details of these attacks planned for presentation at the Security Analyst Summit"
+          "q": "Published: 2017-02-08 · Archived: 2026-04-06 00:46:50 UTC",
+          "what": "Report published"
         }
       ],
       "tools": [
         {
-          "v": "Metasploit",
-          "q": "We know that the Metasploit framework was used to generate scripts like the following one:"
-        },
-        {
           "v": "Meterpreter",
-          "q": "after detecting Meterpreter code inside the"
+          "q": "Meterpreter and Mimikatz. These tools were used to collect passwords of system administrators"
         },
         {
           "v": "Mimikatz",
-          "q": "Meterpreter and Mimikatz. These tools were used to collect passwords of system administrators and for the"
+          "q": "Meterpreter and Mimikatz. These tools were used to collect passwords of system administrators"
+        },
+        {
+          "v": "PowerShell",
+          "q": "discovering the use of PowerShell scripts within the Windows registry."
+        },
+        {
+          "v": "NETSH",
+          "q": "Additionally it was discovered that the NETSH utility as used for tunnelling traffic from the victim’s host to the"
+        },
+        {
+          "v": "SC utility",
+          "q": "the attackers used the SC utility to install a malicious service"
+        },
+        {
+          "v": "Metasploit",
+          "q": "Given that the attackers used the Metasploit framework, standard Windows utilities and unknown domains with no WHOIS information"
+        },
+        {
+          "v": "MEM:Trojan.Win32.Cometer",
+          "q": "are MEM:Trojan.Win32.Cometer and MEM:Trojan.Win32.Metasploit."
         },
         {
           "v": "Duqu2",
@@ -113,77 +124,53 @@
         {
           "v": "PLINK",
           "q": "Cybercriminals (like Carbanak or GCMAN) may use PLINK for that."
-        },
-        {
-          "v": "SDELETE",
-          "q": "attackers are using anti-forensic techniques (or simply SDELETE)"
-        },
-        {
-          "v": "SC",
-          "q": "tunnelling were implemented by attackers using Windows standard utilities like “SC” and “NETSH“."
-        },
-        {
-          "v": "NETSH",
-          "q": "tunnelling were implemented by attackers using Windows standard utilities like “SC” and “NETSH“."
-        },
-        {
-          "v": "PowerShell",
-          "q": "discovering the use of PowerShell scripts within the Windows registry."
-        },
-        {
-          "v": "MEM:Trojan.Win32.Cometer",
-          "q": "are MEM:Trojan.Win32.Cometer and MEM:Trojan.Win32.Metasploit."
         }
       ],
       "techniques": [
         {
           "v": "memory-based malware",
-          "q": "and memory-based malware to hide their activity during data acquisition."
+          "q": "attackers are using anti-forensic techniques (or simply SDELETE) and memory-based malware to hide their activity"
         },
         {
-          "v": "anti-forensic techniques",
-          "q": "attackers are using anti-forensic techniques (or simply SDELETE)"
+          "v": "tunnels",
+          "q": "the tunnels that are going to be installed in the network by attackers"
         },
         {
-          "v": "network tunnelling",
-          "q": "Another important part of an attack are the tunnels that are going to be installed in the network by attackers."
+          "v": "privilege escalation",
+          "q": "requires privilege escalation and execution policy changes"
         },
         {
-          "v": "malicious Windows service installation",
-          "q": "the attackers used the SC utility to install a malicious service (that will"
+          "v": "file renaming",
+          "q": "the package from the hard drive with file renaming"
         },
         {
-          "v": "use of service account credentials",
-          "q": "attackers used credentials from Service accounts with administrative privileges (for example backup,"
-        },
-        {
-          "v": "fileless PowerShell attack",
-          "q": "discovering the use of PowerShell scripts within the Windows registry."
+          "v": "collect passwords of system administrators",
+          "q": "Meterpreter and Mimikatz. These tools were used to collect passwords of system administrators"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "more than 100 enterprise networks",
+          "v": "more than 100 enterprise networks infected",
           "q": "Using the Kaspersky Security Network we found more than 100 enterprise networks infected with malicious"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The report says it cannot confirm that all the infected networks were infected by the same attacker.",
-      "The report says attribution is almost impossible given common tools and unknown domains, and names GCMAN and Carbanak only as closest groups with the same TTPs.",
-      "The report says cybercriminals like Carbanak or GCMAN may use PLINK for tunnels.",
-      "The IP addresses given come from one incident case; the report says another attacker may use other IPs."
+      "we cannot confirm that all of them were infected by the same attacker.",
+      "Given that the attackers used the Metasploit framework, standard Windows utilities and unknown domains with no WHOIS information, this makes attribution almost impossible.",
+      "Please note that these IPs are taken from the IR case in which we participated, so there could be any other IP used by an eventual attacker.",
+      "Cybercriminals (like Carbanak or GCMAN) may use PLINK for that."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:40:07Z",
-      "ok": false,
-      "note": "hedges[2]: The text says cybercriminals (like Carbanak or GCMAN) may use PLINK for tunnels, but this is in the report's general introduction, not tied to this a",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:40:07Z",
+        "ok": false,
+        "note": "hedges[2]: The text says cybercriminals (like Carbanak or GCMAN) may use PLINK for tunnels, but this is in the report's general introduction, not tied to this a",
+        "by": "auditor"
+      }
+    ]
   },
   "cab1d334efc14a7e9238a6349486de0763d4e0ab": {
     "sha1": "cab1d334efc14a7e9238a6349486de0763d4e0ab",

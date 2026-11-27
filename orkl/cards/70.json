@@ -204,23 +204,18 @@
   },
   "70c8c187f3ec6aef60cd3daebad232a3290fbfbf": {
     "sha1": "70c8c187f3ec6aef60cd3daebad232a3290fbfbf",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:22:51Z",
+    "read_at": "2026-11-27T03:48:51Z",
     "model": "haiku",
-    "summary": "Huntress analysis of a macOS variant of the LightSpy spyware framework, uploaded to VirusTotal and described by BlackBerry as an iOS implant. The sample is x86_64 and runs on Intel Macs or Apple Silicon with Rosetta 2. It uses a dropper, a core implant and 10 plugins for files, keychain, browser history, camera, screen and Wi-Fi data. Prior research links LightSpy to APT 41, but the post makes no attribution claim itself. YARA and Sigma rules are provided.",
+    "summary": "Huntress researchers found that a sample BlackBerry described as an iOS LightSpy implant is a previously unreported macOS variant of the LightSpy spyware framework. The dropper loads encrypted plugin modules from a command server; ten macOS plugins cover browser history, keychains, cameras, screens, audio and shell commands. Development paths suggest two hosts. The sample was uploaded to VirusTotal from India, which the report calls a weak signal.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "APT 41",
-          "q": "most prior research has associated this malware to APT 41",
-          "by": "the report itself, citing prior research"
-        },
-        {
-          "v": "NSO Group",
-          "q": "the more recent and sophisticated Pegasus spyware from NSO Group",
-          "by": "Huntress, in its own assessment"
+          "q": "most prior research has associated this malware to APT 41.",
+          "by": "most prior research (cited by the report; the report itself makes no attribution claim)"
         }
       ],
       "sectors": [],
@@ -234,53 +229,57 @@
         {
           "v": "April 11, 2024",
           "q": "On April 11, 2024, BlackBerry released a new blog detailing a new VirusTotal upload of the LightSpy mobile",
-          "what": "BlackBerry released a blog on a new VirusTotal upload of LightSpy"
-        },
-        {
-          "v": "2020",
-          "q": "What made LightSpy famous was an iOS version discovered in 2020",
-          "what": "An iOS version of LightSpy was discovered"
+          "what": "BlackBerry blog on a new VirusTotal upload of LightSpy"
         },
         {
           "v": "2024-04-25",
-          "q": "Published: 2024-04-25",
-          "what": "Huntress published this analysis"
+          "q": "Published: 2024-04-25 · Archived: 2026-04-06 03:24:28 UTC",
+          "what": "Huntress article on the macOS LightSpy variant published"
+        },
+        {
+          "v": "2020",
+          "q": "What made LightSpy famous was an iOS version discovered in 2020, covered by both Kaspersky and",
+          "what": "iOS version of LightSpy discovered"
         }
       ],
       "tools": [
         {
-          "v": "LightSpy",
-          "q": "part of the LightSpy framework"
-        },
-        {
-          "v": "Pegasus",
-          "q": "the more recent and sophisticated Pegasus spyware from NSO Group"
-        },
-        {
-          "v": "WyrmSpy",
-          "q": "(also known as WyrmSpy)"
-        },
-        {
           "v": "SocketRocket",
-          "q": "using the open source library SocketRocket"
+          "q": "using the open source library SocketRocket with"
+        },
+        {
+          "v": "AudioRecorder",
+          "q": "AudioRecorder (Plugin ID: 18000)"
+        },
+        {
+          "v": "KeyChains",
+          "q": "KeyChains (Plugin ID: 31000)"
+        },
+        {
+          "v": "CameraShot",
+          "q": "CameraShot (Plugin ID: 19000)"
+        },
+        {
+          "v": "ScreenRecorder",
+          "q": "ScreenRecorder (Plugin ID: 34000)"
+        },
+        {
+          "v": "ShellCommand",
+          "q": "ShellCommand (Plugin ID: 20000)"
         }
       ],
       "techniques": [
         {
-          "v": "dropper",
-          "q": "A dropper, which loads a series of dynamically loaded modules"
+          "v": "PID file",
+          "q": "makes use of a process identification number (PID) file"
+        },
+        {
+          "v": "AES",
+          "q": "is encrypted with AES with a static key"
         },
         {
           "v": "rolling-type XOR",
           "q": "The plugins and core dylib are encrypted with a rolling-type XOR"
-        },
-        {
-          "v": "appended to the end of the binary",
-          "q": "The configuration for this malware is appended to the end of the binary"
-        },
-        {
-          "v": "PID file",
-          "q": "process identification number (PID) file located at"
         },
         {
           "v": "WebSockets",
@@ -288,7 +287,11 @@
         },
         {
           "v": "plugin manifest",
-          "q": "solves this problem by using a plugin manifest"
+          "q": "The macOS version solves this problem by using a plugin manifest"
+        },
+        {
+          "v": "dynamically loaded modules",
+          "q": "A dropper, which loads a series of dynamically loaded"
         }
       ],
       "cves": [],
@@ -299,7 +302,7 @@
         },
         {
           "v": "two hosts",
-          "q": "There are two hosts that seem to have been involved in development of LightSpy"
+          "q": "There are two hosts that seem to have been involved in development of LightSpy: mac and air."
         }
       ]
     },
@@ -308,18 +311,18 @@
       "name": "LightSpy"
     },
     "hedges": [
-      "Huntress says it has assessed that Apple is referring to Pegasus spyware in its alert notice.",
-      "The authors make no attribution claims in the post, but say they have no reason to disagree with the prior APT 41 link.",
-      "The VirusTotal upload from India is not a particularly strong indicator of an active campaign or regional targeting; take it with a heavy grain of salt.",
-      "The authors cannot confirm that the two development hosts were not multiple machines sharing one username."
+      "The report makes no attribution claim of its own; the APT 41 link comes from most prior research.",
+      "Obviously, there is no way to confirm there were no other development hosts using the same usernames.",
+      "The upload from India is a contributing factor only, not a strong indicator of an active campaign or regional targeting.",
+      "The view that Apple's alert refers to Pegasus is the report's own assessment and is not confirmed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:35Z",
-      "ok": false,
-      "note": "actors[1]: The text says only that Apple's alert refers to Pegasus spyware from NSO Group, which is a different malware. It does not tie NSO Group to LightSpy, ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:35Z",
+        "ok": false,
+        "note": "actors[1]: The text says only that Apple's alert refers to Pegasus spyware from NSO Group, which is a different malware. It does not tie NSO Group to LightSpy, ",
+        "by": "auditor"
+      }
+    ]
   }
 }

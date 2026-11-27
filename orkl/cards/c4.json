@@ -161,60 +161,69 @@
   },
   "c44102b7092e8536bff0af1b062bbf436d3f3966": {
     "sha1": "c44102b7092e8536bff0af1b062bbf436d3f3966",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:26:03Z",
+    "read_at": "2026-11-27T03:49:31Z",
     "model": "haiku",
-    "summary": "A Krebs on Security article, citing a joint Flashpoint and RiskIQ report, describes criminals buying expired domains and running fake brand e-commerce shops that skim payment card data. The report observed more than 800 such sites since June 2018 and ties them to Magecart, described as a collective of at least seven cybercrime groups. Stolen card data is sold in cybercrime shops, and some actors sell live access to hacked stores. Former domain owners can lose accounts tied to their old email addresses.",
+    "summary": "Joint research by Flashpoint and RiskIQ, relayed by KrebsOnSecurity in November 2018, describes hundreds of fake e-commerce shops set up on expired domains to skim payment card data. The report counts more than 800 such sites since June 2018 and links them to Magecart, described as a collective of at least seven cybercrime groups. Stolen card data is sold in online cybercrime shops, and some actors sell live access to hacked stores. Two non-commercial anti-abuse organisations and Shadowserver help sinkhole hacked domains.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Magecart",
           "q": "The report tracks the work of Magecart — the name given to a collective of at least seven cybercrime groups",
-          "by": "Flashpoint and RiskIQ (joint report, as relayed by the article)"
+          "by": "Flashpoint and RiskIQ joint report, as relayed by KrebsOnSecurity"
         }
       ],
       "sectors": [
         {
           "v": "e-commerce",
-          "q": "who use them to set up fake e-commerce sites that steal credit card details from unwary shoppers."
+          "q": "set up fake e-commerce sites that steal credit card details from unwary shoppers."
         }
       ],
       "countries": [],
       "dates": [
         {
           "v": "2018-11-13",
-          "q": "Published: 2018-11-13 · Archived: 2026-04-06 01:17:32 UTC",
+          "q": "Published: 2018-11-13",
           "what": "Article published"
         },
         {
           "v": "June 2018",
-          "q": "We have observed more than 800 sites hosting these brand impersonation/skimming stores since June 2018,",
-          "what": "Start of the period in which the report observed fake store sites"
+          "q": "We have observed more than 800 sites hosting these brand impersonation/skimming stores since June 2018",
+          "what": "Start of the period in which the report observed the fake stores"
+        },
+        {
+          "v": "Nov. 4",
+          "q": "On Nov. 4, KrebsOnSecurity published Who’s in Your",
+          "what": "Earlier article on a network of hacked sites fitting the Magecart profile"
         }
       ],
       "tools": [
         {
           "v": "skimmer",
-          "q": "the skimmer copies it and sends it to a drop server."
+          "q": "Some visitors will attempt to make purchases, entering their payment information into the payment form where the skimmer copies it"
         }
       ],
       "techniques": [
         {
-          "v": "re-registering expired domains",
-          "q": "Lately, neglected domains have been getting scooped up by crooks"
+          "v": "domain expired",
+          "q": "That’s because in June of this year the domain expired, and control over her site went to someone who purchased"
         },
         {
-          "v": "payment form skimming",
-          "q": "Some visitors will attempt to make purchases, entering their payment information into the payment"
+          "v": "brand impersonation",
+          "q": "We have observed more than 800 sites hosting these brand impersonation/skimming stores since June 2018"
         },
         {
-          "v": "selling access to hacked stores",
-          "q": "some Magecart actors will sell access to hacked online stores,"
+          "v": "sell access to hacked online stores",
+          "q": "some Magecart actors will sell access to hacked online stores, allowing crooks who buy this access"
         },
         {
-          "v": "sinkholing hacked domains",
+          "v": "put up for sale",
+          "q": "Credit card data stolen by these various Magecart groups invariably gets put up for sale at online cybercrime"
+        },
+        {
+          "v": "sinkhole",
           "q": "“sinkhole” or quietly assume control over hacked domains that are used for"
         }
       ],
@@ -222,15 +231,19 @@
       "figures": [
         {
           "v": "more than 800 sites",
-          "q": "We have observed more than 800 sites hosting these brand impersonation/skimming stores since June 2018,"
+          "q": "We have observed more than 800 sites hosting these brand impersonation/skimming stores since June 2018"
         },
         {
           "v": "at least seven",
-          "q": "The report tracks the work of Magecart — the name given to a collective of at least seven cybercrime groups"
+          "q": "a collective of at least seven cybercrime groups"
         },
         {
           "v": "roughly half their normal cost",
-          "q": "the products for sale are all advertised for roughly half their normal cost."
+          "q": "the products for sale are all advertised for roughly half their normal cost"
+        },
+        {
+          "v": "hundreds",
+          "q": "shows hundreds of other domains that were apparently registered upon expiration over"
         }
       ]
     },
@@ -239,17 +252,17 @@
       "name": "Magecart"
     },
     "hedges": [
-      "The sites are described as almost certainly set up simply to siphon payment card data, per the article's summary of the report.",
-      "Domains were apparently registered upon expiration, according to the article's review of neighbouring addresses.",
-      "The report's count covers sites observed since June 2018; the article does not claim a complete total."
+      "The report's sites are said to be almost certainly set up simply to siphon payment card data, as relayed by the article.",
+      "Neighbouring domains were apparently registered upon expiration, per the article's review of adjacent addresses.",
+      "The payment page shows security company badges in order to appear more legitimate, per the report."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:40:07Z",
-      "ok": false,
-      "note": "techniques[3]: Sinkholing hacked domains is something Flashpoint, RiskIQ, Abuse.ch and Shadowserver do to counter Magecart. It is not a technique used by the at",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:40:07Z",
+        "ok": false,
+        "note": "techniques[3]: Sinkholing hacked domains is something Flashpoint, RiskIQ, Abuse.ch and Shadowserver do to counter Magecart. It is not a technique used by the at",
+        "by": "auditor"
+      }
+    ]
   }
 }

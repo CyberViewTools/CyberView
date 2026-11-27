@@ -1,67 +1,77 @@
 {
   "83dbf3ac01f347dcb82ecea7b4e3f259049662d8": {
     "sha1": "83dbf3ac01f347dcb82ecea7b4e3f259049662d8",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:29:58Z",
+    "read_at": "2026-11-27T03:50:14Z",
     "model": "haiku",
-    "summary": "Unit 42 (Palo Alto Networks) says the North Korean state-sponsored group Jumpy Pisces (also Andariel, Onyx Sleet) likely collaborated with the Play ransomware group (Fiddling Scorpius) in a 2024 intrusion. Access began in May 2024 through a compromised user account, using Sliver and DTrack, and Play ransomware was deployed in early September 2024. Unit 42 assesses with moderate confidence that the group acted as an affiliate or an initial access broker, and says this remains unclear. Tools included Mimikatz and PsExec.",
+    "summary": "Unit 42 (Palo Alto Networks) reports that North Korean state-sponsored group Jumpy Pisces, also tracked as Andariel and Onyx Sleet, is likely collaborating with the Play ransomware group in a 2024 incident. Jumpy Pisces gained access through a compromised user account in May 2024 and used Sliver and DTrack until early September 2024, when an unidentified actor used the same account to deploy Play ransomware. Unit 42 assesses the collaboration with moderate confidence and says it remains unclear whether Jumpy Pisces was an affiliate or an initial access broker.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Jumpy Pisces",
           "q": "Unit 42 has identified Jumpy Pisces, a North Korean state-sponsored threat group associated with the",
-          "by": "Unit 42, Palo Alto Networks"
+          "by": "Unit 42 (Palo Alto Networks)"
         },
         {
-          "v": "Andariel",
-          "q": "Jumpy Pisces, also known as Andariel and Onyx Sleet, was historically involved in cyberespionage, financial",
-          "by": "Unit 42, Palo Alto Networks"
-        },
-        {
-          "v": "Onyx Sleet",
-          "q": "Jumpy Pisces, also known as Andariel and Onyx Sleet, was historically involved in cyberespionage, financial",
-          "by": "Unit 42, Palo Alto Networks"
+          "v": "Play ransomware group",
+          "q": "is now collaborating with the Play ransomware group (Fiddling Scorpius).",
+          "by": "Unit 42 (Palo Alto Networks), with moderate confidence"
         },
         {
           "v": "Fiddling Scorpius",
           "q": "A closed group we track as Fiddling Scorpius is believed to be",
-          "by": "Unit 42, Palo Alto Networks"
+          "by": "Unit 42 (Palo Alto Networks)"
+        },
+        {
+          "v": "Andariel",
+          "q": "Jumpy Pisces, also known as Andariel and Onyx Sleet, was historically involved in cyberespionage, financial",
+          "by": "Unit 42 (Palo Alto Networks)"
+        },
+        {
+          "v": "Onyx Sleet",
+          "q": "Jumpy Pisces, also known as Andariel and Onyx Sleet, was historically involved in cyberespionage, financial",
+          "by": "Unit 42 (Palo Alto Networks)"
         }
       ],
       "sectors": [],
       "countries": [
         {
-          "v": "North Korean",
+          "v": "North Korea",
           "q": "Unit 42 has identified Jumpy Pisces, a North Korean state-sponsored threat group associated with the"
         }
       ],
       "dates": [
         {
-          "v": "2024-10-30",
-          "q": "Published: 2024-10-30 · Archived: 2026-04-05 15:10:48 UTC",
-          "what": "Report published"
-        },
-        {
-          "v": "early September 2024",
-          "q": "In early September 2024, Unit 42 engaged in incident response services for a client impacted by Play ransomware.",
-          "what": "Unit 42 incident response for a client hit by Play ransomware"
-        },
-        {
-          "v": "May 2024",
-          "q": "Jumpy Pisces gained initial access via a compromised user account in May 2024.",
-          "what": "Initial access via a compromised user account"
-        },
-        {
-          "v": "end of May 2024",
-          "q": "We observed the earliest signs of unauthorized activity at the end of May 2024.",
-          "what": "Earliest signs of unauthorized activity"
+          "v": "Published: 2024-10-30",
+          "q": "Published: 2024-10-30",
+          "what": "Report published by Unit 42"
         },
         {
           "v": "mid-2022",
           "q": "Play ransomware was first reported in mid-2022.",
           "what": "Play ransomware first reported"
+        },
+        {
+          "v": "May 2024",
+          "q": "gained initial access via a compromised user account in May 2024.",
+          "what": "Jumpy Pisces gained initial access through a compromised user account"
+        },
+        {
+          "v": "end of May 2024",
+          "q": "We observed the earliest signs of unauthorized activity at the end of May 2024.",
+          "what": "Earliest signs of unauthorized activity observed"
+        },
+        {
+          "v": "early September 2024",
+          "q": "In early September 2024, Unit 42 engaged in incident response services for a client impacted by Play ransomware.",
+          "what": "Unit 42 incident response engagement for a client hit by Play ransomware"
+        },
+        {
+          "v": "May-September 2024",
+          "q": "Threat actors had access to the network between May-September 2024.",
+          "what": "Period during which threat actors had access to the network"
         }
       ],
       "tools": [
@@ -74,74 +84,66 @@
           "q": "DTrack: This is an infostealer previously used in reported incidents attributed to North Korean threat"
         },
         {
-          "v": "Impacket's credential harvesting module, secretsdump.py",
-          "q": "Partial registry dumps on the host indicate possible use of Impacket's credential harvesting module, secretsdump.py."
-        },
-        {
           "v": "Mimikatz",
           "q": "Mimikatz: Attackers used a customized version of the publicly available credential dumping tool, with"
         },
         {
-          "v": "TokenPlayer",
-          "q": "We observed some tools used prior to ransomware deployment (i.e., TokenPlayer for Windows access token"
+          "v": "Impacket",
+          "q": "Impacket's credential harvesting module, secretsdump.py."
         },
         {
           "v": "PsExec",
-          "q": "to SYSTEM privileges via PsExec."
+          "q": "escalate to SYSTEM privileges via PsExec."
         },
         {
-          "v": "Play ransomware",
-          "q": "Play ransomware was first reported in mid-2022."
+          "v": "TokenPlayer",
+          "q": "(i.e., TokenPlayer for Windows access token"
         },
         {
           "v": "Maui",
           "q": "developed ransomware, Maui."
+        },
+        {
+          "v": "Play ransomware",
+          "q": "Play ransomware was first reported in mid-2022."
         }
       ],
       "techniques": [
+        {
+          "v": "compromised user account",
+          "q": "gained initial access via a compromised user account in May 2024."
+        },
         {
           "v": "credential harvesting",
           "q": "They carried out pre-ransomware activities including credential harvesting, privilege"
         },
         {
-          "v": "move laterally",
-          "q": "The ransomware actor leveraged the account to abuse Windows access tokens, move laterally and escalate"
+          "v": "uninstallation of EDR sensors",
+          "q": "This eventually led to the mass uninstallation of EDR sensors and the"
         },
         {
           "v": "abuse Windows access tokens",
           "q": "The ransomware actor leveraged the account to abuse Windows access tokens, move laterally and escalate"
         },
         {
-          "v": "persistence",
-          "q": "movement and maintained persistence by spreading the open-source tool Sliver and their unique custom malware,"
+          "v": "beaconing activity",
+          "q": "Sliver beaconing activity spanning multiple days until early September 2024, with quiet periods in July and"
         },
         {
-          "v": "SMB",
+          "v": "Server Message Block (SMB)",
           "q": "to other hosts via Server Message Block (SMB) protocol."
         },
         {
-          "v": "uninstallation of EDR sensors",
-          "q": "the uninstallation of EDR sensors, which eventually led to the deployment of Play ransomware."
-        },
-        {
           "v": "invalid certificates",
-          "q": "All the above-mentioned files were signed using a couple of invalid certificates that we note in the Indicators of"
+          "q": "signed using a couple of invalid certificates that we note in the Indicators of"
         },
         {
-          "v": "trojanized binary",
-          "q": "Attackers used a trojanized binary that steals browser history, autofills and credit card details for Chrome,"
-        },
-        {
-          "v": "privileged user account",
-          "q": "Attackers used a dedicated tool built to create a privileged user account on victim machines with Remote"
+          "v": "deployment of Play ransomware",
+          "q": "This ultimately led to the deployment of Play ransomware."
         }
       ],
       "cves": [],
       "figures": [
-        {
-          "v": "a couple",
-          "q": "All the above-mentioned files were signed using a couple of invalid certificates that we note in the Indicators of"
-        },
         {
           "v": "Figure 1",
           "q": "Figure 1. High-level timeline of events."
@@ -149,23 +151,24 @@
       ]
     },
     "subject": {
-      "type": "incident",
-      "name": "Jumpy Pisces intrusion leading to Play ransomware"
+      "type": "campaign",
+      "name": "Jumpy Pisces Engages in Play Ransomware"
     },
     "hedges": [
-      "Collaboration with Play ransomware is assessed with moderate confidence; the report says a faction of the group may be involved.",
-      "It remains unclear whether the group became a Play affiliate or acted as an initial access broker.",
-      "Play says it does not run a RaaS ecosystem; the report notes some suggest it has moved to RaaS.",
-      "Initial access via the compromised account is stated with high confidence.",
-      "Some suspicious files did not successfully execute or were not recoverable at the time of investigation."
+      "Jumpy Pisces, or a faction of the group, is now collaborating with the Play ransomware group: believed with moderate confidence, and the report describes a likely shift in tactics.",
+      "The report assesses a degree of collaboration between Jumpy Pisces and Play Ransomware with moderate confidence.",
+      "It remains unclear whether Jumpy Pisces became an affiliate of Play ransomware or acted as an initial access broker selling network access.",
+      "Fiddling Scorpius is believed to be operating Play ransomware; some suggest it has moved to a ransomware-as-a-service model, which the group denies on its leak site.",
+      "Some suspicious files observed did not successfully execute or were not recoverable at the time of investigation.",
+      "The report describes the trend of North Korean groups joining ransomware campaigns as potential, not confirmed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:35Z",
-      "ok": false,
-      "note": "summary: The text gives moderate confidence only for a degree of collaboration between Jumpy Pisces and Play. It does not give moderate confidence that the grou",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:35Z",
+        "ok": false,
+        "note": "summary: The text gives moderate confidence only for a degree of collaboration between Jumpy Pisces and Play. It does not give moderate confidence that the grou",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -125,11 +125,11 @@
   },
   "fd01a4f0faec85d7c66faedba9e9dc8ab82fd6cb": {
     "sha1": "fd01a4f0faec85d7c66faedba9e9dc8ab82fd6cb",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:26:14Z",
+    "read_at": "2026-11-27T03:49:33Z",
     "model": "haiku",
-    "summary": "Sygnia, a vendor blog from 2024, describes how ransomware attacks against VMware ESXi and vCenter virtualisation environments typically unfold: initial access, privilege escalation, access validation, deployment on hosts, backup compromise, data theft for double extortion, and encryption. It names ransomware groups and tools, including LockBit, BlackCat and Akira, that it says often use this attack vector. It then gives defender guidance on monitoring, backups, authentication, hardening and network restrictions.",
+    "summary": "Sygnia's incident response team describes how ransomware attacks on VMware ESXi virtualization environments typically unfold: initial access, privilege escalation, access validation, backup compromise, data exfiltration, shutdown of virtual machines, and encryption. It names ransomware groups and tools that it says use this attack vector, including LockBit, BlackCat and Akira. It then sets out defensive guidance on monitoring, backups, authentication, hardening and network restrictions.",
     "kind": "overview",
     "facts": {
       "actors": [
@@ -185,32 +185,31 @@
         {
           "v": "2024-05-15",
           "q": "Published: 2024-05-15 · Archived: 2026-04-06 00:51:19 UTC",
-          "what": "Blog post published"
-        },
-        {
-          "v": "2026-04-06",
-          "q": "Published: 2024-05-15 · Archived: 2026-04-06 00:51:19 UTC",
-          "what": "Page archived"
+          "what": "Report published by Sygnia"
         }
       ],
       "tools": [
         {
+          "v": "VMware ESXi",
+          "q": "particularly against VMware ESXi infrastructure."
+        },
+        {
+          "v": "vCenter",
+          "q": "If direct access is denied, attackers use vCenter to enable SSH on all ESXi"
+        },
+        {
           "v": "vSphere Installation Bundles (VIBs)",
-          "q": "using custom-made vSphere Installation Bundles (VIBs)"
+          "q": "or execute commands remotely using custom-made vSphere Installation Bundles (VIBs)."
         },
         {
           "v": "SCCM",
-          "q": "deployment mechanisms (such as SCCM or Active Directory)"
+          "q": "(such as SCCM or Active Directory) may spread additional ransomware to non-virtualized servers and"
         }
       ],
       "techniques": [
         {
-          "v": "conducting phishing attacks",
-          "q": "conducting phishing attacks, downloading malicious files"
-        },
-        {
-          "v": "altering domain group memberships",
-          "q": "such as altering domain group memberships for domain-connected VMware"
+          "v": "phishing",
+          "q": "such as conducting phishing attacks, downloading malicious files, or exploiting known vulnerabilities"
         },
         {
           "v": "brute-force",
@@ -218,39 +217,39 @@
         },
         {
           "v": "RDP hijacking",
-          "q": "executing RDP hijacking attempts that target IT personnel"
+          "q": "executing RDP hijacking attempts that target IT personnel."
         },
         {
-          "v": "enable SSH on all ESXi servers",
-          "q": "attackers use vCenter to enable SSH on all ESXi servers"
+          "v": "altering domain group memberships",
+          "q": "such as altering domain group memberships for domain-connected VMware, employing brute-force"
         },
         {
-          "v": "reset server passwords",
-          "q": "might also reset server passwords"
+          "v": "lateral movement",
+          "q": "Lateral movement and privilege escalation: Upon gaining access, threat actors escalate their privileges"
         },
         {
-          "v": "encrypting or deleting backup storage",
-          "q": "By encrypting or deleting backup storage"
+          "v": "privilege escalation",
+          "q": "Threat actors have been observed using ESXi profiles to perform privilege escalation, by modifying"
         },
         {
           "v": "double extortion",
-          "q": "enact a double extortion scheme"
+          "q": "Threat actors often attempt to enact a double extortion scheme, by exfiltrating data to"
+        },
+        {
+          "v": "exfiltrating data",
+          "q": "Threat actors often attempt to enact a double extortion scheme, by exfiltrating data to"
+        },
+        {
+          "v": "encrypting or deleting backup storage",
+          "q": "By encrypting or deleting backup storage and, in some instances, changing the passwords"
         },
         {
           "v": "shut down all virtual machines",
-          "q": "threat actors shut down all virtual machines and initiate"
+          "q": "At this point, threat actors shut down all virtual machines and initiate"
         },
         {
           "v": "encrypt or delete logs",
-          "q": "threat actors deliberately encrypt or delete logs to conceal their activities"
-        },
-        {
-          "v": "password reuse",
-          "q": "password reuse has been exploited by adversaries"
-        },
-        {
-          "v": "ESXi profiles",
-          "q": "using ESXi profiles to perform privilege escalation"
+          "q": "In some instances, threat actors deliberately encrypt or delete logs to conceal their activities,"
         }
       ],
       "cves": [],
@@ -258,26 +257,25 @@
         {
           "v": "6.7",
           "q": "designed specifically to inhibit ransomware attacks on VMware (versions 6.7"
-        },
-        {
-          "v": "4728, 4732, 4756",
-          "q": "Event ID for a user being added to an AD group: 4728, 4732, 4756."
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "Sygnia says the attack vector is 'often' leveraged by the listed ransomware tools and groups.",
-      "Sygnia's analysis 'indicates' that attacks on virtualisation environments 'typically' follow a similar pattern.",
-      "The report says threat actors 'might' try to seize control of backup systems and 'might' also reset server passwords."
+      "Sygnia's analysis and investigative activities show that this attack vector is often leveraged by ransomware tools and groups",
+      "Sygnia's analysis indicates that ransomware attacks on virtualization environments typically follow a similar pattern",
+      "Threat actors might try to seize control of backup systems.",
+      "Threat actors who obtain prior access to deployment mechanisms may spread additional ransomware to non-virtualized servers and workstations.",
+      "In some instances, threat actors deliberately encrypt or delete logs to conceal their activities, rendering locally-stored logs unreliable.",
+      "It is usually possible to mitigate, or at the very least increase the likelihood of recovering from, attacks targeting ESXi infrastructure."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:40:23Z",
-      "ok": false,
-      "note": "hedges[2]: The two 'might' hedges come from different phases. 'Might try to seize control of backup systems' is in the backup-compromise phase. 'Might also rese",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:40:23Z",
+        "ok": false,
+        "note": "hedges[2]: The two 'might' hedges come from different phases. 'Might try to seize control of backup systems' is in the backup-compromise phase. 'Might also rese",
+        "by": "auditor"
+      }
+    ]
   }
 }

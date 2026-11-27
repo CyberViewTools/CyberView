@@ -36,43 +36,43 @@
   },
   "fcdc48050d4a7d14d7fb3a7d181e8691472925e4": {
     "sha1": "fcdc48050d4a7d14d7fb3a7d181e8691472925e4",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:31:26Z",
+    "read_at": "2026-11-27T03:50:38Z",
     "model": "haiku",
-    "summary": "CrowdStrike Intelligence overview of threats to VMware ESXi hypervisors. It says ransomware groups, including ransomware-as-a-service platforms, increasingly target ESXi, which does not support third-party antivirus. It cites exploited OpenSLP vulnerabilities (CVE-2020-3992, CVE-2021-21974), credential theft as the main entry route, a RAT ecosystem documented by Mandiant, and VM-escape exploit chains likely limited to advanced actors. It closes with defensive recommendations: jump servers with MFA, no internet exposure of vCenter, and offsite backups.",
+    "summary": "CrowdStrike Intelligence overview of threats to VMware ESXi hypervisors and vCenter. It covers the lack of antivirus support in ESXi, OpenSLP flaws exploited in the ESXiArgs ransomware campaign reported by CERT-FR, ransomware-as-a-service platforms and named adversaries, common attack vectors such as credential theft and VM escape, and protective recommendations.",
     "kind": "overview",
     "facts": {
       "actors": [
         {
           "v": "ALPHA SPIDER",
-          "q": "tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE",
+          "q": "Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE",
           "by": "CrowdStrike Intelligence"
         },
         {
           "v": "BITWISE SPIDER",
-          "q": "tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE",
+          "q": "Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE",
           "by": "CrowdStrike Intelligence"
         },
         {
           "v": "SCATTERED SPIDER",
-          "q": "Moreover, SCATTERED SPIDER leveraged the open-source proxy tool rsocx",
+          "q": "compromised vCenter servers. Moreover, SCATTERED SPIDER leveraged the open-source proxy tool rsocx to",
           "by": "CrowdStrike Intelligence"
         },
         {
           "v": "NEMESIS KITTEN",
           "q": "CrowdStrike Intelligence also assesses that a myriad of named adversaries — including NEMESIS KITTEN,",
-          "by": "CrowdStrike Intelligence (assesses)"
+          "by": "CrowdStrike Intelligence"
         },
         {
           "v": "SILENT CHOLLIMA",
-          "q": "SILENT CHOLLIMA and eCrime actors such as PROPHET SPIDER — have used Log4Shell",
-          "by": "CrowdStrike Intelligence (assesses)"
+          "q": "SILENT CHOLLIMA and eCrime actors such as PROPHET SPIDER — have used Log4Shell (CVE-2021-",
+          "by": "CrowdStrike Intelligence"
         },
         {
           "v": "PROPHET SPIDER",
-          "q": "SILENT CHOLLIMA and eCrime actors such as PROPHET SPIDER — have used Log4Shell",
-          "by": "CrowdStrike Intelligence (assesses)"
+          "q": "SILENT CHOLLIMA and eCrime actors such as PROPHET SPIDER — have used Log4Shell (CVE-2021-",
+          "by": "CrowdStrike Intelligence"
         }
       ],
       "sectors": [],
@@ -81,43 +81,43 @@
         {
           "v": "2020",
           "q": "Since 2020, CrowdStrike has increasingly observed big game hunting (BGH) threat actors deploying Linux",
-          "what": "CrowdStrike increasingly observed big game hunting actors deploying Linux ransomware against ESXi"
-        },
-        {
-          "v": "February 2023",
-          "q": "In February 2023, the French Computer Emergency Response Team (CERT-FR) reported a ransomware campaign",
-          "what": "CERT-FR reported the ESXiArgs ransomware campaign targeting internet-exposed ESXi hypervisors"
+          "what": "Observed trend of ransomware tools built to affect ESXi began"
         },
         {
           "v": "late September 2022",
-          "q": "In late September 2022, Mandiant researchers discovered and documented a novel malware ecosystem",
+          "q": "In late September 2022, Mandiant researchers discovered and documented a novel malware ecosystem primarily",
           "what": "Mandiant discovered and documented a malware ecosystem targeting ESXi and vCenter servers"
         },
         {
           "v": "late 2022",
           "q": "In late 2022, CrowdStrike Intelligence observed ALPHA SPIDER use Cobalt Strike variants to perform post-",
-          "what": "CrowdStrike observed ALPHA SPIDER using Cobalt Strike variants for post-exploitation on ESXi servers"
+          "what": "CrowdStrike observed post-exploitation activity on ESXi servers by ALPHA SPIDER"
+        },
+        {
+          "v": "February 2023",
+          "q": "In February 2023, the French Computer Emergency Response Team (CERT-FR) reported a ransomware campaign",
+          "what": "CERT-FR reported a ransomware campaign (ESXiArgs) targeting vulnerable ESXi hypervisors"
         },
         {
           "v": "first quarter of 2023",
-          "q": "In the first quarter of 2023, this trend has continued",
-          "what": "Ransomware-as-a-service platforms were leveraged to target ESXi"
+          "q": "In the first quarter of 2023, this trend has continued: Ransomware-as-a-service (RaaS) platforms including Alphv,",
+          "what": "RaaS platforms were used to target ESXi, continuing the trend"
         },
         {
           "v": "April 2023",
-          "q": "In April 2023, for example, CrowdStrike Intelligence identified a new RaaS program named MichaelKors",
-          "what": "CrowdStrike identified the new RaaS program MichaelKors"
+          "q": "In April 2023, for example, CrowdStrike Intelligence identified a new RaaS program named MichaelKors, which provides affiliates with",
+          "what": "CrowdStrike identified a new RaaS program named MichaelKors"
         },
         {
           "v": "October 15, 2022",
-          "q": "reached end of general support on October 15, 2022",
-          "what": "ESXi 6.5 and 6.7 and vSphere 6.5 and 6.7 reached end of general support, ending security updates"
+          "q": "reached end of general support on October 15, 2022 — essentially ending security updates for the affected",
+          "what": "ESXi 6.5 and 6.7 and vSphere 6.5 and 6.7 reached end of general support"
         }
       ],
       "tools": [
         {
           "v": "Cobalt Strike",
-          "q": "CrowdStrike Intelligence observed ALPHA SPIDER use Cobalt Strike variants to perform post-"
+          "q": "In late 2022, CrowdStrike Intelligence observed ALPHA SPIDER use Cobalt Strike variants to perform post-"
         },
         {
           "v": "SystemBC",
@@ -125,45 +125,41 @@
         },
         {
           "v": "rsocx",
-          "q": "Moreover, SCATTERED SPIDER leveraged the open-source proxy tool rsocx"
-        },
-        {
-          "v": "MichaelKors",
-          "q": "CrowdStrike Intelligence identified a new RaaS program named MichaelKors, which provides affiliates with"
-        },
-        {
-          "v": "Nevada ransomware",
-          "q": "such as Nevada ransomware, have also been launched"
-        },
-        {
-          "v": "remote administration tool",
-          "q": "targeting VMware ESXi and VMware vCenter servers, deployed as a malicious remote administration tool"
-        },
-        {
-          "v": "ESXiArgs",
-          "q": "a ransomware campaign — publicly tracked as ESXiArgs"
-        },
-        {
-          "v": "Alphv",
-          "q": "Alphv, Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE"
+          "q": "leveraged the open-source proxy tool rsocx to"
         },
         {
           "v": "Lockbit",
-          "q": "Alphv, Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE"
+          "q": "Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER"
         },
         {
           "v": "Defray",
-          "q": "Alphv, Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER, BITWISE SPIDER and SPRITE"
+          "q": "Lockbit and Defray — tracked by CrowdStrike Intelligence as ALPHA SPIDER"
+        },
+        {
+          "v": "Alphv",
+          "q": "Ransomware-as-a-service (RaaS) platforms including Alphv,"
+        },
+        {
+          "v": "MichaelKors",
+          "q": "identified a new RaaS program named MichaelKors, which provides affiliates with"
+        },
+        {
+          "v": "Nevada ransomware",
+          "q": "such as Nevada ransomware, have also been launched."
+        },
+        {
+          "v": "vmtools.py",
+          "q": "backdoor named vmtools.py to the file path"
         }
       ],
       "techniques": [
         {
-          "v": "theft of user credentials",
-          "q": "The most straightforward attack vector against an ESXi hypervisor is the theft of user credentials"
+          "v": "credential theft",
+          "q": "The most straightforward attack vector against an ESXi hypervisor is the theft of user credentials."
         },
         {
           "v": "privilege escalation",
-          "q": "privilege escalation is typically the"
+          "q": "Once an adversary with limited privileges has gained access to an ESXi server, privilege escalation is typically the"
         },
         {
           "v": "VM escape",
@@ -175,102 +171,111 @@
         },
         {
           "v": "remote code execution",
-          "q": "resulting in remote code execution (RCE)"
+          "q": "service, resulting in remote code execution (RCE)."
         },
         {
-          "v": "act as a proxy",
-          "q": "reconfigure the VM to act as a proxy for accessing the internal network"
+          "v": "use-after-free",
+          "q": "to trigger a use-after-free issue in the OpenSLP"
         },
         {
-          "v": "encryption",
-          "q": "allow encryption to proceed"
+          "v": "valid accounts",
+          "q": "using valid accounts or exploiting RCE vulnerabilities (e.g.,"
+        },
+        {
+          "v": "persistence",
+          "q": "The RAT allows for persistence on compromised servers as well as a means to interact with the"
+        },
+        {
+          "v": "extract sensitive information",
+          "q": "underlying virtual machines and to extract sensitive information."
         },
         {
           "v": "Log4Shell",
-          "q": "SILENT CHOLLIMA and eCrime actors such as PROPHET SPIDER — have used Log4Shell"
+          "q": "have used Log4Shell (CVE-2021-"
         }
       ],
       "cves": [
         {
           "v": "CVE-2020-3992",
-          "q": "vulnerable to CVE-2020-3992 or CVE-2021-21974"
+          "q": "exposed VMware ESXi hypervisors vulnerable to CVE-2020-3992 or CVE-2021-21974."
         },
         {
           "v": "CVE-2021-21974",
-          "q": "vulnerable to CVE-2020-3992 or CVE-2021-21974"
+          "q": "CVE-2021-21974 allows an unauthenticated network-adjacent adversary to execute arbitrary code on affected VMware"
         },
         {
           "v": "CVE-2016-7463",
-          "q": "tracked as CVE-2016-7463, CVE-2017-4940 and CVE-2020-3955 can potentially be targeted"
+          "q": "vulnerabilities tracked as CVE-2016-7463, CVE-2017-4940 and CVE-2020-3955 can potentially be targeted as a"
         },
         {
           "v": "CVE-2017-4940",
-          "q": "tracked as CVE-2016-7463, CVE-2017-4940 and CVE-2020-3955 can potentially be targeted"
+          "q": "vulnerabilities tracked as CVE-2016-7463, CVE-2017-4940 and CVE-2020-3955 can potentially be targeted as a"
         },
         {
           "v": "CVE-2020-3955",
-          "q": "tracked as CVE-2016-7463, CVE-2017-4940 and CVE-2020-3955 can potentially be targeted"
-        },
-        {
-          "v": "CVE-2012-1517",
-          "q": "only two — CVE-2012-1517 and CVE-2012-1516 — target a communication"
-        },
-        {
-          "v": "CVE-2012-1516",
-          "q": "only two — CVE-2012-1517 and CVE-2012-1516 — target a communication"
-        },
-        {
-          "v": "CVE-2022-31705",
-          "q": "such as USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM"
-        },
-        {
-          "v": "CVE-2021-22041",
-          "q": "such as USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM"
-        },
-        {
-          "v": "CVE-2021-22040",
-          "q": "such as USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM"
-        },
-        {
-          "v": "CVE-2021-22045",
-          "q": "CD-ROM (CVE-2021-22045) or SVGA"
+          "q": "vulnerabilities tracked as CVE-2016-7463, CVE-2017-4940 and CVE-2020-3955 can potentially be targeted as a"
         },
         {
           "v": "CVE-2021-21985",
-          "q": "exploiting RCE vulnerabilities (e.g., CVE-2021-21985)"
+          "q": "CVE-2021-21985). Although these vulnerabilities have been addressed by VMware, these services should"
+        },
+        {
+          "v": "CVE-2012-1517",
+          "q": "only two — CVE-2012-1517 and CVE-2012-1516 — target a communication component between the VM and"
+        },
+        {
+          "v": "CVE-2012-1516",
+          "q": "only two — CVE-2012-1517 and CVE-2012-1516 — target a communication component between the VM and"
+        },
+        {
+          "v": "CVE-2022-31705",
+          "q": "USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM (CVE-2021-22045) or SVGA (CVE-"
+        },
+        {
+          "v": "CVE-2021-22041",
+          "q": "USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM (CVE-2021-22045) or SVGA (CVE-"
+        },
+        {
+          "v": "CVE-2021-22040",
+          "q": "USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM (CVE-2021-22045) or SVGA (CVE-"
+        },
+        {
+          "v": "CVE-2021-22045",
+          "q": "USB (CVE-2022-31705, CVE-2021-22041, CVE-2021-22040), CD-ROM (CVE-2021-22045) or SVGA (CVE-"
         }
       ],
       "figures": [
         {
-          "v": "approximately 40",
-          "q": "Of the approximately 40 vulnerabilities potentially facilitating VM escape through the virtualization component"
+          "v": "approximately 40 vulnerabilities",
+          "q": "Of the approximately 40 vulnerabilities potentially facilitating VM escape through the virtualization component,"
         },
         {
-          "v": "at least three",
-          "q": "involves at least three different exploits"
+          "v": "at least three different exploits",
+          "q": "virtualization component of ESXi involves at least three different exploits, as illustrated below:"
         },
         {
-          "v": "top five",
-          "q": "top five recommendations that organizations should implement"
+          "v": "top five recommendations",
+          "q": "Listed below are CrowdStrike’s top five recommendations that organizations should implement to mitigate the"
         }
       ]
     },
     "subject": null,
     "hedges": [
-      "The report states its assessment that adversaries will likely keep targeting VMware virtualization infrastructure is made with high confidence.",
-      "The report says VM-escape exploit chains need several exploits, no public proof-of-concept exists as of writing, and only advanced actors likely have the capability.",
-      "The report says none of the cross-site scripting vulnerabilities are known to be exploited in the wild, and it is not aware of exploitation of CVE-2021-22043.",
-      "The report cites industry reporting that credential theft appears to be the primary attack vector against ESXi servers.",
-      "The report notes VMware has deprecated its knowledge base article on third-party agents and antivirus on ESXi as outdated.",
-      "The report defines high confidence as not implying absolute certainty; such judgments still carry a marginal probability of being inaccurate."
+      "Credential theft appears to be the primary attack vector, according to industry reporting.",
+      "CrowdStrike Intelligence assesses with high confidence that adversaries will likely continue to target VMware virtualization infrastructure.",
+      "Only advanced actors, such as nation-state adversaries, likely possess the capabilities needed for the multi-exploit VM escape chain.",
+      "As of writing, no publicly available proof-of-concept code exists for the multi-exploit VM escape chain.",
+      "CrowdStrike Intelligence is not aware of in-the-wild exploitation of CVE-2021-22043.",
+      "The attribution of Log4Shell use to named adversaries is presented by CrowdStrike Intelligence as an assessment.",
+      "The editor's note says VMware's antivirus guidance for ESXi is outdated and considered deprecated."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:40:23Z",
-      "ok": false,
-      "note": "summary: The summary calls both OpenSLP CVEs 'exploited'. The text says CVE-2021-21974 'has not been previously exploited in the wild'. Only CVE-2020-3992 is st",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:40:23Z",
+        "ok": false,
+        "note": "summary: The summary calls both OpenSLP CVEs 'exploited'. The text says CVE-2021-21974 'has not been previously exploited in the wild'. Only CVE-2020-3992 is st",
+        "by": "auditor"
+      }
+    ]
   }
 }

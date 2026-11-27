@@ -1,11 +1,11 @@
 {
   "6fc0a63dcad44a5acddd26dc1f10e2721e0b3403": {
     "sha1": "6fc0a63dcad44a5acddd26dc1f10e2721e0b3403",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T03:31:49Z",
+    "read_at": "2026-11-27T03:51:03Z",
     "model": "haiku",
-    "summary": "The UK, with allies, holds the Chinese state responsible for a pervasive pattern of hacking. The NCSC assessed it was highly likely that HAFNIUM, associated with the Chinese state, was responsible for early-2021 intrusions that gained access to networks worldwide via Microsoft Exchange servers, affecting at least 30,000 organisations in the US alone according to open-source reporting. The UK attributes activity known as APT40 and APT31 to the Chinese Ministry of State Security, including targeting of maritime industries, naval defence contractors and government entities such as the Finnish…",
+    "summary": "A UK government statement, issued through the National Cyber Security Centre (part of GCHQ), attributes early-2021 intrusions via Microsoft Exchange servers to China. It assesses HAFNIUM, associated with the Chinese state, as highly likely responsible. It attributes APT40 and APT31 to the Chinese Ministry of State Security. APT40 targeted maritime industries and naval defence contractors in the US and Europe. APT31 targeted government entities, including the Finnish parliament in 2020. Open-source reporting indicates at least 30,000 organisations were compromised in the US alone.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
@@ -15,11 +15,6 @@
           "by": "National Cyber Security Centre (NCSC)"
         },
         {
-          "v": "Chinese Ministry of State Security",
-          "q": "The UK is also attributing the Chinese Ministry of State Security as being behind activity known in open source as",
-          "by": "UK government"
-        },
-        {
           "v": "APT40",
           "q": "Activity relating to APT40 included the targeting maritime industries and naval defence contractors in the US and",
           "by": "UK government"
@@ -27,6 +22,11 @@
         {
           "v": "APT31",
           "q": "for APT31 the targeting of government entities, including the Finnish parliament in 2020.",
+          "by": "UK government"
+        },
+        {
+          "v": "Chinese Ministry of State Security",
+          "q": "The UK is also attributing the Chinese Ministry of State Security as being behind activity known in open source as",
           "by": "UK government"
         }
       ],
@@ -46,7 +46,7 @@
       ],
       "countries": [
         {
-          "v": "China",
+          "v": "UK",
           "q": "The UK has revealed that Chinese state-backed actors were responsible for gaining access to computer networks"
         },
         {
@@ -63,12 +63,12 @@
         {
           "v": "early 2021",
           "q": "The attacks took place in early 2021 and open-source reporting indicates that at least 30,000 organisations have",
-          "what": "Attacks took place"
+          "what": "Microsoft Exchange server attacks took place"
         },
         {
           "v": "2020",
           "q": "for APT31 the targeting of government entities, including the Finnish parliament in 2020.",
-          "what": "APT31 targeted the Finnish parliament"
+          "what": "APT31 targeting of the Finnish parliament"
         }
       ],
       "tools": [],
@@ -76,37 +76,36 @@
         {
           "v": "gaining access to computer networks",
           "q": "The UK has revealed that Chinese state-backed actors were responsible for gaining access to computer networks"
-        },
-        {
-          "v": "large-scale espionage",
-          "q": "The attack on Microsoft Exchange software was highly likely to enable large-scale espionage, including acquiring"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "30,000 organisations",
-          "q": "The attacks took place in early 2021 and open-source reporting indicates that at least 30,000 organisations have"
+          "v": "30,000",
+          "q": "open-source reporting indicates that at least 30,000 organisations have"
         },
         {
-          "v": "70 affected organisations",
-          "q": "the NCSC issued tailored advice to over 70 affected organisations to enable them successfully to mitigate the"
+          "v": "over 70",
+          "q": "issued tailored advice to over 70 affected organisations to enable them successfully to mitigate the"
         }
       ]
     },
-    "subject": null,
+    "subject": {
+      "type": "incident",
+      "name": "Microsoft Exchange server compromises (early 2021)"
+    },
     "hedges": [
-      "NCSC assessed that it was highly likely that HAFNIUM, associated with the Chinese state, was responsible for the activity.",
-      "The attack on Microsoft Exchange software was highly likely to enable large-scale espionage.",
-      "Open-source reporting indicates that at least 30,000 organisations have been compromised, with many more affected worldwide."
+      "The NCSC assessed it was highly likely that HAFNIUM was responsible, which the report presents as an assessment rather than a certainty.",
+      "The 30,000 figure comes from open-source reporting, which the report cites as an indication.",
+      "The report describes the Exchange attack as highly likely to enable large-scale espionage."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T03:39:26Z",
-      "ok": false,
-      "note": "figures[1]: The text says the NCSC advised \"over 70\" affected organisations. The value \"70\" drops the \"over\" and gives a precise figure the text does not.",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T03:39:26Z",
+        "ok": false,
+        "note": "figures[1]: The text says the NCSC advised \"over 70\" affected organisations. The value \"70\" drops the \"over\" and gives a precise figure the text does not.",
+        "by": "auditor"
+      }
+    ]
   }
 }

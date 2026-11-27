@@ -24,95 +24,97 @@
   },
   "00dcdb65370a0b56b2e7890e259ec8fb303d6924": {
     "sha1": "00dcdb65370a0b56b2e7890e259ec8fb303d6924",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:13:12Z",
+    "read_at": "2026-11-27T13:51:30Z",
     "model": "haiku",
-    "summary": "Trend Micro report on exposed Redis servers, which lack authentication by default, being abused for remote code execution. Attackers write cron tasks through the config command or push malicious replication modules. Captured malware, including the Kinsing downloader and a multiplatform shell-based worm, installs XMRig cryptocurrency miners and spreads to other vulnerable Redis instances using weak-password guessing. The report also lists indicators of compromise and detection rules.",
+    "summary": "Trend Micro reports that exposed Redis instances without authentication or TLS can be abused for remote code execution, as seen in honeypot captures. Two abuse methods are described: writing cron tasks through the config command, and loading a malicious module through slaveof replication. The samples include a multiplatform shell and PowerShell worm that installs cryptocurrency-mining malware, and the Kinsing malware, which installs the XMRig Monero miner. The report gives security recommendations and lists Trend Micro protection rules and indicators of compromise.",
     "kind": "malware-analysis",
     "facts": {
-      "actors": [
-        {
-          "v": "attackers",
-          "q": "We’ve observed attackers using these scenarios in a honeypot",
-          "by": "Trend Micro (the report)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "2020-04-21",
           "q": "Published: 2020-04-21 · Archived: 2026-04-05 13:12:51 UTC",
-          "what": "Report published"
+          "what": "Article published"
         },
         {
           "v": "October 2018",
-          "q": "Redis 5.0, which was released in October 2018",
+          "q": "starting with Redis 5.0, which was released in October 2018, Redis no longer uses the word",
           "what": "Redis 5.0 released"
         }
       ],
       "tools": [
         {
           "v": "Kinsing",
-          "q": "downloads a version of the Kinsing malware"
+          "q": "Case 2: Kinsing malware"
         },
         {
           "v": "XMRig",
-          "q": "downloads and executes the XMRig Monero"
+          "q": "This malware installs the XMRig malware and names it kdevtmpfsi."
         },
         {
           "v": "masscan",
-          "q": "Download and install masscan"
+          "q": "Scan port 6379 with masscan. The scan is run with the shard"
         },
         {
           "v": "pnscan",
-          "q": "Scan port 6379 with pnscan"
+          "q": "Scan port 6379 with pnscan."
         }
       ],
       "techniques": [
         {
-          "v": "abusing the config command",
+          "v": "Redis config command abuse to write cron tasks for code execution",
           "q": "Scenario 1: Abusing the config command"
         },
         {
-          "v": "abusing the slaveof feature",
+          "v": "Redis slaveof replication abuse to load a malicious module",
           "q": "Scenario 2: Abusing the slaveof feature"
         },
         {
-          "v": "remote code execution",
-          "q": "Exposed Redis Instances Abused for Remote Code Execution"
+          "v": "Persistence via cron entry",
+          "q": "Add persistence through updata.sh, which has the same contents as init.sh and is added to crontab."
         },
         {
-          "v": "brute-force password guessing",
-          "q": "resistant to brute-force attacks"
+          "v": "SSH key installation for access",
+          "q": "Install a new Secure Shell (SSH) authorized key into"
         },
         {
-          "v": "wormlike self-spreading",
-          "q": "“wormlike” spreading capability"
+          "v": "Weak password guessing against Redis",
+          "q": "The list of weak passwords used include:"
         },
         {
-          "v": "cryptocurrency mining",
-          "q": "Cryptocurrency Mining"
+          "v": "Mass scanning for exposed Redis port",
+          "q": "Scan port 6379 with pnscan."
+        },
+        {
+          "v": "Remote code execution via exposed Redis",
+          "q": "abused to perform remote code execution (RCE), as demonstrated by"
         }
       ],
       "cves": [],
       "figures": [
         {
-          "v": "8,000",
-          "q": "more than 8,000 unsecured Redis"
+          "v": "more than 8,000 unsecured Redis instances",
+          "q": "about more than 8,000 unsecured Redis instances"
         },
         {
           "v": "over 200 commands",
-          "q": "over 200 commands"
+          "q": "susceptible to having over 200 commands"
         },
         {
-          "v": "22,000",
-          "q": "22,000 IP address subsets"
+          "v": "22,000 IP address subsets",
+          "q": "22,000 IP address subsets."
         },
         {
-          "v": "55 kB",
-          "q": "The replica received about 55 kB"
+          "v": "about 55 kB",
+          "q": "The replica received about 55 kB from the master,"
+        },
+        {
+          "v": "3333, 5555, 7777, and 9999",
+          "q": "Block outgoing traffic to ports 3333, 5555, 7777, and 9999 using"
         }
       ]
     },
@@ -121,18 +123,18 @@
       "name": "Kinsing"
     },
     "hedges": [
-      "this may not be the be-all and end-all of the possible abuse surrounding exposed Redis instances",
-      "an action that may have been inspired by this repository",
-      "As of the publication of this article, there are no transactions associated with the hard-coded Ethereum address."
+      "The report says cryptocurrency mining 'may not be the be-all and end-all' of the possible abuse of exposed Redis instances.",
+      "The Alibaba Cloud uninstall action in the worm 'may have been inspired by' a repository, per the report.",
+      "As of publication, there are no transactions associated with the hard-coded Ethereum address."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:25:42Z",
-      "ok": false,
-      "note": "summary: Calls Kinsing a \"downloader\". The text describes Kinsing as a bot with scanning and backdoor features, and the malicious Redis module is what downloads",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:25:42Z",
+        "ok": false,
+        "note": "summary: Calls Kinsing a \"downloader\". The text describes Kinsing as a bot with scanning and backdoor features, and the malicious Redis module is what downloads",
+        "by": "auditor"
+      }
+    ]
   },
   "00ed8ff824930cc09fa3ce64165c8f25d476c290": {
     "sha1": "00ed8ff824930cc09fa3ce64165c8f25d476c290",
@@ -269,6 +271,12 @@
       "The report says the infected organizations appear to be limited.",
       "The report says code-level similarities led it to believe Duqu was based on the same source code as Stuxnet.",
       "The report says the hardcoded User-Agent may be used to identify infected machines."
-    ]
+    ],
+    "audit": {
+      "at": "2026-11-27T13:48:15Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   }
 }

@@ -119,23 +119,23 @@
   },
   "e012644ba7c04c8fc85518ff6ffb20e4bef11b93": {
     "sha1": "e012644ba7c04c8fc85518ff6ffb20e4bef11b93",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:08:39Z",
+    "read_at": "2026-11-27T13:50:31Z",
     "model": "haiku",
-    "summary": "Sekoia's threat intelligence team investigated the Quad7 (7777) botnet, which uses compromised, mostly TP-Link routers to relay password spraying against Microsoft 365 accounts. They monitored one router and recovered malware from a victim router in France: a Socks5 proxy and a bind shell named xlogin. The report links the activity to likely business email compromise by cybercriminals rather than an APT, but leaves attribution, the exploited vulnerabilities and the geographic distribution unresolved.",
+    "summary": "Sekoia's report on the Quad7 (7777) botnet: compromised TP-Link routers relay password spraying against Microsoft 365 accounts. Researchers monitored one router, recovered its binaries from a physical intervention in France, and captured one week of network traffic. They link the activity to possible business email compromise by cybercriminals rather than an APT. Attribution, the exploited vulnerabilities and the geographic spread remain unresolved.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Quad7 botnet operators",
           "q": "To our understanding, the Quad7 botnet operators leverage compromised TP-Link routers to relay",
-          "by": "Sekoia TDR (the report authors)"
+          "by": "Sekoia (report authors)"
         },
         {
-          "v": "cybercriminals",
-          "q": "Therefore, the threat actor behind the Quad7 botnet does not appear to be an APT but more likely cybercriminals",
-          "by": "Sekoia TDR (the report authors)"
+          "v": "cybercriminal activity",
+          "q": "we link the Quad7 botnet activity to possible long term business email compromise (BEC) cybercriminal activity rather than an APT threat actor.",
+          "by": "Sekoia (report authors)"
         }
       ],
       "sectors": [
@@ -147,23 +147,23 @@
       "countries": [
         {
           "v": "Bulgaria",
-          "q": "as Bulgaria remains the most infected country, followed by Russia, the"
+          "q": "as Bulgaria remains the most infected country, followed by Russia, the US, and Ukraine, as shown below."
         },
         {
           "v": "Russia",
-          "q": "as Bulgaria remains the most infected country, followed by Russia, the"
+          "q": "as Bulgaria remains the most infected country, followed by Russia, the US, and Ukraine, as shown below."
         },
         {
           "v": "US",
-          "q": "US, and Ukraine, as shown below."
+          "q": "as Bulgaria remains the most infected country, followed by Russia, the US, and Ukraine, as shown below."
         },
         {
           "v": "Ukraine",
-          "q": "US, and Ukraine, as shown below."
+          "q": "as Bulgaria remains the most infected country, followed by Russia, the US, and Ukraine, as shown below."
         },
         {
           "v": "France",
-          "q": "router compromised by the Quad7 botnet in France."
+          "q": "identifying some victims in France."
         }
       ],
       "dates": [
@@ -174,19 +174,29 @@
         },
         {
           "v": "2024-07-23",
-          "q": "Published: 2024-07-23",
-          "what": "The Sekoia report was published"
+          "q": "Published: 2024-07-23 · Archived: 2026-04-06 00:18:49 UTC",
+          "what": "Sekoia published this investigation report"
         },
         {
-          "v": "2022",
-          "q": "the Quad7 operators persist in maintaining the infrastructure established in 2022",
-          "what": "The botnet infrastructure was established"
+          "v": "August 2022",
+          "q": "dropping from 16,000 in August 2022, to ~7,000 in July 2024",
+          "what": "Unique compromised IP count was about 16,000"
+        },
+        {
+          "v": "July 2024",
+          "q": "dropping from 16,000 in August 2022, to ~7,000 in July 2024",
+          "what": "Unique compromised IP count was about 7,000"
+        },
+        {
+          "v": "2024",
+          "q": "Of the eleven IPs observed in 2024, we were able to identify and contact three individuals",
+          "what": "Eleven victim IPs observed in 2024; three individuals contacted"
         }
       ],
       "tools": [
         {
           "v": "xlogin",
-          "q": "to a simple authenticated shell named xlogin"
+          "q": "redirected incoming connections to a simple authenticated shell named xlogin"
         },
         {
           "v": "Socks5 proxy",
@@ -197,65 +207,73 @@
           "q": "a Telnet binary coming from BusyBox"
         },
         {
-          "v": "microsocks",
-          "q": "Detects the microsocks project developed by rofl0r"
+          "v": "Dropbear",
+          "q": "launched Dropbear (a pre-installed lightweight SSH agent)"
         }
       ],
       "techniques": [
         {
           "v": "password spraying",
-          "q": "leverage compromised TP-Link routers to relay password spraying attacks against Microsoft 365 accounts"
+          "q": "This suggests that a list of passwords is being tested on each account (password spraying), rather than"
         },
         {
-          "v": "bind shell",
-          "q": "related to the xlogin bind shell and who was interacting with it"
+          "v": "compromised TP-Link routers",
+          "q": "To our understanding, the Quad7 botnet operators leverage compromised TP-Link routers to relay"
+        },
+        {
+          "v": "unauthenticated file disclosure",
+          "q": "chained an unauthenticated file disclosure"
         },
         {
           "v": "command injection",
-          "q": "and a command injection."
+          "q": "(according to a Google search) and a command injection."
         },
         {
-          "v": "authentication bypass",
-          "q": "that the attackers had an authentication bypass leading to an RCE or an unauthenticated RCE"
+          "v": "re-compromising routers",
+          "q": "by re-compromising routers upon their restart"
+        },
+        {
+          "v": "TFTP file transfer",
+          "q": "who use the TFTP protocol"
+        },
+        {
+          "v": "disable the TP-Link management interface",
+          "q": "to disable the TP-Link management interface after compromising it"
         }
       ],
       "cves": [],
       "figures": [
         {
+          "v": "16,000",
+          "q": "dropping from 16,000 in August 2022, to ~7,000 in July 2024"
+        },
+        {
+          "v": "~7,000",
+          "q": "dropping from 16,000 in August 2022, to ~7,000 in July 2024"
+        },
+        {
           "v": "0.11%",
           "q": "we have detected these attacks on 0.11% of our monitored Microsoft 365 accounts"
         },
         {
-          "v": "16,000",
-          "q": "involved dropping from 16,000 in August 2022, to ~7,000 in July 2024."
-        },
-        {
-          "v": "~7,000",
-          "q": "involved dropping from 16,000 in August 2022, to ~7,000 in July 2024."
-        },
-        {
-          "v": "912 connections",
-          "q": "912 connections were made using the socks"
+          "v": "912",
+          "q": "Our network capture revealed that 912 connections were made using the socks"
         },
         {
           "v": "27%",
           "q": "27% of organisations (Entra ID tenants) were targeted over the"
         },
         {
-          "v": "98%",
-          "q": "over 98% of the authentication attempts identified by this heuristic can be conclusively"
-        },
-        {
-          "v": "one week",
-          "q": "we collected one week’s data"
-        },
-        {
-          "v": "40 hours",
+          "v": "one every 40 hours",
           "q": "The rate of attempts per account is on average about one every 40 hours"
         },
         {
+          "v": "over 98%",
+          "q": "over 98% of the authentication attempts identified by this heuristic can be conclusively"
+        },
+        {
           "v": "11MB",
-          "q": "our small network capture (11MB) obtained from connections"
+          "q": "analysing our small network capture (11MB) obtained from connections to the ports"
         }
       ]
     },
@@ -264,22 +282,21 @@
       "name": "Quad7 botnet"
     },
     "hedges": [
-      "To our understanding, the Quad7 botnet operators leverage compromised TP-Link routers to relay password spraying attacks",
-      "we cannot be completely certain that the compromised assets were all TP-Link routers",
-      "we link the Quad7 botnet activity to possible long term business email compromise (BEC) cybercriminal activity rather than an APT threat actor",
-      "we believe this botnet is primarily used to conduct simple password spraying attacks, rather than traditional brute force attacks",
-      "we were unable to identify any evidence pointing to a known threat actor",
-      "we are almost certain that the attackers had an authentication bypass leading to an RCE or an unauthenticated RCE",
-      "This is a very weak link as GobRAT and the other implants dropped by the same threat actor are modular and way more sophisticated",
-      "It is important to remember that our investigation was limited to one router and one week of monitoring"
+      "Report says it cannot be completely certain that almost all compromised assets were TP-Link routers.",
+      "Report says it links the activity to possible long-term BEC cybercriminal activity rather than an APT threat actor.",
+      "Report says attribution of the activity cluster to a specific threat actor remains a mystery.",
+      "Report calls the GobRAT infrastructure match a very weak link.",
+      "Report says it is almost certain attackers had an authentication bypass leading to RCE or unauthenticated RCE.",
+      "Report says its investigation was limited to one router and one week of monitoring.",
+      "Report says the botnet is primarily used for password spraying rather than brute force, based on a small capture."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:26:27Z",
-      "ok": false,
-      "note": "techniques[2]: The command injection (Parental Control page) was used by a different threat actor, which the report says it does not believe is related to Quad7",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:26:27Z",
+        "ok": false,
+        "note": "techniques[2]: The command injection (Parental Control page) was used by a different threat actor, which the report says it does not believe is related to Quad7",
+        "by": "auditor"
+      }
+    ]
   }
 }

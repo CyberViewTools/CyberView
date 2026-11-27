@@ -296,7 +296,7 @@
   },
   "4485a72e8dfe4255f38ac3e0f3f2c549ec82a01f": {
     "sha1": "4485a72e8dfe4255f38ac3e0f3f2c549ec82a01f",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T13:39:48Z",
     "model": "haiku",
@@ -669,7 +669,15 @@
       "Mandiant had earlier attributed XakNet and CyberArmyofRussia_Reborn activity to APT28; re-analysis linked the latter to APT44 with high confidence.",
       "Election-related threat is framed as what the group may pose in the near term, not as a confirmed operation.",
       "Several judgments are stated as likely or almost certain rather than confirmed."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T13:48:33Z",
+      "ok": false,
+      "note": "actors[1].by: Not clearly wrong, but see actors[2]: the text says multiple governments attribute APT44 to Unit 74455 within the GRU.; actors[2].by: The quote si",
+      "by": "auditor"
+    }
   },
   "44c6dff1f7f5ad0c568066a6a68ab728cdf6ac3f": {
     "sha1": "44c6dff1f7f5ad0c568066a6a68ab728cdf6ac3f",
@@ -792,6 +800,12 @@
       "The remote C2 server was down during the analysis of this sample.",
       "Unfortunately the URL was inaccessible as of writing.",
       "If enabled, Agent Tesla has two built in persistence mechanisms"
-    ]
+    ],
+    "audit": {
+      "at": "2026-11-27T13:48:33Z",
+      "ok": true,
+      "note": "",
+      "by": "auditor"
+    }
   }
 }

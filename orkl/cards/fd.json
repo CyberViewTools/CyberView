@@ -125,7 +125,7 @@
   },
   "fd01a4f0faec85d7c66faedba9e9dc8ab82fd6cb": {
     "sha1": "fd01a4f0faec85d7c66faedba9e9dc8ab82fd6cb",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T03:26:14Z",
     "model": "haiku",
@@ -270,6 +270,14 @@
       "Sygnia says the attack vector is 'often' leveraged by the listed ransomware tools and groups.",
       "Sygnia's analysis 'indicates' that attacks on virtualisation environments 'typically' follow a similar pattern.",
       "The report says threat actors 'might' try to seize control of backup systems and 'might' also reset server passwords."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T03:40:23Z",
+      "ok": false,
+      "note": "hedges[2]: The two 'might' hedges come from different phases. 'Might try to seize control of backup systems' is in the backup-compromise phase. 'Might also rese",
+      "by": "auditor"
+    }
   }
 }

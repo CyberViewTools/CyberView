@@ -93,18 +93,18 @@
   },
   "3357fa14af664294f29d790c60f4ab45ccbbfd3a": {
     "sha1": "3357fa14af664294f29d790c60f4ab45ccbbfd3a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:34:27Z",
+    "read_at": "2026-11-27T14:08:46Z",
     "model": "haiku",
-    "summary": "Kaspersky's threat page on GCMAN, a group that uses APT techniques and legitimate penetration testing tools to infect networks and steal funds by moving money from financial institutions to e-currency services. Spear-phishing with a malicious RAR archive is the initial infection method. A cron script on the bank's server generates transactions at $200 per minute. Kaspersky names detection names for the malware and says it released indicators of compromise. The page was published 2017-09-13.",
+    "summary": "Kaspersky's threat page on GCMAN, a group that uses APT techniques and legitimate penetration testing tools to attack financial institutions. Initial access is spear-phishing with malicious RAR archives. The malware was compiled with GCC and plants a cron script on bank servers that generates transactions at $200 per minute. Kaspersky products detect it under Backdoor and Trojan-Downloader GCMan names, and Kaspersky released indicators of compromise. Published 2017-09-13.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "GCMAN",
           "q": "GCMAN is a group that uses APT techniques and legitimate penetration testing tools to infect computer networks",
-          "by": "Kaspersky (report author)"
+          "by": "Kaspersky (the report's publisher)"
         }
       ],
       "sectors": [
@@ -118,44 +118,40 @@
         {
           "v": "2017-09-13",
           "q": "Published: 2017-09-13 · Archived: 2026-04-05 22:48:20 UTC",
-          "what": "Report published"
+          "what": "Kaspersky page published"
         },
         {
           "v": "2026-04-05",
           "q": "Published: 2017-09-13 · Archived: 2026-04-05 22:48:20 UTC",
-          "what": "Page archived"
+          "what": "Kaspersky page archived"
         }
       ],
       "tools": [
         {
+          "v": "GCC compiler",
+          "q": "The malware was compiled with the help of the GCC compiler, a rarity among malware writers."
+        },
+        {
+          "v": "cron script",
+          "q": "The group also plants a cron script into the bank's server to generate financial transactions at the rate of $200 per minute."
+        },
+        {
           "v": "Backdoor.Win32.GCMan",
           "q": "Backdoor.Win32.GCMan; Backdoor.Win64.GCMan; Trojan-Downloader.Win32.GCMan"
-        },
-        {
-          "v": "Backdoor.Win64.GCMan",
-          "q": "Backdoor.Win32.GCMan; Backdoor.Win64.GCMan; Trojan-Downloader.Win32.GCMan"
-        },
-        {
-          "v": "Trojan-Downloader.Win32.GCMan",
-          "q": "Backdoor.Win32.GCMan; Backdoor.Win64.GCMan; Trojan-Downloader.Win32.GCMan"
-        },
-        {
-          "v": "GCC compiler",
-          "q": "was compiled with the help of the GCC compiler, a rarity among malware writers."
-        },
-        {
-          "v": "legitimate penetration testing tools",
-          "q": "GCMAN is a group that uses APT techniques and legitimate penetration testing tools to infect computer networks"
         }
       ],
       "techniques": [
         {
-          "v": "spear-phishing emails",
+          "v": "spear-phishing",
           "q": "The initial infection mechanism is handled by spear-phishing."
         },
         {
-          "v": "planted scheduled script on the bank's server",
-          "q": "The group also plants a cron script into the bank's server to generate financial transactions at the rate of $200 per minute."
+          "v": "malicious RAR archive attachment",
+          "q": "A financial institution is targeted with e-mails carrying a malicious RAR archive."
+        },
+        {
+          "v": "steal funds by transferring money",
+          "q": "attempt to steal funds by transferring money from financial institutions to e-currency services."
         }
       ],
       "cves": [],
@@ -171,13 +167,13 @@
       "name": "GCMAN"
     },
     "hedges": [],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:48:24Z",
-      "ok": false,
-      "note": "summary: The text says GCMAN infects networks and attempts to steal funds. The summary says it steals funds, which drops the hedge 'attempt' and states the thef",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:48:24Z",
+        "ok": false,
+        "note": "summary: The text says GCMAN infects networks and attempts to steal funds. The summary says it steals funds, which drops the hedge 'attempt' and states the thef",
+        "by": "auditor"
+      }
+    ]
   }
 }

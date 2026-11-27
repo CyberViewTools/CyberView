@@ -432,11 +432,11 @@
   },
   "e66c3e6b12e93b94f0885ef6f8d74cbfa9702bbc": {
     "sha1": "e66c3e6b12e93b94f0885ef6f8d74cbfa9702bbc",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:28:28Z",
+    "read_at": "2026-11-27T14:07:35Z",
     "model": "haiku",
-    "summary": "Cisco Talos reports on XorDDoS, a Linux DDoS trojan first identified in 2014. Talos describes a new VIP sub-controller and a central controller that manage multiple bot controllers. Talos observed spread from November 2023 to February 2025, with the United States the largest share of compromised victims and attack activity. Talos assesses with high confidence that the operators are Chinese-speaking, and that the trojan tooling is sold on the underground market. The trojan gains access through SSH brute-force attacks and then persists using init and cron scripts.",
+    "summary": "Cisco Talos report on XorDDoS, a Linux DDoS trojan first identified in 2014. Talos observed it spreading from November 2023 to February 2025, with nearly 50 percent of successfully compromised victims in the United States and over 70 percent of attempted attacks targeting the United States. The report describes a new VIP sub-controller and a central controller that manages multiple sub-controllers, and assesses the toolset as a product developed for sale. Talos assesses with high confidence that the operators are Chinese-speaking. Infection relies on SSH brute-force attacks and root…",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
@@ -453,63 +453,54 @@
           "q": "with nearly 50 percent of its successfully compromised victims located in the United States."
         },
         {
-          "v": "Saudi Arabia",
-          "q": "Saudi Arabia, France, Turkey, the United Arab Emirates and South Korea."
+          "v": "Taiwan",
+          "q": "United States, Taiwan, Canada, Japan, Brazil, Paraguay, Argentina, the United Kingdom, the Netherlands, Italy,"
+        },
+        {
+          "v": "China",
+          "q": "Ukraine, Germany, Thailand, China, India, Israel, Venezuela, Switzerland, Singapore, Finland, Australia, Saudi"
         }
       ],
       "dates": [
         {
+          "v": "2025-04-17",
+          "q": "Published: 2025-04-17 · Archived: 2026-04-02 10:46:37 UTC",
+          "what": "Talos published the report on XorDDoS"
+        },
+        {
           "v": "2014",
           "q": "First identified in 2014, its sub-controller was uncovered in 2015.",
-          "what": "XorDDoS first identified"
+          "what": "XorDDoS was first identified"
         },
         {
           "v": "2015",
-          "q": "Although the sub-controller for XorDDoS was exposed in 2015, attacks have persisted over the last decade.",
-          "what": "XorDDoS sub-controller exposed"
+          "q": "Although the sub-controller for XorDDoS was exposed in 2015",
+          "what": "The XorDDoS sub-controller was exposed"
         },
         {
-          "v": "2017",
-          "q": "trojan, the first instance of which we traced back to 2017.",
-          "what": "First instance of the VIP trojan version traced"
-        },
-        {
-          "v": "November 2023",
+          "v": "November 2023 to February 2025",
           "q": "continuing to spread globally between November 2023 and February 2025.",
-          "what": "Start of observation period"
-        },
-        {
-          "v": "February 2025",
-          "q": "continuing to spread globally between November 2023 and February 2025.",
-          "what": "End of observation period"
+          "what": "Period over which Talos observed XorDDoS activity"
         },
         {
           "v": "2024",
-          "q": "In 2024, Talos discovered a new “VIP” version of the XorDDoS sub-controller, which can control the",
-          "what": "Talos discovered new VIP sub-controller"
+          "q": "In 2024, Talos discovered a new “VIP” version of the XorDDoS sub-controller",
+          "what": "Talos discovered the new VIP sub-controller"
         },
         {
-          "v": "2025-04-17",
-          "q": "Published: 2025-04-17",
-          "what": "Talos report published"
+          "v": "2017",
+          "q": "the first instance of which we traced back to 2017.",
+          "what": "First VIP-version trojan instance traced"
         }
       ],
       "tools": [
         {
-          "v": "XorDDoS trojan",
-          "q": "The XorDDoS trojan is a well-known DDoS malware that targets Linux machines, turning them into"
-        },
-        {
-          "v": "XorDDoS builder",
-          "q": "The language settings of the muti-layer controller, XorDDoS builder and controller binding tool"
+          "v": "XorDDoS",
+          "q": "Cisco Talos observed an existing distributed denial-of-service (DDoS) malware known as XorDDoS,"
         },
         {
           "v": "central controller",
-          "q": "the central controller enables threat actors to manage multiple XorDDoS controllers"
-        },
-        {
-          "v": "controller binder",
-          "q": "The central controller can generate a controller binder that will inject a DLL file to the XorDDoS controller to"
+          "q": "Talos observed a new version of the sub-controller, which we call the \"central controller.\""
         },
         {
           "v": "CyberChef",
@@ -522,23 +513,39 @@
           "q": "Secure Shell (SSH) brute-force attacks to gain remote access to target devices."
         },
         {
-          "v": "init script and a cron job script",
+          "v": "init script and cron job script",
           "q": "the malware installs an init script and a cron job script."
         },
         {
+          "v": "round-robin attack",
+          "q": "A round-robin attack is a task performed by all online hosts."
+        },
+        {
+          "v": "Docker servers",
+          "q": "the trojan has expanded its reach to Docker servers, converting infected hosts into bots."
+        },
+        {
           "v": "DDoS attack",
-          "q": "to launch DDoS attack and the attacks are globalized."
+          "q": "launch DDoS attack and the attacks are globalized."
+        },
+        {
+          "v": "XOR key",
+          "q": "continues to use the same decryption function and the XOR key"
         }
       ],
       "cves": [],
       "figures": [
         {
+          "v": "over 70 percent",
+          "q": "over 70 percent of attacks using XorDDoS targeted the United States from"
+        },
+        {
           "v": "nearly 50 percent",
           "q": "with nearly 50 percent of its successfully compromised victims located in the United States."
         },
         {
-          "v": "over 70 percent",
-          "q": "A significant finding shows that over 70 percent of attacks using XorDDoS targeted the United States from"
+          "v": "64669, 64668 and 64667",
+          "q": "Snort SIDs for this threat are 64669, 64668 and 64667."
         }
       ]
     },
@@ -548,17 +555,17 @@
     },
     "hedges": [
       "Talos assess with high confidence that the operators are Chinese-speaking individuals.",
-      "The language settings ... strongly suggest that the operators are Chinese-speaking individuals.",
       "Talos believes that this collection is a product suite developed for sale.",
-      "Talos believes the 2015 version 1.4 panel is no longer in use by threat actors."
+      "the panel from 2015 was for version 1.4, the oldest version, which we believe is no longer in use by threat actors.",
+      "Talos' assessment that these tools are for sale."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:49:29Z",
-      "ok": false,
-      "note": "summary: The summary says the trojan tooling \"is sold on the underground market\". The text only says Talos believes the tools are a product suite developed for ",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:49:29Z",
+        "ok": false,
+        "note": "summary: The summary says the trojan tooling \"is sold on the underground market\". The text only says Talos believes the tools are a product suite developed for ",
+        "by": "auditor"
+      }
+    ]
   }
 }

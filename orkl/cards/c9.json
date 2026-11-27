@@ -453,18 +453,18 @@
   },
   "c9fbf6cbb9f5ab705b5081e1684ca27d4b60fa30": {
     "sha1": "c9fbf6cbb9f5ab705b5081e1684ca27d4b60fa30",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:39:09Z",
+    "read_at": "2026-11-27T14:09:54Z",
     "model": "haiku",
-    "summary": "BleepingComputer reports a wave of ransomware attacks on VMware ESXi servers that exploit CVE-2021-21974, a heap overflow in the OpenSLP service patched in February 2021. The new ESXiArgs ransomware encrypts VM files and replaces the login message and ESXi home page with ransom notes. About 120 servers were encrypted on the first day and 2,400 were detected as compromised. OVHcloud's early link to the Nevada ransomware operation was later withdrawn. Only four ransom payments were tracked, and a free recovery guide helped many victims.",
+    "summary": "News report on the ESXiArgs ransomware campaign (February 2023) that encrypted VMware ESXi servers still unpatched against CVE-2021-21974, an OpenSLP heap overflow patched in February 2021. Roughly 120 servers were encrypted on the first day, and about 2,400 were reported compromised per a Censys search. An early OVHcloud link to Nevada ransomware was withdrawn. The report says ESXiArgs is likely based on leaked Babuk code, and the encryption was reported as secure. Only four ransom payments ($88,000) were tracked, partly because a free recovery guide helped victims.",
     "kind": "incident",
     "facts": {
       "actors": [
         {
-          "v": "Nevada ransomware operation",
-          "q": "linking this massive wave of attacks targeting VMware ESXi servers with the Nevada ransomware operation.",
-          "by": "OVHcloud"
+          "v": "Nevada ransomware",
+          "q": "Nevada ransomware and are using CVE-2021-21974 as compromission vector",
+          "by": "OVHcloud (CISO Julien Levrard)"
         }
       ],
       "sectors": [],
@@ -477,90 +477,102 @@
         },
         {
           "v": "23 February 2021",
-          "q": "for which a patch has been available since 23 February 2021,",
+          "q": "a patch has been available since 23 February 2021",
           "what": "Patch for CVE-2021-21974 became available"
         },
         {
           "v": "February 6th",
           "q": "In an advisory published on February 6th, VMware confirmed that this attack exploits older",
-          "what": "VMware advisory said the attack exploits older ESXi flaws, not a zero-day"
+          "what": "VMware advisory confirming the attack exploits older ESXi flaws, not a zero-day"
         },
         {
-          "v": "December 2022",
-          "q": "discovered by Juniper in December 2022, allowing the threat actors to remotely",
-          "what": "Juniper discovered a custom Python backdoor for VMware ESXi"
+          "v": "2021",
+          "q": "which has been disabled by default since 2021",
+          "what": "OpenSLP service disabled by default"
         }
       ],
       "tools": [
         {
-          "v": "ESXiArgs",
-          "q": "New ESXiArgs ransomware"
+          "v": "ESXiArgs ransomware",
+          "q": "to deploy a new ESXiArgs ransomware"
         },
         {
-          "v": "encryptor",
-          "q": "encrypt - The encryptor ELF executable."
+          "v": "leaked Babuk source code",
+          "q": "leaked Babuk source code, which"
         },
         {
-          "v": "Babuk",
-          "q": "ransomware derived from the Babuk (ESXi variant) source code."
+          "v": "Sosemanuk",
+          "q": "Sosemanuk, a secure stream cipher."
         },
         {
-          "v": "Python backdoor",
-          "q": "deleting logs, removing a Python backdoor"
-        },
-        {
-          "v": "OpenSLP",
-          "q": "OpenSLP service that can be exploited by unauthenticated threat actors in low-complexity"
+          "v": "custom Python backdoor",
+          "q": "is the same custom Python backdoor for VMware"
         }
       ],
       "techniques": [
-        {
-          "v": "remote code execution",
-          "q": "old remote code execution vulnerability to deploy a new ESXiArgs ransomware."
-        },
         {
           "v": "heap overflow",
           "q": "caused by a heap overflow issue in the"
         },
         {
-          "v": "encrypts files",
-          "q": "The ransomware encrypts files with the .vmxf, .vmx, .vmdk, .vmsd, and .nvram extensions on"
+          "v": "remote code execution",
+          "q": "old remote code execution vulnerability"
+        },
+        {
+          "v": "unauthenticated",
+          "q": "can be exploited by unauthenticated threat actors"
+        },
+        {
+          "v": "file key is encrypted with RSA",
+          "q": "The file key is encrypted with RSA"
+        },
+        {
+          "v": "terminates all running virtual machines",
+          "q": "terminates all running virtual machines"
+        },
+        {
+          "v": "ESXi virtual machine's configuration files",
+          "q": "modify the ESXi virtual machine's configuration files"
         },
         {
           "v": "cleanup by deleting logs",
-          "q": "performs some cleanup by deleting logs, removing a Python backdoor"
-        },
-        {
-          "v": "ransom note",
-          "q": "index.html - The ransom note in HTML form that will replace VMware ESXi's home"
+          "q": "performs some cleanup by deleting logs"
         }
       ],
       "cves": [
         {
           "v": "CVE-2021-21974",
-          "q": "CVE-2021-21974 affects the following systems:"
+          "q": "CVE-2021-21974, the security flaw is caused by a heap overflow issue"
         }
       ],
       "figures": [
         {
-          "v": "approximately 120",
-          "q": "At the end of the first day of attacks, approximately 120 ESXi servers were encrypted."
+          "v": "120",
+          "q": "approximately 120 ESXi servers were encrypted"
         },
         {
-          "v": "2,400 VMware ESXi devices",
+          "v": "2,400",
           "q": "with 2,400 VMware ESXi devices"
         },
         {
           "v": "$88,000",
-          "q": "reporting only four ransom payments for a total of $88,000."
+          "q": "only four ransom payments for a total of $88,000"
         },
         {
-          "v": "500 GB",
-          "q": "machine had over 500 GB of data but typical daily usage of only 2 Mbps."
+          "v": "6.x and prior to 6.7",
+          "q": "ESXi hypervisors in version 6.x and prior to 6.7"
         },
         {
-          "v": "version 6.x and prior to 6.7",
-          "q": "in version 6.x and prior to 6.7."
+          "v": "427",
+          "q": "the OpenSLP port (427)"
+        },
+        {
+          "v": "32 bytes",
+          "q": "it generates 32 bytes using OpenSSL's secure"
+        },
+        {
+          "v": "RSA-2048",
+          "q": "my guess is RSA-2048 based on looking at"
         }
       ]
     },
@@ -569,20 +581,22 @@
       "name": "ESXiArgs ransomware"
     },
     "hedges": [
-      "OVHcloud said the Nevada link was an assumption and that investigation was still ongoing to confirm it.",
-      "OVHcloud later said it attributed the attack to the wrong ransomware operation.",
-      "Threat actors claim to have stolen data, but one victim reported that was not the case in their incident.",
-      "The RSA-2048 key size is only a guess by the ID Ransomware analyst, since the code accepts any valid PEM key.",
-      "It is unclear whether ESXiArgs is a new variant or just a shared Babuk codebase.",
-      "The report says this is a developing story that will be updated as new information becomes available."
+      "Investigation are still ongoing to confirm those assumptions",
+      "The company backtracked soon after our story was released, saying they attributed it to the wrong ransomware operation.",
+      "ESXiArgs is likely based on leaked Babuk source code",
+      "it is unclear if this is a new variant or just a shared Babuk codebase",
+      "my guess is RSA-2048 based on looking at encrypted files",
+      "until we can find a sample, there is no way to determine if it has any weaknesses in the encryption",
+      "Some admins breached in this attack said they did not have SLP enabled, adding further confusion as to how servers were breached.",
+      "the threat actors behind this attack claim to have stolen data"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:49:20Z",
-      "ok": false,
-      "note": "actors[0]: The text says OVHcloud's Nevada link was an assumption that it later backtracked on, and that the ransom notes and analysis do not tie the attacks to",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:49:20Z",
+        "ok": false,
+        "note": "actors[0]: The text says OVHcloud's Nevada link was an assumption that it later backtracked on, and that the ransom notes and analysis do not tie the attacks to",
+        "by": "auditor"
+      }
+    ]
   }
 }

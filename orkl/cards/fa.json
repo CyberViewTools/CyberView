@@ -385,20 +385,14 @@
   },
   "fa2349d8a5f0a8d211d60e45781ef4e01776981a": {
     "sha1": "fa2349d8a5f0a8d211d60e45781ef4e01776981a",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:32:57Z",
+    "read_at": "2026-11-27T14:09:02Z",
     "model": "haiku",
-    "summary": "Unit 42 (Palo Alto Networks) threat brief on Operation MidnightEclipse, the initial exploitation of CVE-2024-3400, a CVSS 10.0 unauthenticated command injection flaw in PAN-OS firewalls with GlobalProtect. The report describes an unnamed threat actor that failed three times to install a Python backdoor called UPSTYLE, then used a cron job backdoor to run commands from an external server. Most attempts were unsuccessful probes. A very limited number of compromises led to interactive command execution. Fixed in PAN-OS hotfix releases. Threat Prevention signatures 95187, 95189 and 95191 can…",
+    "summary": "Unit 42 (Palo Alto Networks) threat brief on Operation MidnightEclipse, the initial exploitation of CVE-2024-3400, a command injection flaw in PAN-OS GlobalProtect. Most attempts were unsuccessful; a few led to file copies or interactive command execution. The actor tried three times to install a Python backdoor called UPSTYLE, failed, and used a cron job backdoor that pulled commands from an external server instead. Fixes are in PAN-OS hotfix releases, and Threat Prevention IDs 95187, 95189 and 95191 block attacks. Volexity is credited with finding the issue.",
     "kind": "actor-campaign",
     "facts": {
-      "actors": [
-        {
-          "v": "threat actor",
-          "q": "We believe the threat actors created UPSTYLE specifically for this campaign.",
-          "by": "Unit 42 (Palo Alto Networks)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
       "dates": [
@@ -409,61 +403,61 @@
         },
         {
           "v": "April 7, 2024",
-          "q": "on April 7, 2024:",
-          "what": "UPSTYLE file on the attacker-controlled server last modified"
+          "q": "April 7, 2024",
+          "what": "Threat actor last modified the backdoor file it hosted"
         },
         {
           "v": "May 20, 2024",
           "q": "Updated May 20, 2024, at 8:10 a.m. PT to adjust second threat hunting query.",
-          "what": "Latest update to the threat brief"
+          "what": "Latest update to the brief"
         }
       ],
       "tools": [
         {
           "v": "UPSTYLE",
           "q": "which our colleagues at Volexity referred to as UPSTYLE."
-        },
-        {
-          "v": "cron job backdoor",
-          "q": "decided to install a cron job backdoor to carry out their post-exploitation activities."
         }
       ],
       "techniques": [
         {
           "v": "command injection",
-          "q": "A command injection vulnerability in Palo Alto Networks PAN-OS software enables an unauthenticated attacker"
+          "q": "A critical command injection vulnerability in Palo Alto Networks PAN-OS software enables an unauthenticated attacker"
         },
         {
-          "v": "cron job",
-          "q": "shortly after we saw evidence of the creation of a cron job."
+          "v": "cron job backdoor",
+          "q": "the threat actor decided to install a cron job backdoor to carry out their post-exploitation activities"
         },
         {
-          "v": "post-exploit persistence techniques",
-          "q": "a proof of concept including post-exploit persistence techniques that survive resets and upgrades."
+          "v": "legitimate log files to receive commands",
+          "q": "The use of legitimate log files to receive commands and a legitimate CSS file to exfiltrate the command results"
+        },
+        {
+          "v": "Potential Exfiltration",
+          "q": "Level 2: Potential Exfiltration – A file on the device has been copied to a location accessible via a web request"
         }
       ],
       "cves": [
         {
           "v": "CVE-2024-3400",
-          "q": "The vulnerability, assigned CVE-2024-3400, has a CVSS score of 10.0."
+          "q": "The vulnerability, assigned CVE-2024-3400, has a CVSS score of"
         }
       ],
       "figures": [
         {
-          "v": "10.0",
-          "q": "has a CVSS score of 10.0."
+          "v": "Threat ID 95187",
+          "q": "Customers with a Threat Prevention subscription can block attacks for this vulnerability using Threat ID 95187, 95189 and"
         },
         {
-          "v": "95187",
-          "q": "Customers with a Threat Prevention subscription can block attacks for this vulnerability using Threat ID 95187, 95189 and 95191"
+          "v": "PAN-OS 10.2.9-h1",
+          "q": "in hotfix releases of PAN-OS 10.2.9-h1, PAN-OS 11.0.4-h1, PAN-OS 11.1.2-h3 and all later PAN-OS"
         },
         {
-          "v": "three",
-          "q": "the threat actors were unsuccessful at installing UPSTYLE after three different exploit attempts."
+          "v": "Level 0 to Level 3",
+          "q": "classified observations of attempted exploitation into several levels, from Level 0 to Level 3"
         },
         {
-          "v": "10.2.9-h1",
-          "q": "This issue is fixed in hotfix releases of PAN-OS 10.2.9-h1, PAN-OS 11.0.4-h1, PAN-OS 11.1.2-h3"
+          "v": "vast majority",
+          "q": "The vast majority of cases that Unit 42 has responded to have been unsuccessful attempts to exploit"
         }
       ]
     },
@@ -472,19 +466,20 @@
       "name": "Operation MidnightEclipse"
     },
     "hedges": [
-      "Unit 42 believes the threat actors created UPSTYLE specifically for this campaign.",
-      "Unit 42 could not access the scripts or commands at the external server; it believes the cron job backdoor was used for post-exploitation activity.",
-      "Unit 42 has not seen UPSTYLE used in other exploit attempts, but says it could have been installed on other devices.",
-      "Unit 42 has not seen any relationship between the other exploit-attempt IP addresses and Operation MidnightEclipse.",
-      "Unit 42 assesses there is likely little to no immediate impact of a Level 0 probe."
+      "We are not aware of any malicious attempts to use these persistence techniques in active exploitation of the vulnerability at this time.",
+      "We believe the threat actors created UPSTYLE specifically for this campaign.",
+      "We were unable to access the bash script hosted at this URL.",
+      "We believe this cron job-based backdoor was used to carry out the actor’s post-exploitation activities.",
+      "While we have not seen UPSTYLE used in any other exploit attempts, it is possible that UPSTYLE could have been successfully installed on other devices.",
+      "We have not seen any relationships between these indicators and those associated with Operation MidnightEclipse."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:49:37Z",
-      "ok": false,
-      "note": "hedges[4]: The text says \"Palo Alto Networks assesses there is likely little to no immediate impact of a Level 0 attempt\". The card attributes this assessment t",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:49:37Z",
+        "ok": false,
+        "note": "hedges[4]: The text says \"Palo Alto Networks assesses there is likely little to no immediate impact of a Level 0 attempt\". The card attributes this assessment t",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -68,11 +68,11 @@
   },
   "09f0abdfdcc9cc3038d147028c913c04958925d1": {
     "sha1": "09f0abdfdcc9cc3038d147028c913c04958925d1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:33:46Z",
+    "read_at": "2026-11-27T14:08:51Z",
     "model": "haiku",
-    "summary": "A 2022 defensive blog post by Pepe Berba on hunting for Linux persistence through systemd services, systemd timers and cron jobs. It describes how these mechanisms can be abused to keep a backdoor running after reboot, including user-level services and modifying existing services. It recommends detection with auditd, osquery, sysmon and auditbeat rules and notes gaps in each approach.",
+    "summary": "A 2022 blog post by Pepe Berba, part 3 of a Linux persistence hunting series, covers three persistence methods: malicious systemd services, systemd timers and cron jobs. It explains where unit files and cron entries are placed and how to detect them with auditd, sysmon, auditbeat and osquery. It maps each method to MITRE ATT&CK techniques and notes detection gaps.",
     "kind": "overview",
     "facts": {
       "actors": [],
@@ -87,18 +87,10 @@
         {
           "v": "2026-04-05",
           "q": "Published: 2022-01-30 · Archived: 2026-04-05 15:27:35 UTC",
-          "what": "Page archived"
+          "what": "Archived copy captured"
         }
       ],
       "tools": [
-        {
-          "v": "systemd",
-          "q": "Adversaries may utilize systemd to install their own malicious services so that even after a reboot"
-        },
-        {
-          "v": "Cron",
-          "q": "Cron is the most traditional way to create scheduled tasks."
-        },
         {
           "v": "auditd",
           "q": "using open-source solutions such as auditd, osquery, sysmon and auditbeats."
@@ -116,8 +108,12 @@
           "q": "using open-source solutions such as auditd, osquery, sysmon and auditbeats."
         },
         {
-          "v": "metasploit",
-          "q": "This will fail to detect persistence installation such as those found in metasploit’s"
+          "v": "systemd",
+          "q": "Adversaries may utilize systemd to install their own malicious services so that even after a reboot, their backdoor"
+        },
+        {
+          "v": "Metasploit",
+          "q": "[6] Metasploit: service_persistence.rb"
         }
       ],
       "techniques": [
@@ -132,35 +128,30 @@
         {
           "v": "Scheduled Task/Job: Cron",
           "q": "Scheduled Task/Job: Cron"
-        },
-        {
-          "v": "modify existing services",
-          "q": "Instead of creating a new systemd service, an attacker can just modify existing services."
-        },
-        {
-          "v": "user services",
-          "q": "There is less common class of systemd service called user services."
-        },
-        {
-          "v": "Staying covert",
-          "q": "5.2.3 Staying covert"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "five",
+          "q": "Based on this, and corroborated by [4], the five main candidates are the following:"
+        }
+      ]
     },
     "subject": null,
     "hedges": [
-      "The commented out rules may not be immediately applicable because they might not exist depending on the distro you are using.",
-      "The sysmon rules above will not be triggered by this script (while the auditd rules above will catch this)."
+      "The commented-out auditd rules may not apply because those directories may not exist on the distro in use.",
+      "Sysmon rules only detect file creation and miss files moved into place or existing files that are modified.",
+      "The sysmon version of the cron rules is not as powerful as auditd, even as a direct translation.",
+      "Auditbeat's default configuration does not monitor systemd unit directories unless changed."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:48:15Z",
-      "ok": false,
-      "note": "summary: It says the post 'notes gaps in each approach', but the text names gaps only for auditd (default rules miss the metasploit path), sysmon (file-creation",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:48:15Z",
+        "ok": false,
+        "note": "summary: It says the post 'notes gaps in each approach', but the text names gaps only for auditd (default rules miss the metasploit path), sysmon (file-creation",
+        "by": "auditor"
+      }
+    ]
   }
 }

@@ -482,26 +482,32 @@
   },
   "35218a707e2b5162679179473d6dc043b3d6b8e1": {
     "sha1": "35218a707e2b5162679179473d6dc043b3d6b8e1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:34:36Z",
+    "read_at": "2026-11-27T14:09:00Z",
     "model": "haiku",
-    "summary": "Blog post from The Safe Mac (July 2013) relaying F-Secure's report of Janicab, a Mac OS X trojan disguised as a PDF. It uses a right-to-left override in the filename and a signed app that runs after one approval. When run, it opens a decoy document, creates a cron job and a hidden folder, finds a command-and-control server, and takes screenshots and records audio. The report says most anti-virus did not detect it at the time. The developer certificate was reported revoked on July 16, 2013.",
+    "summary": "The Safe Mac blog reports F-Secure's discovery of Janicab, a macOS trojan disguised as a PDF. It uses a right-to-left override in its filename and a signed app, so it can run with little warning. The report says it hides components in a hidden folder, uses a cron job for persistence, finds its command server through IP address text, and takes screenshots and records audio. The developer certificate was reported revoked by July 16, 2013.",
     "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "hacker",
+          "q": "Because it allows the hacker to hide the fact that the document is actually an application!",
+          "by": "the report itself"
+        }
+      ],
       "sectors": [],
       "countries": [],
       "dates": [
         {
           "v": "July 15th, 2013",
           "q": "Published July 15th, 2013 at 2:27 PM EDT , modified July 16th, 2013 at 8:11 PM EDT",
-          "what": "Original post published; the report says F-Secure announced the trojan that day."
+          "what": "Report published on the day F-Secure announced the discovery of Janicab"
         },
         {
           "v": "July 16, 2013",
           "q": "July 16, 2013: Looks like the developer certificate used to sign this trojan has already been revoked.",
-          "what": "Update: the developer certificate was reported revoked."
+          "what": "Developer certificate used to sign the trojan reported as revoked"
         }
       ],
       "tools": [
@@ -516,59 +522,72 @@
       ],
       "techniques": [
         {
-          "v": "right-to-left override character in file name to disguise an app",
-          "q": "The first new twist that makes this malware unique in the Mac world is the use of a right-to-left override (RLO)"
-        },
-        {
-          "v": "disguising an application as a document to trick the user",
+          "v": "disguising an application as a document",
           "q": "disguising an application as a document to trick the user into opening it"
         },
         {
-          "v": "code-signed app that runs after one approval",
-          "q": "recent KitM (aka Hackback) malware, is that the app is signed."
+          "v": "right-to-left override",
+          "q": "The first new twist that makes this malware unique in the Mac world is the use of a right-to-left override (RLO)"
         },
         {
-          "v": "opens a decoy document when run",
+          "v": "marking the extension as being hidden",
+          "q": "of marking the extension as being hidden, and the system knows the extension is"
+        },
+        {
+          "v": "signed app",
+          "q": "malware using a signed app is troubling, as it may indicate that Gatekeeper will not offer"
+        },
+        {
+          "v": "invisible folder",
+          "q": "in an invisible folder in the user’s home folder"
+        },
+        {
+          "v": "cron job",
+          "q": "creates a cron job to keep components running"
+        },
+        {
+          "v": "command & control server",
+          "q": "Once installed, this malware locates its command & control server by searching a few specific places for specific"
+        },
+        {
+          "v": "taking screenshots and recording audio",
+          "q": "it begins taking screenshots and recording audio,"
+        },
+        {
+          "v": "opens a document",
           "q": "When run, the trojan opens a document to avoid causing further suspicion."
-        },
-        {
-          "v": "cron job persistence",
-          "q": "folder) and creates a cron job to keep components running."
-        },
-        {
-          "v": "command-and-control server discovery",
-          "q": "Once installed, this malware locates its command & control server by searching a few specific places"
-        },
-        {
-          "v": "screenshot and audio capture",
-          "q": "After contacting the C&C server, it begins taking screenshots and recording audio,"
-        },
-        {
-          "v": "evades most anti-virus detection",
-          "q": "At this time, Janicab is not detected by most anti-virus software"
         }
       ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "two",
+          "q": "results in only two choices: cancel or move it to the trash."
+        },
+        {
+          "v": "Mac OS X 10.8",
+          "q": "That is the default state in Mountain Lion (Mac OS X 10.8), but much earlier versions of Mac OS X may differ"
+        }
+      ]
     },
     "subject": {
       "type": "malware",
       "name": "Janicab"
     },
     "hedges": [
-      "At this time, the built-in defenses in Mac OS X will allow the trojan to run without much warning.",
-      "Presumably the malware uses cron because it is older technology.",
-      "Looks like the developer certificate used to sign the trojan has already been revoked.",
-      "The author does not know yet which Mac OS X versions the malware can infect.",
-      "Seeing a signed app used by malware may mean Gatekeeper offers less security than hoped."
+      "Presumably it uses cron since that is older technology that has been abandoned in favor of launchd.",
+      "I don't know yet what versions of Mac OS X this malware is capable of infecting",
+      "According to F-Secure's post, the app installs a number of components in an invisible folder in the user's home folder",
+      "Looks like the developer certificate used to sign this trojan has already been revoked.",
+      "At this time, the built in defenses in Mac OS X will allow this trojan to run without much in the way of warnings"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:48:33Z",
-      "ok": false,
-      "note": "tools[1]: KitM (aka Hackback) is mentioned only as an earlier signed-app malware for comparison. The text does not say Janicab uses it or that it is part of thi",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:48:33Z",
+        "ok": false,
+        "note": "tools[1]: KitM (aka Hackback) is mentioned only as an earlier signed-app malware for comparison. The text does not say Janicab uses it or that it is part of thi",
+        "by": "auditor"
+      }
+    ]
   }
 }

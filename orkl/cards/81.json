@@ -250,108 +250,112 @@
   },
   "813f7820008c206bdcbaf4af6559ac0f0be9239b": {
     "sha1": "813f7820008c206bdcbaf4af6559ac0f0be9239b",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:33:06Z",
+    "read_at": "2026-11-27T14:09:09Z",
     "model": "haiku",
-    "summary": "FortiGuard Labs describes EncystPHP, a PHP web shell delivered via CVE-2025-64328, a post-authentication command injection in FreePBX Endpoint Manager v17.0.2.36 to v17.0.3. Incidents began in early December 2025; one victim was managed by an Indian technology company and the exploit came from Brazil. The shell masquerades as FreePBX files, adds a root account and SSH key, removes rival web shells and persists via cron. The activity is associated with INJ3CTOR3, a group first identified in 2020. Patch, and treat any successful exploitation as a full compromise.",
+    "summary": "FortiGuard Labs describes EncystPHP, a PHP web shell delivered by exploiting CVE-2025-64328 in FreePBX Endpoint Manager v17.0.2.36 to v17.0.3. It drops further droppers, creates a root-level account, sets up cron persistence, and disguises itself as legitimate FreePBX files. The report says the activity appears associated with INJ3CTOR3, a group first identified in 2020. Incidents were launched in early December, and the exploit is said to have originated in Brazil and targeted a technology company in India.",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
         {
           "v": "INJ3CTOR3",
-          "q": "Its malicious activity appears to be associated with the hacker group INJ3CTOR3, first identified in 2020, which",
+          "q": "Its malicious activity appears to be associated with the hacker group INJ3CTOR3",
           "by": "FortiGuard Labs"
         }
       ],
       "sectors": [
         {
-          "v": "technology",
-          "q": "targeted a victim environment managed by an Indian technology company"
+          "v": "technology company",
+          "q": "managed by an Indian technology company"
         }
       ],
       "countries": [
         {
           "v": "Brazil",
-          "q": "The exploit originated from Brazil and targeted a victim environment managed by an Indian technology company"
+          "q": "The exploit originated from Brazil"
+        },
+        {
+          "v": "India",
+          "q": "targeted a victim environment managed by an Indian technology company"
         }
       ],
       "dates": [
         {
           "v": "2026-01-28",
           "q": "Published: 2026-01-28 · Archived: 2026-04-02 10:46:39 UTC",
-          "what": "report published by FortiGuard Labs"
+          "what": "Report published"
         },
         {
           "v": "early December",
           "q": "Incidents were launched in early December last year",
-          "what": "incidents launched, exploiting CVE-2025-64328 (year given as 'last year' relative to publication)"
+          "what": "Incidents launched, per the report"
         },
         {
           "v": "2020",
-          "q": "hacker group INJ3CTOR3, first identified in 2020, which",
-          "what": "threat group first identified"
+          "q": "first identified in 2020",
+          "what": "INJ3CTOR3 group first identified"
         },
         {
           "v": "2022",
           "q": "In 2022, the threat actor shifted its focus to the Elastix system via CVE-2021-45461.",
-          "what": "threat actor shifted its focus to the Elastix system"
+          "what": "Threat actor shifted focus to the Elastix system"
         }
       ],
       "tools": [
         {
           "v": "EncystPHP",
           "q": "FortiGuard Labs has discovered a web shell that we named “EncystPHP.”"
-        },
-        {
-          "v": "k.php dropper",
-          "q": "The k.php dropper performs similar actions, including deploying a Base64-encoded web shell, installing configuration"
         }
       ],
       "techniques": [
         {
-          "v": "post-authentication command-injection",
-          "q": "CVE-2025-64328, a post-authentication command-injection vulnerability in the"
-        },
-        {
-          "v": "crontab entries",
-          "q": "Scheduled Task/Job: Multiple crontab entries installed to"
+          "v": "web shell",
+          "q": "The web shell was delivered via CVE-2025-64328, a post-authentication command-injection vulnerability in the"
         },
         {
           "v": "root-level user",
-          "q": "the malware creates a root-level user named newfpbx,"
+          "q": "the malware creates a root-level user named newfpbx"
         },
         {
-          "v": "database credentials",
-          "q": "Collection of database credentials from"
+          "v": "crontab entries",
+          "q": "installs multiple crontab entries that download the secondary"
         },
         {
-          "v": "SSH public key",
-          "q": "EncystPHP injects the SSH public key and modifies system configurations to ensure that"
-        },
-        {
-          "v": "file permissions",
-          "q": "The dropper first modifies the file permissions of ajax.php and model.php to 000, rendering both files"
+          "v": "masquerading",
+          "q": "masquerading as a legitimate FreePBX file named ajax.php"
         },
         {
           "v": "forges timestamps",
           "q": "the dropper forges timestamps to match those of legitimate files"
         },
         {
-          "v": "legitimate FreePBX file",
-          "q": "Web shell written to legitimate FreePBX file"
+          "v": "tampers with log files",
+          "q": "tampers with log files and deletes the FreePBX"
         },
         {
-          "v": "web shells",
-          "q": "Deleting other PHP web shells"
+          "v": "injects the SSH public key",
+          "q": "EncystPHP injects the SSH public key and modifies system configurations"
         },
         {
-          "v": "HTTP",
-          "q": "Use of HTTP for payload delivery and"
+          "v": "collect database configuration",
+          "q": "EncystPHP then attempts to collect database configuration information"
         },
         {
-          "v": "error reporting",
-          "q": "this stage disables error reporting, executes EncystPHP,"
+          "v": "file permissions",
+          "q": "The dropper first modifies the file permissions of ajax.php and model.php to 000"
+        },
+        {
+          "v": "Deleting other PHP web shells",
+          "q": "Figure 8: Deleting other PHP web shells"
+        },
+        {
+          "v": "elevated privileges",
+          "q": "By leveraging Elastix and FreePBX administrative contexts, the web shell operates with elevated privileges"
+        },
+        {
+          "v": "abuse of telephony resources",
+          "q": "abuse of telephony resources."
         }
       ],
       "cves": [
@@ -361,11 +365,11 @@
         },
         {
           "v": "CVE-2019-19006",
-          "q": "targeted CVE-2019-19006. In 2022, the threat actor shifted its focus to the Elastix system via CVE-2021-45461."
+          "q": "targeted CVE-2019-19006."
         },
         {
           "v": "CVE-2021-45461",
-          "q": "targeted CVE-2019-19006. In 2022, the threat actor shifted its focus to the Elastix system via CVE-2021-45461."
+          "q": "In 2022, the threat actor shifted its focus to the Elastix system via CVE-2021-45461."
         }
       ],
       "figures": [
@@ -376,6 +380,14 @@
         {
           "v": "High",
           "q": "Severity Level: High"
+        },
+        {
+          "v": "every minute",
+          "q": "download the secondary dropper k.php every minute"
+        },
+        {
+          "v": "Any organization",
+          "q": "Impacted Users: Any organization"
         }
       ]
     },
@@ -384,19 +396,18 @@
       "name": "EncystPHP"
     },
     "hedges": [
-      "The report says the malicious activity appears to be associated with the hacker group INJ3CTOR3.",
-      "The report says 'We assess that this campaign represents recent attack activity and behavior patterns associated with INJ3CTOR3.'",
-      "The report says the attack techniques are not entirely new and the activity closely mirrors historical INJ3CTOR3 campaigns.",
-      "The report says the web shell's blending into legitimate FreePBX and Elastix components may evade immediate detection.",
-      "The report says some PHP files removed by the malware 'may be related to older versions of the web shell itself or other malicious PHP files.'"
+      "Its malicious activity appears to be associated with the hacker group INJ3CTOR3 (report's own hedge on the attribution).",
+      "We assess that this campaign represents recent attack activity and behavior patterns associated with INJ3CTOR3 (report's own assessment).",
+      "These may be related to older versions of the web shell itself or other malicious PHP files.",
+      "Such activity may evade immediate detection, according to the report's conclusion."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:48:49Z",
-      "ok": false,
-      "note": "summary: It says flatly that 'The activity is associated with INJ3CTOR3', which drops the report's hedge that the activity 'appears to be associated' and that t",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:48:49Z",
+        "ok": false,
+        "note": "summary: It says flatly that 'The activity is associated with INJ3CTOR3', which drops the report's hedge that the activity 'appears to be associated' and that t",
+        "by": "auditor"
+      }
+    ]
   }
 }

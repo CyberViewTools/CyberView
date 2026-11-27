@@ -751,18 +751,18 @@
   },
   "939b3f78473a8b4c171ef36ae3e74817db77a8e3": {
     "sha1": "939b3f78473a8b4c171ef36ae3e74817db77a8e3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:32:48Z",
+    "read_at": "2026-11-27T14:09:05Z",
     "model": "haiku",
-    "summary": "Anomali Threat Research reports that China-based cryptomining actor Rocke moved its command and control for the LSD malware from Pastebin to self-hosted subdomains in summer 2019, then to DNS TXT records with a DNS-over-HTTPS fallback in September 2019. The malware also gained exploitation of ActiveMQ (CVE-2016-3088) and Confluence (CVE-2019-3396), brute-forces SSH and Redis credentials, and installs a Monero miner. The report expects further exploitation and warns the payload could change to ransomware or a RAT.",
+    "summary": "Anomali Threat Research reports that China-based cryptomining actor Rocke moved its command-and-control away from Pastebin during summer 2019, first to self-hosted setup scripts and then, from September 2019, to DNS TXT records with a DNS-over-HTTPs fallback. Its LSD malware added exploitation of ActiveMQ servers using CVE-2016-3088, spreads with stored SSH keys and credential brute forcing, kills other high-CPU processes, and installs a Monero miner. The report says Rocke may change payloads to more damaging ones and that the group is expected to exploit more vulnerabilities.",
     "kind": "actor-campaign",
     "facts": {
       "actors": [
         {
           "v": "Rocke",
           "q": "China-based cryptomining threat actor Rocke has changed its Command and Control (C2) infrastructure away",
-          "by": "Anomali Threat Research"
+          "by": "Anomali Threat Research (the report)"
         }
       ],
       "sectors": [],
@@ -774,35 +774,35 @@
       ],
       "dates": [
         {
+          "v": "summer of 2019",
+          "q": "from Pastebin to a self-hosted solution during the summer of 2019.",
+          "what": "Rocke moved its C2 away from Pastebin to a self-hosted solution."
+        },
+        {
           "v": "July 29, 2019",
           "q": "A spike of over 20,000 queries per hour were recorded on July 29, 2019.",
-          "what": "Spike in queries to the lsd subdomain used for the setup script"
+          "what": "A spike in queries to the lsd subdomain was recorded."
         },
         {
           "v": "September 17, 2019",
           "q": "The “update” subdomain was still being requested until September 17, 2019, when it",
-          "what": "Queries to the update subdomain stopped"
+          "what": "Queries to the update subdomain stopped."
         },
         {
           "v": "September 2019",
-          "q": "In September 2019, the actor moved away from",
-          "what": "Actor moved from dedicated script hosting to DNS text records"
+          "q": "In September 2019, Rocke pushed a new version of the LSD malware.",
+          "what": "Rocke pushed a new LSD malware version that uses DNS TXT records for C2."
         },
         {
-          "v": "April 2019",
-          "q": "In April 2019, Confluence users posted reports on Atlassian’s support forum reporting",
-          "what": "Confluence users reported cryptominer infections"
-        },
-        {
-          "v": "August 2018",
-          "q": "first reported by Cisco Talos[1] in August 2018, and Palo Alto’s Unit 42 has produced numerous reports",
-          "what": "Group first reported by Cisco Talos"
+          "v": "2025-12-18",
+          "q": "Published: 2025-12-18 · Archived: 2026-04-05 18:23:27 UTC",
+          "what": "Anomali published the blog post."
         }
       ],
       "tools": [
         {
           "v": "LSD",
-          "q": "The “LSD” malware has had some updates since it was first reported on by Anomali Threat Research team in"
+          "q": "The LSD malware uses stored ssh keys on the infected"
         },
         {
           "v": "Monero miner",
@@ -819,34 +819,50 @@
           "q": "servers via credential brute forcing."
         },
         {
-          "v": "TXT records",
-          "q": "Instead of hosting the setup script and update version on a dedicated host, the threat actor is using TXT records."
+          "v": "stored ssh keys",
+          "q": "The LSD malware uses stored ssh keys on the infected"
         },
         {
-          "v": "DNS-over-HTTPs (DoH)",
-          "q": "accessed via normal DNS queries or DNS-over-HTTPs (DoH) if the DNS query fails."
+          "v": "Cron job entries",
+          "q": "Cron job entries are created to ensure a new version of"
         },
         {
-          "v": "cron jobs",
-          "q": "set up some persistence via cron jobs and download the"
+          "v": "systemd service",
+          "q": "The LSD malware creates a systemd service to ensure it"
         },
         {
-          "v": "kills all processes with high CPU",
-          "q": "kills all processes with high CPU"
+          "v": "Masquerading",
+          "q": "T1036 Masquerading"
         },
         {
           "v": "timestamp altered",
           "q": "Files created have their timestamp altered to appear"
         },
         {
-          "v": "known ssh hosts",
-          "q": "The setup script uses known ssh hosts and stored ssh"
+          "v": "kills all processes with high CPU",
+          "q": "The LSD malware gets the CPU usage of all running processes and kills all processes with high CPU"
+        },
+        {
+          "v": "mutex",
+          "q": "This serves as a mutex to ensure only one instance of the malware is"
+        },
+        {
+          "v": "DNS TXT records",
+          "q": "The LSD uses HTTP/HTTPs and DNS TXT records for"
+        },
+        {
+          "v": "DNS-over-HTTPs",
+          "q": "DNS-over-HTTPs (DoH) if the DNS query fails."
+        },
+        {
+          "v": "scans for other machines",
+          "q": "The LSD malware scans for other machines that are"
         }
       ],
       "cves": [
         {
           "v": "CVE-2016-3088",
-          "q": "vulnerable to CVE-2016-3088."
+          "q": "support for CVE-2016-3088 exploitation was the important addition."
         },
         {
           "v": "CVE-2019-3396",
@@ -855,16 +871,12 @@
       ],
       "figures": [
         {
-          "v": "over 20,000 queries per hour",
+          "v": "20,000 queries per hour",
           "q": "A spike of over 20,000 queries per hour were recorded on July 29, 2019."
         },
         {
-          "v": "around 75 requests per hour",
+          "v": "75 requests per hour",
           "q": "around 75 requests per hour."
-        },
-        {
-          "v": "65533",
-          "q": "listening on localhost and TCP port 65533."
         }
       ]
     },
@@ -873,18 +885,18 @@
       "name": "LSD"
     },
     "hedges": [
-      "It is possible for the actor to change payloads to something more damaging if Rocke wished to try to make illegal funds with a different technique.",
-      "Its malicious operations may become more difficult to detect.",
+      "it is possible for the actor to change payloads to something more damaging if Rocke wished to try to make illegal funds with a different technique",
+      "its malicious operations may become more difficult to detect",
       "It is expected that the group will continue to exploit more vulnerabilities to mine additional cryptocurrencies in the near future.",
-      "It is possible that Rocke, or other cryptomining threat actors could change the payload from a cryptominer to something more dangerous, such as ransomware or a Remote Access Trojan (RAT)."
+      "it is possible that Rocke, or other cryptomining threat actors could change the payload from a cryptominer to something more dangerous"
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:48:59Z",
-      "ok": false,
-      "note": "summary: It says the malware 'gained exploitation of' Confluence (CVE-2019-3396). The text only says Rocke used that CVE in April 2019 to install its malware on",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:48:59Z",
+        "ok": false,
+        "note": "summary: It says the malware 'gained exploitation of' Confluence (CVE-2019-3396). The text only says Rocke used that CVE in April 2019 to install its malware on",
+        "by": "auditor"
+      }
+    ]
   }
 }

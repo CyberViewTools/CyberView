@@ -183,147 +183,31 @@
     "sha1": "b58144152c477b7d3de87a8d5ace97094dc41ce7",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T13:35:32Z",
+    "read_at": "2026-11-27T14:09:43Z",
     "model": "haiku",
-    "summary": "Varonis reports the ESXiArgs ransomware campaign against VMware ESXi servers, likely after scanning for hosts exposed to CVE-2020-3992 and CVE-2021-21974. Nevada, a RaaS group thought active since late 2022, is widely believed responsible, though its ransom note resembles Cheerscrypt's. The payload stops VMs, encrypts VM files and replaces ESXi login pages with ransom notes. Data theft is unconfirmed. Patching, restricting port 427 and offline backups are advised; CISA released a recovery script.",
-    "kind": "actor-campaign",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "Nevada",
-          "q": "a ransomware-as-a-service (RaaS) group known as Nevada, believed active since late 2022",
-          "by": "Varonis (report author)"
-        }
-      ],
+      "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "2023-02-07",
-          "q": "Published: 2023-02-07 · Archived: 2026-04-05 17:30:50 UTC",
-          "what": "Report published"
-        },
-        {
-          "v": "late 2022",
-          "q": "a ransomware-as-a-service (RaaS) group known as Nevada, believed active since late 2022",
-          "what": "Nevada believed active since"
-        },
-        {
-          "v": "early- to mid-2022",
-          "q": "Cheerscrypt, a ransomware threat that targeted ESXi in early- to mid-2022.",
-          "what": "Cheerscrypt targeted ESXi"
-        },
-        {
-          "v": "second quarter of 2022",
-          "q": "first observed in the second quarter of 2022",
-          "what": "Cheerscrypt first observed"
-        },
-        {
-          "v": "October 2022",
-          "q": "the end of general support for these installations was October 2022",
-          "what": "End of general support for ESXi 6.5 and 6.7"
-        }
-      ],
-      "tools": [
-        {
-          "v": "locker",
-          "q": "Nevada provides affiliates with a “locker” (encryption) payload"
-        },
-        {
-          "v": "encrypt",
-          "q": "a Linux executable encryption tool (encrypt)"
-        },
-        {
-          "v": "encrypt.sh",
-          "q": "associated shell script (encrypt.sh)"
-        },
-        {
-          "v": "esxcli",
-          "q": "the ransomware shell script uses the inbuilt ESX command line interface, esxcli"
-        },
-        {
-          "v": "Cheerscrypt",
-          "q": "Cheerscrypt, a ransomware threat that targeted ESXi in early- to mid-2022."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "scanning activity",
-          "q": "conducting widespread scanning activity to identify VMware ESXi hosts"
-        },
-        {
-          "v": "remote code execution",
-          "q": "CVE-2020-3992 and CVE-2021-21974 that, when exploited, can allow remote code execution."
-        },
-        {
-          "v": "render most files inaccessible",
-          "q": "Given the large size of files associated with virtual machines, this approach will render most files inaccessible"
-        },
-        {
-          "v": "terminated all virtual machines",
-          "q": "Having forcefully terminated all virtual machines, ensuring that targeted files are not locked open"
-        },
-        {
-          "v": "double-extortion tactic",
-          "q": "double-extortion tactic in their attacks and shared some stolen data on their Tor-based leak site."
-        }
-      ],
-      "cves": [
-        {
-          "v": "CVE-2020-3992",
-          "q": "CVE-2020-3992 and CVE-2021-21974 that, when exploited, can allow remote code execution."
-        },
-        {
-          "v": "CVE-2021-21974",
-          "q": "CVE-2020-3992 and CVE-2021-21974 that, when exploited, can allow remote code execution."
-        }
-      ],
-      "figures": [
-        {
-          "v": "CVSS v3 score of 9.8",
-          "q": "Assigned a CVSS v3 score of 9.8, this vulnerability is considered critical"
-        },
-        {
-          "v": "CVSS v3 score of 8.8",
-          "q": "this vulnerability was assigned a CVSS v3 score of 8.8"
-        },
-        {
-          "v": "port 427",
-          "q": "via port 427 to gain remote code execution"
-        },
-        {
-          "v": "7.x and earlier",
-          "q": "organizations using VMware ESXi version 7.x and earlier are advised to"
-        },
-        {
-          "v": "128MB",
-          "q": "those larger than 128MB being encrypted in “steps.”"
-        },
-        {
-          "v": "3 days",
-          "q": "Contact us within 3 days, otherwise we will expose some data and raise the price"
-        }
-      ]
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
     },
-    "subject": {
-      "type": "campaign",
-      "name": "ESXiArgs"
-    },
-    "hedges": [
-      "While the ransom note suggests data has been stolen, this has yet to be confirmed.",
-      "Nevada is widely thought to be associated with the attacks, and the group is believed to be responsible for many of them.",
-      "There is no specific evidence at this time that Nevada has carried out data exfiltration, although the possibility remains.",
-      "The ransom note may just be an instance of plagiarism, though ransomware groups have been known to rebrand.",
-      "The attacks are described as likely following scanning activity, based on reports.",
-      "The scanning IP addresses have been linked to past vulnerability scanning and may be used by multiple threat actors."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:49:20Z",
-      "ok": false,
-      "note": "summary: The text says Nevada \"appears to be responsible for many of these recent attacks\" and is \"widely thought to be associated\" with them. The summary says ",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:49:20Z",
+        "ok": false,
+        "note": "summary: The text says Nevada \"appears to be responsible for many of these recent attacks\" and is \"widely thought to be associated\" with them. The summary says ",
+        "by": "auditor"
+      }
+    ]
   }
 }

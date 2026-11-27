@@ -772,112 +772,31 @@
     "sha1": "2e330f9e2f40c3c82b7a190fe66bbd9feaec173a",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T13:38:52Z",
+    "read_at": "2026-11-27T14:11:39Z",
     "model": "haiku",
-    "summary": "Intezer researchers describe SysJoker, a C++ backdoor written separately for Windows, Linux and macOS. It was first found in an active attack on a Linux web server of an educational institution. It masquerades as a system update, gets its C2 address from a text file on Google Drive, and can run commands and drop executables. The report estimates the attack began in the second half of 2021 and assesses the operator as an advanced actor seeking espionage and lateral movement, possibly followed by ransomware. Published 11 January 2022.",
-    "kind": "malware-analysis",
+    "summary": "",
+    "kind": "",
     "facts": {
-      "actors": [
-        {
-          "v": "advanced threat actor",
-          "q": "There are indications that SysJoker attack is performed by an advanced threat actor:",
-          "by": "Intezer (report authors)"
-        }
-      ],
-      "sectors": [
-        {
-          "v": "education",
-          "q": "SysJoker was first discovered during an active attack on a Linux-based web server of a leading educational institution."
-        }
-      ],
+      "actors": [],
+      "sectors": [],
       "countries": [],
-      "dates": [
-        {
-          "v": "December 2021",
-          "q": "In December 2021, we discovered a new multi-platform backdoor that targets Windows, Mac, and",
-          "what": "Intezer discovered the SysJoker backdoor"
-        },
-        {
-          "v": "January 11, 2022",
-          "q": "January 11, 2022",
-          "what": "Report published"
-        }
-      ],
-      "tools": [
-        {
-          "v": "PowerShell",
-          "q": "All of these actions are executed via PowerShell commands."
-        },
-        {
-          "v": "Google Drive",
-          "q": "from a text file hosted on Google Drive."
-        }
-      ],
-      "techniques": [
-        {
-          "v": "masquerades as a system update",
-          "q": "SysJoker masquerades as a system update and generates its C2 by decoding a string retrieved"
-        },
-        {
-          "v": "living off the land commands",
-          "q": "machine using Living off the Land (LOtL) commands."
-        },
-        {
-          "v": "persistence",
-          "q": "SysJoker will create persistence by adding an entry to the"
-        },
-        {
-          "v": "XOR encoding of strings and C2 data",
-          "q": "SysJoker holds within the binary a hardcoded XOR key which is used for decoding and encoding"
-        },
-        {
-          "v": "receives instructions from C2",
-          "q": "SysJoker can receive the following instruction from the C2: exe, cmd, remove_reg, and"
-        },
-        {
-          "v": "infected npm package",
-          "q": "A possible attack vector for this malware is via an infected npm package."
-        }
-      ],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
       "cves": [],
-      "figures": [
-        {
-          "v": "6 detections",
-          "q": "has only 6 detections at the time of this writing."
-        },
-        {
-          "v": "three times",
-          "q": "During our analysis the C2 changed three times, indicating"
-        },
-        {
-          "v": "at least 4 different domains",
-          "q": "The attacker registered at least 4 different domains and wrote from scratch the malware for"
-        },
-        {
-          "v": "90 to 120 seconds",
-          "q": "duration between 90 to 120 seconds."
-        }
-      ]
+      "figures": []
     },
-    "subject": {
-      "type": "malware",
-      "name": "SysJoker"
-    },
-    "hedges": [
-      "The start of the attack is an estimate, based on C2 domain registration and samples found in VirusTotal.",
-      "The report assesses that SysJoker is after specific targets, based on victimology and behaviour.",
-      "A possible attack vector is an infected npm package; the report presents this only as possible.",
-      "The advanced-actor view rests on indications: newly written code, rarely seen Linux malware, multiple domains and no observed second stage.",
-      "The espionage goal is an assessment from the malware's capabilities; ransomware is said only to possibly follow.",
-      "No second-stage instruction from the attacker was observed during the report's analysis."
-    ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:48:24Z",
-      "ok": false,
-      "note": "summary: The summary says the report 'assesses the operator as an advanced actor'. The text only says 'There are indications that SysJoker attack is performed b",
-      "by": "auditor"
-    }
+    "subject": null,
+    "hedges": [],
+    "reason": "value-not-in-quote",
+    "tries": 1,
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:48:24Z",
+        "ok": false,
+        "note": "summary: The summary says the report 'assesses the operator as an advanced actor'. The text only says 'There are indications that SysJoker attack is performed b",
+        "by": "auditor"
+      }
+    ]
   }
 }

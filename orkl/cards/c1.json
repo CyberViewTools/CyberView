@@ -160,11 +160,11 @@
   },
   "c113d860308817fd565d73657bc12da6d142c7bd": {
     "sha1": "c113d860308817fd565d73657bc12da6d142c7bd",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T13:31:58Z",
+    "read_at": "2026-11-27T14:09:03Z",
     "model": "haiku",
-    "summary": "FortiGuard Labs analysis of ELF/Sshdinjector.A!tr, a Linux malware collection injected into the SSH daemon. Samples surfaced around mid-November 2024 and the post says they are attributed to the DaggerFly espionage group. The collection includes a dropper, a malicious SSH library that communicates with a remote bot master and typically exfiltrates information, and persistence binaries. The post also evaluates using generative AI (r2ai with Radare2) for reverse engineering and notes hallucination, extrapolation and omissions in its output.",
+    "summary": "FortiGuard Labs blog post by Axelle Apvrille reverse-engineers ELF/Sshdinjector.A!tr, a Linux malware collection injected into the SSH daemon. Samples surfaced around mid-November 2024. A dropper installs a malicious library, libsshd.so, which connects to a bot master and typically exfiltrates information. Other binaries keep the host infected. The post says the collection is attributed to the DaggerFly espionage group in existing threat intelligence. It also evaluates generative AI (r2ai with Claude 3.5 Sonnet) as a reverse-engineering aid, reporting hallucination, extrapolation and…",
     "kind": "malware-analysis",
     "facts": {
       "actors": [
@@ -178,17 +178,25 @@
       "countries": [],
       "dates": [
         {
-          "v": "2025-02-04",
-          "q": "Published: 2025-02-04",
-          "what": "Blog post on the malware published by FortiGuard Labs"
+          "v": "mid-November 2024",
+          "q": "malware collection surfaced around mid-November 2024.",
+          "what": "samples of the malware collection first surfaced"
         },
         {
-          "v": "mid-November 2024",
-          "q": "surfaced around mid-November 2024",
-          "what": "Samples of the malware collection first surfaced"
+          "v": "2025-02-04",
+          "q": "Published: 2025-02-04",
+          "what": "blog post published"
         }
       ],
       "tools": [
+        {
+          "v": "ELF/Sshdinjector.A!tr",
+          "q": "ELF/Sshdinjector.A!tr is a collection of malware that can be injected into the SSH daemon."
+        },
+        {
+          "v": "libsshd.so",
+          "q": "A malicious SSH library named libsshd.so communicates with a remote bot master"
+        },
         {
           "v": "Radare2",
           "q": "Reverse engineering was performed using Radare2, assisted by Generative AI through the Radare2 extension"
@@ -200,40 +208,28 @@
         {
           "v": "Claude 3.5 Sonnet",
           "q": "The results from this article were mainly obtained using Claude 3.5 Sonnet 2024-10-22."
-        },
-        {
-          "v": "libsshd.so",
-          "q": "A malicious SSH library named libsshd.so communicates with a remote bot master and will typically"
         }
       ],
       "techniques": [
         {
-          "v": "Injection into the SSH daemon",
-          "q": "is a collection of malware that can be injected into the SSH daemon"
+          "v": "dropper",
+          "q": "A dropper checks if the host is infected."
         },
         {
-          "v": "Overwriting system binaries",
-          "q": "it attempts to overwrite the legitimate binaries ls, netstat, and crond with infected binaries"
+          "v": "searches the SSH daemon",
+          "q": "Finally, it searches the SSH daemon and, if"
         },
         {
-          "v": "Persistence through infected binaries",
-          "q": "Several other infected binaries (mainpasteheader, selfrecoverheader,…) ensure the host remains infected"
+          "v": "listens for incoming commands",
+          "q": "and listens for incoming commands."
         },
         {
-          "v": "Restarting SSH and cron daemons",
-          "q": "it will kill and restart both the SSH and Cron daemons"
-        },
-        {
-          "v": "Remote shell and command execution",
-          "q": "Opens a shell terminal"
-        },
-        {
-          "v": "Reading the password file",
-          "q": "Reads users from /etc/shadow"
-        },
-        {
-          "v": "Hiding on the OS by infecting common binaries",
+          "v": "infecting common binaries",
           "q": "It hides on the OS by infecting common binaries such as netstat"
+        },
+        {
+          "v": "persistence",
+          "q": "(malware persistence)."
         },
         {
           "v": "Data exfiltration",
@@ -242,6 +238,10 @@
       ],
       "cves": [],
       "figures": [
+        {
+          "v": "two other threads",
+          "q": "creates two other threads from the functions “heihei” and “xixi”."
+        },
         {
           "v": "Medium",
           "q": "Severity Level: Medium"
@@ -253,19 +253,18 @@
       "name": "ELF/Sshdinjector.A!tr"
     },
     "hedges": [
-      "The DaggerFly attribution is cited from existing threat intelligence, and the post says nobody had examined what the samples actually do.",
-      "AI-generated analysis can hallucinate, extrapolate or omit details; the author says its output must be checked against a disassembler.",
-      "The author says AI-generated source code details are not always correct, while decompiler output is accurate but hard to read.",
-      "The author says the AI's claims that the malware manipulates the MAC address and hides its network communications are exaggerated."
+      "Attribution to DaggerFly is cited from existing threat intelligence; the post focuses on reverse engineering the binaries.",
+      "AI-generated code details are not always correct; decompiler output is described as accurate but harder to read.",
+      "The analyst notes AI can hallucinate and extrapolate, for example overstating MAC address manipulation and network hiding."
     ],
-    "reason": "audit-wrong",
-    "tries": 0,
-    "audit": {
-      "at": "2026-11-27T13:49:20Z",
-      "ok": false,
-      "note": "hedges[0]: The text says 'nobody seems to have looked into what they actually do', which is hedged. The card states it flatly as 'nobody had examined', dropping",
-      "by": "auditor"
-    }
+    "audit_history": [
+      {
+        "at": "2026-11-27T13:49:20Z",
+        "ok": false,
+        "note": "hedges[0]: The text says 'nobody seems to have looked into what they actually do', which is hedged. The card states it flatly as 'nobody had examined', dropping",
+        "by": "auditor"
+      }
+    ]
   },
   "c1f9f0d2d77c1b350c7195058c7ac7bed463957a": {
     "sha1": "c1f9f0d2d77c1b350c7195058c7ac7bed463957a",

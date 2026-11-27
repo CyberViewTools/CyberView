@@ -45,32 +45,26 @@
     "key": "a-5a0483f5-09b3-4673-bb5a-56d41eaf91ed",
     "kind": "actor",
     "name": "MageCart",
-    "headline": "MageCart: card skimmers that hit online shops, from single sites to cloud platforms",
-    "in_short": "MageCart is a name for web card skimming. Attackers plant code on shopping sites to steal card details. Reports describe thousands of sites hit, and attacks on cloud services that serve many stores at once.",
+    "headline": "MageCart: card-skimming crews that plant code on online shops",
+    "in_short": "MageCart is a name for hackers who steal payment card numbers from online stores. Reports describe attacks on single shops, cloud-hosted platforms and tag-manager scripts.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "MageCart is the name given to a cluster of card-skimming activity, listed in the MISP galaxy catalogue under the name MageCart.",
+            "t": "MageCart is listed in the MISP galaxy catalogue as a threat actor, with no aliases or tools recorded there.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "WIRED describes Magecart as a group of hackers whose goal is stealing credit card numbers.",
+            "t": "WIRED describes Magecart as a group of hackers that steals credit card numbers, often by skimming card data from ecommerce sites.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "According to WIRED, Magecart has been behind some of the bigger hacks of recent years, from British Airways to Ticketmaster.",
-            "cites": [
-              "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
-            ]
-          },
-          {
-            "t": "Malwarebytes refers to the criminal part of the Magecart cabal, which suggests the name covers more than one party.",
+            "t": "Malwarebytes refers to the criminal part of the Magecart \"cabal\", which suggests the name covers more than one operator.",
             "cites": [
               "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
@@ -81,19 +75,19 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "WIRED says Magecart hackers cast the widest possible net to find vulnerable ecommerce sites.",
+            "t": "The focus is online shopping. WIRED says the hackers cast the widest possible net to find vulnerable ecommerce sites.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "Malwarebytes describes compromised shopping sites that were injected with skimmer code.",
+            "t": "Malwarebytes describes compromised shopping sites that were injected with a single line of code loading a remote script.",
             "cites": [
               "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           },
           {
-            "t": "In the Volusion case, the victim was a provider of cloud-hosted online stores, so the attack reached the stores that rely on it.",
+            "t": "A report on the Volusion breach says most Magecart attacks happen when hackers use vulnerabilities in self-hosted stores to plant skimmer code.",
             "cites": [
               "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
             ]
@@ -104,39 +98,34 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Malwarebytes reports that a single line of code added to a shopping site loads a remote piece of JavaScript.",
+            "t": "The core technique is web card skimming. Malicious code on a shop page captures card details that shoppers type in.",
+            "cites": [
+              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc",
+              "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
+            ]
+          },
+          {
+            "t": "Malwarebytes found skimmers that overlay a fake payment frame on the real payment form and send the stolen data back in encoded form.",
             "cites": [
               "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           },
           {
-            "t": "In the Heroku-hosted skimmers it described, a rogue iframe overlays the standard payment form to harvest card data.",
+            "t": "The same report says the crooks registered free Heroku accounts to host skimmer infrastructure. Malwarebytes had earlier documented skimmers served from GitHub and Amazon S3 buckets.",
             "cites": [
               "5c4ff737523066bf4f97e1a19613189aa290a25b"
             ]
           },
           {
-            "t": "The stolen data is sent back in encoded form.",
+            "t": "Sucuri describes the ATMZOW skimmer, which is planted through Google Tag Manager containers. It used heavy obfuscation and 40 newly registered domains, many hidden behind a firewall.",
             "cites": [
-              "5c4ff737523066bf4f97e1a19613189aa290a25b"
+              "53626c1051da5e12ff8b7cade2ef7872314c17b2"
             ]
           },
           {
-            "t": "Malwarebytes says threat actors used free Heroku accounts to host their skimmer infrastructure, and that it had earlier documented skimmers served from GitHub and Amazon S3 buckets.",
+            "t": "Sucuri says Google removed one container, and the actors created new ones and reinfected sites. Sucuri also says Group IB linked this skimmer to a 2015 infection that hit thousands of Magento sites.",
             "cites": [
-              "5c4ff737523066bf4f97e1a19613189aa290a25b"
-            ]
-          },
-          {
-            "t": "The Volusion report says most Magecart attacks happen when hackers use vulnerabilities in self-hosted stores to plant skimmer code.",
-            "cites": [
-              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
-            ]
-          },
-          {
-            "t": "The same report describes supply-chain attacks, including seven service providers breached in May 2019 through misconfigured cloud-hosting accounts.",
-            "cites": [
-              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
+              "53626c1051da5e12ff8b7cade2ef7872314c17b2"
             ]
           }
         ]
@@ -145,27 +134,33 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "WIRED, in an article published on 2019-07-11, says the group hit 17,000 domains in a few months.",
+            "t": "WIRED, in July 2019, said Magecart had been behind some of the bigger hacks of recent years, from British Airways to Ticketmaster.",
             "cites": [
               "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
             ]
           },
           {
-            "t": "Malwarebytes published a post on 2019-12-03 about skimmers on Heroku. It says the abusive instances were reported to Heroku and taken down.",
+            "t": "WIRED reported the group had hit 17,000 domains in a few months, helped by poor security hygiene. The author warned the method could lead to even bigger problems.",
+            "cites": [
+              "de4beaf9c5834c50cd06b8fd7e31ba973b19240b"
+            ]
+          },
+          {
+            "t": "In October 2019 hackers breached Volusion, a provider of cloud-hosted online stores. The report says more than 6,500 stores were affected and the number could be higher.",
+            "cites": [
+              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
+            ]
+          },
+          {
+            "t": "The report calls the Volusion case a Magecart-style supply-chain attack. It says seven service providers were breached earlier that year through misconfigured cloud-hosting accounts.",
+            "cites": [
+              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
+            ]
+          },
+          {
+            "t": "Malwarebytes reported the Heroku-hosted skimmers to Heroku, and the abusive instances were taken down. It said it would likely keep seeing skimmers abuse more cloud services.",
             "cites": [
               "5c4ff737523066bf4f97e1a19613189aa290a25b"
-            ]
-          },
-          {
-            "t": "A report dated Oct. 8, 2019 says hackers breached Volusion and altered a file on its Google Cloud infrastructure so that card details entered in shoppers' forms were captured.",
-            "cites": [
-              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
-            ]
-          },
-          {
-            "t": "That report says more than 6,500 stores were impacted, that the number could be higher, and that the malicious code was still being delivered at the time of writing.",
-            "cites": [
-              "e4e99526c558b60b7b3a9600ce869fb4a29e54dc"
             ]
           }
         ]
@@ -174,25 +169,27 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Shop owners should keep self-hosted store software patched and check the access settings on their cloud-hosting accounts.",
-            "cites": []
+            "t": "Shop owners should treat unexpected scripts on their pages as a sign of compromise, as Sucuri advises.",
+            "cites": [
+              "53626c1051da5e12ff8b7cade2ef7872314c17b2"
+            ]
           },
           {
-            "t": "Merchants should also review which third-party scripts and providers can touch their payment pages.",
+            "t": "Keep store software patched and review who can change your cloud and tag-manager accounts.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "9e83615f1e5a693ef69ce91006bedaffed3cf689",
+    "based_on": "86ec7aec2f1666487a9c650e3d544fbd4589abb4",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T04:20:22Z",
+    "written_at": "2026-11-27T05:49:28Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "463df9fa"
+    "written_run": "80dcb815"
   }
 }

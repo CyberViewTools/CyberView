@@ -21,5 +21,124 @@
     "hedges": [],
     "reason": "quote-not-in-text",
     "tries": 2
+  },
+  "fe38ca9e8664e774e9783b3db2315f1a94afa094": {
+    "sha1": "fe38ca9e8664e774e9783b3db2315f1a94afa094",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T06:01:40Z",
+    "model": "haiku",
+    "summary": "Cisco Talos Incident Response describes a June 2022 Qakbot malspam campaign that hijacked old email threads, likely harvested from multiple organisations in the 2021 ProxyLogon-related Exchange compromises. The report calls this external thread hijacking, which differs from victim thread hijacking because the attacker does not need access to the target's own Exchange server. Emails come from spoofed external senders. The report gives defender tips: spoofed senders, old threads, few internal-to-internal threads, malformed replies, partly scrubbed addresses and reused threads. Its attribution…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "HAFNIUM",
+          "q": "most famously exploited by the HAFNIUM group",
+          "by": "Cisco Talos (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2022-07-27",
+          "q": "Published: 2022-07-27",
+          "what": "report published"
+        },
+        {
+          "v": "June 2022",
+          "q": "We recently observed this in June 2022 as part of a broader campaign that delivered the Qakbot banking trojan.",
+          "what": "Qakbot campaign using external thread hijacking observed"
+        },
+        {
+          "v": "2021",
+          "q": "assess were likely harvested during the 2021 ProxyLogon-related compromises targeting vulnerable",
+          "what": "ProxyLogon-related Exchange compromises from which emails were likely harvested"
+        },
+        {
+          "v": "2020",
+          "q": "is likely an indirect effect of the widespread compromises and exfiltration of large volumes of email from 2020 and",
+          "what": "widespread email compromises and exfiltration"
+        },
+        {
+          "v": "May 2022",
+          "q": "Cisco Talos has observed at least one email thread as recent as May 2022",
+          "what": "most recent observed email thread used in the campaign"
+        },
+        {
+          "v": "early 2022",
+          "q": "Most recently, this was seen in an IcedID campaign in early 2022 where the adversary compromised a",
+          "what": "IcedID campaign using victim thread hijacking"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Qakbot",
+          "q": "In a recent malspam campaign delivering the Qakbot banking trojan"
+        },
+        {
+          "v": "IcedID",
+          "q": "In the past, in a standard malspam campaign delivering IcedID, an attacker would have taken control of the target"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "external thread hijacking",
+          "q": "Cisco Talos has observed threat actors using external thread hijacking, a method by which attackers weaponize"
+        },
+        {
+          "v": "victim thread hijacking",
+          "q": "In a victim thread hijacking attack, the adversary would take the following steps:"
+        },
+        {
+          "v": "bulk email aggregation for phishing",
+          "q": "This campaign relies on external thread hijacking, whereby the adversary is likely using a bulk aggregation"
+        },
+        {
+          "v": "spoofed senders",
+          "q": "Spoofed senders."
+        },
+        {
+          "v": "malformed replies",
+          "q": "Malformed replies. The adversary concatenated the old, legitimate content with the new, malicious"
+        },
+        {
+          "v": "partly scrubbed email addresses",
+          "q": "Partially scrubbed email addresses."
+        },
+        {
+          "v": "reuse of harvested threads in multiple waves",
+          "q": "Repetitive use of the same harvested legitimate email threads in multiple phishing waves."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-26855",
+          "q": "tracked as CVE-2021-26855, targeting vulnerable Exchange servers."
+        }
+      ],
+      "figures": [
+        {
+          "v": "dozens of hours",
+          "q": "can potentially avoid incorrect assessment of an incident and save dozens of hours of hunting for an internal"
+        },
+        {
+          "v": "months to years ago",
+          "q": "the attackers used old emails harvested months to years ago during"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Qakbot"
+    },
+    "hedges": [
+      "Talos assesses the old emails were likely harvested in the 2021 ProxyLogon-related compromises; the selection process was not directly observed.",
+      "The assessment of ProxyLogon-harvested emails is based on observations such as email timing and research into publicly acknowledged compromises.",
+      "The attacker likely took the described steps; the email selection process could have used a regex search but was not directly observed.",
+      "The external thread hijacking approach is not necessarily specific to one adversary.",
+      "Talos expects that adversaries will likely continue to use bulk email aggregations from multiple organisations."
+    ]
   }
 }

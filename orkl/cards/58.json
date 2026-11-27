@@ -1,25 +1,143 @@
 {
   "5852a6bc3cac355c497c3c1e51f8e329670dca6f": {
     "sha1": "5852a6bc3cac355c497c3c1e51f8e329670dca6f",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:26:35Z",
+    "read_at": "2026-11-27T05:51:04Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Securonix Threat Research describes the STARK#MULE campaign, which sends phishing zip attachments with US military recruitment-themed lures aimed at Korean-speaking victims. The malware is staged from two compromised Korean e-commerce websites. It runs PowerShell, sets up daily scheduled tasks for persistence, and communicates over HTTP. The report says the actor possibly originates from North Korea, pending confirmation, and compares the activity to the APT37 group.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "APT37",
+          "q": "these types of attacks are on par with past attacks stemming from typical North Korean groups such as APT37",
+          "by": "Securonix Threat Research"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government officials",
+          "q": "South Korea has historically been a primary target of the group, especially its government officials."
+        },
+        {
+          "v": "e-commerce",
+          "q": "Both are e-commerce sites which only utilize the HTTP protocol."
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "There is a possibility that the malicious threat actor (MTA) originates from North Korea (this is still to be confirmed)."
+        },
+        {
+          "v": "South Korea",
+          "q": "South Korea has historically been a primary target of the group"
+        }
+      ],
+      "dates": [
+        {
+          "v": "Jul 28, 2023",
+          "q": "Jul 28, 2023, updated August 1, 2023",
+          "what": "Report first published"
+        },
+        {
+          "v": "August 1, 2023",
+          "q": "updated August 1, 2023",
+          "what": "Report updated"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 15:28:22 UTC",
+          "what": "Report archived copy captured"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PowerShell",
+          "q": "contains PowerShell code executed by the shortcut file"
+        },
+        {
+          "v": "WinRAR",
+          "q": "This is a legitimate winrar binary used to extract"
+        },
+        {
+          "v": "schtasks.exe",
+          "q": "leveraging schtasks.exe to establish persistence"
+        },
+        {
+          "v": "conshost.exe",
+          "q": "The file “conshost.exe”, which is likely masquerading as the Windows binary"
+        },
+        {
+          "v": "Thumbs.db",
+          "q": "The Thumbs.db file masquerades as a .ps1 PowerShell file."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing email",
+          "q": "The attack likely begins with a phishing email with a zip file attachment."
+        },
+        {
+          "v": "Command and Scripting Interpreter: PowerShell",
+          "q": "T1059.001: Command and Scripting Interpreter: PowerShell"
+        },
+        {
+          "v": "Scheduled Task/Job",
+          "q": "T1053.005: Scheduled Task/Job: Scheduled Task"
+        },
+        {
+          "v": "Encrypted Channel: Symmetric Cryptography",
+          "q": "T1573.001: Encrypted Channel: Symmetric Cryptography"
+        },
+        {
+          "v": "Ingress Tool Transfer",
+          "q": "T1105: Ingress Tool Transfer"
+        },
+        {
+          "v": "Non-Standard Port",
+          "q": "T1571: Non-Standard Port"
+        },
+        {
+          "v": "Exfiltration Over Web Service",
+          "q": "T1567: Exfiltration Over Web Service"
+        },
+        {
+          "v": "pad the script",
+          "q": "This is likely an attempt to pad the script in order to evade AV detections"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "two compromised websites",
+          "q": "The threat actor’s infrastructure appears to be solely based on two compromised websites that appear to be"
+        },
+        {
+          "v": "three files",
+          "q": "The zip file is not password protected and contains three files as seen in the figure below:"
+        },
+        {
+          "v": "Two scheduled tasks",
+          "q": "Two scheduled tasks are then created using schtasks.exe."
+        },
+        {
+          "v": "360kb",
+          "q": "stands only 360kb and is compiled using Microsoft Visual C/C++"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "STARK#MULE"
+    },
+    "hedges": [
+      "The campaign appears to be targeting Korean-speaking victims based on the nomenclature and names of documents used.",
+      "There is a possibility that the malicious threat actor (MTA) originates from North Korea (this is still to be confirmed).",
+      "Based on the source and likely targets, these types of attacks are on par with past attacks stemming from typical North Korean groups such as APT37.",
+      "The awkward usage of Multi National and typos such as Templete further solidify that the author(s) were of non-English origin or a possible false-flag attempt.",
+      "It's possible that there could be more compromised websites that the threat actors are using, however in this attack chain we only observed communication between the two."
+    ]
   }
 }

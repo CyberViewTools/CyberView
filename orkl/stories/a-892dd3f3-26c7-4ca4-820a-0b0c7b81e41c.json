@@ -51,190 +51,60 @@
     "key": "a-892dd3f3-26c7-4ca4-820a-0b0c7b81e41c",
     "kind": "actor",
     "name": "NICKEL KIMBALL",
-    "headline": "NICKEL KIMBALL (Kimsuky): a long-running spy group aimed mostly at South Korea",
-    "in_short": "NICKEL KIMBALL, better known as Kimsuky, is tied by several vendors and South Korean authorities to North Korea. Reports show phishing, fake documents and Android spyware used against government, defense and policy targets.",
+    "headline": "NICKEL KIMBALL (Kimsuky): a spying group aimed mostly at South Korea, per vendor reports",
+    "in_short": "NICKEL KIMBALL is tracked under many names, including Kimsuky and APT43. Vendors link it to North Korea. Reports describe phishing, Android spyware and fake-document lures aimed mostly at South Korean targets. Attribution varies by report.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "NICKEL KIMBALL is the Secureworks name for a group that other vendors call Kimsuky, APT43, Velvet Chollima, Emerald Sleet, THALLIUM, TA427 and Black Banshee, among other names.",
+            "t": "The catalogue lists NICKEL KIMBALL under many aliases, including Kimsuky, APT43, Emerald Sleet, Velvet Chollima, THALLIUM and TA427.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "The catalogue lists these tools for the group: BabyShark, FastFire, FastSpy, FireViewer, KONNI, KimJongRAT, Kimsuky and ReconShark.",
-            "cites": [
-              "catalogue"
-            ]
-          },
-          {
-            "t": "Microsoft describes Kimsuky as a North Korean state actor. Breakglass Intelligence attributes a command server it studied to Kimsuky and to North Korea with high confidence.",
-            "cites": [
-              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb",
-              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
-            ]
-          },
-          {
-            "t": "Sekoia and Kudelski Security note that some North Korea experts regard Kimsuky as a mega-cluster made up of several branches, such as TA406 and TA408. They also say vendors divide and name clusters differently.",
-            "cites": [
-              "24bb6d01f2508e4001990348616aff2cadc34cd1"
-            ]
-          }
-        ]
-      },
-      {
-        "h": "targets",
-        "sentences": [
-          {
-            "t": "Microsoft says the group went after people in international affairs groups, NGOs, government agencies and media companies in its 2025 ClickFix activity.",
+            "t": "BleepingComputer's report on Microsoft's findings calls Kimsuky a North Korean state actor, also known as Emerald Sleet or Velvet Chollima.",
             "cites": [
               "cf6d782a9ed23d0624252d04a5cabe070f3b16bb"
             ]
           },
           {
-            "t": "South Korea's National Police Agency said Kimsuky exploited an email server flaw at a defense subcontractor. The agency said North Korean groups breached defense firms to steal technology data.",
-            "cites": [
-              "b7d522acdad578db2e351cd84aad9110b81459bc"
-            ]
-          },
-          {
-            "t": "AhnLab reported signs of the AppleSeed backdoor being spread to maintenance contractors of a military unit in July 2022. It says Kimsuky mainly uses that backdoor.",
-            "cites": [
-              "d0d666177b14b04a9202863e5b062a0e5936b161"
-            ]
-          },
-          {
-            "t": "Genians Security Center assesses, with moderate confidence, that Kimsuky ran a 2026 campaign against South Korean policy and security professionals.",
-            "cites": [
-              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
-            ]
-          },
-          {
-            "t": "Breakglass Intelligence found phishing lures on Kimsuky infrastructure aimed at South Korean users of the Naver web portal.",
-            "cites": [
-              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
-            ]
-          }
-        ]
-      },
-      {
-        "h": "methods",
-        "sentences": [
-          {
-            "t": "AhnLab says the group spreads the PebbleDash backdoor mainly by spear-phishing. The emails carry shortcut files disguised as ordinary documents, using a double file extension.",
-            "cites": [
-              "4d612928d40b956cf990c917aca29944d7abb949"
-            ]
-          },
-          {
-            "t": "AhnLab also describes a patched system file used to switch off remote desktop login checks, and a Dropbox and TCP socket channel for commands.",
-            "cites": [
-              "4d612928d40b956cf990c917aca29944d7abb949"
-            ]
-          },
-          {
-            "t": "Microsoft says Kimsuky adopted the ClickFix trick. A fake South Korean official builds a rapport, sends a PDF, and tells the target to run code in PowerShell as administrator. That code installs a browser-based remote desktop tool.",
-            "cites": [
-              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb"
-            ]
-          },
-          {
-            "t": "Breakglass Intelligence describes a three-stage chain that starts with a help file posing as API documentation. It ends in a keylogger with clipboard monitoring and timed uploads.",
-            "cites": [
-              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
-            ]
-          },
-          {
-            "t": "ENKI WhiteHat attributes new Android variants of DOCSWAP to Kimsuky, citing shared infrastructure, a known phishing string and Korean comments. It calls this strong evidence, not a definitive confirmation. The apps pose as delivery services and carry a remote access tool with keylogging.",
-            "cites": [
-              "37114c033cf4dc4e27f0631d4af9be712dbea44b"
-            ]
-          },
-          {
-            "t": "An earlier S2W analysis of DocSwap only suspected a possible connection to Kimsuky.",
-            "cites": [
-              "ffaaf49f0ead72966c28858a9674927f78fe951a"
-            ]
-          },
-          {
-            "t": "A researcher's blog post says Kimsuky uses a persistence trick that hijacks the default program for .txt files.",
-            "cites": [
-              "d024ba07693e90631f56e0ccf049775a082516ca"
-            ]
-          }
-        ]
-      },
-      {
-        "h": "operations",
-        "sentences": [
-          {
-            "t": "In a 2022 article, South Korean officials said hackers believed to be operating from North Korea breached the nuclear research body KAERI through a VPN server flaw. One of thirteen IP addresses involved was linked to attack infrastructure used by Kimsuky.",
-            "cites": [
-              "80579210268b61ff389629fd202a0b1ca0b79eb7"
-            ]
-          },
-          {
-            "t": "The National Police Agency said Kimsuky exploited a flaw in a defense subcontractor's email server between April and July 2023. The flaw let large files be downloaded without logging in.",
-            "cites": [
-              "b7d522acdad578db2e351cd84aad9110b81459bc"
-            ]
-          },
-          {
-            "t": "In February 2022, ESRC analysed a Word file posing as a guide from the Klip digital wallet service. It linked the file to the Smoke Screen campaign and to Thallium, also known as Kimsuky. The command server could not be reached, so analysis stopped early.",
+            "t": "ESRC linked a February 2022 malicious Word document to Thallium, also known as Kimsuky. The report describes the actor as North Korea-linked.",
             "cites": [
               "fdf53fac0af9cced76179fb1b9df0ce009952e36"
             ]
           },
           {
-            "t": "Microsoft says it saw the ClickFix tactic only in limited attacks starting in January 2025.",
+            "t": "Sekoia and Kudelski Security say some DPRK experts regard Kimsuky as a mega-cluster with several branches, such as TA406 and TA408. The report adds that vendors name and divide clusters differently.",
             "cites": [
-              "cf6d782a9ed23d0624252d04a5cabe070f3b16bb"
+              "24bb6d01f2508e4001990348616aff2cadc34cd1"
             ]
           },
           {
-            "t": "In April 2026, Breakglass Intelligence mapped about 79 domains across five IP addresses tied to one Kimsuky command server.",
+            "t": "Where Kimsuky ends and other groups begin is disputed. Genians says some researchers class KONNI, Kimsuky and APT37 as one group, and that they overlap in targets and infrastructure. It cites an MSMT report that treats Kimsuky and KONNI as distinct.",
             "cites": [
-              "02e61990f3e053afd9e6aaa3b1a6fd466e46fbd3"
+              "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
             ]
           },
           {
-            "t": "Genians says the 2026 campaign began with reply-based phishing from someone posing as a National Assembly member's aide. It also says a third party imitating the same techniques cannot be fully ruled out.",
-            "cites": [
-              "891354fdf71c1ff1b9f5258c0ee3fc46575bf7f5"
-            ]
-          }
-        ]
-      },
-      {
-        "h": "takeaway",
-        "sentences": [
-          {
-            "t": "Treat unexpected documents, shortcut files and help files with caution, even when they appear to come from an official or a recruiter.",
-            "cites": []
-          },
-          {
-            "t": "Never paste or run commands because a message or web page tells you to.",
-            "cites": []
-          },
-          {
-            "t": "Keep email and VPN servers patched, and use separate passwords for work and personal accounts.",
+            "t": "DCSO says KONNI is generally understood to fall under the Kimsuky cluster of DPRK Reconnaissance General Bureau-linked actors.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "4a039daaf3b67af48543d6d979ee180ea30e2dfd",
+    "based_on": "14b25756cd69269005c347772fa6097fa69a3c0b",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T04:19:38Z",
+    "written_at": "2026-11-27T05:49:09Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked",
-      "bare-attribution"
+      "uncited",
+      "missing-section"
     ],
-    "written_run": "450efb4c"
+    "written_run": "fd91a38b"
   }
 }

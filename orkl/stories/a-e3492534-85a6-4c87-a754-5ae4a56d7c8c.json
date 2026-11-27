@@ -4,8 +4,8 @@
     "key": "a-e3492534-85a6-4c87-a754-5ae4a56d7c8c",
     "kind": "actor",
     "name": "Threat Group-3390",
-    "headline": "Threat Group-3390: a long-running group known by many names, with a wide malware kit",
-    "in_short": "Threat Group-3390 is tracked as APT27, Iron Tiger, Emissary Panda and more. Reports on file link it to tools like HyperBro and PlugX, a web-shell and downloader trail, and a chat-app campaign aimed at three operating systems.",
+    "headline": "Threat Group-3390: a long-running espionage group with many names",
+    "in_short": "Threat Group-3390 is tracked as Emissary Panda, APT27, Iron Tiger, LuckyMouse and more. Vendors describe it as using watering holes, DLL sideloading and tools such as PlugX and HyperBro against a wide range of targets.",
     "sections": [
       {
         "h": "who",
@@ -17,9 +17,50 @@
             ]
           },
           {
-            "t": "Google Threat Intelligence Group describes APT27 as a PRC-nexus threat actor and says it observed APT27-associated activity that used Gemini.",
+            "t": "Dell SecureWorks researchers designated the group Threat Group 3390 and nicknamed it Emissary Panda. The article says the group is believed to be based in China.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "Symantec tracks the group as Budworm, also known as LuckyMouse, Emissary Panda and APT27. It says the group is believed to have been active since at least 2013.",
+            "cites": [
+              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+            ]
+          },
+          {
+            "t": "Google Threat Intelligence Group describes APT27 as a PRC-nexus threat actor.",
             "cites": [
               "b2386bef6e70b932af44e6bb3f3d3f1cc3cc69ec"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
+          {
+            "t": "SecureWorks said most targets were in the automotive, electronic, aerospace, energy and pharmaceutical industries. It said at least 50 organizations in the US and the United Kingdom had data stolen.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "The same article also names defense contractors, colleges and universities, law firms and political organizations as targets. It says a cultural site for the Uyghur ethnic group was apparently used to target members of that minority for surveillance.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "Symantec says Budworm often focuses on government, technology and defense organizations. In August 2023 it hit a Middle Eastern telecommunications organization and an Asian government.",
+            "cites": [
+              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+            ]
+          },
+          {
+            "t": "A malware catalogue entry says HyperBro has been observed to target mainly the gambling industry, though it has been seen in other places too.",
+            "cites": [
+              "8e3cb1df4bfe919159e8adeff374e65f8a3d913c"
             ]
           }
         ]
@@ -28,27 +69,39 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "The catalogue lists many tools for the group, including PlugX, HyperBro, China Chopper, Cobalt Strike, Mimikatz, Impacket and gh0st RAT.",
+            "t": "SecureWorks said the group broke into networks largely through watering hole attacks launched from over 100 compromised legitimate websites.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "It said the group relied on old vulnerabilities, including CVE-2011-3544 and CVE-2010-0738, and used the PlugX remote access tool.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "Symantec reports that Budworm loads its SysUpdate backdoor by DLL sideloading. It also used living-off-the-land and publicly available tools such as AdFind, SecretsDump and PasswordDumper to map networks and dump credentials.",
+            "cites": [
+              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+            ]
+          },
+          {
+            "t": "The catalogue lists many tools for the group, including PlugX, HyperBro, Cobalt Strike, Mimikatz, China Chopper, SysUpdate, RCSession and Clambling.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Recorded Future's Insikt Group says LuckyMouse (TG-3390, Emissary Panda, Bronze Union) is among the actors that have historically used Scanbox, a reconnaissance framework that can log keystrokes.",
+            "t": "HyperBro typically has three or more components. These include a genuine loader and an encrypted, compressed payload with its command-and-control details inside.",
             "cites": [
-              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+              "8e3cb1df4bfe919159e8adeff374e65f8a3d913c"
             ]
           },
           {
-            "t": "One analyst's report says the Redosdru downloader is commonly associated with APT27/Iron Tiger. The report says Microsoft reported it as early as July 2009.",
+            "t": "One analyst's blog post says the Redosdru downloader is commonly associated with APT27/Iron Tiger.",
             "cites": [
               "3770824fad66a3c0254661f0e17ca27b301dafdb"
-            ]
-          },
-          {
-            "t": "The Malpedia page for the TwoFace web shell lists APT27 among five associated actors. According to Unit 42, TwoFace has two stages, a loader and a payload, and is written in C#.",
-            "cites": [
-              "b0cdf57ffe0f8d7999e42901c8cb1610d98c2c3a"
             ]
           }
         ]
@@ -57,13 +110,43 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "A report titled \"Iron Tiger Compromises Chat Application Mimi, Targets Windows, Mac, and Linux Users\" lists indicators for HyperBro samples on Windows and Rshell samples on Linux and Mac OS.",
+            "t": "SecureWorks unveiled the group at the Black Hat conference, with an article published on 5 August 2015.",
+            "cites": [
+              "4a50222f670f781ca703820d626b3a3bc659eb97"
+            ]
+          },
+          {
+            "t": "Symantec says Budworm used an updated SysUpdate backdoor in two attacks in August 2023. It says only credential harvesting was seen on infected machines, and the activity may have been stopped early.",
+            "cites": [
+              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+            ]
+          },
+          {
+            "t": "Symantec says the targeting of a telecommunications company and a government points to intelligence gathering as the motivation.",
+            "cites": [
+              "d6fdc69202fef1c0f4e171e9fcae238e25ab4bcf"
+            ]
+          },
+          {
+            "t": "A threat report titled \"Iron Tiger Compromises Chat Application Mimi\" lists HyperBro samples for Windows and Rshell samples for Linux and Mac.",
             "cites": [
               "d2f4168868c9c9bf5764bc3a92c6399e4b6d5d1d"
             ]
           },
           {
-            "t": "Google's report says an APT27 fleet management application is likely to support an ORB network. The report was published on 2026-05-11.",
+            "t": "Kaspersky's GReAT team reported a 2024 campaign against Russian government organizations and IT companies. It says a new implant, PlugY, shares code with DRBControl, which several companies attribute to APT27.",
+            "cites": [
+              "11bb697ec74ff8bedc5d4284110aef0a6169afd8"
+            ]
+          },
+          {
+            "t": "Recorded Future's Insikt Group lists LuckyMouse among the actors that have historically used the Scanbox reconnaissance framework.",
+            "cites": [
+              "7d4b5b5f75e6544cd0a3bdd6adaca054a49948c9"
+            ]
+          },
+          {
+            "t": "Google Threat Intelligence Group says it observed activity associated with APT27 that used Gemini. It says an APT27 fleet management application is likely to support an ORB network.",
             "cites": [
               "b2386bef6e70b932af44e6bb3f3d3f1cc3cc69ec"
             ]
@@ -74,22 +157,26 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Defenders can use the published indicator lists and tool names to check their own systems for signs of this group.",
+            "t": "Vendors use different names for this group and may not describe exactly the same activity, so check which source makes each claim.",
+            "cites": []
+          },
+          {
+            "t": "Keeping software patched and watching for unexpected DLL loading are sensible defences against the methods described above.",
             "cites": []
           }
         ]
       }
     ],
     "status": "rejected",
-    "based_on": "80e6be70324d008c78fe9f0ed74d66b58ecf21f6",
+    "based_on": "8a4b272b1122c8af87a7ca9e533516c7c9f4c5d3",
     "tries": 1,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T04:19:57Z",
+    "written_at": "2026-11-27T05:50:29Z",
     "writer_model": "sonnet",
     "reasons": [
-      "unbacked",
-      "missing-section"
+      "bare-attribution",
+      "unbacked"
     ],
-    "written_run": "65942953"
+    "written_run": "5a17aa08"
   }
 }

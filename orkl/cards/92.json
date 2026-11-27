@@ -21,5 +21,142 @@
     "hedges": [],
     "reason": "value-not-in-quote",
     "tries": 2
+  },
+  "92c37a8def1ad20659b82eba04c2aaec4efc9cca": {
+    "sha1": "92c37a8def1ad20659b82eba04c2aaec4efc9cca",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T05:56:53Z",
+    "model": "haiku",
+    "summary": "FortiGuard Labs (Fortinet) describes a Russian-language phishing email with a ZIP attachment. Its macro-enabled add-in file runs a script that creates a scheduled task for persistence and tries to reach a command and control server. The report links the activity to the Konni RAT and to APT 37, a group said to align with North Korean government objectives, but hedges that link. The C2 server was not responding at the time of writing, so the RAT executable could not be analysed. The blog was published 2022-09-19.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT 37",
+          "q": "that has been tied to the group APT 37 (aka: Ricochet Chollima, InkySquid, ScarCruft, Reaper, and Group123)",
+          "by": "Fortinet FortiGuard Labs (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "It is targeted at another Russian government address."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "It aims to appear official by spoofing an address for the Consulate General of Russia in Shenyang, China."
+        },
+        {
+          "v": "China",
+          "q": "It aims to appear official by spoofing an address for the Consulate General of Russia in Shenyang, China."
+        },
+        {
+          "v": "North Korea",
+          "q": "Republic of Korea (DPRK), commonly known as North Korea."
+        },
+        {
+          "v": "Ukraine",
+          "q": "This is interesting because this is the English spelling of an area of Ukraine."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2022-09-19",
+          "q": "Published: 2022-09-19 · Archived: 2026-04-05 21:30:55 UTC",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2026-04-05",
+          "q": "Published: 2022-09-19 · Archived: 2026-04-05 21:30:55 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Konni",
+          "q": "Konni, a remote administration tool (RAT)"
+        },
+        {
+          "v": "Certutil",
+          "q": "Using the Microsoft “Certutil” tool"
+        },
+        {
+          "v": "PowerShell",
+          "q": "The second purpose of “oup.vbs” is to execute a base 64-encoded PowerShell command."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spoofing an address",
+          "q": "It aims to appear official by spoofing an address for the Consulate General of Russia in Shenyang, China."
+        },
+        {
+          "v": "malicious macro",
+          "q": "Should that occur, a malicious macro will execute."
+        },
+        {
+          "v": "scheduled task",
+          "q": "The first is to create a scheduled task called"
+        },
+        {
+          "v": "persistence",
+          "q": "once attackers are in, they mean to stay through the use of persistence mechanisms"
+        },
+        {
+          "v": "command and control",
+          "q": "frequent check-ins with command and control."
+        },
+        {
+          "v": "decoy",
+          "q": "This PowerPoint file is actually a decoy."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "Medium",
+          "q": "Severity Level: Medium"
+        },
+        {
+          "v": "5 minutes",
+          "q": "The purpose of this task is to continually run “oup.vbs” once every 5 minutes."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Konni"
+    },
+    "hedges": [
+      "The group APT 37 is described as tied to Konni, not confirmed as its operator.",
+      "The group has been known to align its targeting and objectives with those of the North Korean government.",
+      "The actions used are described as consistent with previous instances of Konni, not as a confirmed match.",
+      "The command and control server was not responding at the time of writing, so the RAT executable could not be obtained for analysis.",
+      "Persistence and C2 activity are said to match prior attempts at deploying Konni."
+    ]
+  },
+  "927e005f5cdd9887481a10b2b8a854ec57389e5b": {
+    "sha1": "927e005f5cdd9887481a10b2b8a854ec57389e5b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T05:58:24Z",
+    "model": "haiku",
+    "summary": "A Malpedia family page for Dridex, a banking Trojan. It is mainly an index of third-party reports and blog posts about Dridex, listed by date, title and author. The short quoted passages describe Dridex as an information-stealing malware that sends credentials over an encrypted tunnel to numerous scattered command-and-control servers, and note that an older macro-based infection method faded after Microsoft Office updates, and that IBM X-Force reported Dridex v4 using AtomBombing code injection. It is a reference index rather than a threat report, so no facts are recorded.",
+    "kind": "not-a-threat-report",
+    "facts": {
+      "actors": [],
+      "sectors": [],
+      "countries": [],
+      "dates": [],
+      "tools": [],
+      "techniques": [],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": []
   }
 }

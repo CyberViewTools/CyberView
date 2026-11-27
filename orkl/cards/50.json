@@ -263,5 +263,122 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "500775ea85be6e7d6730f0f358cbbc4fc74d81a9": {
+    "sha1": "500775ea85be6e7d6730f0f358cbbc4fc74d81a9",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T05:56:46Z",
+    "model": "haiku",
+    "summary": "Kaspersky Labs researchers, as reported by The Hacker News in June 2018, attribute an espionage campaign to the Chinese-speaking group LuckyMouse. The campaign targeted a national data center in an unnamed Central Asian country and used watering hole attacks against government websites. Visitors were redirected to BeEF or ScanBox. The data center was infected with the HyperBro remote access trojan. The command and control server sat on a MikroTik router at a Ukrainian ISP that researchers believe was hacked for the campaign. The initial access vector is unclear.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "LuckyMouse",
+          "q": "who have attributed these attacks to a Chinese-speaking threat actor group called LuckyMouse",
+          "by": "Kaspersky Labs security researchers"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "injected malicious JavaScript code into the official government websites"
+        },
+        {
+          "v": "defense",
+          "q": "theft of massive amounts of data from the directors and managers of US-based defense contractors"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Central Asia",
+          "q": "from an unnamed country in Central Asia"
+        },
+        {
+          "v": "Ukrainian",
+          "q": "The main command and control (C&C) server used in this attack is hosted on an IP address which belongs to a Ukrainian ISP"
+        }
+      ],
+      "dates": [
+        {
+          "v": "fall 2017",
+          "q": "active covertly since fall 2017",
+          "what": "campaign believed to have become active covertly"
+        },
+        {
+          "v": "March",
+          "q": "but was spotted in March by security researchers",
+          "what": "campaign spotted by Kaspersky Labs researchers"
+        },
+        {
+          "v": "2010",
+          "q": "The group has been active since at least 2010",
+          "what": "LuckyMouse group believed active since at least this year"
+        },
+        {
+          "v": "mid-November 2017",
+          "q": "There were traces of HyperBro in the infected data center from mid-November 2017.",
+          "what": "HyperBro traces found in the infected data center"
+        },
+        {
+          "v": "March 2016",
+          "q": "specifically to a MikroTik router running a firmware version released in March 2016",
+          "what": "firmware date of the MikroTik router used for command and control"
+        },
+        {
+          "v": "2018-06-14",
+          "q": "Published: 2018-06-14",
+          "what": "article published reporting the campaign"
+        }
+      ],
+      "tools": [
+        {
+          "v": "HyperBro",
+          "q": "HyperBro, a Remote Access Trojan (RAT) deployed to maintain persistence in the targeted system"
+        },
+        {
+          "v": "Browser Exploitation Framework (BeEF)",
+          "q": "penetration testing suite Browser Exploitation Framework (BeEF)"
+        },
+        {
+          "v": "ScanBox",
+          "q": "or the ScanBox reconnaissance framework"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "watering hole attack",
+          "q": "in order to conduct watering hole attacks"
+        },
+        {
+          "v": "phishing",
+          "q": "possibly had conducted watering hole or phishing attacks to compromise accounts belonging to employees"
+        },
+        {
+          "v": "router compromise",
+          "q": "Researchers believe the Mikrotik router was explicitly hacked for the campaign"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2017-11882",
+          "q": "spotted using a widely used Microsoft Office vulnerability (CVE-2017-11882)"
+        }
+      ],
+      "figures": []
+    },
+    "subject": {
+      "type": "malware",
+      "name": "HyperBro"
+    },
+    "hedges": [
+      "The campaign is believed to be active covertly since fall 2017",
+      "The initial attack vector used in the attack against the data center is unclear",
+      "researchers have no proofs of this technique being used in this particular attack",
+      "researchers believe LuckyMouse possibly had conducted watering hole or phishing attacks to compromise accounts",
+      "Researchers believe the Mikrotik router was explicitly hacked for the campaign",
+      "These events suggest that the data center infected with HyperBro and the waterholing campaign are connected."
+    ]
   }
 }

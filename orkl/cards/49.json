@@ -119,5 +119,94 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "490d99f79acb8bd63784f656f911669351d34833": {
+    "sha1": "490d99f79acb8bd63784f656f911669351d34833",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T05:58:04Z",
+    "model": "haiku",
+    "summary": "ASEC reports ongoing distribution of oversized LNK shortcut files delivering the RokRAT backdoor to South Korean users, particularly North Korea-related ones. Opening one runs PowerShell, which writes three files to a public folder and runs RokRAT in a fileless manner. RokRAT carries out the operator's commands and uploads data to pCloud, Yandex and DropBox while disguised as Googlebot. The report names no threat actor; it says the LNK type resembles an earlier post that mentions RedEyes (ScarCruft).",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "individuals associated with Korean unification, military, and education",
+          "q": "malware aimed at individuals associated with Korean unification, military, and education has been continuously identified"
+        }
+      ],
+      "countries": [
+        {
+          "v": "South Korea",
+          "q": "found to be targeting South Korean users, particularly those related to North Korea."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2024-04-22",
+          "q": "Published: 2024-04-22 · Archived: 2026-04-05 18:09:58 UTC",
+          "what": "Report published by ASEC"
+        }
+      ],
+      "tools": [
+        {
+          "v": "RokRAT",
+          "q": "The data of “viewer.dat” that is ultimately executed is the RokRAT malware, which is a backdoor-type malware"
+        },
+        {
+          "v": "PowerShell",
+          "q": "The confirmed LNK files contain a command to execute PowerShell via CMD, and their type"
+        },
+        {
+          "v": "pCloud",
+          "q": "The collected information is transmitted to the threat actor’s cloud server using cloud services such as pCloud,"
+        },
+        {
+          "v": "Yandex",
+          "q": "Yandex, and DropBox."
+        },
+        {
+          "v": "DropBox",
+          "q": "Yandex, and DropBox."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "legitimate document files, script code, and malicious PE data",
+          "q": "A notable fact about this type is that it includes legitimate document files, script code, and malicious PE data"
+        },
+        {
+          "v": "fileless manner",
+          "q": "file and executes it in a fileless manner."
+        },
+        {
+          "v": "cloud services",
+          "q": "The collected information is transmitted to the threat actor’s cloud server using cloud services such as pCloud,"
+        },
+        {
+          "v": "disguised as Googlebot",
+          "q": "the UserAgent in the request header is disguised as Googlebot"
+        },
+        {
+          "v": "Deletion of specific files",
+          "q": "Deletion of specific files (with VBS, CMD, BAT, and LNK extensions) within the Startup folder"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "3 files",
+          "q": "Afterward, it creates 3 files in the %public% folder."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "RokRAT"
+    },
+    "hedges": [
+      "The report names no threat actor. It only says the LNK file type is similar to the type found in an earlier ASEC post that names RedEyes (ScarCruft)."
+    ]
   }
 }

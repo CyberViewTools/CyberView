@@ -1,0 +1,100 @@
+{
+  "3e58e6bdc409d0498c76749dbdc044772063afdb": {
+    "sha1": "3e58e6bdc409d0498c76749dbdc044772063afdb",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T06:00:35Z",
+    "model": "haiku",
+    "summary": "RiskIQ's report (published 2018-09-19, research done with Volexity) describes a Magecart payment-card skimming attack on the retailer Newegg. The report says attackers registered a lookalike domain on August 13th and placed a skimmer on the checkout payment page around August 14th. It was removed on September 18th, so customers were exposed for over a month. The skimmer code reuses the basecode from the British Airways attack, adapted to Newegg's form. The report urges banks to review cards used on Newegg between August 14th and September 18th.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "Magecart",
+          "q": "the Magecart actor behind it has not stopped their",
+          "by": "RiskIQ (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "retail",
+          "q": "Newegg is an extremely popular retailer"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 13th",
+          "q": "On August 13th Magecart operators registered a domain called",
+          "what": "Attackers registered a lookalike domain"
+        },
+        {
+          "v": "August 14th",
+          "q": "The first time the skimmer became active was around August 14th",
+          "what": "Skimmer first became active on the Newegg site"
+        },
+        {
+          "v": "September 18th",
+          "q": "on September 18th, which means the attackers had a full month of skimming Newegg customers",
+          "what": "Skimmer confirmed removed"
+        },
+        {
+          "v": "2018-09-19",
+          "q": "Published: 2018-09-19",
+          "what": "Report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "skimmer code",
+          "q": "The skimmer code is recognizable from the British Airways incident"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "payment card skimming",
+          "q": "performing digital credit card skimming campaigns"
+        },
+        {
+          "v": "skimmer placed on payment page",
+          "q": "The skimmer was put on the payment processing page itself, not in a script"
+        },
+        {
+          "v": "acquired a certificate",
+          "q": "these actors acquired a certificate issued for the domain by Comodo"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "$2.65 billion",
+          "q": "evaluated at $2.65 billion in 2016"
+        },
+        {
+          "v": "161st",
+          "q": "Alexa shows that Newegg has the 161st most popular site"
+        },
+        {
+          "v": "50 million visitors a month",
+          "q": "estimates Newegg receives over 50 million visitors a month"
+        },
+        {
+          "v": "15 lines of script",
+          "q": "condensed down to a tidy 15 lines of script"
+        },
+        {
+          "v": "more than a month",
+          "q": "on the Newegg website for more than a month"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "Magecart attack on Newegg"
+    },
+    "hedges": [
+      "The report says it can assume the attack claimed a massive number of victims. This is an inference from the month-long skimming window, not a measured count.",
+      "Business size and traffic figures come from a 2016 valuation and third-party estimates (Alexa ranking, Similarweb visitor estimate)."
+    ]
+  }
+}

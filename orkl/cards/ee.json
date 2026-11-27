@@ -429,26 +429,187 @@
   },
   "eeba7b963e4002b7f15df2dd6c4cef6df6d9f9e1": {
     "sha1": "eeba7b963e4002b7f15df2dd6c4cef6df6d9f9e1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T04:26:03Z",
+    "read_at": "2026-11-27T05:51:10Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Microsoft Threat Intelligence describes active exploitation of on-premises SharePoint servers through CVE-2025-49706 and CVE-2025-49704, plus follow-on CVE-2025-53770 and CVE-2025-53771. Chinese state actors Linen Typhoon and Violet Typhoon exploit these flaws, and Storm-2603, assessed with moderate confidence as China-based, has used them to deploy Warlock ransomware. Attacks used a web shell to steal MachineKey data, then Mimikatz, PsExec and Impacket for credential theft and lateral movement. Microsoft's guidance is to apply the security updates, enable AMSI, rotate ASP.NET machine keys,…",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "Linen Typhoon",
+          "q": "Since 2012, Linen Typhoon has focused on stealing intellectual property",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Violet Typhoon",
+          "q": "Since 2015, the Violet Typhoon activity group has been dedicated to espionage",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-2603",
+          "q": "The group that Microsoft tracks as Storm-2603 is assessed with moderate confidence to be a China-based threat actor.",
+          "by": "Microsoft Threat Intelligence"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "government",
+          "q": "government, defense, strategic planning, and human rights."
+        },
+        {
+          "v": "defense",
+          "q": "government, defense, strategic planning, and human rights."
+        },
+        {
+          "v": "higher education",
+          "q": "think tanks, higher education, digital and print media"
+        },
+        {
+          "v": "financial and health related sectors",
+          "q": "financial and health related sectors in the United States, Europe, and East Asia."
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "to be a China-based threat actor."
+        },
+        {
+          "v": "United States",
+          "q": "financial and health related sectors in the United States, Europe, and East Asia."
+        }
+      ],
+      "dates": [
+        {
+          "v": "2025-07-22",
+          "q": "Published: 2025-07-22 · Archived: 2026-04-05 21:55:21 UTC",
+          "what": "Microsoft published the blog post"
+        },
+        {
+          "v": "July 19, 2025",
+          "q": "On July 19, 2025, Microsoft Security Response Center (MSRC) published a blog addressing active attacks",
+          "what": "MSRC published a blog on active attacks against on-premises SharePoint servers"
+        },
+        {
+          "v": "July 23, 2025",
+          "q": "July 23, 2025 update – Expanded analysis and threat intelligence from our continued monitoring of exploitation activity by",
+          "what": "Microsoft updated the blog with expanded analysis of Storm-2603 ransomware activity"
+        },
+        {
+          "v": "July 7, 2025",
+          "q": "As early as July 7, 2025, Microsoft analysis suggests threat actors were attempting to exploit CVE-2025-49706 and CVE-",
+          "what": "Earliest attempts to exploit the SharePoint vulnerabilities, per Microsoft analysis"
+        },
+        {
+          "v": "July 18, 2025",
+          "q": "Starting on July 18, 2025, Microsoft has observed Storm-2603",
+          "what": "Storm-2603 began deploying ransomware using these vulnerabilities"
+        }
+      ],
+      "tools": [
+        {
+          "v": "spinstall0.aspx",
+          "q": "The spinstall0.aspx script contains commands to retrieve MachineKey data and return the results to the"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "The threat actor performs credential access using Mimikatz, specifically targeting the Local Security Authority Subsystem"
+        },
+        {
+          "v": "PsExec",
+          "q": "The actor moves laterally using PsExec and the Impacket toolkit,"
+        },
+        {
+          "v": "Impacket",
+          "q": "The actor moves laterally using PsExec and the Impacket toolkit,"
+        },
+        {
+          "v": "Warlock",
+          "q": "Storm-2603 is then observed modifying Group Policy Objects (GPO) to distribute Warlock ransomware in compromised"
+        },
+        {
+          "v": "Lockbit",
+          "q": "Microsoft has observed this threat actor deploying Warlock and Lockbit ransomware in the past"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Exploit public-facing application (T1190)",
+          "q": "T1190 Exploit public-facing application | Use of known vulnerabilities to exploit internet-facing on-premises"
+        },
+        {
+          "v": "Web shell (T1505.003)",
+          "q": "T1505.003 Server software component: web shell | Threat actors install web shell after exploiting SharePoint"
+        },
+        {
+          "v": "OS credential dumping: LSASS memory (T1003.001)",
+          "q": "T1003.001 OS Credential Dumping: LSASS Memory"
+        },
+        {
+          "v": "Windows Management Instrumentation (T1047)",
+          "q": "T1047 Windows Management Instrumentation | Impacket is used to execute commands through WMI"
+        },
+        {
+          "v": "Scheduled task (T1053.005)",
+          "q": "T1053.005 Scheduled Task/Job: Scheduled Task | Scheduled task is created to maintain persistence following initial"
+        },
+        {
+          "v": "Group policy modification (T1484.001)",
+          "q": "T1484.001 Domain or Tenant Policy Modification: Group Policy Modification"
+        },
+        {
+          "v": "Disable or modify security tools (T1562.001)",
+          "q": "T1562.001 Impair Defenses: Disable or Modify Tools | Disabling Microsoft Defender via registry modifications"
+        },
+        {
+          "v": "Proxy (T1090)",
+          "q": "T1090 Proxy, Technique | Fast reverse proxy tool used for C2 communications"
+        },
+        {
+          "v": "Data encrypted for impact (T1486)",
+          "q": "T1486 Data Encrypted for Impact | Files are encrypted in victim environments as part of ransomware attack"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2025-49706",
+          "q": "CVE-2025-49706, a spoofing vulnerability"
+        },
+        {
+          "v": "CVE-2025-49704",
+          "q": "CVE-2025-49704, a remote code execution vulnerability"
+        },
+        {
+          "v": "CVE-2025-53770",
+          "q": "newly disclosed security vulnerabilities in CVE-2025-53770 that are related"
+        },
+        {
+          "v": "CVE-2025-53771",
+          "q": "CVE-2025-53771 – SharePoint ToolShell Path Traversal"
+        }
+      ],
+      "figures": [
+        {
+          "v": "two",
+          "q": "Microsoft has observed two named Chinese nation-state actors, Linen Typhoon and Violet Typhoon"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "Active exploitation of on-premises SharePoint vulnerabilities"
+    },
+    "hedges": [
+      "Storm-2603 is assessed with moderate confidence to be a China-based threat actor.",
+      "Microsoft has not identified links between Storm-2603 and other known Chinese threat actors.",
+      "Microsoft is currently unable to confidently assess the threat actor objectives.",
+      "Investigations into other actors also using these exploits are still ongoing.",
+      "Microsoft assesses with high confidence that threat actors will continue to integrate them into their attacks against unpatched on-premises SharePoint systems.",
+      "Microsoft analysis suggests threat actors were attempting to exploit these CVEs as early as July 7, 2025.",
+      "These alerts can also be triggered by unrelated threat activity."
+    ]
   },
   "ee014dd867eed637d08c84509af57fe141d58c21": {
     "sha1": "ee014dd867eed637d08c84509af57fe141d58c21",

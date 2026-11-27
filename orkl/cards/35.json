@@ -154,7 +154,7 @@
     "sha1": "3565c7608ac712c0ecbee7ea10d0ef3e3f629764",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T04:32:36Z",
+    "read_at": "2026-11-27T05:53:42Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -170,7 +170,74 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "reason": "value-not-in-quote, quote-not-in-text",
+    "tries": 2
+  },
+  "35133d4a5776cdd31b605dbf66355e9e7b352016": {
+    "sha1": "35133d4a5776cdd31b605dbf66355e9e7b352016",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T05:55:51Z",
+    "model": "haiku",
+    "summary": "Technique reference page for MITRE ATT&CK T1562.002, Impair Defenses: Disable Windows Event Logging, published as an open-source catalog of detection test cases. It describes how adversaries disable Windows event logging and change audit policy to leave less evidence of compromise. It lists ten test cases covering IIS HTTP logging, audit policy, wevtutil, Phant0m and EventLog channel permissions. It names one threat group and one ransomware family that use these methods. It reports no specific incident.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "Threat Group 3390 (Bronze Union)",
+          "q": "Disables HTTP logging on a Windows IIS web server as seen by Threat Group 3390 (Bronze Union).",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2026-04-05",
+          "q": "Archived: 2026-04-05 20:08:38 UTC",
+          "what": "Page archived"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Phant0m",
+          "q": "Kill Windows Event Log Service Threads using Invoke-Phant0m."
+        },
+        {
+          "v": "Wevtutil",
+          "q": "Wevtutil can be used to disable logs."
+        },
+        {
+          "v": "auditpol",
+          "q": "Clear the Windows audit policy using auditpol utility."
+        },
+        {
+          "v": "RansomEXX ransomware",
+          "q": "NOTE: RansomEXX ransomware uses this to disable Security logs post-encryption."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Impair Defenses: Disable Windows Event Logging",
+          "q": "T1562.002 - Impair Defenses: Disable Windows Event Logging"
+        },
+        {
+          "v": "clear the audit policy",
+          "q": "To clear the audit policy, adversaries may run the"
+        },
+        {
+          "v": "Kill Event Log Service Threads",
+          "q": "Atomic Test #3: Kill Event Log Service Threads"
+        }
+      ],
+      "cves": [],
+      "figures": []
+    },
+    "subject": null,
+    "hedges": [
+      "Use the cleanup commands to restore some default auditpol settings (your original settings will be lost)",
+      "WARNING you will need to restart PC to return to normal state with Log Service.",
+      "Adversaries may target system-wide logging or just that of a particular application."
+    ]
   }
 }

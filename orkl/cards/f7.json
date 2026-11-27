@@ -417,5 +417,169 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "f7ece8e2fcdf3adeaa01c3c4ce3254dab3bbc13f": {
+    "sha1": "f7ece8e2fcdf3adeaa01c3c4ce3254dab3bbc13f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T06:03:04Z",
+    "model": "haiku",
+    "summary": "Sygnia's forensic report describes a late-2023 intrusion at a large organization, which Sygnia links to a China-nexus state-sponsored actor it tracks as Velvet Ant. The actor kept access for about three years using PlugX malware, an internal file server as command-and-control, and two exposed F5 BIG-IP appliances. After eradication, the actor reappeared through dormant footholds. Four tools were found on the appliances. Sygnia says attribution is difficult and cannot rule out a false-flag operation.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Velvet Ant",
+          "q": "which Sygnia tracks as Velvet Ant",
+          "by": "Sygnia (report author)"
+        },
+        {
+          "v": "China-nexus state-sponsored threat actor",
+          "q": "China-nexus state-sponsored threat actor.",
+          "by": "Sygnia (report author)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "late 2023",
+          "q": "In late 2023, a large organization was the victim of a serious cyber attack.",
+          "what": "Serious cyber attack on a large organization, investigated by Sygnia"
+        },
+        {
+          "v": "June 16, 2024",
+          "q": "June 16, 2024",
+          "what": "Date the Sygnia report was published"
+        },
+        {
+          "v": "about three years",
+          "q": "remained active in the compromised network for about three years",
+          "what": "Length of the threat actor's presence in the victim network"
+        },
+        {
+          "v": "2008",
+          "q": "PlugX has been used by multiple Chinese state sponsored groups since 2008.",
+          "what": "PlugX first used by Chinese state-sponsored groups"
+        },
+        {
+          "v": "2015",
+          "q": "deployed – although its successor, ShadowPad has been in use since 2015.",
+          "what": "ShadowPad in use"
+        }
+      ],
+      "tools": [
+        {
+          "v": "PlugX",
+          "q": "The malware was identified as PlugX, a well-known remote access Trojan."
+        },
+        {
+          "v": "ShadowPad",
+          "q": "a toolset that includes the ShadowPad and PlugX"
+        },
+        {
+          "v": "VELVETSTING",
+          "q": "VELVETSTING – a tool that connects to the threat actor’s C&C once an hour, searching"
+        },
+        {
+          "v": "VELVETTAP",
+          "q": "VELVETTAP – a tool with the ability to capture network packets."
+        },
+        {
+          "v": "ESRDE",
+          "q": "ESRDE – a tool with similar capabilities to that of ‘VELVETSTING’"
+        },
+        {
+          "v": "SAMRID",
+          "q": "SAMRID – identified as ‘EarthWorm’, an open-source SOCKS proxy tunneller"
+        },
+        {
+          "v": "Impacket",
+          "q": "Impacket, an open-source collection of Python classes, was used for lateral tool transfer"
+        },
+        {
+          "v": "wmiexec.py",
+          "q": "the threat actor employed Impacket’s wmiexec.py, a tool that utilizes the native Windows"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "DLL Search Order Hijacking",
+          "q": "T1574.001 – Hijack Execution Flow: DLL Search Order Hijacking"
+        },
+        {
+          "v": "DLL side loading",
+          "q": "by leveraging different methods such as DLL search order hijacking, Phantom DLL loading and DLL side loading."
+        },
+        {
+          "v": "tampered with the EDR product",
+          "q": "the threat actor consistently tampered with the EDR product prior to installing PlugX"
+        },
+        {
+          "v": "harvested credentials",
+          "q": "The memory dumps contained harvested credentials and various commands executed by the threat actor."
+        },
+        {
+          "v": "Windows Management Instrumentation",
+          "q": "a tool that utilizes the native Windows Management Instrumentation (WMI) to execute remote commands."
+        },
+        {
+          "v": "reverse SSH tunnel",
+          "q": "revealed a reverse SSH tunnel connection to the same C&C IP"
+        },
+        {
+          "v": "internal file server as its C&C",
+          "q": "reconfigured PlugX to use an internal file server as its C&C"
+        },
+        {
+          "v": "Protocol Tunneling",
+          "q": "T1572 – Protocol Tunneling"
+        },
+        {
+          "v": "Timestomp",
+          "q": "T1070.006 – Indicator Removal: Timestomp"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "two F5 BIG-IP appliances",
+          "q": "The compromised organization had two F5 BIG-IP appliances which provided services such as firewall,"
+        },
+        {
+          "v": "port 13742",
+          "q": "On the file server, port 13742 was opened."
+        },
+        {
+          "v": "once an hour",
+          "q": "The malware running on the device polls the C&C server once an hour."
+        },
+        {
+          "v": "Dozens of compromised hosts",
+          "q": "Dozens of compromised hosts were re-imaged"
+        },
+        {
+          "v": "hundreds of indicators of compromise",
+          "q": "hundreds of indicators of compromise (IOCs) were blocked"
+        },
+        {
+          "v": "Windows Server 2003",
+          "q": "targeting Windows Server 2003 systems on which the"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Velvet Ant"
+    },
+    "hedges": [
+      "this advisory is based on initial rapid study, and needs to be treated accordingly",
+      "The evidence gathered suggests the involvement of a China-nexus state-sponsored threat actor",
+      "Sygnia determined that the threat actor exhibited behaviors like those of a China-nexus threat actor",
+      "visibility limitations hinder the ability to identify exactly how the appliances were compromised",
+      "The threat actor may have leveraged one of the vulnerabilities to gain remote access to the appliances",
+      "the visibility available in the network prevents Sygnia from ruling out a ‘false-flag’ operation conducted by a different Advanced Persistent Threat (APT) group",
+      "makes it difficult for Sygnia to attribute the attack to any previously publicly-reported group"
+    ]
   }
 }

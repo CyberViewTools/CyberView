@@ -526,5 +526,101 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "8aceafada32998d60eb1c26278b11140b63fc12d": {
+    "sha1": "8aceafada32998d60eb1c26278b11140b63fc12d",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T05:56:44Z",
+    "model": "haiku",
+    "summary": "A news article, published 2021-01-05, reports that the North Korean group Thallium targeted users of a private stock investment messenger app in a software supply chain attack. ESTsecurity's Security Response Center (ESRC) found an altered NSIS installer that fetched a malicious XSL script and ran it via wmic.exe. The payload created folders, ran a RAT, and used a scheduled task for persistence. Macro-laden Excel documents also distributed the XSL payload. The report says the motive is unclear.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Thallium",
+          "q": "North Korean hacking group Thallium has targeted users of a private stock investment messenger service",
+          "by": "ESTsecurity Security Response Center (ESRC), as reported in the article"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "stock investors",
+          "q": "North Korean software supply chain attack targets stock investors"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korean",
+          "q": "North Korean hacking group Thallium"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2021-01-05",
+          "q": "Published: 2021-01-05 · Archived: 2026-04-05 17:06:04 UTC",
+          "what": "Article published; the report on the attack was published this week"
+        },
+        {
+          "v": "7-Jan-2021",
+          "q": "Update 7-Jan-2021: Removed reference to APT37.",
+          "what": "Article updated to remove reference to APT37"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NSIS",
+          "q": "produced a Windows executable using Nullsoft Scriptable Install System (NSIS)"
+        },
+        {
+          "v": "wmic.exe",
+          "q": "via the in-built wmic.exe utility"
+        },
+        {
+          "v": "VBScript",
+          "q": "The next stage of attack executes a VBScript to create files and folders"
+        },
+        {
+          "v": "Remote Access Trojan (RAT)",
+          "q": "deploy a Remote Access Trojan (RAT) on the machine"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "XSL Script Processing",
+          "q": "leverage the \"XSL Script Processing\""
+        },
+        {
+          "v": "software supply chain attack",
+          "q": "North Korean software supply chain attack targets stock investors"
+        },
+        {
+          "v": "phishing",
+          "q": "the group mainly relied on phishing attacks"
+        },
+        {
+          "v": "scheduled task",
+          "q": "By creating a rogue scheduled task called activate"
+        },
+        {
+          "v": "reconnaissance",
+          "q": "The threat actors perform reconnaissance of the infected system"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "15 minutes",
+          "q": "instructing Windows Scheduler to run the dropped code every 15 minutes"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "The threat actors' reasons for targeting users investing in stock remain unclear.",
+      "Whether the goal behind this attack was monetary gain or espionage on traders",
+      "Update 7-Jan-2021: Removed reference to APT37.",
+      "Quoted from a translated ESTsecurity report."
+    ]
   }
 }

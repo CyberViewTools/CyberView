@@ -1,0 +1,186 @@
+{
+  "5448bd180ebda2a99555318853cc81f1bdd50f83": {
+    "sha1": "5448bd180ebda2a99555318853cc81f1bdd50f83",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T06:00:58Z",
+    "model": "haiku",
+    "summary": "Malpedia entry, compiled by Fraunhofer FKIE, on the CHINACHOPPER malware family: a code injection webshell that runs Microsoft .NET code sent in HTTP POST requests, allowing file transfer, command execution, and access to Active Directory and databases. It lists six actor names and a bibliography of vendor and government reports from 2013 to 2025. The page notes that no YARA signature exists yet.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT41",
+          "q": "Actor(s): APT41, EMISSARY PANDA, GALLIUM, HAFNIUM, Hurricane Panda, Leviathan",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        },
+        {
+          "v": "EMISSARY PANDA",
+          "q": "Actor(s): APT41, EMISSARY PANDA, GALLIUM, HAFNIUM, Hurricane Panda, Leviathan",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        },
+        {
+          "v": "GALLIUM",
+          "q": "Actor(s): APT41, EMISSARY PANDA, GALLIUM, HAFNIUM, Hurricane Panda, Leviathan",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        },
+        {
+          "v": "HAFNIUM",
+          "q": "Actor(s): APT41, EMISSARY PANDA, GALLIUM, HAFNIUM, Hurricane Panda, Leviathan",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        },
+        {
+          "v": "Hurricane Panda",
+          "q": "Actor(s): APT41, EMISSARY PANDA, GALLIUM, HAFNIUM, Hurricane Panda, Leviathan",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        },
+        {
+          "v": "Leviathan",
+          "q": "Actor(s): APT41, EMISSARY PANDA, GALLIUM, HAFNIUM, Hurricane Panda, Leviathan",
+          "by": "Fraunhofer FKIE (Malpedia entry)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "governmental entities",
+          "q": "Target Governmental Entities in the Middle East, Africa and Asia"
+        },
+        {
+          "v": "telecom",
+          "q": "GALLIUM: Targeting global telecom"
+        },
+        {
+          "v": "telecommunications",
+          "q": "OPERATION SOFT CELL: A WORLDWIDE CAMPAIGN AGAINST TELECOMMUNICATIONS"
+        },
+        {
+          "v": "engineering and maritime",
+          "q": "Targeting U.S. Engineering and Maritime"
+        }
+      ],
+      "countries": [
+        {
+          "v": "China",
+          "q": "Alert (AA20-275A): Potential for China Cyber Response to Heightened U.S.-China Tensions"
+        },
+        {
+          "v": "U.S.",
+          "q": "Targeting U.S. Engineering and Maritime"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2013-08-07",
+          "q": "2013-08-07 ⋅ FireEye ⋅ Dennis Hanzlik, Ian Ahl, Tony Lee",
+          "what": "Earliest dated reference on the page: FireEye analysis of the China Chopper web shell, part I"
+        },
+        {
+          "v": "2019-08-27",
+          "q": "2019-08-27 ⋅ Cisco Talos ⋅ Paul Rascagnères, Vanja Svajcer",
+          "what": "Cisco Talos report titled 'China Chopper still active 9 years later'"
+        },
+        {
+          "v": "2020-07-21",
+          "q": "2020-07-21 ⋅ Department of Justice ⋅ Department of Justice",
+          "what": "Department of Justice charged two Chinese hackers working with the Ministry of State Security"
+        },
+        {
+          "v": "2021-03-02",
+          "q": "2021-03-02 ⋅ Volexity ⋅ Josh Grunzweig, Matthew Meltzer, Sean Koessel, Steven Adair, Thomas Lancaster",
+          "what": "Volexity reported active exploitation of multiple zero-day Microsoft Exchange vulnerabilities (Operation Exchange Maraud"
+        },
+        {
+          "v": "2021-03-02",
+          "q": "2021-03-02 ⋅ Microsoft ⋅ Microsoft 365 Defender Threat Intelligence Team, Microsoft 365 Security, Microsoft Threat Intelligence",
+          "what": "Microsoft reported HAFNIUM targeting Exchange Servers with 0-day exploits"
+        },
+        {
+          "v": "2024-05-23",
+          "q": "2024-05-23 ⋅ Palo Alto Networks Unit 42 ⋅ Daniel Frank, Lior Rochberger",
+          "what": "Unit 42 report on Operation Diplomatic Specter, a Chinese cyberespionage campaign targeting governmental entities"
+        },
+        {
+          "v": "2025-03-24",
+          "q": "2025-03-24 ⋅ SYGNIA ⋅",
+          "what": "SYGNIA report tracking a live China-nexus operation (Weaver Ant)"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "CHINACHOPPER Cobalt Strike HUI Loader SodaMaster"
+        },
+        {
+          "v": "MimiKatz",
+          "q": "CHINACHOPPER MimiKatz RGDoor"
+        },
+        {
+          "v": "PlugX",
+          "q": "CHINACHOPPER PlugX"
+        },
+        {
+          "v": "Ghost RAT",
+          "q": "CHINACHOPPER Ghost RAT Wonknu ZXShell APT27"
+        },
+        {
+          "v": "reGeorg",
+          "q": "CHINACHOPPER reGeorg"
+        },
+        {
+          "v": "Godzilla Webshell",
+          "q": "Godzilla Webshell ASPXSpy BlueShell CHINACHOPPER Cobalt Strike Ladon MimiKatz Dalbit"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "code injection webshell",
+          "q": "a simple code injection webshell that executes Microsoft .NET code within HTTP POST commands. This allows"
+        },
+        {
+          "v": "upload and download files",
+          "q": "the shell to upload and download files, execute applications with web server account permissions, list directory"
+        },
+        {
+          "v": "access Active Directory",
+          "q": "contents, access Active Directory, access databases, and any other action allowed by the .NET runtime."
+        },
+        {
+          "v": "0-day exploits",
+          "q": "HAFNIUM targeting Exchange Servers with 0-day exploits"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-26855",
+          "q": "Microsoft Exchange Schwachstellen Detektion und Reaktion (CVE-2021-26855, CVE-2021-26857, CVE-"
+        },
+        {
+          "v": "CVE-2021-26857",
+          "q": "Microsoft Exchange Schwachstellen Detektion und Reaktion (CVE-2021-26855, CVE-2021-26857, CVE-"
+        },
+        {
+          "v": "CVE-2021-27065",
+          "q": "2021-26858, CVE-2021-27065)"
+        }
+      ],
+      "figures": [
+        {
+          "v": "9 years",
+          "q": "China Chopper still active 9 years later"
+        },
+        {
+          "v": "Two",
+          "q": "Two Chinese Hackers Working with the Ministry of State Security Charged with Global Computer Intrusion"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "CHINACHOPPER"
+    },
+    "hedges": [
+      "Reference titles include hedged attributions, e.g. 'Suspected Chinese Cyber Espionage Group' and 'Potentially Linked to Iran'.",
+      "The page states: There is no Yara-Signature yet."
+    ]
+  }
+}

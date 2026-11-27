@@ -92,7 +92,7 @@ test("auditState: pauses above 5% once 50 cards are audited, not before", () => 
   assert.equal(auditState(audited(100, 6), DEFAULTS).paused, true);
   assert.equal(auditState(audited(100, 5), DEFAULTS).paused, false);
   assert.equal(paused(audited(100, 6), DEFAULTS), true);
-  assert.deepEqual(DEFAULTS, { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50, rewrite_hours: 0 });   // the code defaults; config/pipeline.json sets the live values
+  assert.deepEqual(DEFAULTS, { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50, rewrite_hours: 0, audit_since: "" });   // the code defaults; config/pipeline.json sets the live values
 });
 test("auditState: counts only the most recent 500 audits", () => {
   const m = new Map();
@@ -592,4 +592,21 @@ test("settle and run: a pass with a non-empty changes list changes nothing", asy
     const t = await run({ ...deps(dir, reply({ verdict: "pass", changes: [{ code: "tone", note: "x" }] })), log: (l) => lines.push(l), max: 5 });
     assert.equal(t.published, 0); assert.equal(files(dir).next.status, "draft"); assert.ok(lines.some((l) => /bad-reply/.test(l)));
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+// owner, 2026-11-27: the reader moved to Sonnet, but the pause gate kept counting the Haiku reader's audits, so the desk stayed
+// paused and wrote nothing. library.audit_since measures the current reader: only cards read at or after it are counted.
+test("auditState: audit_since counts only cards read at or after it; empty counts every card", () => {
+  const m = new Map();
+  for (let i = 0; i < 60; i++) m.set(`o${String(i).padStart(3, "0")}`.padEnd(40, "0"), { sha1: `o${String(i).padStart(3, "0")}`.padEnd(40, "0"), status: "read", read_at: "2026-11-27T16:00:00Z", audit: { at: "2026-11-27T22:10:00Z", ok: i >= 10, note: "", by: "auditor" } });
+  for (let i = 0; i < 60; i++) m.set(`n${String(i).padStart(3, "0")}`.padEnd(40, "0"), { sha1: `n${String(i).padStart(3, "0")}`.padEnd(40, "0"), status: "read", read_at: "2026-11-27T22:30:00Z", audit: { at: "2026-11-27T22:40:00Z", ok: i >= 2, note: "", by: "auditor" } });
+  const all = auditState(m, { ...DEFAULTS });
+  assert.equal(all.audited, 120); assert.equal(all.wrong, 12); assert.equal(all.paused, true, "10% wrong across both readers");
+  const now = auditState(m, { ...DEFAULTS, audit_since: "2026-11-27T22:00:00Z" });
+  assert.equal(now.audited, 60); assert.equal(now.wrong, 2); assert.equal(now.paused, false, "3.3% for the current reader");
+  assert.deepEqual(wrongCards(m, { ...DEFAULTS, audit_since: "2026-11-27T22:00:00Z" }).length, 2);
+  const unread = new Map([["u".padEnd(40, "0"), { sha1: "u".padEnd(40, "0"), status: "unread", tries: 1, read_at: "2026-11-27T16:00:00Z", audit: { at: "2026-11-27T22:10:00Z", ok: false, note: "", by: "auditor" } }]]);
+  assert.equal(auditState(unread, { ...DEFAULTS, audit_since: "2026-11-27T22:00:00Z" }).wrong, 0, "an old card waiting to be re-read is not the current reader's mistake");
+  const reread = new Map([["r".padEnd(40, "0"), { sha1: "r".padEnd(40, "0"), status: "unread", tries: 1, reason: "value-not-in-quote", read_at: "2026-11-27T22:18:46Z", audit: { at: "2026-11-27T16:38:27Z", ok: false, note: "", by: "auditor" } }]]);
+  assert.equal(auditState(reread, { ...DEFAULTS, audit_since: "2026-11-27T22:00:00Z" }).audited, 0, "a verdict older than the card's read is about an earlier read, not this reader");
 });

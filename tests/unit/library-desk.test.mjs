@@ -293,10 +293,10 @@ test("pipeline.json: the library block as the owner set it on 2026-11-26 (backfi
   const L = rj("config/pipeline.json").library;
   assert.equal(L.backfill, true); assert.equal(L.enabled, true);
   assert.deepEqual(L.pilot, { reports: 200, top_actors: 10, thin_actors: 5, loose: 5 });
-  assert.deepEqual(L.wave, { read: 150, write: 16, review: 16, audit: 150 });
-  assert.deepEqual(L.api, { enabled: true, monthly_usd_cap: 75, month_caps: { "2026-11": 0 } });   // 2026-11-27: parked for the rest of November
+  assert.deepEqual(L.wave, { read: 20, write: 16, review: 16, audit: 150 });   // 2026-11-27: read 20 for the $3 test (150 before)
+  assert.deepEqual(L.api, { enabled: true, monthly_usd_cap: 75, month_caps: { "2026-11": 80 } });   // 2026-11-27 evening: a $3 test
   assert.equal(L.reread, 3); assert.equal(L.audit_pct, 20); assert.equal(L.audit_pause_pct, 5); assert.equal(L.audit_min, 50); assert.equal(L.rewrite_hours, 24);
-  for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min", "api", "monthly_usd_cap", "concurrency", "run_minutes", "rewrite_hours", "month_caps"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
+  for (const k of ["enabled", "backfill", "pilot", "wave", "reread", "audit_pct", "audit_pause_pct", "audit_min", "api", "monthly_usd_cap", "concurrency", "run_minutes", "rewrite_hours", "month_caps", "audit_since"]) assert.ok(L._note.includes(k), `_note does not explain ${k}`);
   assert.match(L._note, /owner/);
   const c = deskConfig(join(ROOT, "config", "pipeline.json"));
   assert.equal(c.backfill, true); assert.deepEqual(c.wave, L.wave); assert.deepEqual(c.pilot, DESK_DEFAULTS.pilot);

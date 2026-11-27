@@ -11,7 +11,9 @@ import { existsSync, readdirSync } from "node:fs";
 import { ROOT, readJson } from "./store.mjs";
 import { DIR } from "../orkl.mjs";
 
-export const DEFAULTS = { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50, rewrite_hours: 0 };   // audit_pct 100: every card is audited before the site may show it; rewrite_hours 0: no rewrite cool-down
+export const DEFAULTS = { reread: 3, audit_pct: 100, audit_pause_pct: 5, audit_min: 50, rewrite_hours: 0, audit_since: "" };   // audit_pct 100: every card is audited before the site may show it; rewrite_hours 0: no rewrite cool-down
+/** library.audit_since as an ISO time, or "" (count every card). The pause gate measures the reader in use: set it when the reader changes. */
+const sinceOf = (c) => { const t = Date.parse(c && c.audit_since); return Number.isFinite(t) ? new Date(t).toISOString().replace(/\.\d+Z$/, "Z") : ""; };
 /** The writer's rewrite cool-down in ms (library.rewrite_hours). */
 export const rewriteMsOf = (cfg) => Math.max(0, Number((cfg || {}).rewrite_hours) || 0) * 3600000;
 export const WINDOW = 500;                                // the most recent audited cards that count
@@ -24,6 +26,7 @@ export function loadConfig(file = join(ROOT, "config", "pipeline.json")) {
   const lib = (readJson(file, {}) || {}).library;
   const out = { ...DEFAULTS };
   if (lib && typeof lib === "object") for (const k of Object.keys(DEFAULTS)) if (Number.isFinite(lib[k]) && lib[k] >= 0) out[k] = lib[k];
+  if (lib && typeof lib === "object" && typeof lib.audit_since === "string") out.audit_since = lib.audit_since;
   return out;
 }
 
@@ -43,11 +46,13 @@ export const auditFailed = (c) => !!c && c.status === "unread" && (failedEntry(c
 /** The cards the rate measures: those in use. A card counts by its latest auditor verdict when it is `read` (or has no status); one
  *  awaiting a re-read (`unread`, tries < 2) counts only as wrong, if its auditor verdict failed. A `no-text` card, or an `unread`
  *  one with its tries spent (>= 2), is retired: the reader will not read it again, so it counts as neither audited nor wrong. */
-function counted(cards) {
+function counted(cards, since = "") {
   const out = [];
   for (const x of list(cards)) {
     const v = auditorVerdict(x);
     if (!v) continue;
+    // library.audit_since: the current reader only: read at or after it, and a verdict on this read (not one left from an earlier read)
+    if (since && !(String(x.read_at || "") >= since && String(v.at || "") >= String(x.read_at || ""))) continue;
     const st = x.status, tries = Number(x.tries) || 0;
     if (st === "no-text" || (st === "unread" && tries >= 2)) continue;
     if (st === "unread" && v.ok === true) continue;
@@ -55,7 +60,7 @@ function counted(cards) {
   }
   return out;
 }
-const recent = (cards) => counted(cards)
+const recent = (cards, since = "") => counted(cards, since)
   .sort((a, b) => String(b.v.at || "").localeCompare(String(a.v.at || "")) || String(a.sha1 || "").localeCompare(String(b.sha1 || "")))
   .slice(0, WINDOW);
 
@@ -63,7 +68,7 @@ const recent = (cards) => counted(cards)
  *  count): how many, how many wrong, the wrong share, and whether the Library is paused. */
 export function auditState(cards, cfg = DEFAULTS) {
   const c = { ...DEFAULTS, ...(cfg || {}) };
-  const all = recent(cards);
+  const all = recent(cards, sinceOf(c));
   const wrong = all.filter((x) => x.v.ok !== true).length, audited = all.length;
   const pct = audited ? (100 * wrong) / audited : 0;
   return { audited, wrong, pct, paused: audited >= c.audit_min && pct > c.audit_pause_pct };
@@ -72,7 +77,7 @@ export function auditState(cards, cfg = DEFAULTS) {
  *  time (markCardWrong sets their tries to the reader's limit). Counted for the pipeline check and status; a person decides what next. */
 export const retiredAfterAudit = (cards) => list(cards).filter((c) => c && c.status === "unread" && (Number(c.tries) || 0) >= 2 && c.reason === "audit-wrong").map((c) => c.sha1).sort();
 /** The sha1s of the cards currently counted as wrong. */
-export const wrongCards = (cards) => recent(cards).filter((x) => x.v.ok !== true).map((x) => x.sha1);
+export const wrongCards = (cards, cfg = DEFAULTS) => recent(cards, sinceOf({ ...DEFAULTS, ...(cfg || {}) })).filter((x) => x.v.ok !== true).map((x) => x.sha1);
 export const paused = (cards, cfg = DEFAULTS) => auditState(cards, cfg).paused;
 
 /** Pure: corrections files ({key: [{at, role, model, code, note}]}) -> counts by role and model for the last `days` days. */

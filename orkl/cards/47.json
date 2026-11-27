@@ -164,5 +164,138 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "477096318b2545e6e1330383ccf77393d2a4378b": {
+    "sha1": "477096318b2545e6e1330383ccf77393d2a4378b",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:54:14Z",
+    "model": "haiku",
+    "summary": "SecurityScorecard's report, citing an FBI statement, attributes the May 2021 Colonial Pipeline ransomware attack to the DarkSide group, also called Carbon Spider, with moderate confidence. Its NetFlow analysis found over 80GB exfiltrated from Colonial on 6 May 2021, likely for extortion, with no direct disruption of pipeline operations. It also lists suspected other victims and says attribution analysis is still in progress.",
+    "kind": "incident",
+    "facts": {
+      "actors": [
+        {
+          "v": "DarkSide",
+          "q": "The FBI stated on May 10, 2021, that the DarkSide ransomware group -- also known as Carbon",
+          "by": "FBI"
+        },
+        {
+          "v": "DarkSide",
+          "q": "SecurityScorecard can confirm with moderate confidence that DarkSide also known as Carbon",
+          "by": "SecurityScorecard"
+        },
+        {
+          "v": "Carbon Spider",
+          "q": "Carbon Spider is a Russian criminal group focused on",
+          "by": "SecurityScorecard"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "critical infrastructure",
+          "q": "SecurityScorecard did not observe any evidence of direct disruption of the critical infrastructure owned and operated by Colonial"
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "eastern United States. The press later confirmed that the attack included ransomware. The"
+        },
+        {
+          "v": "Russia",
+          "q": "Carbon Spider is a Russian criminal group focused on"
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 7, 2021",
+          "q": "On May 7, 2021, Colonial Pipeline issued a statement that, due to a cyber-attack, they had",
+          "what": "Colonial Pipeline announced a cyber-attack and partial shutdown of pipeline operations"
+        },
+        {
+          "v": "May 10, 2021",
+          "q": "The FBI stated on May 10, 2021, that the DarkSide ransomware group -- also known as Carbon",
+          "what": "FBI stated DarkSide was responsible for the attack"
+        },
+        {
+          "v": "May 6, 2021",
+          "q": "transferred data from Colonial Pipeline on May 6, 2021, to an external IP address, one",
+          "what": "Data was transferred from Colonial Pipeline to an external address, one day before public reports"
+        },
+        {
+          "v": "May 5, 2021",
+          "q": "SecurityScorecard scan on May 5, 2021, the only service running on the C2 IP was SSH",
+          "what": "SecurityScorecard scan of the command-and-control address, the last scan before the data transfer"
+        },
+        {
+          "v": "August 2020",
+          "q": "SecurityScorecard observed that this group has been operating since August 2020",
+          "what": "DarkSide group observed operating since this date, via dark web leak postings"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Cobalt Strike",
+          "q": "the threat actor utilized Cobalt Strike amongst many other tools"
+        },
+        {
+          "v": "DarkSide ransomware",
+          "q": "DarkSide ransomware is designed to encrypt files that are often irreversible without a"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "data exfiltration",
+          "q": "Our NetFlow analysis demonstrates that SSH was used as the data exfiltration"
+        },
+        {
+          "v": "extortion",
+          "q": "exfiltrated data from the Colonial Pipeline network likely for use in an extortion attempt"
+        },
+        {
+          "v": "known vulnerability",
+          "q": "known vulnerability, perform reconnaissance within the network and identify targeted data for"
+        },
+        {
+          "v": "reconnaissance",
+          "q": "known vulnerability, perform reconnaissance within the network and identify targeted data for"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 80GB",
+          "q": "SecurityScorecard found that over 80GB of data was transferred from"
+        },
+        {
+          "v": "80GB+",
+          "q": "at least 80GB+ of data was exfiltrated from Colonial and sent to the adversary between GMT:"
+        },
+        {
+          "v": "almost 50%",
+          "q": "pipeline that supplies almost 50% of gasoline to the"
+        },
+        {
+          "v": "more than 1000",
+          "q": "IP addresses that communicated with the data exfiltration IP address on port 22 and had more than 1000"
+        },
+        {
+          "v": "2 hours",
+          "q": "where the data was exfiltrated in 2 hours"
+        }
+      ]
+    },
+    "subject": {
+      "type": "incident",
+      "name": "Colonial Pipeline ransomware attack"
+    },
+    "hedges": [
+      "SecurityScorecard can confirm with moderate confidence that DarkSide also known as Carbon Spider was responsible for the Colonial Pipeline attack, and describes the investigation as ongoing.",
+      "The report says attribution is often difficult; its analysis of competing hypotheses is marked in progress, and it calls Carbon Spider the most likely scenario.",
+      "No direct disruption of Colonial's critical infrastructure was found; it is only plausible that DarkSide damaged other parts of the network.",
+      "NetFlow data shows connections and volumes but not content, so the report could not view the exfiltrated data and assumes it will be used for extortion.",
+      "Other victims are suspected from NetFlow analysis only; some IP addresses may be attacker reviewers or proxies, and the report suspects they may have been used by attackers."
+    ]
   }
 }

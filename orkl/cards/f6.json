@@ -52,5 +52,132 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "f60783926da05ba81e9780327e6a2596bbf6760f": {
+    "sha1": "f60783926da05ba81e9780327e6a2596bbf6760f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:55:10Z",
+    "model": "haiku",
+    "summary": "PRODAFT and INVICTUS Threat Intelligence (PTI) published this report on 1 September 2020 about BadUSB attacks by the Fin7 group. Fin7 used USB drives modified to act as keyboards to run PowerShell, and a Bella remote administration tool against macOS victims. The report describes antivirus test results gathered by attackers that its team did not validate. It counts 325 victims in 16 countries, mostly in the USA, with bot notifications observed from February to April 2020.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Fin7",
+          "q": "threat actors; who have been detected to be working in cooperation with the notorious Fin7 APT group.",
+          "by": "PRODAFT & INVICTUS Threat Intelligence (PTI) team"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "USA",
+          "q": "The data shows that the Fin7 group mostly targets the USA."
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 1, 2020",
+          "q": "PTI Team September 1, 2020",
+          "what": "Article published"
+        },
+        {
+          "v": "March 2020",
+          "q": "In March 2020, BadUSB attacks associated with the Fin7 attack group were publicly reported[1].",
+          "what": "BadUSB attacks associated with Fin7 were publicly reported"
+        },
+        {
+          "v": "February 2020",
+          "q": "We observed notifications between February 2020 and April 2020.",
+          "what": "Notifications of new bots observed, February to April 2020"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Bella",
+          "q": "Fin7 group uses an open-source remote administration tool, whose name is Bella, to control macOS victim machines."
+        },
+        {
+          "v": "Tirion Loader",
+          "q": "exposed previously unknown Tirion Loader."
+        },
+        {
+          "v": "Carbanak backdoor",
+          "q": "We expect that Fin7 group will replace the Carbanak backdoor with this loader in their future campaigns."
+        },
+        {
+          "v": "Atmega32u modules",
+          "q": "Attackers use Atmega32u modules to create BadUSB drives."
+        },
+        {
+          "v": "Metasploit stagers",
+          "q": "such as Malicious Macros, Metasploit stagers, Winbio, and a Powershell Keylogger."
+        },
+        {
+          "v": "XMPP bot",
+          "q": "attackers use an XMPP bot to get notified when a new bot added to one of their malicious campaigns"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "BadUSB attacks",
+          "q": "In March 2020, BadUSB attacks associated with the Fin7 attack group were publicly reported[1]."
+        },
+        {
+          "v": "social engineering",
+          "q": "The purpose of these social engineering attacks was to convince potential victims to plug-in USB flash drives"
+        },
+        {
+          "v": "simulate keyboard strokes",
+          "q": "Fin7 actors are modifying their USBs to act as a keyboard and simulate keyboard strokes"
+        },
+        {
+          "v": "macOS targeted BadUSB attacks",
+          "q": "Now we will share unpublished details about macOS targeted BadUSB attacks"
+        },
+        {
+          "v": "password phishing through system prompt",
+          "q": "Login / keychain password phishing through system prompt"
+        },
+        {
+          "v": "evasion success",
+          "q": "Because of their non-trivial attack vector, they can’t use publicly available anti-virus checker services to evaluate their evasion success."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "325 victims",
+          "q": "So far, we identified 325 victims in 16 countries."
+        },
+        {
+          "v": "16 countries",
+          "q": "So far, we identified 325 victims in 16 countries."
+        },
+        {
+          "v": "12 different campaign names",
+          "q": "We observed 12 different campaign names."
+        },
+        {
+          "v": "5 of them",
+          "q": "As you can see from the image only 5 of them can detect and block the attack:"
+        },
+        {
+          "v": "2/3 of these attacks",
+          "q": "As you can see in the image, 2/3 of these attacks can not be detected by AV solutions."
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Fin7 BadUSB attacks"
+    },
+    "hedges": [
+      "The report says its team did not manually validate the anti-virus detection results it shows.",
+      "The report says it believes the File ID number represents second-stage payload files.",
+      "The report expects the Fin7 group to replace the Carbanak backdoor with the Tirion Loader in future campaigns.",
+      "The report says the Fin7 BadUSB attacks were publicly reported in March 2020 and that its team is still trying to contact victims."
+    ]
   }
 }

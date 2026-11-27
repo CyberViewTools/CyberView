@@ -122,5 +122,119 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "972b5646b64f08b58a794e17796900da4401e4b2": {
+    "sha1": "972b5646b64f08b58a794e17796900da4401e4b2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:54:00Z",
+    "model": "haiku",
+    "summary": "Kaspersky Lab's GReAT team reports on Skimer, malware that infects ATMs and activates only when a specific magic card is inserted. Kaspersky has identified 49 modifications, 37 of them targeting ATMs from one manufacturer, and the most recent was found in May 2016. The report calls the investigation ongoing and recommends ATM hardening and checks on card data.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "criminals",
+          "q": "Criminals often obscured their malware with packers to make analysis more difficult for researchers.",
+          "by": "Kaspersky Lab GReAT (report authors)"
+        },
+        {
+          "v": "money mules",
+          "q": "how money mules interact with an infected ATM",
+          "by": "Kaspersky Lab GReAT (report authors)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banks",
+          "q": "Seven years ago, in 2009, we saw a completely new type of attack on banks."
+        },
+        {
+          "v": "financial institutions",
+          "q": "we have already shared the full report with different LEAs, CERTs, financial institutions"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2009",
+          "q": "Seven years ago, in 2009, we saw a completely new type of attack on banks.",
+          "what": "criminals first went after ATMs themselves with Skimer, described as a new type of attack on banks"
+        },
+        {
+          "v": "May 2016",
+          "q": "The most recent version was discovered at the beginning of May 2016.",
+          "what": "most recent version of the malware was discovered"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Skimer",
+          "q": "infecting it with malware called Skimer."
+        },
+        {
+          "v": "Themida",
+          "q": "using the commercially available packer Themida, which packs both the infector and the dropper."
+        },
+        {
+          "v": "Tyupkin",
+          "q": "we have identified Tyupkin, Carbanak and black box attacks."
+        },
+        {
+          "v": "Carbanak",
+          "q": "we have identified Tyupkin, Carbanak and black box attacks."
+        },
+        {
+          "v": "Trojan.Win32.Patched.rb",
+          "q": "Patched SpiService.exe files are detected as Trojan.Win32.Patched.rb"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "packers",
+          "q": "Criminals often obscured their malware with packers to make analysis more difficult for researchers."
+        },
+        {
+          "v": "NTFS data stream",
+          "q": "be placed in the NTFS data stream corresponding to the XFS service´s executable file."
+        },
+        {
+          "v": "magic card",
+          "q": "Skimer only wakes up when a magic card (specific Track 2 data, see IOCs at the"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "49",
+          "q": "Kaspersky Lab has now identified 49 modifications of this malware, with 37 of these"
+        },
+        {
+          "v": "37",
+          "q": "Kaspersky Lab has now identified 49 modifications of this malware, with 37 of these"
+        },
+        {
+          "v": "40",
+          "q": "Dispense money – 40 notes from the specified cassette;"
+        },
+        {
+          "v": "60 seconds",
+          "q": "insert the session key in less than 60 seconds."
+        },
+        {
+          "v": "21",
+          "q": "the malware will accept 21 different codes for setting its activity."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Skimer"
+    },
+    "hedges": [
+      "Placing the file in an NTFS data stream is most likely done to make forensic analysis more difficult.",
+      "As this is still an ongoing investigation, we have already shared the full report with different LEAs, CERTs, financial institutions and Kaspersky Lab Threat Intelligence-Service customers.",
+      "Banks may be able to proactively look for these card numbers inside their processing systems, and detect potentially infected ATMs, money mules, or block attempts to activate the malware."
+    ]
   }
 }

@@ -252,5 +252,107 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "5c02cbcfd2c9ad05d4034cde8fbad0e30a6b48e2": {
+    "sha1": "5c02cbcfd2c9ad05d4034cde8fbad0e30a6b48e2",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:51:50Z",
+    "model": "haiku",
+    "summary": "Threatray Labs reports a new variant of the GZipLoader, the loader component of the IcedID banking Trojan. The variant was first seen in its feeds on February 9, 2022. It adds dynamic resolution of Windows API functions and string encryption, and removes the SSL-pinning feature. The report says the changed control flow could break pattern-based detection rules such as YARA rules, and recommends rechecking detections for IcedID.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [],
+      "sectors": [
+        {
+          "v": "financial",
+          "q": "targeting financial information"
+        },
+        {
+          "v": "banking",
+          "q": "IcedId is a modular banking Trojan discovered in 2017"
+        }
+      ],
+      "countries": [],
+      "dates": [
+        {
+          "v": "2017",
+          "q": "IcedId is a modular banking Trojan discovered in 2017",
+          "what": "IcedId was discovered"
+        },
+        {
+          "v": "February 9th, 2022",
+          "q": "The earliest sample in our feeds with this new loader is from February 9th, 2022.",
+          "what": "earliest sample of the new GZipLoader version in the feeds"
+        },
+        {
+          "v": "February 25, 2022",
+          "q": "February 25, 2022",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "IcedId",
+          "q": "IcedId is a modular banking Trojan discovered in 2017"
+        },
+        {
+          "v": "GZipLoader",
+          "q": "GZipLoader is the loader component of the IcedID infection chain"
+        },
+        {
+          "v": "Vatet",
+          "q": "other malware families, such as Vatet, Egregor, REvil"
+        },
+        {
+          "v": "Egregor",
+          "q": "other malware families, such as Vatet, Egregor, REvil"
+        },
+        {
+          "v": "REvil",
+          "q": "other malware families, such as Vatet, Egregor, REvil"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "stacked strings",
+          "q": "Strings are hidden using a technique commonly known as stacked strings"
+        },
+        {
+          "v": "XOR encryption",
+          "q": "combined with simple XOR encryption"
+        },
+        {
+          "v": "dynamic resolution of Windows API functions",
+          "q": "the dynamic resolution of Windows API functions"
+        },
+        {
+          "v": "SSL-pinning",
+          "q": "except for the removal of the SSL-pinning feature"
+        },
+        {
+          "v": "code reuse",
+          "q": "search algorithms that are based on code reuse"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "9 functions",
+          "q": "the virtual memory region 0x4b0000 of the regsvr32 process contains 9 functions"
+        },
+        {
+          "v": "2 weeks",
+          "q": "if we limit the search scope to the last 2 weeks"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "IcedID GZipLoader"
+    },
+    "hedges": [
+      "This could break some detections rules based on patterns recognition such as YARA rules."
+    ]
   }
 }

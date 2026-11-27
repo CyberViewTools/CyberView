@@ -108,32 +108,213 @@
   },
   "f57f1bde5e9e4b6c2eea46bb6bae72501b7be4e3": {
     "sha1": "f57f1bde5e9e4b6c2eea46bb6bae72501b7be4e3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:34:30Z",
+    "read_at": "2026-11-27T09:45:22Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Microsoft Threat Intelligence reports that financially motivated actors, including Storm-0569, Storm-1113, Sangria Tempest and Storm-1674, abused the App Installer protocol handler from mid-November 2023 to deliver malware such as BATLOADER, EugenLoader and DarkGate, often leading to ransomware. Lures included SEO-poisoned software download pages, malicious search ads and Microsoft Teams phishing. Microsoft disabled the handler by default in an App Installer build and lists detections and indicators.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Storm-0569",
+          "q": "Storm-0569 is an access broker that focuses on downloading post-compromise payloads",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-1113",
+          "q": "Storm-1113 is a threat actor that acts both as an access broker focused on malware distribution through search",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Sangria Tempest",
+          "q": "Sangria Tempest (previously ELBRUS, also tracked as Carbon Spider, FIN7) is a financially motivated",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-1674",
+          "q": "Storm-1674 is an access broker known for using tools based on the publicly available TeamsPhisher tool to distribute DarkGate malware.",
+          "by": "Microsoft Threat Intelligence"
+        },
+        {
+          "v": "Storm-0506",
+          "q": "Black Basta ransomware deployment by Storm-0506",
+          "by": "Microsoft Threat Intelligence"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "mid-November 2023",
+          "q": "Since mid-November 2023, Microsoft Threat Intelligence has observed threat actors",
+          "what": "Observed App Installer abuse begins"
+        },
+        {
+          "v": "December 2023",
+          "q": "At the beginning of December 2023, Microsoft observed Storm-0569 distributing BATLOADER through search",
+          "what": "Storm-0569 distributes BATLOADER via SEO poisoning"
+        },
+        {
+          "v": "September 2023",
+          "q": "In September 2023, Microsoft observed handoffs from Storm-1674 to ransomware operators",
+          "what": "Storm-1674 handoffs to ransomware operators observed"
+        },
+        {
+          "v": "2023-12-28",
+          "q": "Published: 2023-12-28",
+          "what": "Blog post published"
+        },
+        {
+          "v": "2014",
+          "q": "Carbanak, a backdoor used by the actor since 2014",
+          "what": "Carbanak used by Sangria Tempest since this year"
+        },
+        {
+          "v": "November 2022",
+          "q": "a commodity malware first observed around November 2022",
+          "what": "EugenLoader first observed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "BATLOADER",
+          "q": "Storm-0569 distributing BATLOADER through search"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "BATLOADER dropped a Cobalt Strike Beacon followed by data exfiltration"
+        },
+        {
+          "v": "Rclone",
+          "q": "using the Rclone data exfiltration tools"
+        },
+        {
+          "v": "EugenLoader",
+          "q": "EugenLoader delivered through search advertisements mimicking the Zoom app"
+        },
+        {
+          "v": "Gozi",
+          "q": "previously observed malware installs, such as Gozi, Redline stealer"
+        },
+        {
+          "v": "IcedID",
+          "q": "previously observed malware installs, such as Gozi, Redline stealer, IcedID"
+        },
+        {
+          "v": "NetSupport Manager",
+          "q": "NetSupport Manager (also referred to as NetSupport RAT)"
+        },
+        {
+          "v": "Lumma stealer",
+          "q": "Sectop RAT, and Lumma stealer"
+        },
+        {
+          "v": "Carbanak",
+          "q": "Sangria Tempest then drops Carbanak, a backdoor used by the actor since"
+        },
+        {
+          "v": "Gracewire",
+          "q": "that in turn delivers the Gracewire malware implant"
+        },
+        {
+          "v": "POWERTRASH",
+          "q": "leading to the delivery of POWERTRASH, a highly obfuscated PowerShell script"
+        },
+        {
+          "v": "TeamsPhisher",
+          "q": "based on the publicly available TeamsPhisher tool"
+        },
+        {
+          "v": "DarkGate",
+          "q": "tools based on the publicly available TeamsPhisher tool to distribute DarkGate malware."
+        },
+        {
+          "v": "Pikabot",
+          "q": "ZIP files containing a LNK file that ultimately drops DarkGate and Pikabot"
+        },
+        {
+          "v": "Black Basta ransomware",
+          "q": "Black Basta ransomware deployment by Storm-0506"
+        },
+        {
+          "v": "Clop ransomware",
+          "q": "such as Clop ransomware."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malvertising and phishing emails",
+          "q": "through malvertising and phishing emails containing malicious links to download sites"
+        },
+        {
+          "v": "SEO poisoning",
+          "q": "(SEO) poisoning with sites spoofing legitimate software downloads"
+        },
+        {
+          "v": "Spoofing legitimate software",
+          "q": "Spoofing and impersonating popular legitimate software is a common social engineering tactic"
+        },
+        {
+          "v": "App Installer protocol handler abuse",
+          "q": "access vector for malware that may lead to ransomware distribution"
+        },
+        {
+          "v": "Bypassing security warnings",
+          "q": "because it can bypass mechanisms"
+        },
+        {
+          "v": "Signed malicious MSIX packages",
+          "q": "distribute signed malicious MSIX application packages"
+        },
+        {
+          "v": "Teams phishing lures",
+          "q": "phishing lures sent over Teams with malicious attachments"
+        },
+        {
+          "v": "Avoiding Teams accept/block screen",
+          "q": "Microsoft assesses this technique was used to avoid the accept/block screen"
+        },
+        {
+          "v": "Tenants used to send meeting chat messages",
+          "q": "Tenants created by the threat actor are used to create meetings and send"
+        },
+        {
+          "v": "Ransomware handoff",
+          "q": "handoff to ransomware operators like Storm-0846 and Storm-0506"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2021-43890",
+          "q": "CVE-2021-43890"
+        }
+      ],
+      "figures": [
+        {
+          "v": "1.21.3421.0",
+          "q": "has been disabled by default in App Installer build 1.21.3421.0"
+        },
+        {
+          "v": "1.403.520.0",
+          "q": "select the detection build 1.403.520.0 or newer"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "hedges": [
+      "Threat actors have likely chosen the App Installer handler vector because it can bypass security mechanisms such as SmartScreen.",
+      "Microsoft assesses that the Teams meeting-chat technique was used to avoid the accept/block screen.",
+      "Spoofed MSIX lures sent via Google ads possibly rely on Storm-1113 infrastructure.",
+      "Spoofed applications will likely drop SectopRAT or DarkGate.",
+      "Some listed Defender alerts can also be triggered by unrelated threat activity."
+    ]
   },
   "f5be6d41943b1acbd1ce5c55d970e900593acdf3": {
     "sha1": "f5be6d41943b1acbd1ce5c55d970e900593acdf3",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T08:36:35Z",
+    "read_at": "2026-11-27T09:45:15Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -149,7 +330,7 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "value-not-in-quote, quote-not-in-text",
-    "tries": 1
+    "reason": "quote-not-in-text",
+    "tries": 2
   }
 }

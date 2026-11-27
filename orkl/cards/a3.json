@@ -326,25 +326,223 @@
   },
   "a300dd52dd9e5b3082b657768eaf75e67a3f8655": {
     "sha1": "a300dd52dd9e5b3082b657768eaf75e67a3f8655",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:37:59Z",
+    "read_at": "2026-11-27T09:46:46Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Joint advisory by the FBI, CISA, HHS and MS-ISAC on Black Basta, a ransomware-as-a-service variant first identified in April 2022. Affiliates gain initial access through spearphishing, social engineering over Microsoft Teams, and exploitation of ConnectWise CVE-2024-1709. They use legitimate remote-access and admin tools, steal data before encrypting, and use double extortion. The report says affiliates have impacted over 500 organizations and at least 12 of 16 critical infrastructure sectors. This version was updated November 8, 2024.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "Black Basta affiliates",
+          "q": "Black Basta affiliates have impacted over 500 organizations globally.",
+          "by": "the report itself (joint advisory by FBI, CISA, HHS and MS-ISAC)"
+        },
+        {
+          "v": "FIN7",
+          "q": "SentinelOne: Black Basta Ransomware | Attacks Deploy Custom EDR Evasion Tools Tied to FIN7 Threat",
+          "by": "SentinelOne, as cited in the report's references (the report only lists the title)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Healthcare and Public Health (HPH) Sector",
+          "q": "including the Healthcare and Public Health (HPH) Sector."
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "The authoring organizations urge HPH Sector and all critical infrastructure organizations to apply the"
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "dates": [
+        {
+          "v": "April 2022",
+          "q": "Black Basta is considered a ransomware-as-a-service (RaaS) variant and was first identified in April 2022.",
+          "what": "Black Basta first identified"
+        },
+        {
+          "v": "May 10, 2024",
+          "q": "Updates to this advisory, originally published May 10, 2024, include:",
+          "what": "Advisory originally published"
+        },
+        {
+          "v": "February 2024",
+          "q": "Starting in February 2024, Black Basta affiliates began exploiting ConnectWise vulnerability CVE-2024-1709",
+          "what": "Affiliates began exploiting the ConnectWise vulnerability"
+        },
+        {
+          "v": "May 2024",
+          "q": "In May 2024, Black Basta affiliates launched a social engineering campaign in which targeted users were sent a",
+          "what": "Social engineering campaign using spam email and fake technical support calls launched"
+        },
+        {
+          "v": "October 2024",
+          "q": "In October 2024, this social engineering campaign incorporated the use of Microsoft Teams to contact victims.",
+          "what": "Campaign added contact over Microsoft Teams"
+        },
+        {
+          "v": "November 8, 2024",
+          "q": "November 8, 2024: The advisory was updated to reflect new TTPs employed by Black Basta affiliates,",
+          "what": "Advisory updated with new techniques and current indicators"
+        }
+      ],
+      "tools": [
+        {
+          "v": "AnyDesk",
+          "q": "remote access, such as AnyDesk or Microsoft’s Quick Assist"
+        },
+        {
+          "v": "Microsoft Teams",
+          "q": "incorporated the use of Microsoft Teams to contact victims."
+        },
+        {
+          "v": "Qakbot",
+          "q": "According to cybersecurity researchers, affiliates have also used Qakbot during initial access."
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Some affiliates also use tools like Splashtop, Screen Connect, and Cobalt Strike beacons to"
+        },
+        {
+          "v": "Mimikatz",
+          "q": "Black Basta affiliates use credential scraping tools like Mimikatz for privilege escalation."
+        },
+        {
+          "v": "SoftPerfect",
+          "q": "Black Basta affiliates use tools such as SoftPerfect network scanner"
+        },
+        {
+          "v": "BITSAdmin",
+          "q": "Black Basta affiliates use tools such as BITSAdmin and PsExec"
+        },
+        {
+          "v": "PsExec",
+          "q": "Black Basta affiliates use tools such as BITSAdmin and PsExec"
+        },
+        {
+          "v": "Splashtop",
+          "q": "Some affiliates also use tools like Splashtop, Screen Connect, and Cobalt Strike beacons to"
+        },
+        {
+          "v": "RClone",
+          "q": "Black Basta affiliates use RClone to facilitate data exfiltration prior to encryption."
+        },
+        {
+          "v": "Backstab",
+          "q": "deploying a tool called Backstab"
+        },
+        {
+          "v": "PowerShell",
+          "q": "observed Black Basta affiliates using PowerShell"
+        },
+        {
+          "v": "vssadmin.exe",
+          "q": "the vssadmin.exe program to delete volume shadow copies"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spearphishing",
+          "q": "Black Basta affiliates primarily use spearphishing [T1566 ] to obtain initial access."
+        },
+        {
+          "v": "exploiting ConnectWise vulnerability",
+          "q": "Starting in February 2024, Black Basta affiliates began exploiting ConnectWise vulnerability CVE-2024-1709"
+        },
+        {
+          "v": "abusing valid credentials",
+          "q": "In some instances, affiliates have been observed abusing valid credentials [T1078 ]."
+        },
+        {
+          "v": "email bombing",
+          "q": "Recent techniques include email bombing"
+        },
+        {
+          "v": "act as technical support",
+          "q": "Black Basta affiliates would subsequently call the victim, act as technical support, and"
+        },
+        {
+          "v": "double-extortion model",
+          "q": "employ a double-extortion model, both encrypting systems and exfiltrating data."
+        },
+        {
+          "v": "credential scraping",
+          "q": "Black Basta affiliates use credential scraping tools like Mimikatz for privilege escalation."
+        },
+        {
+          "v": "disable endpoint detection",
+          "q": "deploying a tool called Backstab, designed to disable endpoint detection"
+        },
+        {
+          "v": "disable antivirus",
+          "q": "Black Basta affiliates have used PowerShell to disable antivirus"
+        },
+        {
+          "v": "data exfiltration",
+          "q": "Black Basta affiliates use RClone to facilitate data exfiltration prior to encryption."
+        },
+        {
+          "v": "fully encrypt files",
+          "q": "Black Basta affiliates have used a public key to fully encrypt files."
+        },
+        {
+          "v": "delete volume shadow copies",
+          "q": "the vssadmin.exe program to delete volume shadow copies"
+        },
+        {
+          "v": "lateral movement",
+          "q": "assist with remote access and lateral movement."
+        },
+        {
+          "v": "reconnaissance",
+          "q": "Black Basta affiliates have conducted reconnaissance using"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2024-1709",
+          "q": "Starting in February 2024, Black Basta affiliates began exploiting ConnectWise vulnerability CVE-2024-1709"
+        },
+        {
+          "v": "CVE-2020-1472",
+          "q": "According to cybersecurity researchers, Black Basta affiliates have also exploited ZeroLogon (CVE-2020-1472 [CWE-330 ])"
+        },
+        {
+          "v": "CVE-2021-42278",
+          "q": "NoPac (CVE-2021-42278 [CWE-20 ] and CVE-2021-42287 [CWE-269 ])"
+        },
+        {
+          "v": "CVE-2021-42287",
+          "q": "NoPac (CVE-2021-42278 [CWE-20 ] and CVE-2021-42287 [CWE-269 ])"
+        }
+      ],
+      "figures": [
+        {
+          "v": "over 500 organizations",
+          "q": "Black Basta affiliates have impacted over 500 organizations globally."
+        },
+        {
+          "v": "12 out of 16",
+          "q": "whose actors have encrypted and stolen data from at least 12 out of 16 critical"
+        },
+        {
+          "v": "10 and 12 days",
+          "q": "Typically, the ransom notes give victims between 10 and 12 days to pay the"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Black Basta"
+    },
+    "hedges": [
+      "Use of the listed legitimate tools should not be attributed as malicious without analytical evidence of threat actor use or control.",
+      "Several tool uses and vulnerability exploitation are attributed to cybersecurity researchers rather than to the authoring organizations.",
+      "Authoring organizations recommend vetting IP addresses before blocking, since some may host valid domains and actors change them.",
+      "IOCs in the later tables were obtained from trusted third-party reporting and are considered most current.",
+      "Many indicators from the initial publication were removed as outdated; Cobalt Strike infrastructure is described as likely or suspected."
+    ]
   }
 }

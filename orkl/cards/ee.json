@@ -842,5 +842,115 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "ee13e11ba2a6ac3d516e211ebc38e7f831f87755": {
+    "sha1": "ee13e11ba2a6ac3d516e211ebc38e7f831f87755",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:51:15Z",
+    "model": "haiku",
+    "summary": "Yoroi Malware ZLAB analysis of the Conti ransomware encryptor source code, which surfaced after the @ContiLeaks account began dumping internal Conti data in early 2022. The report covers API hashing, anti-hooking checks, ChaCha20 encryption with RSA-protected keys, file-size and extension-based encryption modes, and SMB share propagation. It also notes Conti's reuse of earlier leaked code such as Carberp, and expects less mature gangs to benefit from the leak.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "Conti",
+          "q": "Conti, one of the most dangerous ransomware gangs that",
+          "by": "the report (Yoroi)"
+        },
+        {
+          "v": "FIN7/Carbanak",
+          "q": "module developed by FIN7/Carbanak gang",
+          "by": "the report (Yoroi)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "27 February 2022",
+          "q": "Since 27 February 2022, a few days after the apparition of the Conti’s gang support",
+          "what": "The @ContiLeaks account began dumping internal Conti data"
+        },
+        {
+          "v": "March 8, 2022",
+          "q": "March 8, 2022",
+          "what": "Publication date of the analysis"
+        },
+        {
+          "v": "2013",
+          "q": "Carberp malware source code leaked back in 2013",
+          "what": "Carberp malware source code was leaked"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Conti ransomware encryptor",
+          "q": "Across all the leaked material, there was also the Conti ransomware encryptor source code."
+        },
+        {
+          "v": "Carberp",
+          "q": "such as the Carberp malware source code leaked back in 2013"
+        },
+        {
+          "v": "Carbanak backdoor",
+          "q": "used as the foundation for the Carbanak backdoor."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "API Hashing",
+          "q": "The API Hashing"
+        },
+        {
+          "v": "AntiHook Tricks",
+          "q": "AntiHook Tricks"
+        },
+        {
+          "v": "String Obfuscation",
+          "q": "The String Obfuscation"
+        },
+        {
+          "v": "multi-threaded encryption",
+          "q": "The multi-threaded encryption"
+        },
+        {
+          "v": "Network Propagation",
+          "q": "Network Propagation"
+        },
+        {
+          "v": "ChaCha20",
+          "q": "generates the Key and the Initial Vector (IV) for the ChaCha20 algorithm"
+        },
+        {
+          "v": "RSA",
+          "q": "use the RSA algorithm to encrypt them"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "over 200 companies",
+          "q": "breached over 200 companies according to"
+        },
+        {
+          "v": "1048576 bytes",
+          "q": "If the size of the file is less or equal to 1048576 bytes"
+        },
+        {
+          "v": "50%",
+          "q": "a partial encryption (50%) will be performed"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "Conti ransomware"
+    },
+    "hedges": [
+      "Nobody knows for sure who operates it, maybe a reluctant Conti gang member, some foreign intelligence, or police officer",
+      "probably a hard punch in the face for the entire criminal gang",
+      "Obviously, this detection approach does not cover all the hooking techniques but is enough to trick many antiviruses"
+    ]
   }
 }

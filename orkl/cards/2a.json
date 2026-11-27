@@ -291,25 +291,144 @@
   },
   "2a4321fdcddd7640c9c4c60ed54d73d030eaefe5": {
     "sha1": "2a4321fdcddd7640c9c4c60ed54d73d030eaefe5",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:38:46Z",
+    "read_at": "2026-11-27T09:46:39Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "SentinelOne reports that North Korean-aligned threat actors targeting macOS have mixed components of two 2023 campaigns, RustBucket and KandyKorn. SwiftLoader droppers are used to deliver KandyKorn payloads. KandyKorn began with a fake crypto-trading Python app shared over Discord, then hijacked the installed Discord app for persistence and loaded a C++ backdoor RAT. The report links further tools, including ObjCShellz and SUGARLOADER, and lists hashes, network indicators and file paths for defenders. Some links are assessed with medium or high likelihood rather than proven.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "North Korean-aligned threat actors",
+          "q": "North Korean-aligned threat actors targeting macOS have had a busy 2023,",
+          "by": "the report itself (SentinelOne)"
+        },
+        {
+          "v": "DPRK-aligned threat actors",
+          "q": "Research by Elastic published in early November 2023 described a sophisticated intrusion by DPRK-aligned threat actors.",
+          "by": "Elastic research, as summarised in the report"
+        },
+        {
+          "v": "North Korean threat actors",
+          "q": "North Korean threat actors have an ongoing and evolving campaign first disclosed by JAMF dubbed RustBucket.",
+          "by": "the report itself (SentinelOne)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "crypto exchange",
+          "q": "targeting blockchain engineers of a crypto exchange"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "North Korean-aligned threat actors targeting macOS have had a busy 2023,"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2023-11-27",
+          "q": "Published: 2023-11-27 · Archived: 2026-04-05 18:37:53 UTC",
+          "what": "Report published"
+        },
+        {
+          "v": "early November 2023",
+          "q": "Research by Elastic published in early November 2023 described a sophisticated intrusion by DPRK-aligned threat actors.",
+          "what": "Elastic research on a KandyKorn intrusion published"
+        },
+        {
+          "v": "June",
+          "q": "in June researchers spotted",
+          "what": "A SecurePDF Viewer variant of SwiftLoader was spotted"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SwiftLoader",
+          "q": "‘SwiftLoader’, which functioned externally as a PDF Viewer for a lure document sent to targets."
+        },
+        {
+          "v": "RustBucket",
+          "q": "North Korean threat actors have an ongoing and evolving campaign first disclosed by JAMF dubbed RustBucket."
+        },
+        {
+          "v": "KandyKorn",
+          "q": "subsequently delivered a backdoor RAT written in C++ dubbed ‘KandyKorn’."
+        },
+        {
+          "v": "SUGARLOADER",
+          "q": "Mach-O binary, dubbed SUGARLOADER, at"
+        },
+        {
+          "v": "HLOADER",
+          "q": "SUGARLOADER also downloads a Mach-O payload dubbed HLOADER and writes it to"
+        },
+        {
+          "v": "ObjCShellz",
+          "q": "dubbed the malware ObjCShellz, in light of the fact that the code"
+        },
+        {
+          "v": "SecurePDF Viewer",
+          "q": "SecurePDF Viewer.app . This application was signed and notarized by Apple"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "social engineering via Discord",
+          "q": "a five-stage attack that began with social engineering via Discord to trick"
+        },
+        {
+          "v": "Python scripts used to drop malware",
+          "q": "Python scripts were used to drop malware"
+        },
+        {
+          "v": "hijacked the host’s installed Discord app",
+          "q": "that hijacked the host’s installed Discord app"
+        },
+        {
+          "v": "in-memory",
+          "q": "uses this to retrieve and execute the KANDYKORN remote access trojan in-memory via"
+        },
+        {
+          "v": "persistence mechanism",
+          "q": "persistence mechanism that will not be detected by Apple’s monitoring of background login items."
+        },
+        {
+          "v": "signed and notarized by Apple",
+          "q": "This application was signed and notarized by Apple (since revoked)"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "two major campaigns",
+          "q": "with two major campaigns noted so"
+        },
+        {
+          "v": "five-stage",
+          "q": "a five-stage attack that began with social engineering via Discord to trick"
+        },
+        {
+          "v": "TCP port 44",
+          "q": "communicating over TCP port 44."
+        },
+        {
+          "v": "macOS 12.6",
+          "q": "requires at least macOS 12.6 (Monterey)"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "KandyKorn"
+    },
+    "hedges": [
+      "The report assesses with medium confidence that the .pld file refers to the same KandyKorn RAT, given overlaps in infrastructure, objectives and TTPs.",
+      "The C2 did not respond with a download during the report's test.",
+      "The report says ObjCShellz is highly likely a later stage of the SwiftLoader SecurePDF Viewer.app.",
+      "The report says it provides only the first clues that RustBucket droppers and KandyKorn payloads are likely being shared."
+    ]
   }
 }

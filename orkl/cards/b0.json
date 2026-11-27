@@ -426,25 +426,250 @@
   },
   "b05e114fb83abe2200a05c5cfe7cb354c80f84a2": {
     "sha1": "b05e114fb83abe2200a05c5cfe7cb354c80f84a2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:34:12Z",
+    "read_at": "2026-11-27T09:44:58Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Malpedia entry for GRIFFON, a lightweight JavaScript validator-style implant with no persistence mechanism. It receives modules to run in memory, sends results to C2 servers, and its first module gathers information about the infected workstation. The entry attributes it to FIN7 and lists references dated 2018 to 2022 from several vendors and agencies. It notes there is no YARA signature yet.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "Actor(s): FIN7",
+          "by": "the report itself (Malpedia entry by Fraunhofer FKIE)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2018-10-01",
+          "q": "2018-10-01 ⋅ FireEye ⋅ Katie Nickels, Regina Elwell",
+          "what": "FireEye published the reference ATT&CKing FIN7, which lists Griffon"
+        },
+        {
+          "v": "2019-05-08",
+          "q": "2019-05-08 ⋅ Kaspersky Labs ⋅ Félix Aime, Yury Namestnikov",
+          "what": "Kaspersky Labs published the reference on FIN7.5, which lists Griffon"
+        }
+      ],
+      "tools": [
+        {
+          "v": "GRIFFON",
+          "q": "GRIFFON is a lightweight JavaScript validator-style implant"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "in-memory module execution",
+          "q": "designed for receiving modules to be executed in-memory and sending the results to C2s"
+        },
+        {
+          "v": "initial information gathering",
+          "q": "information-gathering JavaScript, which"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Griffon"
+    },
+    "hedges": [
+      "The entry states there is no YARA signature yet."
+    ]
+  },
+  "b0eeb4f27d695518aa8037b19e27cb6c6248f84f": {
+    "sha1": "b0eeb4f27d695518aa8037b19e27cb6c6248f84f",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:55:33Z",
+    "model": "haiku",
+    "summary": "Cybaze-Yoroi ZLAB reports a campaign it calls NIBBI, part of its Aggah campaigns, targeting Italian manufacturing firms, some in the automotive production chain. The infection starts with a macro-armed PowerPoint that runs Mshta and fetches scripts from Pastebin. Payloads include Revenge RAT, AZORult and finally AgentTesla, which sends stolen data through an SMTP client. The chain also lowers system security settings, adds Windows Anti-Malware exclusions and monitors the clipboard for bitcoin addresses. UNIT42 first spotted the actor in 2018 and suggested a possible Gorgon overlap, which the…",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Aggah",
+          "q": "the Aggah campaigns varied in the time",
+          "by": "Cybaze-Yoroi ZLAB (report authors)"
+        },
+        {
+          "v": "Gorgon",
+          "q": "the Gorgon APT group, but no clear evidence confirmed that.",
+          "by": "PaloAlto UNIT42 (hypothesis only)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "manufacturing",
+          "q": "the manufacturing sector, some of them also part of the automotive production chain."
+        },
+        {
+          "v": "automotive",
+          "q": "the manufacturing sector, some of them also part of the automotive production chain."
+        },
+        {
+          "v": "local government",
+          "q": "retail, manufacturing, and local government industries in the US, Europe and Asia."
+        },
+        {
+          "v": "production",
+          "q": "many organizations operating in production sectors in Europe"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Italy",
+          "q": "also in Italy."
+        },
+        {
+          "v": "US",
+          "q": "in the US, Europe and Asia."
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 22, 2020",
+          "q": "May 22, 2020",
+          "what": "report published"
+        },
+        {
+          "v": "12/2018",
+          "q": "Roma225 (12/2018), Hagga (08/2019),",
+          "what": "Roma225 operations described"
+        },
+        {
+          "v": "08/2019",
+          "q": "Roma225 (12/2018), Hagga (08/2019),",
+          "what": "Hagga operations described"
+        },
+        {
+          "v": "09/2019",
+          "q": "Mana (09/2019), YAKKA (01/2020).",
+          "what": "Mana operations described"
+        },
+        {
+          "v": "01/2020",
+          "q": "Mana (09/2019), YAKKA (01/2020).",
+          "what": "YAKKA operations described"
+        },
+        {
+          "v": "2018",
+          "q": "This actor was first spotted by PaloAlto’s UNIT42 in 2018",
+          "what": "actor first spotted by UNIT42"
+        },
+        {
+          "v": "mid/end 2019",
+          "q": "all date back to mid/end 2019",
+          "what": "earliest malware exploiting the CMSTP bypass"
+        },
+        {
+          "v": "April",
+          "q": "it has been active since the middle of April.",
+          "what": "C2 domain active"
+        },
+        {
+          "v": "2nd of May",
+          "q": "compared another time the 2nd of May since these days.",
+          "what": "C2 domain activity seen again"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Powerpoint",
+          "q": "The infection chain starts with a malicious Microsoft Powerpoint weaponized with a malicious macro."
+        },
+        {
+          "v": "mshta.exe",
+          "q": "abusing “mshta.exe” (T1170) a"
+        },
+        {
+          "v": "revenge rat",
+          "q": "revenge rat has the classic functionality of spyware,"
+        },
+        {
+          "v": "AZORult",
+          "q": "while AZORult is considered an info stealer."
+        },
+        {
+          "v": "AgentTesla",
+          "q": "the final payload is AgentTesla."
+        },
+        {
+          "v": "Powershell",
+          "q": "The Powershell Loader"
+        },
+        {
+          "v": "pastebin",
+          "q": "legit website such as pastebin (T1102)"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Signed Binary Proxy Execution",
+          "q": "All attack operations used a “Signed Binary Proxy Execution” technique abusing Mshta, a legit Microsoft tool"
+        },
+        {
+          "v": "armed with macro",
+          "q": "an office document (PowerPoint or Excel) armed with macro"
+        },
+        {
+          "v": "injection methods",
+          "q": "some of them used injection methods."
+        },
+        {
+          "v": "CMSTP bypass",
+          "q": "Furthermore the CMSTP bypass exploit is a new feature present only in the 2020"
+        },
+        {
+          "v": "registry run keys",
+          "q": "infections the registry run keys were used."
+        },
+        {
+          "v": "obfuscation",
+          "q": "All threats use at least one obfuscation method to make the analysis harder."
+        },
+        {
+          "v": "abuse of legit web service",
+          "q": "the abuse of legit web service has been reported in some campaigns."
+        },
+        {
+          "v": "Anti-Malware exclusions",
+          "q": "insert in the Microsoft Windows Anti-Malware exclusions the following processes:"
+        },
+        {
+          "v": "set to zero the level of security",
+          "q": "has the objective to set to zero the level of security of the infected"
+        },
+        {
+          "v": "Amsi",
+          "q": "invoke the execution of the static method “Bypass” of the “Amsi” class."
+        },
+        {
+          "v": "clipboard",
+          "q": "constant check in the clipboard of the victim machine, looking for bitcoin addresses"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "fourth component",
+          "q": "and the fourth component, UyFaSxgj:"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "NIBBI"
+    },
+    "hedges": [
+      "The report notes UNIT42's hypothesis of possible overlap with the Gorgon APT group, but says no clear evidence confirmed it.",
+      "The report says the second-stage binary is probably not executed because both binaries perform the same action and only one is sufficient.",
+      "The final paste was removed at the time of analysis, so that component could not be examined.",
+      "The report suggests, without firm proof, that the actor likes to test the latest disclosed exploits."
+    ]
   }
 }

@@ -1,25 +1,382 @@
 {
   "554c01c9451fbb1457a3dbbf64f167d3a47d151b": {
     "sha1": "554c01c9451fbb1457a3dbbf64f167d3a47d151b",
-    "status": "unread",
-    "partial": false,
-    "read_at": "2026-11-27T08:46:45Z",
+    "status": "read",
+    "partial": true,
+    "read_at": "2026-11-27T09:49:31Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Red Canary's 2025 Threat Detection Report reviews threats it detected at customers in 2024, about 93,000 confirmed. Topics include ransomware precursors, initial access via fake CAPTCHA paste-and-run lures and fake browser updates, identity attacks, edge-device vulnerabilities such as ScreenConnect and FortiClient EMS, infostealers such as LummaC2 and macOS stealers, VPN abuse, cloud attacks and North Korean IT worker insiders. Top threats include SocGholish, Impacket and Scarlet Goldfinch.",
+    "kind": "overview",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "SCATTERED SPIDER",
+          "q": "what used to be SCATTERED SPIDER’s signature technique has proliferated across",
+          "by": "Red Canary (report)"
+        },
+        {
+          "v": "Storm-0844",
+          "q": "shares significant overlaps with activity tracked by Microsoft as Storm-0844",
+          "by": "Red Canary (report), citing Microsoft"
+        },
+        {
+          "v": "UNC5267",
+          "q": "Mandiant has been tracking this activity as UNC5267 across numerous incident response engagements since 2022",
+          "by": "Mandiant"
+        },
+        {
+          "v": "FIN7",
+          "q": "Earlier in 2024 we saw FIN7 delivering NetSupport Manager in MSIX campaigns.",
+          "by": "Red Canary (report)"
+        },
+        {
+          "v": "Black Basta",
+          "q": "most notably with Black Basta affiliates who conducted extensive social engineering",
+          "by": "Red Canary (report)"
+        },
+        {
+          "v": "LockBit",
+          "q": "a big win against ransomware operator LockBit with Operation Cronos",
+          "by": "Red Canary (report)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "educational services",
+          "q": "organizations in the educational services sector accounted for 63 percent of all VPN use"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North Korea",
+          "q": "purportedly organized by the Democratic People’s Republic of Korea (DPRK, aka North Korea)"
+        },
+        {
+          "v": "UK",
+          "q": "led by the UK National Crime Agency (NCA)"
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2024",
+          "q": "In August 2024, we observed ransomware incidents that leveraged virtual private networks (VPN), particularly Cisco ASA",
+          "what": "Ransomware incidents using VPNs, notably Cisco ASA, observed"
+        },
+        {
+          "v": "June 2023",
+          "q": "Scarlet Goldfinch is Red Canary’s name for a fake browser update activity cluster, similar to SocGholish, that first emerged in June 2023.",
+          "what": "Scarlet Goldfinch first emerged"
+        },
+        {
+          "v": "January 2024",
+          "q": "Amber Albatross is a Red Canary-named activity cluster that we have been tracking since January 2024.",
+          "what": "Red Canary began tracking Amber Albatross"
+        },
+        {
+          "v": "February 19, 2024",
+          "q": "These critical vulnerabilities in ConnectWise’s ScreenConnect RMM software were disclosed on February 19, 2024",
+          "what": "ScreenConnect vulnerabilities disclosed; exploitation seen within days"
+        },
+        {
+          "v": "September 2024",
+          "q": "following a Mandiant report published in September 2024.",
+          "what": "Mandiant published its report on North Korean workers infiltrating organizations"
+        },
+        {
+          "v": "September 2024",
+          "q": "In September 2024, Apple removed the ability to bypass Gatekeeper in this manner",
+          "what": "Apple removed the Gatekeeper bypass in macOS Sequoia"
+        },
+        {
+          "v": "mid-2022",
+          "q": "has been available for purchase on underground forums since at least mid-2022.",
+          "what": "LummaC2 available as a service on underground forums"
+        },
+        {
+          "v": "July 2023",
+          "q": "In use since at least July 2023, multiple adversary groups leverage",
+          "what": "HijackLoader in use"
+        },
+        {
+          "v": "October 2024",
+          "q": "reports in October 2024 detailed a new variant of HijackLoader that",
+          "what": "Reports described a new HijackLoader variant that bundles its components into a signed executable"
+        },
+        {
+          "v": "mid-November 2024",
+          "q": "the biggest change we observed showed up in mid-November 2024.",
+          "what": "Scarlet Goldfinch dropped its PowerShell stage"
+        }
+      ],
+      "tools": [
+        {
+          "v": "LummaC2",
+          "q": "LummaC2, also known as LummaC or Lumma Stealer, is a malware-as-a-service (MaaS) stealer that has been available"
+        },
+        {
+          "v": "HijackLoader",
+          "q": "HijackLoader, also known as “IDAT Loader,”"
+        },
+        {
+          "v": "NetSupport Manager",
+          "q": "NetSupport Manager is one of the many remote monitoring and management (RMM) tools misused by adversaries."
+        },
+        {
+          "v": "Scarlet Goldfinch",
+          "q": "Scarlet Goldfinch is Red Canary’s name for a fake browser update activity cluster, similar to SocGholish"
+        },
+        {
+          "v": "SocGholish",
+          "q": "Scarlet Goldfinch is Red Canary’s name for a fake browser update activity cluster, similar to SocGholish"
+        },
+        {
+          "v": "Impacket",
+          "q": "move laterally using detectable tools like PsExec or Impacket."
+        },
+        {
+          "v": "PsExec",
+          "q": "move laterally using detectable tools like PsExec or Impacket."
+        },
+        {
+          "v": "Mimikatz",
+          "q": "adversaries commonly obtain credentials through tools like Mimikatz and move laterally"
+        },
+        {
+          "v": "AdFind",
+          "q": "free open source tools like AdFind, Angry IP Scanner, BloodHound, Nmap, PCHunter, SoftPerfect"
+        },
+        {
+          "v": "BloodHound",
+          "q": "free open source tools like AdFind, Angry IP Scanner, BloodHound, Nmap, PCHunter, SoftPerfect"
+        },
+        {
+          "v": "Nmap",
+          "q": "free open source tools like AdFind, Angry IP Scanner, BloodHound, Nmap, PCHunter, SoftPerfect"
+        },
+        {
+          "v": "AnyDesk",
+          "q": "tool like Microsoft Quick Assist, AnyDesk, or TeamViewer."
+        },
+        {
+          "v": "Caffeine",
+          "q": "They also leveraged software like Caffeine to keep computers from going into"
+        },
+        {
+          "v": "Akira",
+          "q": "Historically tied to Akira ransomware, Storm-0844 has recently made a switch to deploying FOG ransomware."
+        },
+        {
+          "v": "FOG",
+          "q": "Prolific groups like FOG, RansomHub, and FunkSec all first appeared on the scene in 2024."
+        },
+        {
+          "v": "RansomHub",
+          "q": "Prolific groups like FOG, RansomHub, and FunkSec all first appeared on the scene in 2024."
+        },
+        {
+          "v": "FunkSec",
+          "q": "Prolific groups like FOG, RansomHub, and FunkSec all first appeared on the scene in 2024."
+        },
+        {
+          "v": "Atomic Stealer",
+          "q": "Of the three, Atomic Stealer was the most prevalent by far, appearing"
+        },
+        {
+          "v": "Poseidon Stealer",
+          "q": "Poseidon Stealer’s developer selling its infrastructure to exit the market"
+        },
+        {
+          "v": "Banshee",
+          "q": "Banshee’s source code leaking."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "paste and run",
+          "q": "“Paste and run,” a technique used to fool users into running malicious code"
+        },
+        {
+          "v": "fake browser updates",
+          "q": "Threats leveraging fake browser updates as an initial access vector"
+        },
+        {
+          "v": "SEO poisoning",
+          "q": "Search engine optimization (SEO) poisoning remains an effective technique for gaining initial access in 2024."
+        },
+        {
+          "v": "malvertising",
+          "q": "Malicious advertising, also called “malvertising,” is"
+        },
+        {
+          "v": "email bombing",
+          "q": "began with email bombing to flood a victim’s inbox with spam"
+        },
+        {
+          "v": "password spraying",
+          "q": "Password spraying is a technique similar to"
+        },
+        {
+          "v": "credential stuffing",
+          "q": "as credential stuffing, whereby they leverage"
+        },
+        {
+          "v": "intercepting session tokens",
+          "q": "intercepting session tokens (often stored in cookies)"
+        },
+        {
+          "v": "adversary-in-the-middle",
+          "q": "Adversary-in-the-middle (AitM) and man-in-the-middle (MitM) attacks enable password theft"
+        },
+        {
+          "v": "Account Manipulation",
+          "q": "Account Manipulation (T1098)"
+        },
+        {
+          "v": "Impair Defenses",
+          "q": "Impair Defenses (T1562)"
+        },
+        {
+          "v": "Cloud Accounts",
+          "q": "including our number one, Cloud Accounts."
+        },
+        {
+          "v": "Email Hiding Rules",
+          "q": "Email Hiding Rules"
+        },
+        {
+          "v": "Mshta",
+          "q": "Mshta’s return to the top 10 technique list"
+        },
+        {
+          "v": "RMM tool abuse",
+          "q": "we saw adversaries continue to abuse RMM tools."
+        },
+        {
+          "v": "VPN abuse",
+          "q": "VPN abuse is both rampant and hard to detect"
+        },
+        {
+          "v": "VMware ESXi hypervisors",
+          "q": "adversaries often favored moving to VMware ESXi hypervisors, which are rarely well-monitored"
+        },
+        {
+          "v": "bypass Gatekeeper",
+          "q": "removed the ability to bypass Gatekeeper in this manner"
+        },
+        {
+          "v": "AppleScript",
+          "q": "AppleScript is the common thread that runs between most macOS stealers"
+        },
+        {
+          "v": "ransomware precursors",
+          "q": "which we refer to as “ransomware precursors.”"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2023-48788",
+          "q": "CVE-2023-48788"
+        },
+        {
+          "v": "CVE-2024-1709",
+          "q": "CVE-2024-1709 & 1708—regarding ConnectWise ScreenConnect"
+        },
+        {
+          "v": "CVE-2024-1708",
+          "q": "CVE-2024-1709 & CVE-2024-1708"
+        }
+      ],
+      "figures": [
+        {
+          "v": "93,000",
+          "q": "Red Canary detected nearly 93,000 threats in 2024"
+        },
+        {
+          "v": "308 petabytes",
+          "q": "Red Canary ingested 308 petabytes of security telemetry"
+        },
+        {
+          "v": "1,400 customers",
+          "q": "from our 1,400 customers’ endpoints,"
+        },
+        {
+          "v": "25,000",
+          "q": "25,000 of which"
+        },
+        {
+          "v": "30 million",
+          "q": "Our detection engine generated 30 million"
+        },
+        {
+          "v": "4 million identities",
+          "q": "over 4 million identities, endpoints, and cloud resources"
+        },
+        {
+          "v": "four times as many identity threats",
+          "q": "four times as many identity threats in 2024 than the year before."
+        },
+        {
+          "v": "400 percent",
+          "q": "we saw a 400 percent increase"
+        },
+        {
+          "v": "95 percent",
+          "q": "95 percent of stealer infections happening prior to September"
+        },
+        {
+          "v": "$75 million",
+          "q": "with one as high as $75 million"
+        },
+        {
+          "v": "$250 USD per month",
+          "q": "Subscriptions start at $250 USD per month"
+        },
+        {
+          "v": "$20,000 USD",
+          "q": "one-time payment of $20,000 USD to gain access to Lumma source code"
+        },
+        {
+          "v": "63 percent",
+          "q": "organizations in the educational services sector accounted for 63 percent of all VPN use"
+        },
+        {
+          "v": "25 percent",
+          "q": "Known Exploited Vulnerability Catalog grew by approximately 25 percent"
+        },
+        {
+          "v": "$1 trillion",
+          "q": "Gartner forecasts that IT spending on public cloud services will exceed $1 trillion in 2027"
+        },
+        {
+          "v": "80 percent",
+          "q": "According to Gartner, 80 percent of data breaches can be"
+        },
+        {
+          "v": "34 servers",
+          "q": "collectively took down 34 servers, seized more than 200 cryptocurrency wallets"
+        },
+        {
+          "v": "nine countries",
+          "q": "law enforcement agencies from nine countries"
+        },
+        {
+          "v": "4.9%",
+          "q": "4.9% of customers affected"
+        },
+        {
+          "v": "2.9%",
+          "q": "2.9% CUSTOMERS AFFECTED"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "hedges": [
+      "Red Canary cannot definitively say that suspicious activity it uncovered was associated with DPRK IT workers.",
+      "It is difficult to say with certainty whether identity attacks are increasing, steady or decreasing.",
+      "Some of the activity shares significant overlaps with activity tracked by Microsoft as Storm-0844.",
+      "Mandiant believes the DPRK insider campaign may date back as far as 2018.",
+      "Red Canary assesses Amber Albatross as nefarious based on suspicious reconnaissance and heavy obfuscation, and has yet to discern how the malware uses the data it collects.",
+      "The report excludes unwanted software and confirmed testing from its data, consistent with past years."
+    ]
   }
 }

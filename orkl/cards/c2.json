@@ -255,5 +255,136 @@
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
     "tries": 2
+  },
+  "c2fe4faed629239ed3b7bd3c8f9f8ac0342f8e70": {
+    "sha1": "c2fe4faed629239ed3b7bd3c8f9f8ac0342f8e70",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:51:26Z",
+    "model": "haiku",
+    "summary": "SentinelOne reports a new variant of Operation In(ter)ception, a macOS campaign it links to the North-Korean linked Lazarus group (aka Nukesped). Lures use job vacancies at a rival cryptocurrency exchange, following a Coinbase-themed variant that ESET spotted in August 2022. The malware uses a persistence agent, a second-stage app and a downloader with hardcoded C2. The C2 was offline during analysis, so the final payload was not retrieved.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "Lazarus",
+          "q": "North-Korean linked APT threat actor Lazarus",
+          "by": "SentinelOne"
+        },
+        {
+          "v": "Nukesped",
+          "q": "The Lazarus (aka Nukesped) threat actor",
+          "by": "SentinelOne"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "cryptocurrency exchange",
+          "q": "lures for job vacancies at cryptocurrency exchange platform Coinbase"
+        },
+        {
+          "v": "aerospace and defense",
+          "q": "including targeting aerospace and defense"
+        }
+      ],
+      "countries": [
+        {
+          "v": "North-Korean",
+          "q": "North-Korean linked APT threat actor Lazarus"
+        }
+      ],
+      "dates": [
+        {
+          "v": "August 2022",
+          "q": "Decoy PDF documents advertising positions on crypto exchange platform Coinbase were discovered by our friends at ESET back in August 2022",
+          "what": "Coinbase-themed variant discovered by ESET"
+        },
+        {
+          "v": "September 26, 2022",
+          "q": "September 26, 2022",
+          "what": "report published"
+        },
+        {
+          "v": "2020",
+          "q": "a number of campaigns since at least 2020, including targeting aerospace and defense",
+          "what": "Lazarus lure campaigns observed since at least this year"
+        },
+        {
+          "v": "2021",
+          "q": "has been in existence since at least 2021.",
+          "what": "second-stage application in existence"
+        },
+        {
+          "v": "2018",
+          "q": "AppleJeus campaigns that began in 2018.",
+          "what": "AppleJeus campaigns began"
+        }
+      ],
+      "tools": [
+        {
+          "v": "wifianalyticsagent",
+          "q": "The wifianalyticsagent sample passes Gatekeeper with an ‘ad hoc’ signature"
+        },
+        {
+          "v": "WifiAnalyticsServ",
+          "q": "“WifiAnalyticsServ.app”; this mirrors the same architecture seen in the Coinbase variant,"
+        },
+        {
+          "v": "FinderFontsUpdater",
+          "q": "which used a second stage called “FinderFontsUpdater.app”."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persistence agent",
+          "q": "drops a persistence agent at"
+        },
+        {
+          "v": "decoy PDF documents",
+          "q": "Decoy PDF documents advertising positions on crypto exchange"
+        },
+        {
+          "v": "lures for job vacancies",
+          "q": "using lures for job vacancies at cryptocurrency exchange platform Coinbase"
+        },
+        {
+          "v": "targeted messaging on LinkedIn",
+          "q": "attracting victims via targeted messaging on LinkedIn."
+        },
+        {
+          "v": "ad hoc signature",
+          "q": "signed with an ad hoc signature, meaning that they will pass Apple’s Gatekeeper checks"
+        },
+        {
+          "v": "hardcoded C2",
+          "q": "Hardcoded C2 in the third-stage downloader"
+        },
+        {
+          "v": "no effort to encrypt or obfuscate",
+          "q": "The threat actors have made no effort to encrypt or obfuscate any of the binaries"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "26 page",
+          "q": "The PDF is a 26 page dump of all vacancies at"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "Operation In(ter)ception"
+    },
+    "hedges": [
+      "It is not clear at this stage how the malware is being distributed.",
+      "Targeted LinkedIn messaging is attributed to earlier reports, so the distribution method is unconfirmed.",
+      "The C2 was offline during analysis, so the WifiCloudWidget payload could not be retrieved.",
+      "Hardcoded persistence details suggest further variants may exist or be forthcoming.",
+      "No obfuscation may indicate short-term campaigns and/or little fear of detection by targets.",
+      "Operation In(ter)ception may be a combined effort to conduct both espionage and cryptocurrency theft.",
+      "Lazarus is described as North-Korean linked, not confirmed.",
+      "The Coinbase variant campaign indications suggest it dated back at least a year."
+    ]
   }
 }

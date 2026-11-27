@@ -664,5 +664,117 @@
       "note": "summary: It says the report 'leaves some attribution ... questions open'. The report does not leave attribution open: it cites earlier researchers' strong-confi",
       "by": "auditor"
     }
+  },
+  "bee575efddd40c5fb55d6d0a72fa4f6878c0c801": {
+    "sha1": "bee575efddd40c5fb55d6d0a72fa4f6878c0c801",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:56:12Z",
+    "model": "haiku",
+    "summary": "BlackBerry Threat Intelligence describes LokiLocker, a limited-access ransomware-as-a-service family first seen in mid-August 2021, with about 30 affiliates. Samples are written in .NET, protected with NETGuard and KoiVM, and encrypt files with AES and RSA. Early samples were spread inside trojanized brute-checker tools. If the ransom is unpaid, the malware can wipe files and overwrite the Master Boot Record. The researchers say the possible Iranian origin may be a false flag. Most known victims are in Eastern Europe and Asia.",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "LokiLocker",
+          "q": "LokiLocker, a ransomware-as-a-service (RaaS) family with possible origins in Iran",
+          "by": "BlackBerry Threat Intelligence researchers (the report)"
+        },
+        {
+          "v": "Iranian attackers",
+          "q": "the real threat actors are trying to cast the blame on Iranian attackers",
+          "by": "BlackBerry Threat Intelligence researchers (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "Iran",
+          "q": "LokiLocker, a ransomware-as-a-service (RaaS) family with possible origins in Iran"
+        },
+        {
+          "v": "Eastern Europe and Asia",
+          "q": "Most so far are in Eastern Europe and Asia."
+        }
+      ],
+      "dates": [
+        {
+          "v": "mid-August 2021",
+          "q": "seen in the wild in mid-August 2021",
+          "what": "LokiLocker first seen in the wild"
+        },
+        {
+          "v": "16 Mar 2022",
+          "q": "Wed 16 Mar 2022 // 21:00 UTC",
+          "what": "BlackBerry report on LokiLocker published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "NETGuard",
+          "q": "protected with NETGuard – a commercial product that"
+        },
+        {
+          "v": "ConfuserEX",
+          "q": "\"modified ConfuserEX,\" an open-source tool for protecting .NET"
+        },
+        {
+          "v": "KoiVM",
+          "q": "also using KoiVM, a virtualization plugin."
+        },
+        {
+          "v": "PayPal BruteCheck",
+          "q": "tools, including PayPal BruteCheck, Spotify BruteChecker, PiaVNP Brute Checker by"
+        },
+        {
+          "v": "Spotify BruteChecker",
+          "q": "tools, including PayPal BruteCheck, Spotify BruteChecker, PiaVNP Brute Checker by"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "AES for file encryption",
+          "q": "AES for file encryption and RSA for key protection"
+        },
+        {
+          "v": "wiper function",
+          "q": "also includes a wiper function that will erase the data if the payment deadline passes."
+        },
+        {
+          "v": "Master Boot Record (MBR)",
+          "q": "overwrite the Master Boot Record (MBR) of the system drive to render the system unusable,"
+        },
+        {
+          "v": "Blue Screen of Death",
+          "q": "try to crash the system by forcing a Blue Screen of Death."
+        },
+        {
+          "v": "trojanized brute-checker",
+          "q": "An early sample of the ransomware was distributed inside trojanized brute-checker hacking"
+        },
+        {
+          "v": "email",
+          "q": "to email the attackers to receive instructions for paying the ransom."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "30 different such affiliates",
+          "q": "30 different such affiliates across the LokiLocker samples that they have found in the wild."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "LokiLocker"
+    },
+    "hedges": [
+      "It's not entirely clear whether this means they truly originate from Iran or that the real threat actors are trying to cast the blame on Iranian attackers.",
+      "The researchers are still trying to determine the origins of the RaaS family.",
+      "It seems that this functionality is not yet implemented, as there are no references to this array in the code,",
+      "it could just as well be a false flag meant to misdirect our attention\" and put blame on Iran.",
+      "It's possible that the LokiLocker version distributed with these hacking tools constituted some kind of beta testing phase before the malware was offered to a wider range of affiliates."
+    ]
   }
 }

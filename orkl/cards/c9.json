@@ -25,5 +25,181 @@
       "note": "",
       "by": "auditor"
     }
+  },
+  "c9af65927e7b013cfdb566cd32de2941c915ee0e": {
+    "sha1": "c9af65927e7b013cfdb566cd32de2941c915ee0e",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:52:17Z",
+    "model": "haiku",
+    "summary": "eSentire's Threat Response Unit reports an opportunistic June 2021 malspam campaign by the FIN7 group, using a fake legal complaint about Brown-Forman. A law firm was a victim. The Excel lure installs the JSSLoader RAT via WMI. The report also covers FIN7's shifting lures, timed infrastructure registration, and suspected ties to Ryuk and REvil, which remain unconfirmed.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "FIN7 is a financially motivated cybercrime group which gained notoriety for stealing millions",
+          "by": "eSentire (report author)"
+        },
+        {
+          "v": "Carbanak Group",
+          "q": "FIN7 [1][2] (a.k.a. Carbanak Group)",
+          "by": "eSentire (report author)"
+        },
+        {
+          "v": "Ryuk",
+          "q": "FIN7 has also been associated with the Ryuk ransomware group",
+          "by": "Truesec researchers, as cited by eSentire"
+        },
+        {
+          "v": "REvil",
+          "q": "The infamous REvil (Sodin) gang took credit for the ransomware",
+          "by": "eSentire, reporting the gang's own claim"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "law firm",
+          "q": "One of the victims of the malicious legal complaint campaign was a law firm."
+        },
+        {
+          "v": "wine and spirits",
+          "q": "Brown-Forman is a large, U.S.-based wine and spirits company and the maker"
+        }
+      ],
+      "countries": [
+        {
+          "v": "U.S.",
+          "q": "Brown-Forman is a large, U.S.-based wine and spirits company"
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 2021",
+          "q": "During the first week of June 2021,",
+          "what": "eSentire TRU witnessed a FIN7 malspam campaign"
+        },
+        {
+          "v": "June 1, 2021",
+          "q": "Figure 2: Legal Complaint lure observed by TRU on June 1, 2021 that led to an",
+          "what": "Legal complaint lure observed by TRU that led to a JSSLoader download"
+        },
+        {
+          "v": "June 10",
+          "q": "On June 10, external researchers",
+          "what": "External researchers observed a USPS mail delivery notification lure"
+        },
+        {
+          "v": "June 17, 2021",
+          "q": "U.S. federal law officials filed court documents on June 17, 2021 stating",
+          "what": "US court documents stated FIN7 had more than 70 members"
+        },
+        {
+          "v": "December 2020",
+          "q": "In December 2020,",
+          "what": "Truesec observed FIN7 tools used to gain a foothold later used to launch Ryuk ransomware"
+        },
+        {
+          "v": "August 2020",
+          "q": "August 2020 (Figure 5). The infamous REvil (Sodin) gang took credit for the ransomware",
+          "what": "Ransomware attack on Brown-Forman, credited by the gang to REvil"
+        },
+        {
+          "v": "2021-03-11",
+          "q": "was registered 2021-03-11, but",
+          "what": "Lookalike landing page domain registered; not observed until June"
+        },
+        {
+          "v": "May 27",
+          "q": "Both contacted domains registered May 27th, a week prior",
+          "what": "C2 domains registered about a week before in-the-wild use"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JSSLoader",
+          "q": "executes a variant of the JSSLoader Remote Access Trojan (RAT)"
+        },
+        {
+          "v": "Ryuk ransomware",
+          "q": "launch Ryuk ransomware into the victim’s environment"
+        },
+        {
+          "v": "Excel",
+          "q": "The initial stage of the malware arrives as an Excel attachment"
+        },
+        {
+          "v": "Windows Management Instrumentation",
+          "q": "leverages Windows Management Instrumentation (WMI) to install the RAT"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malspam",
+          "q": "Response Unit (TRU) witnessed an opportunistic malspam campaign that was conducted by"
+        },
+        {
+          "v": "fake legal complaint",
+          "q": "The criminal group used a fake legal complaint centering around Brown-"
+        },
+        {
+          "v": "Lookalike Landing Page",
+          "q": "Figure 1: Brown-Forman Lookalike Landing Page"
+        },
+        {
+          "v": "initial access market",
+          "q": "“initial access market,” selling or trading"
+        },
+        {
+          "v": "domain age",
+          "q": "website reputation filters which utilize domain age as input"
+        },
+        {
+          "v": "social engineering",
+          "q": "they know how to use social engineering techniques that will lure"
+        },
+        {
+          "v": "Magecart attacks",
+          "q": "FIN7 is one of many cyber gangs observed participating in Magecart attacks"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "more than 70 members",
+          "q": "that FIN7 had more than 70 members, all assigned to various departments under the larger"
+        },
+        {
+          "v": "more than a billion dollars",
+          "q": "stole more than a billion dollars between 2015 and 2018 from"
+        },
+        {
+          "v": "hundreds of U.S. companies",
+          "q": "the group went after hundreds of U.S. companies infecting"
+        },
+        {
+          "v": "a terabyte",
+          "q": "stole a terabyte of their company data"
+        },
+        {
+          "v": "almost six weeks",
+          "q": "In a second attack against the company, almost six weeks"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "FIN7 fake legal complaint malspam campaign using a Brown-Forman lure"
+    },
+    "hedges": [
+      "The role of one intermediate server is unclear; it may test whether a visitor is a susceptible victim rather than a security researcher.",
+      "The months-long gap before a landing page was used might have been meant to thwart reputation filters that use domain age.",
+      "The report calls the timing relative to the Brown-Forman claim deadline coincidental and says whether FIN7 is connected to the REvil attack remains to be seen.",
+      "Truesec theorized FIN7 may have sold access to the Ryuk group or may be closely affiliated with it; the report says either theory implies few sectors are out of scope.",
+      "A Swiss security company promised evidence linking FIN7 and REvil but never provided sufficient evidence, according to the report.",
+      "The report sees no apparent relationship between this infrastructure and infrastructure reported by previous research.",
+      "In-the-wild use of a newly registered lookalike domain has not been observed; the report assesses it will replace the prior one.",
+      "The report describes FIN7 selling initial access to ransomware groups as plausible, not confirmed."
+    ]
   }
 }

@@ -316,25 +316,398 @@
   },
   "59060ce826df58285a90a8198d06fcdd5e7e6987": {
     "sha1": "59060ce826df58285a90a8198d06fcdd5e7e6987",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T08:46:17Z",
+    "read_at": "2026-11-27T09:49:08Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Google's Threat Horizons report (April 2023) is a set of cloud threat articles. It covers state actors borrowing criminal methods, APT29's use of cloud-hosted command-and-control (disrupted May 2022), HOODOO/APT41 using the public GC2 tool against Taiwanese media, weak passwords and API abuse as leading compromise factors, ransomware against misconfigured SQL databases, 14 compromised customer sites on IT service providers' infrastructure, encrypted ZIP malware hosted in Google Drive, GKE patching trade-offs, and leaked service account keys.",
+    "kind": "overview",
+    "facts": {
+      "actors": [
+        {
+          "v": "APT29",
+          "q": "operation by APT29, previously attributed by the US and UK Governments to the Russian Foreign",
+          "by": "US and UK Governments (as stated in the report)"
+        },
+        {
+          "v": "SVR",
+          "q": "Intelligence Service (SVR), that was controlling compromised websites by means of C2 on Google",
+          "by": "US and UK Governments (as stated in the report)"
+        },
+        {
+          "v": "HOODOO",
+          "q": "disrupted a campaign from HOODOO, a Chinese",
+          "by": "Google’s Threat Analysis Group (TAG)"
+        },
+        {
+          "v": "APT41",
+          "q": "government-backed attacker also known as APT41, that",
+          "by": "Google’s Threat Analysis Group (TAG)"
+        },
+        {
+          "v": "Russian military",
+          "q": "as when the Russian military posed as the Cyber Caliphate to disable",
+          "by": "the report"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial services",
+          "q": "appeared to target the financial services sector"
+        },
+        {
+          "v": "media",
+          "q": "targeted a Taiwanese media organization by sending"
+        },
+        {
+          "v": "public sector",
+          "q": "illustrates the continued overlap of public sector threat actors targeting private sector"
+        },
+        {
+          "v": "IT Service Providers",
+          "q": "All the sites were set up through IT Service Providers (ITSP), who had resold GC services"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Taiwan",
+          "q": "targeted a Taiwanese media organization by sending"
+        },
+        {
+          "v": "China",
+          "q": "disrupted a campaign from HOODOO, a Chinese"
+        },
+        {
+          "v": "Russia",
+          "q": "previously attributed by the US and UK Governments to the Russian Foreign"
+        }
+      ],
+      "dates": [
+        {
+          "v": "May 2022",
+          "q": "in May 2022, Google’s Threat Analysis Group disrupted an",
+          "what": "Google's Threat Analysis Group disrupted an APT29 operation"
+        },
+        {
+          "v": "July 2022",
+          "q": "HOODOO previously used GC2 in July 2022 to target an Italian job search website.",
+          "what": "HOODOO used GC2 against an Italian job search website"
+        },
+        {
+          "v": "September 2022",
+          "q": "In September 2022, an attacker",
+          "what": "Attacker compromised insecurely configured Cloud SQL instances, corrupted data and left a ransom note"
+        },
+        {
+          "v": "October 2022",
+          "q": "In October 2022, Google’s Threat Analysis Group (TAG)",
+          "what": "Google's TAG disrupted a HOODOO campaign against a Taiwanese media organization"
+        },
+        {
+          "v": "Q3 2022",
+          "q": "most targeted software in Q3 2022 was IT automation",
+          "what": "Jenkins was among the most targeted software"
+        },
+        {
+          "v": "Q4 2022",
+          "q": "in Q4 2022 Mandiant observed a campaign distributing",
+          "what": "Mandiant observed a URSNIF campaign hosting the malware on Google Drive"
+        },
+        {
+          "v": "fourth quarter of 2022",
+          "q": "observed incidents in the fourth quarter of 2022, a",
+          "what": "Weak passwords accounted for nearly half of observed incidents"
+        },
+        {
+          "v": "February 2023",
+          "q": "As of February 2023, Google discovered 14",
+          "what": "Google discovered 14 compromised customer websites hosted on Google Cloud"
+        },
+        {
+          "v": "October 2022",
+          "q": "ending in October 2022. Customers were running several",
+          "what": "End of the year of GKE node patching data reviewed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "GC2",
+          "q": "and Control” (GC2). Written in Go, the tool gets"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Cobalt Strike and other “pentest” software available for"
+        },
+        {
+          "v": "URSNIF",
+          "q": "by hosting the URSNIF binary on Google Drive. The threat actors"
+        },
+        {
+          "v": "DICELOADER",
+          "q": "which led to the eventual DICELOADER infection. This campaign"
+        },
+        {
+          "v": "Trojanized Zoom MSI installer",
+          "q": "and installed a Trojanized Zoom MSI installer, which led"
+        },
+        {
+          "v": "Chronicle",
+          "q": "consider using tools like Chronicle detection"
+        },
+        {
+          "v": "Tor",
+          "q": "Attackers have attempted to use Tor nodes, open proxies,"
+        },
+        {
+          "v": "Trufflehog",
+          "q": "Consider open source tools such as Trufflehog"
+        },
+        {
+          "v": "ScoutSuite",
+          "q": "and ScoutSuite to identify exposed keys or open"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "phishing",
+          "q": "by sending phishing emails that contained links to a password-"
+        },
+        {
+          "v": "encrypted ZIP files",
+          "q": "storing malware in Google Drive as encrypted ZIP files,"
+        },
+        {
+          "v": "ransomware",
+          "q": "Threat actors often use ransomware in the cloud to"
+        },
+        {
+          "v": "misconfigurations",
+          "q": "opportunity for the attacker due to misconfigurations (public IP addresses configured to allow inbound and"
+        },
+        {
+          "v": "Weak passwords",
+          "q": "Weak passwords accounted for nearly half of"
+        },
+        {
+          "v": "API compromise",
+          "q": "rise in API compromise in Q3 maintained course, being a"
+        },
+        {
+          "v": "leaked service account keys",
+          "q": "The low hanging fruit: leaked service account keys"
+        },
+        {
+          "v": "hardcoded",
+          "q": "checking code into a public code repository with the key hardcoded"
+        },
+        {
+          "v": "cryptomining",
+          "q": "start new instances for cryptomining and other"
+        },
+        {
+          "v": "persistence",
+          "q": "to create new Service Accounts for maintaining persistence."
+        },
+        {
+          "v": "domain-wide delegation",
+          "q": "had been granted domain-wide delegation with an API"
+        },
+        {
+          "v": "open proxies",
+          "q": "Attackers have attempted to use Tor nodes, open proxies,"
+        },
+        {
+          "v": "false hacktivist groups",
+          "q": "use of entirely false hacktivist groups as a"
+        },
+        {
+          "v": "compromising legitimate websites",
+          "q": "the value of compromising legitimate websites for use in continuing operations"
+        },
+        {
+          "v": "command-and-control",
+          "q": "providing the infrastructure for command-and-control"
+        },
+        {
+          "v": "publicly available tooling",
+          "q": "Chinese APT groups are increasingly using publicly available tooling such as"
+        },
+        {
+          "v": "Go",
+          "q": "the proliferation of tools written in the Go programming language"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "nearly half",
+          "q": "Weak passwords accounted for nearly half of"
+        },
+        {
+          "v": "nearly 1/5th of incidents",
+          "q": "being a factor in nearly 1/5th of incidents."
+        },
+        {
+          "v": "14",
+          "q": "As of February 2023, Google discovered 14"
+        },
+        {
+          "v": "38",
+          "q": "We found 38 domains meeting our overall criteria, and"
+        },
+        {
+          "v": "42%",
+          "q": "In 42% of leaked key incidents detected by our abuse systems,"
+        },
+        {
+          "v": "67.6%",
+          "q": "our abuse data surfaces that 67.6% of keys in confirmed"
+        },
+        {
+          "v": "23.5%",
+          "q": "(23.5% had Owner roles, and 44.1% had Editor"
+        },
+        {
+          "v": "44.1%",
+          "q": "(23.5% had Owner roles, and 44.1% had Editor"
+        },
+        {
+          "v": "99%",
+          "q": "“99% of cloud users, roles, services, and resources were granted excessive"
+        },
+        {
+          "v": "19%",
+          "q": "to be the most common cause of a breach, 19% of"
+        },
+        {
+          "v": "243 days",
+          "q": "the longest life cycle of 243 days to identify"
+        },
+        {
+          "v": "57",
+          "q": "recently identified 57 valid AWS keys, including from Amazon"
+        },
+        {
+          "v": "10 years",
+          "q": "found the oldest active key to be uploaded 10 years ago."
+        },
+        {
+          "v": "2X, 3X, or more open CVEs",
+          "q": "Clusters running on older GKE patch releases had 2X, 3X, or more open CVEs"
+        },
+        {
+          "v": "0.2 BTC",
+          "q": "up. You must pay 0.2 BTC to [Bitcoin"
+        },
+        {
+          "v": "30 second",
+          "q": "necessary (the default is 30 second) to ensure that as pods get shutdown during the patching process"
+        }
+      ]
+    },
+    "subject": null,
+    "hedges": [
+      "Report says cloud malware delivery trend probably reflects trust in cloud domains and the scale of operations from them.",
+      "Report says GC2 gets commands from Google Sheets, likely to obfuscate the malicious activity.",
+      "Report says storing malware as encrypted ZIP files is likely in an effort to evade detection.",
+      "Report says the DICELOADER campaign appeared to target financial services, based on the phishing emails found.",
+      "Report says it cannot comment on the root cause of the 14 compromised customer website incidents.",
+      "Report says the misconfigured SQL instances likely had weak passwords or no password at all.",
+      "Report says the growth of Go-language tools is likely due to the language's flexibility and ease of adding modules.",
+      "Report speculates that state actors may pose as non-state actors to complicate attribution or deflect blame."
+    ]
+  },
+  "5982e26060e1f5716c477568072fbc86f62adcf7": {
+    "sha1": "5982e26060e1f5716c477568072fbc86f62adcf7",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:49:52Z",
+    "model": "haiku",
+    "summary": "The Register reports, citing the Taipei Times and Liberty Times, that Taiwan's Criminal Investigation Bureau gave 250 USB drives as prizes at a December 2017 security quiz. 54 drives were infected via a supplier's computer with an old data-stealing virus, XtbSeDuA.exe, which targets 32-bit machines. Stolen data was forwarded to a relay server in Poland, which the police say has been shut down. 34 drives are still in circulation. No threat actor is named, and the report says there is no suggestion espionage was a motive.",
+    "kind": "incident",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "Taiwan",
+          "q": "Winners of a security quiz staged by Taiwan's Criminal Investigation Bureau may be"
+        },
+        {
+          "v": "China",
+          "q": "While the dongles were manufactured in China"
+        },
+        {
+          "v": "Poland",
+          "q": "stolen data was forwarded to a relay IP address in Poland"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 2017",
+          "q": "the Bureau hosted an infosec event in December 2017",
+          "what": "Bureau hosted an infosec event"
+        },
+        {
+          "v": "December 11 to December 12",
+          "q": "The prizes were handed out from December 11 to December 12, when complaints from the",
+          "what": "Prizes handed out; public complaints began arriving"
+        },
+        {
+          "v": "2015",
+          "q": "which in 2015 was associated with 2015 Europol raids on an electronic funds fraud ring",
+          "what": "Relay IP address linked to Europol raids on a funds fraud ring"
+        },
+        {
+          "v": "10 Jan 2018",
+          "q": "Richard Chirgwin Wed 10 Jan 2018 // 07:29 UTC",
+          "what": "Article published by The Register"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XtbSeDuA.exe",
+          "q": "an old virus Chinese-language site Liberty Times names as “XtbSeDuA.exe” that tries to steal personal data from 32-bit machines"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "infected drives via supplier computer",
+          "q": "were infected by a computer used by an employee of supplier Shawo Hwa Industries Co"
+        },
+        {
+          "v": "stealing personal data from 32-bit machines",
+          "q": "an old virus Chinese-language site Liberty Times names as “XtbSeDuA.exe” that tries to steal personal data from 32-bit machines"
+        },
+        {
+          "v": "forwarding stolen data to a relay server",
+          "q": "stolen data was forwarded to a relay IP address in Poland"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "250",
+          "q": "gave 250 drives to people who won a cybersecurity quiz"
+        },
+        {
+          "v": "54",
+          "q": "It's since emerged that 54 of the 8GB drives were infected by a computer used by an"
+        },
+        {
+          "v": "34",
+          "q": "but 34 of the drives are still in circulation somewhere"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "XtbSeDuA.exe"
+    },
+    "hedges": [
+      "According to the Taipei Times, the Bureau hosted an infosec event in December 2017, and gave 250 drives to people who won a cybersecurity quiz.",
+      "The Taipei Times said there's no suggestion that espionage was a motive.",
+      "The details are relayed from Taipei Times and Liberty Times reporting, as summarised by The Register."
+    ]
   }
 }

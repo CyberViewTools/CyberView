@@ -228,5 +228,111 @@
       "note": "summary: The text says the Defray777 execution is the last step in a breach that 'can involve several other components', including PyXie RAT, Cobalt Strike, LaZ",
       "by": "auditor"
     }
+  },
+  "239a61a974c62f9f17b838a165c65f5f1ab64fff": {
+    "sha1": "239a61a974c62f9f17b838a165c65f5f1ab64fff",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T09:49:53Z",
+    "model": "haiku",
+    "summary": "Gemini Advisory, a Recorded Future company, reports that the cybercrime group FIN7 used trojanized USB devices, programmed to act as keystroke-injecting virtual keyboards, to run a PowerShell-based loader that installed the IceBot remote access trojan. The report identifies 9 IP addresses hosting payloads and 3 command-and-control servers, one with a control panel for infected systems. The activity is tied to a file named sketch_jul31a.ino. The report also says FIN7 has moved into ransomware and created a fake security company, Bastion Secure.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "Recorded Future analysts continue to monitor the activities of the FIN7 group as they adapt and",
+          "by": "Gemini Advisory (a Recorded Future company)"
+        },
+        {
+          "v": "FIN7",
+          "q": "security analysts from Trustwave SpiderLabs reported that FIN7 targeted a US company by sending",
+          "by": "Trustwave SpiderLabs (as cited in the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [
+        {
+          "v": "US",
+          "q": "security analysts from Trustwave SpiderLabs reported that FIN7 targeted a US company by sending"
+        }
+      ],
+      "dates": [
+        {
+          "v": "January 13, 2022",
+          "q": "January 13, 2022",
+          "what": "Date the report was published"
+        },
+        {
+          "v": "March 2020",
+          "q": "In March 2020, security analysts from Trustwave SpiderLabs reported that FIN7",
+          "what": "Trustwave SpiderLabs reported FIN7 targeting a US company with a trojanized USB device"
+        },
+        {
+          "v": "2021-07-29",
+          "q": "2021-07-29 12:26:10",
+          "what": "Earliest first-seen timestamp in the table of IP addresses hosting FIN7 payloads"
+        }
+      ],
+      "tools": [
+        {
+          "v": "IceBot",
+          "q": "FIN7 uses the trojanized USB devices to ultimately load the IceBot Remote Access Trojan"
+        },
+        {
+          "v": "Arduino",
+          "q": "The Arduino platform provides a common set of software utilities and libraries for constructing"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "BadUSB keystroke injection",
+          "q": "When a USB is maliciously used as a virtual keyboard, the attack is called a “keystroke injection”, “BadUSB”, or"
+        },
+        {
+          "v": "trojanized USB devices",
+          "q": "FIN7 uses the trojanized USB devices to ultimately load the IceBot Remote Access Trojan"
+        },
+        {
+          "v": "XOR-obfuscated payload",
+          "q": "Once loaded, the .NET assembly decodes a block of data that has been XOR-obfuscated with"
+        },
+        {
+          "v": "reflective loader",
+          "q": "The result is a reflective loader shellcode that installs the IceBot Remote Access Trojan"
+        },
+        {
+          "v": "avoiding network-level and endpoint protections",
+          "q": "The tactics and techniques involved in trojanized USB attacks enable FIN7 actors to avoid many of these"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "9 IP addresses",
+          "q": "We identified 9 IP addresses that host FIN7’s malicious payloads and 3 FIN7 command-and-control (C2) servers"
+        },
+        {
+          "v": "3 FIN7 command-and-control (C2) servers",
+          "q": "We identified 9 IP addresses that host FIN7’s malicious payloads and 3 FIN7 command-and-control (C2) servers"
+        },
+        {
+          "v": "8 additional IP addresses",
+          "q": "further analysis revealed 8 additional IP addresses used to host FIN7’s malicious payload."
+        },
+        {
+          "v": "IceBot version 2.1.1",
+          "q": "The main window of the control panel of IceBot version 2.1.1."
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "IceBot"
+    },
+    "hedges": [
+      "It is possible that trojanized USBs are being constructed and used by these administrators for penetration testing.",
+      "Alternatively, they might also be providing trojanized USBs to clients or prospective clients through some form of ruse"
+    ]
   }
 }

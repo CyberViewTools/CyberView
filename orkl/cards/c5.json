@@ -28,25 +28,94 @@
   },
   "c5d51aa7c50818c5981fb74368a3a8e63e18cf15": {
     "sha1": "c5d51aa7c50818c5981fb74368a3a8e63e18cf15",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:39:08Z",
+    "read_at": "2026-11-27T11:00:03Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Forcepoint Security Labs reports that a trojanized RTF document tied to the Carbanak financially motivated criminal group ran VBScript malware that used Google Apps Script, Google Sheets and Google Forms for command-and-control, creating a unique spreadsheet per victim. The report says the Google channel was likely to succeed because such services are rarely blocked. It also mentions a Carbanak campaign called Digital Plagiarist that used weaponized office documents on mirrored hosts. Indicators list Cobalt Strike and Meterpreter DNS beacons.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "Carbanak",
+          "q": "Carbanak (also known as Anunak) are a group of financially motivated criminals first exposed in 2015.",
+          "by": "Forcepoint Security Labs (report author)"
+        },
+        {
+          "v": "Anunak",
+          "q": "Carbanak (also known as Anunak) are a group of financially motivated criminals first exposed in 2015.",
+          "by": "Forcepoint Security Labs (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "The actors typically steal from financial institutions using targeted malware."
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2015",
+          "q": "a group of financially motivated criminals first exposed in 2015",
+          "what": "Carbanak group first exposed"
+        },
+        {
+          "v": "January 17, 2017",
+          "q": "January 17, 2017",
+          "what": "Forcepoint X-Labs report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Google Apps Script",
+          "q": "The \"ggldr\" script will send and receive commands to and from Google Apps Script, Google Sheets, and"
+        },
+        {
+          "v": "Google Sheets",
+          "q": "The \"ggldr\" script will send and receive commands to and from Google Apps Script, Google Sheets, and"
+        },
+        {
+          "v": "Google Forms",
+          "q": "The \"entry\" value is also a unique ID which is sent with each subsequent Google Forms C&C request."
+        },
+        {
+          "v": "VBScript",
+          "q": "The document contains an encoded Visual Basic Script (VBScript) typical of previous"
+        },
+        {
+          "v": "Cobalt Strike",
+          "q": "Carbanak Cobalt Strike / Meterpreter DNS Beacon C&Cs"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "Carbanak Cobalt Strike / Meterpreter DNS Beacon C&Cs"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Abusing Google for C&C communication",
+          "q": "Abusing Google for C&C communication"
+        },
+        {
+          "v": "weaponized office documents",
+          "q": "the group used weaponized office documents"
+        },
+        {
+          "v": "double-clicking",
+          "q": "lured into double-clicking on the embedded OLE object which is disguised as an image:"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Carbanak"
+    },
+    "hedges": [
+      "It is unlikely that these hosted Google services are blocked by default in an organization, so it is more likely that the attacker will establish a C&C channel successfully.",
+      "Using Google as an independent C&C channel is likely to be more successful than using newly created domains or domains with no reputation."
+    ]
   }
 }

@@ -374,25 +374,221 @@
   },
   "c81fb30d64d64d5f4295f775cd85bd3841f305b2": {
     "sha1": "c81fb30d64d64d5f4295f775cd85bd3841f305b2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:46:00Z",
+    "read_at": "2026-11-27T11:04:34Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Microsoft blog post (August 18, 2022) on cryptojackers, trojanized coin miners that use compromised devices' computing power. It says they are increasingly fileless and misuse legitimate system binaries. It describes a Mehcrypt campaign that abuses notepad.exe, and how Microsoft Defender Antivirus, integrated with Intel Threat Detection Technology, detects and blocks it.",
+    "kind": "overview",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "August 18, 2022",
+          "q": "August 18, 2022",
+          "what": "Blog post published"
+        },
+        {
+          "v": "July 25-31, 2022",
+          "q": "legitimate system binaries observed July 25-31, 2022.",
+          "what": "Period in which the notepad.exe-abusing campaign data was observed"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Mehcrypt",
+          "q": "known as Mehcrypt"
+        },
+        {
+          "v": "notepad.exe",
+          "q": "Attackers heavily favor the misuse of notepad.exe among several legitimate system tools in"
+        },
+        {
+          "v": "autoit.exe",
+          "q": "The threat arrives as an archive file containing autoit.exe"
+        },
+        {
+          "v": "VBC.exe",
+          "q": "loads malicious code into VBC.exe via"
+        },
+        {
+          "v": "Threat Detection Technology (TDT)",
+          "q": "Threat Detection Technology (TDT), which applies machine learning to"
+        },
+        {
+          "v": "Microsoft Defender Antivirus",
+          "q": "Microsoft Defender Antivirus uses various sensors and detection technologies, including its"
+        },
+        {
+          "v": "Microsoft Defender for Endpoint",
+          "q": "Microsoft Defender for Endpoint raises an alert."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "living-off-the-land binaries (LOLBins)",
+          "q": "leveraging living-off-the-land binaries (LOLBins) to evade detection."
+        },
+        {
+          "v": "fileless",
+          "q": "The fileless approach, on the other hand, misuses local system binaries or preinstalled tools to"
+        },
+        {
+          "v": "process hollowing",
+          "q": "process hollowing and connects to a C2 server to listen for commands"
+        },
+        {
+          "v": "scheduled task",
+          "q": "The script creates a scheduled task to delete the original files and adds autostart registry"
+        },
+        {
+          "v": "autostart registry",
+          "q": "adds autostart registry"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "hundreds of thousands of devices",
+          "q": "Defender Antivirus detected cryptojackers on hundreds of thousands of devices every"
+        },
+        {
+          "v": "more than 200,000 devices daily",
+          "q": "sees cryptojackers that take advantage of legitimate system binaries on more than 200,000 devices daily"
+        },
+        {
+          "v": "6th generation onwards",
+          "q": "Intel vPro® branded platforms from the 6th generation onwards."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Mehcrypt"
+    },
+    "hedges": []
+  },
+  "c88964f86dee3dddad544afaa958f19d5b078700": {
+    "sha1": "c88964f86dee3dddad544afaa958f19d5b078700",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:08:04Z",
+    "model": "haiku",
+    "summary": "Cybereason reports on targeted attacks against Japanese companies that used the ONI ransomware and a DiskCryptor-based bootkit, MBR-ONI, which it says come from the same threat actor. Attacks began with spear-phishing that dropped the Ammyy Admin RAT, moved laterally to domain controllers, wiped more than 460 event logs, and deployed ONI through Group Policy. The attacks lasted three to nine months. The report suspects ONI and MBR-ONI were used as wipers to hide the operation, though it classes MBR-ONI as ransomware on technical grounds.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "same threat actor",
+          "q": "We concluded that both ONI and MBR-ONI stem from the same threat actor",
+          "by": "Cybereason"
+        },
+        {
+          "v": "Russian speakers",
+          "q": "it can also suggest that the attacks were carried out by Russian speakers",
+          "by": "Cybereason"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Japanese companies",
+          "q": "involved in targeted attacks against Japanese companies"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Japan",
+          "q": "While the ONI attacks presented in this blog are specific to Japan"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 2016",
+          "q": "dates back to December 2016",
+          "what": "earliest indication of the Ammyy Admin RAT on the compromised environment"
+        },
+        {
+          "v": "March 2017",
+          "q": "the MS17-010 security update (released in March 2017)",
+          "what": "MS17-010 security update released; not installed on compromised machines during the attacks"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Ammyy Admin RAT",
+          "q": "which ultimately drop the Ammyy Admin RAT"
+        },
+        {
+          "v": "ONI",
+          "q": "ONI received its name based on the file extension that it appends to the files it encrypts"
+        },
+        {
+          "v": "MBR-ONI",
+          "q": "In addition, Cybereason discovered MBR-ONI, a bootkit ransomware, which modifies"
+        },
+        {
+          "v": "DiskCryptor",
+          "q": "is based on DiskCryptor, a legitimate disk encryption utility"
+        },
+        {
+          "v": "EternalBlue",
+          "q": "We suspect that the threat actor used the NSA-leaked exploit EternalBlue"
+        },
+        {
+          "v": "GlobeImposter",
+          "q": "ONI shares a lot of its code with GlobeImposter ransomware variants"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing with weaponized Office documents",
+          "q": "Penetration vector: Spear-phishing emails carrying weaponized Office documents"
+        },
+        {
+          "v": "credential theft and lateral movement",
+          "q": "Reconnaissance, credential theft and lateral movement"
+        },
+        {
+          "v": "log deletion",
+          "q": "Log deletion and distribution of ONI via rogue GPO"
+        },
+        {
+          "v": "rogue group policy",
+          "q": "a rogue group policy was created and pushed across the"
+        },
+        {
+          "v": "encrypts disk partitions",
+          "q": "the MBR and encrypts disk partitions"
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "three to nine months",
+          "q": "These targeted attacks lasted between three to nine months"
+        },
+        {
+          "v": "hundreds of machines",
+          "q": "an attempt to encrypt hundreds of machines at once"
+        },
+        {
+          "v": "more than 460 logs",
+          "q": "clearly indicates the deletion of more than 460 logs"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "ONI"
+    },
+    "hedges": [
+      "The authors suspect ONI was used as a wiper to cover up a hacking operation rather than for ransom.",
+      "The authors suspect the threat actor used EternalBlue, but cannot confirm it with absolute certainty due to data corruption and log wiping.",
+      "The Russian language traces may be a decoy left on purpose; they only suggest Russian speakers, or at least Russian-speaking authors.",
+      "The authors do not dismiss financial gain as the motive.",
+      "Technically MBR-ONI is classed as ransomware, though the authors think it may have been meant as a wiper."
+    ]
   }
 }

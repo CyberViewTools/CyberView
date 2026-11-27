@@ -174,25 +174,130 @@
   },
   "067c49a4554f7fafd28c93a733febf208e0c09c1": {
     "sha1": "067c49a4554f7fafd28c93a733febf208e0c09c1",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:40:47Z",
+    "read_at": "2026-11-27T11:02:52Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Morphisec describes a fileless attack first identified on June 7, 2017, targeting restaurants across the US. It says the activity matches the FIN7 group, which it links to the Carbanak gang. The infection starts with a phishing email carrying a Word document that runs obfuscated JavaScript and then loads a Meterpreter session largely from memory. The report says the documents scored 0/56 on VirusTotal and that DNS traffic peaked above 10K requests per hour. It presents fileless attacks as rising and promotes Morphisec's own prevention product.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "the financially-motivated FIN7 group.",
+          "by": "the report (Morphisec), citing past attributions"
+        },
+        {
+          "v": "Carbanak gang",
+          "q": "FIN7, which is also associated with the Carbanak gang",
+          "by": "the report (Morphisec)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "restaurants",
+          "q": "targeting restaurants across the US."
+        },
+        {
+          "v": "banks",
+          "q": "Past highly successful and damaging attacks on banks, SEC"
+        },
+        {
+          "v": "hospitality organizations",
+          "q": "large restaurant chains and hospitality organizations"
+        }
+      ],
+      "countries": [
+        {
+          "v": "US",
+          "q": "targeting restaurants across the US."
+        }
+      ],
+      "dates": [
+        {
+          "v": "June 7, 2017",
+          "q": "On June 7, 2017, Morphisec Lab identified a new, highly sophisticated fileless attack",
+          "what": "Morphisec Lab identified the fileless attack"
+        },
+        {
+          "v": "1.6.2017",
+          "q": "from the time the first documents were uploaded (1.6.2017) up until the date of this",
+          "what": "First attack documents were uploaded to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Word document",
+          "q": "the initial infection vector is a malicious Word document attached to a"
+        },
+        {
+          "v": "Meterpreter",
+          "q": "shellcode stage (Meterpreter)."
+        },
+        {
+          "v": "PowerShell",
+          "q": "The second stage JavaScript creates a PowerShell file with the same name in the same"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "fileless attack",
+          "q": "identified a new, highly sophisticated fileless attack"
+        },
+        {
+          "v": "phishing email",
+          "q": "attached to a phishing email that is well-tailored to the targeted business"
+        },
+        {
+          "v": "DNS queries",
+          "q": "uses DNS queries to deliver the next"
+        },
+        {
+          "v": "executed solely from memory",
+          "q": "all the DNS activity is initiated and executed solely from memory"
+        },
+        {
+          "v": "obfuscated JavaScript",
+          "q": "executes obfuscated JavaScript code"
+        },
+        {
+          "v": "scheduled task",
+          "q": "In some cases, an additional scheduled task “AdobeFlashSync” is created for persistency."
+        },
+        {
+          "v": "delayed execution",
+          "q": "this delayed execution helps to bypass behavior analysis"
+        },
+        {
+          "v": "evade memory scanning",
+          "q": "helps the attack to evade memory scanning solutions"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "10K DNS requests per hour",
+          "q": "of more than 10K DNS requests per hour"
+        },
+        {
+          "v": "0/56",
+          "q": "Alarmingly, the detection score on VirusTotal for all of the documents continues to be 0/56"
+        },
+        {
+          "v": "33%",
+          "q": "Fileless attacks are on the rise – Carbon Black reports that researchers found a 33% rise in"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "FIN7 fileless attack on US restaurants"
+    },
+    "hedges": [
+      "Attribution is framed as an 'almost perfect match' to FIN7 attack methods, not as a confirmed identification.",
+      "In some cases, an additional scheduled task is created for persistency.",
+      "If the DLL were saved on disk, many security solutions would immediately identify it as a CobaltStrike Meterpreter.",
+      "The report says that in some cases the attacker can move laterally inside the organization."
+    ]
   }
 }

@@ -59,25 +59,70 @@
   },
   "faf4480c2e9fa0217e8eb9413078470a84ac0924": {
     "sha1": "faf4480c2e9fa0217e8eb9413078470a84ac0924",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:39:46Z",
+    "read_at": "2026-11-27T11:01:55Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "The Register article (4 June 2012) reports on Tinba, a 20KB banking Trojan also known as Zusy. It hooks into browsers, uses Man in the Browser tricks to alter banking sites and get around two-factor authentication, and steals login data. Its command-and-control traffic is RC4-encrypted and goes to four hardcoded domains. Researchers at CSIS Security say antivirus detection of the analysed samples is low. The article compares Tinba with ZeuS and the Flame toolkit. Most of the page is unrelated news.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "banking",
+          "q": "banking login information and snaffling network traffic."
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "4 Jun 2012",
+          "q": "John Leyden Mon 4 Jun 2012 // 12:30 UTC",
+          "what": "Article published reporting the discovery of the Tinba banking Trojan"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Tinba",
+          "q": "Tinba (Tiny Banker, or otherwise known as Zusy) hooks itself into browsers"
+        },
+        {
+          "v": "ZeuS",
+          "q": "ZeuS, the well-established banking Trojan, uses much the same trickery"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Man in the Browser",
+          "q": "The malware used injected code and Man in The Browser (MiTB) tricks to change the way"
+        },
+        {
+          "v": "browser hooking",
+          "q": "hooks itself into browsers before stealing"
+        },
+        {
+          "v": "RC4 encryption of C2 traffic",
+          "q": "Tinba uses a RC4 encryption scheme when communication with its Command & Control"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "20KB",
+          "q": "Weighing in at just 20KB, Tinba represents a new family of banking Trojan."
+        },
+        {
+          "v": "four hardcoded domains",
+          "q": "located at four hardcoded domains"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Tinba"
+    },
+    "hedges": [
+      "Antivirus detection of the analyzed samples is low, according to researchers at CSIS Security, a Danish firm."
+    ]
   }
 }

@@ -451,5 +451,94 @@
       "note": "summary: The intrusion did not 'begin on June 11, 2025'. That is the date a partner contacted Huntress. The text says the lure reached the victim several weeks ",
       "by": "auditor"
     }
+  },
+  "115eca945977d9d9d80821777d878d70fdf9556a": {
+    "sha1": "115eca945977d9d9d80821777d878d70fdf9556a",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:05:37Z",
+    "model": "haiku",
+    "summary": "CrowdStrike describes a campaign in which an actor it says is likely related to CARBON SPIDER used SQL injection against a Microsoft SQL Server to gain code execution. The actor then ran PowerShell scripts, including an antivirus-enumeration payload and the Demux loader. CrowdStrike Intelligence assessed the attribution with low confidence. Falcon Complete and Falcon OverWatch detected and contained the incident, and remediated the host within 1 hour and 45 minutes.",
+    "kind": "actor-campaign",
+    "facts": {
+      "actors": [
+        {
+          "v": "CARBON SPIDER",
+          "q": "CARBON SPIDER is a financially motivated eCrime actor",
+          "by": "CrowdStrike (the report)"
+        },
+        {
+          "v": "CARBON SPIDER",
+          "q": "This incident described in this blog is attributed with low confidence to CARBON SPIDER,",
+          "by": "CrowdStrike (the report)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "August 3, 2021",
+          "q": "Michael DeCristofaro - Eric Loui - Josh Reynolds August 3, 2021",
+          "what": "Blog post by CrowdStrike published (report date)."
+        }
+      ],
+      "tools": [
+        {
+          "v": "Demux",
+          "q": "a distinctive PowerShell stager named Demux commonly"
+        },
+        {
+          "v": "sqlmap",
+          "q": "the actor likely leveraged the sqlmap tool to perform automated SQL injection"
+        },
+        {
+          "v": "xp_cmdshell",
+          "q": "used the SQL xp_cmdshell command to execute multiple PowerShell"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "SQL injection for initial access",
+          "q": "CARBON SPIDER's likely use of SQL injection as an initial access method represents a new development,"
+        },
+        {
+          "v": "PowerShell execution",
+          "q": "tagged with MITRE ATT&CK technique T1059, “Execution via PowerShell” where a"
+        },
+        {
+          "v": "Encoding to evade filtering",
+          "q": "the actor made use of multiple encoding techniques within the SQL-"
+        },
+        {
+          "v": "Antivirus process enumeration",
+          "q": "The above script is an antivirus enumeration PowerShell payload that acquires running"
+        },
+        {
+          "v": "In-memory stager loading",
+          "q": "Demux executes a stager DLL in memory."
+        }
+      ],
+      "cves": [],
+      "figures": [
+        {
+          "v": "6 minutes",
+          "q": "Falcon Complete began response within 6 minutes, contained the threat in under 30"
+        },
+        {
+          "v": "1 hour and 45 minutes",
+          "q": "fully remediated the host within 1 hour and 45 minutes, with active support from"
+        }
+      ]
+    },
+    "subject": {
+      "type": "campaign",
+      "name": "SQL Injection Campaign"
+    },
+    "hedges": [
+      "The attribution to CARBON SPIDER is made with low confidence, based on use of the Demux Loader and stager DLL combination.",
+      "The report says CARBON SPIDER's use of SQL injection as an initial access method is likely, and it is a new development for the actor.",
+      "The report says it is likely the actor will continue to use both spam and server exploitation to achieve initial access in the near-term.",
+      "The rapid-response timings are as reported by the vendor's own teams."
+    ]
   }
 }

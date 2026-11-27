@@ -229,25 +229,119 @@
   },
   "e1030f278cd33eba34a284c6ad0d5a350b1da9eb": {
     "sha1": "e1030f278cd33eba34a284c6ad0d5a350b1da9eb",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:39:17Z",
+    "read_at": "2026-11-27T11:02:11Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Blog post by independent macOS researcher Patrick Wardle (Objective-See, February 2021) on malware compiled natively for Apple silicon. It analyses GoSearch22, a Pirrit-linked adware app whose universal binary includes arm64 code. The app was signed with a developer ID in November 2020, and the certificate was later revoked. The post also describes anti-analysis behaviour, a Safari extension, and lower detection rates for the arm64 build.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "malicious adversaries",
+          "q": "malicious adversaries are indeed crafting multi-architecture",
+          "by": "the report (Patrick Wardle, Objective-See blog)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "February 14, 2021",
+          "q": "by: Patrick Wardle / February 14, 2021",
+          "what": "Blog post published"
+        },
+        {
+          "v": "November 23rd, 2020",
+          "q": "on November 23rd, 2020:",
+          "what": "GoSearch22 was signed with an Apple developer ID"
+        },
+        {
+          "v": "December 2020",
+          "q": "at the end December 2020:",
+          "what": "GoSearch22 was first submitted to VirusTotal"
+        },
+        {
+          "v": "2016",
+          "q": "In a (guest) blog post in 2016, Amit Serper dove into Pirrit:",
+          "what": "Amit Serper published a blog post analysing Pirrit adware"
+        }
+      ],
+      "tools": [
+        {
+          "v": "VirusTotal",
+          "q": "Luckily VirusTotal is generous enough to offer (free)"
+        },
+        {
+          "v": "KnockKnock",
+          "q": "(likely KnockKnock)"
+        },
+        {
+          "v": "Pirrit",
+          "q": "is an instance of the prevalent, yet rather insidious, ‘Pirrit’ adware:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "persist a launch agent",
+          "q": "persist a launch agent"
+        },
+        {
+          "v": "install as a malicious Safari extension",
+          "q": "install itself as a malicious Safari extension"
+        },
+        {
+          "v": "anti-debugging",
+          "q": "note it implements various anti-analysis logic. For example, anti-debugging logic:"
+        },
+        {
+          "v": "virtual machine detection",
+          "q": "attempts to detect if its running in virtual machine by looking for"
+        },
+        {
+          "v": "heavily obfuscated script",
+          "q": "The script is unsurprisingly heavily obfuscated:"
+        },
+        {
+          "v": "universal (fat) binary with arm64 and x86_64 code",
+          "q": "A binary that contains code to run on multiple architectures"
+        },
+        {
+          "v": "reduced detection of the arm64 build",
+          "q": "detections of the arm64 version dropped roughly 15%"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "15%",
+          "q": "detections of the arm64 version dropped roughly 15%"
+        },
+        {
+          "v": "255 matches",
+          "q": "which results in 255 matches:"
+        },
+        {
+          "v": "tens of thousands",
+          "q": "just combining these tags will yield tens of thousands of results"
+        },
+        {
+          "v": "two",
+          "q": "flagged by at least two anti-virus engines"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "GoSearch22"
+    },
+    "hedges": [
+      "The report does not know whether Apple notarized the code; it cannot answer this because the certificate has been revoked.",
+      "It appears GoSearch22.app is an instance of the Pirrit adware family, based on detection results.",
+      "The malicious arm64 code may be the first example of such natively M1-compatible code.",
+      "Searching only for known malware limits results, and the detections are likely due to the Intel code.",
+      "Some search tags are used only to pare down the list and might produce false negatives.",
+      "Static analysis tools or anti-virus engines may struggle with arm64 binaries."
+    ]
   }
 }

@@ -118,30 +118,198 @@
   },
   "180e190a6e08372a2688b571644dadb584a364e2": {
     "sha1": "180e190a6e08372a2688b571644dadb584a364e2",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:42:26Z",
+    "read_at": "2026-11-27T11:03:12Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "FireEye threat-research blog on FIN7, a financially motivated criminal group it says has targeted more than 100 organizations. Covers the August 2018 US indictments and arrests of three leaders, the Combi Security front company, phishing lures, digital code signing, custom tools, links to CARBANAK, BATELEUR, GRIFFON and BIRDDOG, and indicator tables. Many attributions are hedged as suspected.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "aligns with activity we have tracked since 2015 as FIN7.",
+          "by": "FireEye"
+        },
+        {
+          "v": "Carbanak Group",
+          "q": "FIN7 is referred to by many vendors as “Carbanak Group,”",
+          "by": "other vendors (reported by FireEye)"
+        },
+        {
+          "v": "Combi Security",
+          "q": "at least a portion of FIN7 activity was run out of a front company dubbed Combi Security.",
+          "by": "U.S. law enforcement (reported by FireEye)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "finance",
+          "q": "pivoted to target finance departments within their victim organizations."
+        },
+        {
+          "v": "restaurant chains",
+          "q": "primarily aimed at U.S.-based restaurant chains."
+        },
+        {
+          "v": "payment card industry",
+          "q": "beyond those solely associated with payment card industry."
+        },
+        {
+          "v": "government",
+          "q": "sender addresses impersonating legitimate government entities."
+        },
+        {
+          "v": "financial institution",
+          "q": "sent to financial institution customers in Eastern Europe and Central Asia as early as"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Eastern Europe",
+          "q": "sent to financial institution customers in Eastern Europe and Central Asia as early as"
+        },
+        {
+          "v": "Central Asia",
+          "q": "sent to financial institution customers in Eastern Europe and Central Asia as early as"
+        },
+        {
+          "v": "U.S.",
+          "q": "primarily aimed at U.S.-based restaurant chains."
+        }
+      ],
+      "dates": [
+        {
+          "v": "Aug. 1, 2018",
+          "q": "On Aug. 1, 2018, the United States District Attorney’s Office for the Western District of Washington unsealed indictments",
+          "what": "US prosecutors unsealed indictments and announced arrests of three FIN7 leaders"
+        },
+        {
+          "v": "2015",
+          "q": "aligns with activity we have tracked since 2015 as FIN7.",
+          "what": "FireEye began tracking the activity it calls FIN7"
+        },
+        {
+          "v": "late 2015",
+          "q": "2013, with usage attributable to FIN7 beginning in late 2015",
+          "what": "FIN7 use of the CARBANAK backdoor began"
+        },
+        {
+          "v": "April 2017",
+          "q": "in April 2017, FireEye reported that FIN7 sent spear phishing emails to personnel involved with",
+          "what": "FireEye reported FIN7 spear phishing aimed at personnel involved with SEC filings"
+        },
+        {
+          "v": "early 2017",
+          "q": "In early 2017, a pattern of complaints emerged and has continued for well over a year",
+          "what": "Food poisoning complaint lures emerged and continued"
+        },
+        {
+          "v": "July 2017",
+          "q": "identified by Proofpoint in July 2017, which FireEye tracks as a suspected FIN7",
+          "what": "BATELEUR backdoor activity first identified"
+        },
+        {
+          "v": "mid-2017",
+          "q": "which began as early as mid-2017 and have",
+          "what": "BATELEUR campaigns began"
+        },
+        {
+          "v": "Throughout 2018",
+          "q": "Throughout 2018, FireEye has continued to identify multiple domains registered using patterns",
+          "what": "FireEye continued identifying suspected FIN7 infrastructure"
+        }
+      ],
+      "tools": [
+        {
+          "v": "CARBANAK",
+          "q": "FireEye also previously reported on FIN7’s use of the CARBANAK backdoor as a post-exploitation tool to cement their foothold"
+        },
+        {
+          "v": "BATELEUR",
+          "q": "the BATELEUR backdoor activity first identified by Proofpoint in July 2017"
+        },
+        {
+          "v": "GRIFFON",
+          "q": "Suspected GRIFFON 7e703dddcfc83cd352a910b48eaca95e"
+        },
+        {
+          "v": "BIRDDOG",
+          "q": "ZIP archives delivering the BIRDDOG"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear phishing emails",
+          "q": "in April 2017, FireEye reported that FIN7 sent spear phishing emails to personnel involved with"
+        },
+        {
+          "v": "hidden shortcut files (LNK files)",
+          "q": "spear phishing emails that leveraged hidden shortcut files (LNK files) to initiate the infection"
+        },
+        {
+          "v": "application shim database",
+          "q": "The group leveraged an application shim database that injected a malicious in-memory patch into the Services Control Manager"
+        },
+        {
+          "v": "digitally signing their phishing documents",
+          "q": "By digitally signing their phishing documents, backdoors and later stage tools"
+        },
+        {
+          "v": "macro-embedded Word documents",
+          "q": "These campaigns leveraged macro-embedded Word documents directly attached to the"
+        },
+        {
+          "v": "called victims",
+          "q": "FIN7 has called victims prior to lodging digital complaints laden with malicious documents"
+        },
+        {
+          "v": "food poisoning complaints with malicious attachments",
+          "q": "to lodge food poisoning complaints with malicious attachments."
+        },
+        {
+          "v": "novel obfuscation methods",
+          "q": "Throughout 2017, FIN7 was observed creating novel obfuscation methods"
+        },
+        {
+          "v": "custom video recording capability",
+          "q": "recovered a custom video recording capability used by FIN7 as a part of their operations"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "more than 100 organizations",
+          "q": "targeted at more than 100 organizations."
+        },
+        {
+          "v": "three individuals",
+          "q": "arrests of three individuals within the leadership ranks"
+        },
+        {
+          "v": "three years",
+          "q": "Over the three years of responding to a multitude of compromises"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "campaign",
+      "name": "FIN7"
+    },
+    "hedges": [
+      "The report says it does not equate all usage of the CARBANAK backdoor with FIN7.",
+      "The report says how interconnected the campaigns using CARBANAK over five years are is unclear.",
+      "The report says some individuals recruited by the front company may have been unaware of the illicit nature of their work.",
+      "The report says recent campaigns may be diversification of TTPs or semi-autonomous FIN7 splinter groups.",
+      "The report says it is possible the banks spoofed in the campaigns were FIN7's ultimate targets.",
+      "The report says some FIN7 campaigns are attributed with varying degrees of confidence.",
+      "The report marks BATELEUR as a suspected FIN7 subgroup.",
+      "The report marks some listed VPS addresses as possibly carrying legitimate traffic."
+    ]
   },
   "1893329c4ced716898038e57e624618a6b4f9857": {
     "sha1": "1893329c4ced716898038e57e624618a6b4f9857",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T10:42:57Z",
     "model": "haiku",
@@ -302,6 +470,14 @@
     "hedges": [
       "While the time at which this observation occurs does not always correlate with when it was used in an intrusion, knowing when we became aware of that use is still valuable.",
       "We deploy weak signals (or broad signatures) for software that isn’t inherently bad, but is often used by threat actors."
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 0,
+    "audit": {
+      "at": "2026-11-27T10:57:04Z",
+      "ok": false,
+      "note": "actors[0].by: The text says \"we determined\", meaning the Advanced Practices authors. It does not name Mandiant as the source of the APT39 attribution.; actors[1",
+      "by": "auditor"
+    }
   }
 }

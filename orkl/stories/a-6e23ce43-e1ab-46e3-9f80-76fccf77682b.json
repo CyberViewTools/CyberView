@@ -51,28 +51,29 @@
     "key": "a-6e23ce43-e1ab-46e3-9f80-76fccf77682b",
     "kind": "actor",
     "name": "ALPHV",
-    "headline": "ALPHV (BlackCat): a Rust-based ransomware-as-a-service gang known for leak-site extortion and a 2024 exit scam",
-    "in_short": "ALPHV, also called BlackCat, ran a ransomware-as-a-service operation from November 2021. It stole data, pressed victims on a leak site, drew a 2023 FBI disruption, and in March 2024 appeared to run an exit scam.",
+    "headline": "ALPHV/BlackCat: a ransomware-as-a-service gang built on data theft and leak-site extortion",
+    "in_short": "ALPHV, also called BlackCat, runs a Rust-based ransomware-as-a-service that was first seen in November 2021. It steals data and threatens to publish it. In March 2024 BleepingComputer judged it to be running an exit scam.",
     "sections": [
       {
         "h": "who",
         "sentences": [
           {
-            "t": "ALPHV is also known as ALPHVM, BlackCat, Noberus, Ambitious Scorpius and UNC4466.",
+            "t": "ALPHV is also tracked as ALPHVM, BlackCat, BlackCat Gang, Ambitious Scorpius and UNC4466.",
             "cites": [
               "catalogue"
             ]
           },
           {
-            "t": "Malpedia says ALPHV has been seen in ransomware attacks since November 18, 2021.",
+            "t": "Malpedia describes it as a ransomware-as-a-service family written in Rust that runs on Windows, Linux and VMware ESXi.",
             "cites": [
               "1c58bbeefa92023a0cd20d96b4bdeb0de4ff2268",
               "0e4caecb0c32c66e4af751b48bfe683e951501d6"
             ]
           },
           {
-            "t": "Malpedia describes it as a Rust ransomware family sold as ransomware-as-a-service. It runs on Windows, Linux and VMware ESXi.",
+            "t": "Malpedia says it has been seen in attacks since November 18, 2021.",
             "cites": [
+              "1c58bbeefa92023a0cd20d96b4bdeb0de4ff2268",
               "0e4caecb0c32c66e4af751b48bfe683e951501d6"
             ]
           },
@@ -83,15 +84,22 @@
             ]
           },
           {
-            "t": "Cisco Talos says the links between BlackMatter and BlackCat are probable. It has moderate confidence that BlackMatter affiliates were among BlackCat's early adopters. A BlackCat representative said the two groups were connected but that BlackCat was not a rebrand.",
+            "t": "Cisco Talos calls the links to BlackMatter probable. It has moderate confidence that BlackMatter affiliates were among early BlackCat adopters. Talos adds that a BlackCat representative said the groups were connected but that BlackCat was not a rebranding.",
             "cites": [
               "bb5cbc550b61050d510e22b4e640508e9ab30285"
             ]
           },
           {
-            "t": "Sygnia attributed one 2023 intrusion to BlackCat (ALPHV) or one of its affiliates, not to a single confirmed actor.",
+            "t": "BleepingComputer cites the FBI as linking the gang to over 60 breaches in its first four months. It also cites an FBI estimate of at least $300 million in ransom from more than 1,000 victims through September 2023.",
             "cites": [
-              "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
+              "41fd5536e9c346b97ad8a18075e1d47fb52397d6",
+              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+            ]
+          },
+          {
+            "t": "eSentire reports that various security teams say the core operators are based in Russia. The report does not verify this itself.",
+            "cites": [
+              "4b7c4cbaa216abc9ffac4ec57b0fa54b7d2672a8"
             ]
           }
         ]
@@ -100,23 +108,31 @@
         "h": "targets",
         "sentences": [
           {
-            "t": "The group has hit a wide mix of victims. Reports name a county government, a Canadian software group, a dental and medical distributor, an Indian drug maker and a mortgage lender.",
+            "t": "Cybernews reported that BlackCat added NJVC, an IT company supporting US government and defense organisations, to its leak site in September 2022 and then removed it. The claim was not confirmed.",
             "cites": [
-              "ed885645dad7d4f11e5589f4a326465ca3327c43",
-              "985a15506a14dacf708fca376258a3a0f20c94d2",
-              "a801794d4e3d424e5e336407406ad9bfb975d934",
-              "e28eb63dbc097b3e208b713fdbbea41bcdbd4022",
-              "41fd5536e9c346b97ad8a18075e1d47fb52397d6"
+              "9a076bb3cb02af36c7702d3b15c6bc7977c8ba19"
             ]
           },
           {
-            "t": "Recorded Future News says the group has made a point of going after healthcare and pharmaceutical companies.",
+            "t": "DataBreaches linked a 2022 attack on Suffolk County, which disabled its 911 system, to ALPHV/BlackCat. The group claimed responsibility and claimed 400 GB of data, but the publisher could not confirm the leak.",
+            "cites": [
+              "ed885645dad7d4f11e5589f4a326465ca3327c43"
+            ]
+          },
+          {
+            "t": "ALPHV listed the city of Alexandria, Louisiana as a victim. The gang claimed more than 80 GB of data, which is its own claim as quoted in the report.",
+            "cites": [
+              "2cd48c03de391dcdfe25c29240c97b979cdc9e93"
+            ]
+          },
+          {
+            "t": "Recorded Future News reports that Black Cat/AlphV listed Sun Pharmaceuticals, India's largest drugmaker, on its leak site on March 24. The company confirmed a ransomware attack but did not name the group.",
             "cites": [
               "e28eb63dbc097b3e208b713fdbbea41bcdbd4022"
             ]
           },
           {
-            "t": "The FBI linked the gang to over 60 breaches in its first four months, from November 2021 to March 2022, according to BleepingComputer.",
+            "t": "BleepingComputer reported that ALPHV claimed breaches of loanDepot and Prudential Financial. The claims were unverified at the time, because the gang had not yet published proof.",
             "cites": [
               "41fd5536e9c346b97ad8a18075e1d47fb52397d6"
             ]
@@ -127,33 +143,34 @@
         "h": "methods",
         "sentences": [
           {
-            "t": "Malpedia says the ransomware can encrypt files with AES or ChaCha20. It can delete volume shadow copies and stop services and ESXi virtual machines. It can spread to other hosts using PsExec.",
-            "cites": [
-              "0e4caecb0c32c66e4af751b48bfe683e951501d6"
-            ]
-          },
-          {
-            "t": "Symantec reported updates in 2022 that added an ARM build, safe-mode encryption and searchable leak sites. It also saw an updated Exmatter exfiltration tool, and an affiliate using the Eamfo infostealer against Veeam backup credentials.",
-            "cites": [
-              "4b763e937308bcf94c5ba31b1cd6c3aa93fb13a3"
-            ]
-          },
-          {
-            "t": "In one Sygnia case, access came through a compromised third-party vendor. The attacker spent weeks moving through the network with Cobalt Strike and tunnelling tools. It copied data to cloud storage with Rclone and then sent extortion emails.",
+            "t": "Sygnia attributed one 2023 extortion case to BlackCat or one of its affiliates, not to a single confirmed actor. Access came through a compromised third-party vendor. The attacker then used Cobalt Strike for lateral movement, Rclone to copy data to cloud storage, and extortion emails.",
             "cites": [
               "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
             ]
           },
           {
-            "t": "The eSentire Threat Response Unit reported Russian-speaking affiliates using Google ads to lure users into downloading the Nitrogen initial-access malware, which led to ALPHV/BlackCat ransomware.",
+            "t": "In that case the client blocked internet access, which Sygnia says stopped encryption.",
+            "cites": [
+              "d01e8492eb25e3a9dfa0218367a708d2d3230c93"
+            ]
+          },
+          {
+            "t": "eSentire reports that Russian-speaking affiliates used Google ads to lure users to attacker-controlled sites. Victims downloaded the Nitrogen malware, which led to ALPHV/BlackCat ransomware.",
             "cites": [
               "4b7c4cbaa216abc9ffac4ec57b0fa54b7d2672a8"
             ]
           },
           {
-            "t": "Victims were pressed through a leak site. In the Constellation Software case, the gang claimed to have stolen over 1 TB and leaked some documents as proof.",
+            "t": "Symantec says updates in mid-2022 added an ARM build and safe-mode encryption, and made stolen data searchable on the leak sites. It also saw an affiliate use the Eamfo infostealer against Veeam backup credentials.",
             "cites": [
-              "985a15506a14dacf708fca376258a3a0f20c94d2"
+              "4b763e937308bcf94c5ba31b1cd6c3aa93fb13a3"
+            ]
+          },
+          {
+            "t": "Malpedia says the ransomware can encrypt files with AES or ChaCha20 and can delete volume shadow copies. It can also stop ESXi virtual machines and spread to other hosts using PsExec.",
+            "cites": [
+              "1c58bbeefa92023a0cd20d96b4bdeb0de4ff2268",
+              "0e4caecb0c32c66e4af751b48bfe683e951501d6"
             ]
           }
         ]
@@ -162,44 +179,49 @@
         "h": "operations",
         "sentences": [
           {
-            "t": "In September 2022, DataBreaches reported that BlackCat claimed the Suffolk County attack, which disabled the county's 911 system. The group claimed 400 GB of data.",
-            "cites": [
-              "ed885645dad7d4f11e5589f4a326465ca3327c43"
-            ]
-          },
-          {
-            "t": "In a statement relayed by one article, AlphV said it launched ransomware against more than 100 ESXi hypervisors at MGM Resorts on September 11, 2023. The article treats all of these claims as AlphV's own and unverified.",
+            "t": "In its own statement on the 2023 MGM Resorts attack, AlphV said it kept super administrator access to MGM's Okta. It also said it launched ransomware against more than 100 ESXi hypervisors on September 11. These are the group's own unverified claims.",
             "cites": [
               "dcb1fb8a500b2bc4515e729a3696cd477b6e0c8d"
             ]
           },
           {
-            "t": "Henry Schein disclosed an incident on October 15. The report says AlphV claimed responsibility and re-encrypted systems after negotiations broke down.",
+            "t": "In the Henry Schein incident, the report says AlphV (BlackCat) claimed responsibility and re-encrypted systems after negotiations broke down.",
             "cites": [
               "a801794d4e3d424e5e336407406ad9bfb975d934"
             ]
           },
           {
-            "t": "BleepingComputer reports that the FBI disrupted the gang in December 2023 and temporarily took down its Tor negotiation and leak sites. It says the FBI estimated at least $300 million in ransom payments from over 1,000 victims until September 2023.",
+            "t": "In November 2023 the group listed Hampton-Newport News CSB on its leak site. It claimed over 800 GB of stolen data and set a 48-hour deadline.",
             "cites": [
-              "41fd5536e9c346b97ad8a18075e1d47fb52397d6",
-              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+              "de6ff68c9908a3cf753f53848cf5e0171db665a8"
             ]
           },
           {
-            "t": "In February 2024, unnamed sources told BleepingComputer the Change Healthcare attack was linked to BlackCat. The site could not confirm this. UnitedHealth's SEC filing described a suspected nation-state actor.",
+            "t": "In December 2023 the group claimed a breach at Viking Therapeutics. DataBreaches says the claim is unconfirmed. The group allegedly got an employee to file an SEC complaint about the incident.",
             "cites": [
-              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+              "98cab41503c178f8da9bd5a224ab938e28bc6726"
             ]
           },
           {
-            "t": "In March 2024, BleepingComputer judged that the gang appeared to be running an exit scam. Its sites went offline, affiliates said they were not paid, and a fake FBI seizure banner appeared. Europol and the NCA said they were not involved.",
+            "t": "BleepingComputer reports that in December 2023 an international law enforcement operation seized the gang's Tor negotiation and leak sites.",
             "cites": [
               "948b1c05863cec0266517441f5ad68a8bcf7267a"
             ]
           },
           {
-            "t": "A December 2025 Justice Department release, listed on Malpedia, says two Americans pleaded guilty to targeting US victims with ALPHV BlackCat ransomware.",
+            "t": "In February 2024 BleepingComputer reported that unnamed sources linked the Change Healthcare attack to BlackCat. The outlet could not confirm this, and the gang had not claimed the attack. UnitedHealth's SEC filing described a nation-state threat actor.",
+            "cites": [
+              "4cc0024b221effc8ae71cd54f6391a929ecbacf1"
+            ]
+          },
+          {
+            "t": "In March 2024 BleepingComputer judged that the gang was running an exit scam. Its sites went offline, affiliates said they were not paid, and the gang offered its source code for $5 million. It also posted a fake FBI seizure banner, and Europol and the NCA said they were not involved.",
+            "cites": [
+              "948b1c05863cec0266517441f5ad68a8bcf7267a"
+            ]
+          },
+          {
+            "t": "Malpedia lists a December 30, 2025 US Justice Department release saying two Americans pleaded guilty to targeting US victims with ALPHV BlackCat ransomware.",
             "cites": [
               "1c58bbeefa92023a0cd20d96b4bdeb0de4ff2268"
             ]
@@ -210,25 +232,25 @@
         "h": "takeaway",
         "sentences": [
           {
-            "t": "Keep offline backups and protect backup credentials, since reports describe attackers going after backup tools.",
+            "t": "Treat a gang's leak-site claim as unverified until the victim or investigators confirm it.",
             "cites": []
           },
           {
-            "t": "Check third-party vendor access and virtual host security, because both appear in the cases above.",
+            "t": "Keep backup systems and their credentials well separated from everyday administrator accounts.",
             "cites": []
           }
         ]
       }
     ],
-    "status": "rejected",
+    "status": "parked",
     "based_on": "04199b961b2d0358943ce4220a5b8d0133d17ec0",
-    "tries": 1,
+    "tries": 2,
     "by": "CyberView AI (a Claude model)",
-    "written_at": "2026-11-27T10:31:54Z",
+    "written_at": "2026-11-27T10:58:58Z",
     "writer_model": "sonnet",
     "reasons": [
       "unbacked"
     ],
-    "written_run": "3b3caf43"
+    "written_run": "ed86e93d"
   }
 }

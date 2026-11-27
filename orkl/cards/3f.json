@@ -390,25 +390,171 @@
   },
   "3f54af264da2ece6c5fa3fcfe0af45a02899c7d4": {
     "sha1": "3f54af264da2ece6c5fa3fcfe0af45a02899c7d4",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:46:11Z",
+    "read_at": "2026-11-27T11:04:53Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Unit 42 (Palo Alto Networks) reports a November 2015 spear-phishing attack on a French Ministry of Foreign Affairs diplomat in Taipei. Malicious Word documents exploited CVE-2014-6332 to drop the Emissary Trojan, version 5.3. Emissary is related to the Elise backdoor from Operation Lotus Blossom. The report links the activity to those actors with hedged confidence, and the lure was an invitation to a Taiwan technology conference.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
-      "cves": [],
-      "figures": []
+      "actors": [
+        {
+          "v": "LStudio",
+          "q": "part of a malware group referred to as “LStudio”, which is based on the following debug strings",
+          "by": "Unit 42, Palo Alto Networks (the report)"
+        },
+        {
+          "v": "APT threat actors",
+          "q": "APT threat actors, most likely nation state-sponsored, targeted a diplomat in the French Ministry",
+          "by": "Unit 42, Palo Alto Networks (the report)"
+        },
+        {
+          "v": "Lotus Blossom",
+          "q": "Attack on French Diplomat Linked to Operation Lotus Blossom",
+          "by": "Unit 42, Palo Alto Networks (the report), as a link rather than a confirmed attribution"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Ministry of Foreign Affairs",
+          "q": "sent a spear-phishing email to an individual at the French Ministry of Foreign Affairs."
+        },
+        {
+          "v": "government agencies",
+          "q": "Unit 42 assesses that the threat actors’ collection requirements not only include militaries and government agencies in Southeast Asia"
+        }
+      ],
+      "countries": [
+        {
+          "v": "France",
+          "q": "France is Taiwan’s second largest technology partner and fourth largest trading partner in Europe."
+        },
+        {
+          "v": "Taiwan",
+          "q": "a single French diplomat based in Taipei, Taiwan and contained an invitation to a Science and Technology support group"
+        },
+        {
+          "v": "Southeast Asia",
+          "q": "attack campaign on targets in Southeast Asia, in many cases also with official looking decoy"
+        }
+      ],
+      "dates": [
+        {
+          "v": "November 10, 2015",
+          "q": "On November 10, 2015, threat actors sent a spear-phishing email to an individual at the French Ministry",
+          "what": "Spear-phishing email sent to an individual at the French Ministry of Foreign Affairs"
+        },
+        {
+          "v": "November 13, 2015",
+          "q": "the conference was held on November 13, 2015, which is three days after the attack took place.",
+          "what": "Science and Technology conference in Hsinchu, Taiwan, which the lure invited the target to attend, was held"
+        },
+        {
+          "v": "December 18, 2015",
+          "q": "December 18, 2015 at 9:10 AM",
+          "what": "Unit 42 report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Emissary",
+          "q": "install a Trojan called Emissary, which is related to the Operation Lotus Blossom campaign"
+        },
+        {
+          "v": "Elise",
+          "q": "This Trojan is related to the Elise backdoor described in the Operation Lotus Blossom report"
+        },
+        {
+          "v": "ishelp.dll",
+          "q": "The loader Trojan named “ishelp.dll” had an original name of “Loader.dll”"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "The attack involved a spear-phishing email sent to a single French diplomat"
+        },
+        {
+          "v": "malicious Word documents",
+          "q": "Both attachments are malicious Word documents that attempt to exploit the Windows OLE"
+        },
+        {
+          "v": "decoy documents",
+          "q": "opens a decoy (Figure 2) that is a copy of an invitation to a Science and Technology conference"
+        },
+        {
+          "v": "custom algorithm to decrypt the configuration file",
+          "q": "a custom algorithm to decrypt the configuration file"
+        },
+        {
+          "v": "Internet Explorer process",
+          "q": "The Emissary Trojan runs within the Internet Explorer process."
+        },
+        {
+          "v": "command and control",
+          "q": "After decrypting the configuration file, Emissary interacts with its command and control (C2) servers"
+        },
+        {
+          "v": "backdoor access",
+          "q": "The command set available within Emissary allows the threat actors backdoor access to a compromised system."
+        },
+        {
+          "v": "avoid network detection",
+          "q": "suggests that the threat actors set the secondary C2 domains to resolve to the localhost IP address to avoid network detection"
+        },
+        {
+          "v": "separate infrastructure for different targets",
+          "q": "In each case, the threat actors used separate infrastructure for different targets, another way to help avoid detection."
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2014-6332",
+          "q": "Windows OLE Automation Array Remote Code Execution Vulnerability tracked by CVE-2014-6332."
+        }
+      ],
+      "figures": [
+        {
+          "v": "5.3",
+          "q": "to install a new version of the Emissary Trojan, specifically version 5.3."
+        },
+        {
+          "v": "1024",
+          "q": "Emissary uses a seed value of 1024 (as seen in Figure 6)"
+        },
+        {
+          "v": "2012",
+          "q": "Elise uses the seed value of 2012."
+        },
+        {
+          "v": "300",
+          "q": "Sleep Delay: 300"
+        },
+        {
+          "v": "UPG-ZHG-01",
+          "q": "Campaign Code: UPG-ZHG-01"
+        },
+        {
+          "v": "six commands",
+          "q": "function within the Emissary Trojan supports six commands, as seen in Table 2."
+        },
+        {
+          "v": "three days",
+          "q": "the conference was held on November 13, 2015, which is three days after the attack took place."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "Emissary"
+    },
+    "hedges": [
+      "The report says the APT actors are 'most likely nation state-sponsored', so attribution is not firm.",
+      "The link to Operation Lotus Blossom is described as 'linked' and the targeting 'aligns with previous targeting' by these actors.",
+      "The report states it is 'entirely possible the diplomat was truly invited to the conference'.",
+      "The report says the targeting 'suggests' the actors want to breach the Ministry or gain insight into France-Taiwan relations.",
+      "Unit 42 treats Emissary and Elise as separate tools even though they share code, based on differing configuration, command handler and C2 channel.",
+      "The report describes secondary C2 settings as suggesting an attempt to avoid network detection, framed as an inference."
+    ]
   }
 }

@@ -251,7 +251,7 @@
     "sha1": "393e0daf9b2056a372b3370b4aced4d1fa3856f5",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T10:37:45Z",
+    "read_at": "2026-11-27T11:00:51Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -268,29 +268,97 @@
     "subject": null,
     "hedges": [],
     "reason": "quote-not-in-text, value-not-in-quote",
-    "tries": 1
+    "tries": 2
   },
   "39d6c238c746e892620a5de8b28bf378f7c4a35d": {
     "sha1": "39d6c238c746e892620a5de8b28bf378f7c4a35d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:44:18Z",
+    "read_at": "2026-11-27T11:03:48Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "A July 2018 write-up and tweet collection about a zip of purported Carbanak source code shared on a forum. Researchers say the code is not Carbanak but fits the RatoPak group, linked to Buhtrap and Pegasus. The leak is said to include alleged bank intrusions, mainly in Russia, and a list of ten bank names. Researchers were unsure of its authenticity and the zip's origin was unverified.",
+    "kind": "incident",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
+      "actors": [
+        {
+          "v": "RatoPak",
+          "q": "This #RatoPak / (not) #Carbanak leak investigation and discussions really shows once",
+          "by": "Omri Moyal (tweet)"
+        },
+        {
+          "v": "Buhtrap",
+          "q": "At least some parts of the source code leak fit to Buhtrap/Ratopak",
+          "by": "Daniel Plohmann (tweet)"
+        },
+        {
+          "v": "Pegasus",
+          "q": "after deeper look into Ratopak we should say - it is not original Buhtrap but Pegasus.",
+          "by": "codelancer (tweet)"
+        },
+        {
+          "v": "Corkow",
+          "q": "Some of the leaked files are corresponding to banks hacked by #Corkow group.",
+          "by": "Omri Moyal (tweet)"
+        },
+        {
+          "v": "Carbanak",
+          "q": "I wouldn't put a solid carbanak tag on it just yet :) it sure has similarities...",
+          "by": "Denis O'Brien (tweet)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "banking",
+          "q": "Interesting information related to banking fraud on the potential #carbanak leak."
+        }
+      ],
+      "countries": [
+        {
+          "v": "Russia",
+          "q": "leads to this attack on Russian"
+        }
+      ],
+      "dates": [
+        {
+          "v": "July 11, 2018",
+          "q": "GelosSnake July 11, 2018",
+          "what": "Post date of the write-up on the possible source code leak"
+        },
+        {
+          "v": "July 12, 2018",
+          "q": "— Minerva Labs (@MinervaLabs) July 12, 2018",
+          "what": "Minerva Labs published an initial analysis blog post on the leak"
+        }
+      ],
       "tools": [],
-      "techniques": [],
+      "techniques": [
+        {
+          "v": "DLL Side-Loading",
+          "q": "buhtrap/11. DLL Side-Loading+panel/.../libs/ -> pegasus/inc/"
+        },
+        {
+          "v": "AD dump",
+          "q": "the #carbanak leak seems to have full AD dump of several banks such as:"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "f4ae5579930f20ccc41d1f8b1e417e87",
+          "q": "(f4ae5579930f20ccc41d1f8b1e417e87) code as described here:"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "incident",
+      "name": "NotCarbanak Mystery - Source Code Leak"
+    },
+    "hedges": [
+      "Researchers were not 100% sure the leaked code is authentic yet.",
+      "The origin of the zip files is unknown and was not inspected for booby traps.",
+      "Researchers say attribution is difficult; the leak is not a Carbanak leak as the source zip states.",
+      "Denis O'Brien says a solid Carbanak tag should not be put on it just yet, though it has similarities.",
+      "Analysts say Pegasus and Buhtrap have very similar TTP, so RatoPak is the better attribution."
+    ]
   }
 }

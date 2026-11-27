@@ -76,7 +76,7 @@
     "sha1": "7b67ce3a41cf6034c553343e29d619fab6d64508",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T10:41:03Z",
+    "read_at": "2026-11-27T11:03:14Z",
     "model": "haiku",
     "summary": "",
     "kind": "",
@@ -92,7 +92,178 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "quote-not-in-text, link-in-text",
-    "tries": 1
+    "reason": "link-in-text",
+    "tries": 2
+  },
+  "7b21ed4314e6a1392f7606c60356c9e3f8b9b7d4": {
+    "sha1": "7b21ed4314e6a1392f7606c60356c9e3f8b9b7d4",
+    "status": "read",
+    "partial": false,
+    "read_at": "2026-11-27T11:05:50Z",
+    "model": "haiku",
+    "summary": "ESET describes CloudMensis, a previously unknown macOS backdoor discovered in April 2022. It uses public cloud storage services (pCloud, Yandex Disk, Dropbox) for command and control and to exfiltrate documents, keystrokes and screen captures. Its first-stage downloader installs a second-stage spy agent as a system-wide daemon. The malware tries to bypass macOS TCC privacy protections, including by exploiting CVE-2020-9934. The report describes its distribution as very limited, suggesting a targeted operation, and says the initial compromise method is still unknown. Cloud storage metadata…",
+    "kind": "malware-analysis",
+    "facts": {
+      "actors": [
+        {
+          "v": "operators of this malware family",
+          "q": "operators of this malware family deploy CloudMensis to specific targets",
+          "by": "ESET (report publisher)"
+        }
+      ],
+      "sectors": [],
+      "countries": [],
+      "dates": [
+        {
+          "v": "April 2022",
+          "q": "In April 2022, ESET researchers discovered a previously unknown macOS backdoor",
+          "what": "ESET discovered the malware"
+        },
+        {
+          "v": "January 19th, 2022",
+          "q": "First, the pCloud accounts were created on January 19th, 2022.",
+          "what": "pCloud accounts created for the operation"
+        },
+        {
+          "v": "February 4th",
+          "q": "This chart shows a spike of compromises in early March 2022, with the first being on February 4th.",
+          "what": "first compromise shown by cloud storage metadata"
+        },
+        {
+          "v": "April 22nd, 2022",
+          "q": "transmit commands to the bots as of April 22nd, 2022.",
+          "what": "cloud storage directory listing snapshot"
+        },
+        {
+          "v": "2017",
+          "q": "These vulnerabilities were discovered and well documented by Niklas Baumstark and Samuel Groß in 2017.",
+          "what": "Safari exploit vulnerabilities documented by researchers"
+        },
+        {
+          "v": "2018",
+          "q": "Since the release of macOS Mojave (10.14) in 2018",
+          "what": "macOS Mojave released with TCC protections"
+        },
+        {
+          "v": "2020",
+          "q": "reported and described by Matt Shockley in 2020.",
+          "what": "TCC-related vulnerability reported and described"
+        },
+        {
+          "v": "July 19, 2022",
+          "q": "July 19, 2022",
+          "what": "report published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "pCloud",
+          "q": "In the sample we analyzed, pCloud was used to store and deliver the second stage."
+        },
+        {
+          "v": "Yandex Disk",
+          "q": "It supports three different providers: pCloud, Yandex Disk, and Dropbox."
+        },
+        {
+          "v": "Dropbox",
+          "q": "It supports three different providers: pCloud, Yandex Disk, and Dropbox."
+        },
+        {
+          "v": "SSZipArchive",
+          "q": "CloudMensis uses SSZipArchive to create a password-protected ZIP archive of data to"
+        },
+        {
+          "v": "FlowEncrypt",
+          "q": "CloudMensis implements its own encryption function that its authors call FlowEncrypt."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "system-wide daemon",
+          "q": "installs the second-stage malware as a system-wide daemon."
+        },
+        {
+          "v": "privilege escalation",
+          "q": "launch sandbox and privilege escalation exploits from Safari"
+        },
+        {
+          "v": "bypass TCC",
+          "q": "CloudMensis tries to bypass TCC if possible."
+        },
+        {
+          "v": "input capture",
+          "q": "Input Capture: CloudMensis can capture"
+        },
+        {
+          "v": "screen capture",
+          "q": "Command 60: Start a screen capture"
+        },
+        {
+          "v": "cloud storage",
+          "q": "exclusively uses public cloud storage services to communicate back and forth"
+        },
+        {
+          "v": "email messages",
+          "q": "List email messages and attachments"
+        },
+        {
+          "v": "password-protected ZIP archive",
+          "q": "CloudMensis uses SSZipArchive to create a password-protected ZIP archive of data to"
+        },
+        {
+          "v": "removable storage",
+          "q": "List files from removable storage"
+        },
+        {
+          "v": "download and execute",
+          "q": "Download and execute arbitrary files"
+        }
+      ],
+      "cves": [
+        {
+          "v": "CVE-2020-9934",
+          "q": "This vulnerability is known as CVE-2020–9934 and was reported and described by Matt Shockley in 2020."
+        }
+      ],
+      "figures": [
+        {
+          "v": "39 commands",
+          "q": "There are 39 commands implemented in the analyzed CloudMensis sample."
+        },
+        {
+          "v": "between 49 and 93",
+          "q": "identified by a number between 49 and 93 inclusive"
+        },
+        {
+          "v": "51 unique bot identifiers",
+          "q": "shows that 51 unique bot identifiers created subdirectories in the cloud storage"
+        },
+        {
+          "v": "14,972 bytes",
+          "q": "is 14,972 bytes long."
+        },
+        {
+          "v": "RSA-2048",
+          "q": "The CloudMensis initial report is encrypted with a public RSA-2048 key."
+        },
+        {
+          "v": "four vulnerabilities",
+          "q": "while abusing four vulnerabilities"
+        }
+      ]
+    },
+    "subject": {
+      "type": "malware",
+      "name": "CloudMensis"
+    },
+    "hedges": [
+      "We still do not know how victims are initially compromised by this threat.",
+      "this distribution technique is probably not used to install CloudMensis anymore.",
+      "CloudMensis may have been around for many years.",
+      "its very limited distribution suggests that it is used as part of a targeted operation.",
+      "The last spike may be explained by sandboxes running CloudMensis, once it was uploaded to VirusTotal.",
+      "We could not find samples of this screen capture agent.",
+      "We still do not know how CloudMensis is initially distributed and who the targets are."
+    ]
   }
 }

@@ -184,25 +184,172 @@
   },
   "a09c49feefbeba5407ed055e0cfe4263b20e5b83": {
     "sha1": "a09c49feefbeba5407ed055e0cfe4263b20e5b83",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:45:36Z",
+    "read_at": "2026-11-27T11:03:53Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "F5 Labs analyses two TrickBot campaigns from May 2017, across 26 configurations. Targets widened beyond banks to a payment processor (PayPal) and CRM providers (Salesforce, Reynolds & Reynolds). The smaller campaign had 210 URL targets and the larger 257. Command and control servers sat in European web hosting networks and used port 443. The report says initial delivery is email spam and expects further evolution in targets and methods.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "TrickBot",
+          "q": "The financial trojan TrickBot has been updating its campaigns and targets since F5 malware researchers started",
+          "by": "F5 Labs (report author)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions",
+          "q": "Previously, TrickBot, the successor to Dyre, targeted financial institutions"
+        },
+        {
+          "v": "banks",
+          "q": "The smaller campaign focused on targeting banks (83% of URL targets) in Australia, UK, Canada, New Zealand"
+        },
+        {
+          "v": "payment processors",
+          "q": "The fact that payment processors were targets was a notable change that we also observed in Marcher,"
+        },
+        {
+          "v": "CRM",
+          "q": "It appears now that CRMs are a new target of attackers; is it because"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Australia",
+          "q": "The smaller campaign focused on targeting banks (83% of URL targets) in Australia, UK, Canada, New Zealand"
+        },
+        {
+          "v": "UK",
+          "q": "The smaller campaign focused on targeting banks (83% of URL targets) in Australia, UK, Canada, New Zealand"
+        },
+        {
+          "v": "Canada",
+          "q": "The smaller campaign focused on targeting banks (83% of URL targets) in Australia, UK, Canada, New Zealand"
+        },
+        {
+          "v": "New Zealand",
+          "q": "The smaller campaign focused on targeting banks (83% of URL targets) in Australia, UK, Canada, New Zealand"
+        },
+        {
+          "v": "Singapore",
+          "q": "and Singapore, and a payment processor (PayPal) attributed to the US (although PayPal users are global)."
+        },
+        {
+          "v": "US",
+          "q": "and Singapore, and a payment processor (PayPal) attributed to the US (although PayPal users are global)."
+        },
+        {
+          "v": "Bulgaria",
+          "q": "including banks in France, Germany, Switzerland, the Netherlands, and Bulgaria."
+        },
+        {
+          "v": "Hong Kong",
+          "q": "Hong Kong was the new Asia target in this campaign, however, the banking targets in Singapore and India from the"
+        }
+      ],
+      "dates": [
+        {
+          "v": "September 2016",
+          "q": "following it in September 2016. This is expected behavior because attackers need to continually update their",
+          "what": "F5 researchers started following TrickBot"
+        },
+        {
+          "v": "March of 2017",
+          "q": "an Android banking trojan in March of 2017.",
+          "what": "Marcher was observed targeting payment processors"
+        },
+        {
+          "v": "May 2017",
+          "q": "In the 26 TrickBot configurations F5 researchers analyzed that were active in May 2017, targets expanded beyond",
+          "what": "TrickBot campaigns analysed; targets expanded beyond banks"
+        },
+        {
+          "v": "late 2016",
+          "q": "same C&Cs we tracked in late 2016.",
+          "what": "Earlier C&C servers tracked; none were reused in May 2017"
+        },
+        {
+          "v": "August 1, 2017",
+          "q": "byline August 1, 2017",
+          "what": "Report byline date"
+        }
+      ],
+      "tools": [
+        {
+          "v": "TrickBot",
+          "q": "The financial trojan TrickBot has been updating its campaigns and targets since F5 malware researchers started"
+        },
+        {
+          "v": "Dyre",
+          "q": "Previously, TrickBot, the successor to Dyre, targeted financial institutions"
+        },
+        {
+          "v": "Marcher",
+          "q": "The fact that payment processors were targets was a notable change that we also observed in Marcher,"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "email spam campaigns",
+          "q": "TrickBot’s consistent initial attack pattern is to use email spam campaigns, so users are advised not to open suspicious files received by email."
+        },
+        {
+          "v": "encrypted traffic",
+          "q": "We know attackers hide their exploits in encrypted traffic; this is just another point of reference to prove it is a"
+        },
+        {
+          "v": "port 443 / HTTPS",
+          "q": "All of them used port 443 / HTTPS as a connection method"
+        },
+        {
+          "v": "web hosting provider networks",
+          "q": "campaigns reside within web hosting provider networks and were communicating with their infected hosts over port"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "26 TrickBot configurations",
+          "q": "In the 26 TrickBot configurations F5 researchers analyzed that were active in May 2017, targets expanded beyond"
+        },
+        {
+          "v": "210 URL targets",
+          "q": "smaller campaign detected included 210 URL targets focused on banks in Australia, UK, Canada, New Zealand, Singapore, India, and Ireland, and a payment"
+        },
+        {
+          "v": "257 URLs",
+          "q": "The larger campaign detected included 257 URLs for banks in the UK, Australia, US, Canada,"
+        },
+        {
+          "v": "six C&C IP addresses",
+          "q": "When analyzing the two campaigns, six C&C IP addresses were identified, all of which exist within European web"
+        },
+        {
+          "v": "83%",
+          "q": "The smaller campaign focused on targeting banks (83% of URL targets) in Australia, UK, Canada, New Zealand"
+        },
+        {
+          "v": "47%",
+          "q": "The larger campaign was mainly focused on banks in the UK (47% of targets, up from 18% in the smaller"
+        },
+        {
+          "v": "35 unique PayPal URLs",
+          "q": "The 35 unique PayPal URLs targeted were the exact same URLs targeted in both campaigns."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "TrickBot"
+    },
+    "hedges": [
+      "It appears now that CRMs are a new target of attackers.",
+      "It seems TrickBot's success has influenced its authors to repeat and expand their target lists.",
+      "Country targets were attributed from the country code in the URL, not the targeted business's headquarters.",
+      "F5 Labs researchers expect to see further evolution in both the targets and methods used by TrickBot authors."
+    ]
   }
 }

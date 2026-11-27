@@ -159,25 +159,104 @@
   },
   "0e7aa3afb4a262f43d979753d190bf8c19d8a9e7": {
     "sha1": "0e7aa3afb4a262f43d979753d190bf8c19d8a9e7",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T10:42:55Z",
+    "read_at": "2026-11-27T11:02:49Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Splunk Threat Research Team blog dated November 11, 2021 (part 1 of 2) on FIN7 tools: the JSS Loader and Remcos. It describes JavaScript first-stage delivery through spear-phishing, WMI-based host information gathering, data exfiltration to C2 over HTTP POST and DNS, screenshot capture and browser database parsing, and lists detection content. The report leaves open whether the resurfaced JSS Loader activity is a splinter group, a copycat, or FIN7 itself. The report cites the US Department of Justice for about 15 million cards stolen in the United States.",
+    "kind": "malware-analysis",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "FIN7",
+          "q": "FIN7 is a well-organized criminal group composed of highly-skilled individuals that target",
+          "by": "the report itself"
+        },
+        {
+          "v": "Carbanak",
+          "q": "Carbanak and FIN7 are usually referred to as the same group,",
+          "by": "the report itself"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "financial institutions, hospitality, restaurant, and gambling industries",
+          "q": "financial institutions, hospitality, restaurant, and gambling industries."
+        }
+      ],
+      "countries": [
+        {
+          "v": "United States",
+          "q": "and extradited to the United States."
+        }
+      ],
+      "dates": [
+        {
+          "v": "November 11, 2021",
+          "q": "November 11, 2021",
+          "what": "Splunk blog post published (part 1 of 2 on FIN7 tools)"
+        }
+      ],
+      "tools": [
+        {
+          "v": "JSS loader",
+          "q": "a specific tool which is a signature of this group known as the JSS loader has apparently resurfaced,"
+        },
+        {
+          "v": "Remcos",
+          "q": "In this two-part blog we are going to address two tools used by this group — JSS Loader and Remcos."
+        },
+        {
+          "v": "Atlassian JIRA",
+          "q": "using off-the-shelf software like Atlassian JIRA."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "spear-phishing",
+          "q": "FIN7 is well known to use a spear-phishing campaign to compromise a machine by"
+        },
+        {
+          "v": "obfuscated javascript",
+          "q": "downloading or executing an obfuscated javascript as the first stage. We analyze old and"
+        },
+        {
+          "v": "gathering information",
+          "q": "This JS is capable of gathering information to the compromised host by executing several"
+        },
+        {
+          "v": "DNS exfiltration",
+          "q": "We also found some variants where it uses DNS exfiltration of data."
+        },
+        {
+          "v": "screenshot",
+          "q": "Another feature identified is taking a screenshot of the compromised host."
+        },
+        {
+          "v": "parse browser information",
+          "q": "It also has some functions that parse the browser information like history and URL visits of"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "15 million cards",
+          "q": "According to the Department of Justice, FIN7 group stole approximately 15 million cards in"
+        },
+        {
+          "v": "3",
+          "q": "were arrested — specifically 3 of them — and extradited to the United States."
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1
+    "subject": {
+      "type": "malware",
+      "name": "JSS Loader"
+    },
+    "hedges": [
+      "some security researchers believe they might be two groups using the same malware and should be tracked separately",
+      "We do not have enough information to respond to the above questions",
+      "a specific tool which is a signature of this group known as the JSS loader has apparently resurfaced"
+    ]
   }
 }

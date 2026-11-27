@@ -652,7 +652,7 @@
   },
   "1fd0393ff8a786d5f2fbc8a4a51f890f6b410993": {
     "sha1": "1fd0393ff8a786d5f2fbc8a4a51f890f6b410993",
-    "status": "read",
+    "status": "unread",
     "partial": false,
     "read_at": "2026-11-27T15:29:46Z",
     "model": "haiku",
@@ -819,7 +819,15 @@
         "note": "summary: The text gives the 11+ providers and the 11 May–27 September 2023 period as 'according to public sources' (За даними публічних джерел). The summary sta",
         "by": "auditor"
       }
-    ]
+    ],
+    "reason": "audit-wrong",
+    "tries": 2,
+    "audit": {
+      "at": "2026-11-27T15:41:09Z",
+      "ok": false,
+      "note": "summary: The summary states the 'at least 11 providers' count and the 11 May–27 September 2023 period as CERT-UA's own report. The text says these come 'за дани",
+      "by": "auditor"
+    }
   },
   "1f7487abb5b7f175e96b43fdd08d2d151e16bc4e": {
     "sha1": "1f7487abb5b7f175e96b43fdd08d2d151e16bc4e",
@@ -898,26 +906,88 @@
   },
   "1fa5348b18acafb16216f2b891b00066ddc8e5fd": {
     "sha1": "1fa5348b18acafb16216f2b891b00066ddc8e5fd",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T15:32:45Z",
+    "read_at": "2026-11-27T15:42:02Z",
     "model": "haiku",
-    "summary": "",
-    "kind": "",
+    "summary": "Article by Bleeping Computer (January 2022) on SysJoker, a multi-platform backdoor that targets Windows, Linux and macOS. Researchers at Intezer first saw its activity in December 2021 while investigating an attack on a Linux web server. Samples first appeared on VirusTotal in H2 2021. The malware is written in C++ and was undetected by the 57 antivirus engines VirusTotal uses. It uses a hardcoded Google Drive link to fetch lists of C2 servers. Persistence differs by operating system. Intezer published indicators of compromise, and the article gives removal steps.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "January 11, 2022",
+          "q": "January 11, 2022",
+          "what": "Article published"
+        },
+        {
+          "v": "December 2021",
+          "q": "its activity in December 2021 after investigating an attack on a Linux-based web server.",
+          "what": "Researchers at Intezer first saw signs of the activity"
+        },
+        {
+          "v": "H2 2021",
+          "q": "The first uploads of the malware sample on VirusTotal occurred in H2 2021",
+          "what": "First uploads of the malware sample to VirusTotal"
+        }
+      ],
+      "tools": [
+        {
+          "v": "SysJoker",
+          "q": "A new multi-platform backdoor malware named 'SysJoker' has emerged in the wild,"
+        },
+        {
+          "v": "PowerShell",
+          "q": "uses PowerShell commands to do the following:"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "first-stage dropper",
+          "q": "SysJoker employs a first-stage dropper in the form of a DLL, which uses"
+        },
+        {
+          "v": "Living off the Land",
+          "q": "Next, SysJoker will gather information about the machine using Living off the Land (LOtL)"
+        },
+        {
+          "v": "hardcoded Google Drive link",
+          "q": "it uses a hardcoded Google Drive link."
+        },
+        {
+          "v": "persistence",
+          "q": "the malware will create persistence by adding a"
+        },
+        {
+          "v": "LaunchAgent",
+          "q": "LaunchAgent under the path:"
+        },
+        {
+          "v": "evade detection",
+          "q": "with the ability to evade detection on all three"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "57",
+          "q": "that uses 57"
+        },
+        {
+          "v": "two minutes",
+          "q": "sleeps for up to two minutes before creating a new directory"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "SysJoker"
+    },
+    "hedges": [
+      "The report says the C2 instructions to run commands and to remove the backdoor are not implemented yet."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T15:13:15Z",

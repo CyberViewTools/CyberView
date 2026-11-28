@@ -3,7 +3,7 @@
 // links to ORKL, never the report text. All text is inserted as text, never as HTML; every link is rebuilt and
 // host-checked. A link to one record (library.html#r=<sha1> for a report, #tab=actors&ta=<ORKL id> for an actor)
 // opens that record straight away, on the page of the list that holds it.
-// CyberView AI (a Claude model) also reads some of the reports: a read report shows a plain-language summary and the facts it
+// CyberView Tools AI also reads some of the reports: a read report shows a plain-language summary and the facts it
 // names (data/library/cards/<xx>.json), and an actor, or a group of reports on one subject, shows a reviewed story in which every
 // sentence cites the reports it came from (data/library/stories/<key>.json; #story=<key> opens one). Everything fetched is
 // cleaned here again (cleanCard, cleanStory, cleanStoryIndex) and only ever inserted as text.
@@ -13,7 +13,7 @@
   var reports = [], actors = [], sources = [], langs = [];
   var repPage = 0, actPage = 0, OPEN = "", OPEN_ACT = "", paneTitle = "", actTitle = "", actorFilter = "", actorCount = {}, tab = "reports";
   var byName = {}, profiles = null;
-  var AI_BY = "CyberView AI (a Claude model)";
+  var AI_BY = "CyberView Tools AI";
   var FAIL = "This write-up can't be loaded right now.";
   var SHA1 = /^[0-9a-f]{40}$/, SKEY = /^[A-Za-z0-9-]{1,70}$/, CVE = /^CVE-\d{4}-\d{4,7}$/i;
   var SECHEAD = { who: "Who they are", targets: "Who they go after", methods: "How they work", operations: "Notable operations", takeaway: "What defenders should take from it" };

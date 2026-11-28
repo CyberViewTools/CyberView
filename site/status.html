@@ -66,7 +66,7 @@
     <ol class="how">
       <li>Collectors, which are scripts with no AI model, check thousands of government, vendor and news feeds (banks and financial regulators, critical-infrastructure operators and crypto security firms among them), official breach registers, news searches in many languages and public databases such as SlowMist's crypto-hack archive every few minutes, and file each new item as a lead.</li>
       <li>Leads about the same thing are grouped into one story. Fixed rules, also with no AI model, close routine bulletins, commentary, bare database rows and repeats of what is already on file.</li>
-      <li>AI researchers, CyberView AI (a Claude model), read the original pages behind every remaining story and write up only what those pages say.</li>
+      <li>AI researchers, CyberView Tools AI, read the original pages behind every remaining story and write up only what those pages say.</li>
       <li>A different AI agent gives every new or changed event a second review, and corrects or flags what it finds.</li>
       <li>Scripts then check every record against the rules and publish the site. The whole loop runs every few minutes.</li>
       <li>Nothing unchecked is drawn on the globe: reports still being checked appear only in a labelled list.</li>
@@ -87,7 +87,7 @@
         <tbody></tbody>
       </table></div>
     </details>
-    <p class="note">Automation routines are scripts on GitHub Actions and use no AI model. AI routines are Claude jobs; each uses the cheapest model that does its job well. Times are UTC. "Late" means past its expected gap; "stopped" means more than twice that. Runs, usage and output cover the efficiency report's window. Output is events added, updated and reviewed, and reports closed; idle runs produced none of these.</p>
+    <p class="note">Automation routines are scripts on GitHub Actions and use no AI model. AI routines are CyberView Tools AI jobs; each uses the cheapest model that does its job well. Times are UTC. "Late" means past its expected gap; "stopped" means more than twice that. Runs, usage and output cover the efficiency report's window. Output is events added, updated and reviewed, and reports closed; idle runs produced none of these.</p>
   </details>
 
   <details class="panel dpanel" id="dFeeds">
@@ -149,7 +149,7 @@
         <h3>By week</h3><div class="tablewrap"><table id="accWeeks"><thead><tr><th scope="col">Week of</th><th scope="col" class="num">Reviewed</th><th scope="col" class="num">Corrected</th></tr></thead><tbody></tbody></table></div></div>
       <div><h3>What it found most</h3><div class="tablewrap"><table id="accCats"><thead><tr><th scope="col">Finding</th><th scope="col" class="num">Events</th></tr></thead><tbody></tbody></table></div></div>
     </div>
-    <p class="note">The second review is done by a different agent, CyberView AI (a Claude model), on every new or changed event. Corrected means it changed the event; flagged means it raised a problem it could not settle. Every correction is also kept as a test set, so changes to the writers' prompts and models are measured against real past corrections before they ship.</p>
+    <p class="note">The second review is done by a different agent, CyberView Tools AI, on every new or changed event. Corrected means it changed the event; flagged means it raised a problem it could not settle. Every correction is also kept as a test set, so changes to the writers' prompts and models are measured against real past corrections before they ship.</p>
   </details>
 
   <details class="panel dpanel" id="dImprover">
@@ -162,7 +162,7 @@
       <thead><tr><th scope="col">Worker role</th><th scope="col">Model</th><th scope="col">Runs</th><th scope="col">Finished</th><th scope="col">Cost per run</th><th scope="col">Turns</th></tr></thead>
       <tbody></tbody>
     </table></div>
-    <p class="note">Every day the improver job, CyberView AI (a Claude model), reads the week's cost, yield, speed and second-review results and makes at most three small changes to how many agents run and which model each role uses. A script refuses anything outside fixed limits, and nothing is made cheaper while the second review is correcting more than 15% of new events. Its role figures are from its own last report; the current second-review figures are under Accuracy above.</p>
+    <p class="note">Every day the improver job, CyberView Tools AI, reads the week's cost, yield, speed and second-review results and makes at most three small changes to how many agents run and which model each role uses. A script refuses anything outside fixed limits, and nothing is made cheaper while the second review is correcting more than 15% of new events. Its role figures are from its own last report; the current second-review figures are under Accuracy above.</p>
   </details>
 
   <details class="panel dpanel" id="dQueue">

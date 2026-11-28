@@ -251,7 +251,7 @@ test("the rating and the priority equal the site's cvedb-lib for the same row, w
   // fix: the vendor's fixed versions and advisory are given; signs of compromise are linked, not copied
   assert.deepEqual(ssh.fix.vendor_fixed, ["OpenSSH 9.8 or later"]); assert.equal(ssh.fix.advisory.url, "https://advisories.example.com/fixture-openssh");
   assert.ok(!JSON.stringify(ssh).includes("unexpected child processes")); assert.match(ssh.fix.details, /vulnerabilities\.html#CVE-2026-90101$/);
-  assert.equal(ssh.fix.analysis.by, "CyberView AI (a Claude model)");
+  assert.equal(ssh.fix.analysis.by, "CyberView Tools AI");
 });
 
 /* ---- exporters ---- */
@@ -1027,8 +1027,8 @@ test("lookup reads one CVE from the snapshot: the rating, both exposure deadline
   assert.equal(r.your_version.state, "affected");
   assert.equal(r.detection.reads_version, true);
   // anything CyberView wrote is labelled, and the analysis is linked, never copied
-  assert.equal(r.fix.analysis.by, "CyberView AI (a Claude model)");
-  assert.equal(r.fix.guide_by, "CyberView AI (a Claude model)");
+  assert.equal(r.fix.analysis.by, "CyberView Tools AI");
+  assert.equal(r.fix.guide_by, "CyberView Tools AI");
   assert.match(r.fix.details_note, /linked, never copied/);
   const text = readFileSync(join(d, "lookup.txt"), "utf8");
   assert.match(text, /CyberView rating: CVSS 8\.1/);

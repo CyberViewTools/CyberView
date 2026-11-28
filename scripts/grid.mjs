@@ -25,7 +25,7 @@ import { inflateRawSync } from "node:zlib";
 import { DATA, ROOT, readJson, writeJson, nowIso, writeRunLog, readStatus } from "./lib/store.mjs";
 import { get } from "./lib/net.mjs";
 
-export const AI_BY = "CyberView AI (a Claude model)";
+export const AI_BY = "CyberView Tools AI";
 const KEEP_STALE_HOURS = 6;
 const CLOSED_KEEP_DAYS = 30;
 const CONTEXT_MAX = 60, OUTAGE_MAX = 400, COLLECT_PARALLEL = 8, SOURCE_TIMEOUT_S = 60;          // incidents, then single outages of show_customers or more

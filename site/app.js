@@ -48,8 +48,8 @@ var LAYERS=[["ot","Industrial control: OT, building and plant systems",/ot-ics|s
   ["people","People and premises: insiders, physical access",/(?!)/],
   ["org","Policy and other: laws, enforcement, business news",/^$/]];
 var SECG=[["energy","Energy and utilities"],["health","Healthcare"],["gov","Government"],["finance","Finance"],["telecom","Telecom"],["transport","Transport"],["edu","Education"],["tech","Technology"],["cross","Many sectors"],["other","Other sectors"]];
-/* every piece of text CyberView writes is written by its AI agents, which are Claude models; say so wherever it appears */
-var AI_BY="CyberView AI (a Claude model)";
+/* every piece of text CyberView writes is written by its AI agents; say so wherever it appears */
+var AI_BY="CyberView Tools AI";
 /* an event's "sectors" and "surface" come from fixed lists (scripts/lib/taxonomy.mjs; tests/unit/classify.test.mjs keeps this copy in
    step): sector key -> [label, analysis group, CISA critical infrastructure]; surface key -> [label, analysis lane]. Each carries a basis;
    without them the analysis views fall back to the keyword rules in LAYERS and LENS, and every view says which it used. */
@@ -71,7 +71,7 @@ var BASIS={stated:"stated by the source",inferred:"inferred by "+AI_BY,keyword:"
 function basisNote(list,k){var b=k==="layer"?"layerBasis":"secgBasis",c={stated:0,inferred:0,keyword:0};list.forEach(function(e){if(own(c,e[b]))c[e[b]]++;});
   return (k==="layer"?"Attack surface":"Sector")+": "+c.stated+" "+BASIS.stated+", "+c.inferred+" "+BASIS.inferred+", "+c.keyword+" keyword-assigned from the wording (can be wrong).";}
 function basisEl(list,k){var p=el("p","cav basis",basisNote(list,k));p.dataset.basis=k;return p;}
-var BUILD={version:"1.82",date:"2026-11-25"};
+var BUILD={version:"1.83",date:"2026-11-28"};
 var viz={lane:"layer",mat:"layer"};
 var kev=[],ripples=null;
 function own(o,k){return typeof k==="string"&&Object.prototype.hasOwnProperty.call(o,k);}

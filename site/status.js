@@ -10,7 +10,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var REPO = "https://github.com/CyberViewTools/CyberView";
   var MODEL = { "claude-sonnet-5-5": "Sonnet 5.5", "claude-opus-5-5": "Opus 5.5", "claude-haiku-5-5": "Haiku 5.5" };
-  var AI_BY = "CyberView AI (a Claude model)";
+  var AI_BY = "CyberView Tools AI";
   var DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   var has = function (o, k) { return Object.prototype.hasOwnProperty.call(o, k); };
   function safe(fn) { try { fn(); } catch (e) { if (window.console) console.warn("status panel failed", e); } }
@@ -304,7 +304,7 @@
         what: "No AI model." + (has1 && a.reasons.length ? " Top reasons, 24 h:" : ""), reasons: has1 ? a.reasons : [],
         share: has1 && decided ? pctOf(a.rule, decided) + "% of the stories decided stop here" : "" },
       { key: "ai", name: "Researched by AI agents", fig: has1 ? fmt(a.researched) : "—", f7: b ? fmt(b.researched) : "",
-        what: "Stories read from the original pages by CyberView AI (a Claude model).",
+        what: "Stories read from the original pages by CyberView Tools AI.",
         share: has1 && a.researched ? fmt(a.to_event) + " (" + pctOf(a.to_event, a.researched) + "%) became or updated an event" : "" },
       { key: "published", name: "Published events", fig: has1 ? fmt(a.added + a.updated) : "—", f7: b ? fmt(b.added + b.updated) : "",
         sub: has1 ? fmt(a.added) + " new, " + fmt(a.updated) + " updated" : "",
@@ -558,7 +558,7 @@
       if (!keys.length) ul.appendChild(el("li", "muted", "No events yet."));
       if (keys.length > 12) ul.appendChild(el("li", "muted", (keys.length - 12) + " more with fewer events"));
       div.appendChild(ul);
-      if (d[0] === "sector") { var sb = e.d7.sector_basis || {}, bn = el("p", "note", "Sector of the " + e.d7.events + " events in 7 days: " + (sb.stated || 0) + " stated by the source, " + (sb.inferred || 0) + " inferred by CyberView AI (a Claude model), " + (sb.keyword || 0) + " keyword-assigned from the wording (can be wrong)."); bn.dataset.basis = "sector"; div.appendChild(bn); }
+      if (d[0] === "sector") { var sb = e.d7.sector_basis || {}, bn = el("p", "note", "Sector of the " + e.d7.events + " events in 7 days: " + (sb.stated || 0) + " stated by the source, " + (sb.inferred || 0) + " inferred by CyberView Tools AI, " + (sb.keyword || 0) + " keyword-assigned from the wording (can be wrong)."); bn.dataset.basis = "sector"; div.appendChild(bn); }
       box.appendChild(div);
     });
     $("covNote").textContent = same ? e.d7.events + " events first seen in the last " + (dd !== null && dd < 7 ? dd + " days (all the event files hold so far, so the 7- and 30-day counts are the same)" : "7 days") + "."

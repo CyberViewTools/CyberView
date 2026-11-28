@@ -3,7 +3,7 @@
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   var TITLES = { category: "Event types", sector: "Sectors", surface: "Attack surfaces", country: "Countries", actor: "Threat actors", product: "Products", tag: "Themes" };
-  var AI_TX = "CyberView AI (a Claude model)";
+  var AI_TX = "CyberView Tools AI";
   function int0(v) { return typeof v === "number" && isFinite(v) && v >= 0 ? Math.round(v) : 0; }
   // where the sector and surface rows came from (trends.json "basis"): the source, CyberView AI, or the free-text sector field
   function basisLine(k, b) {
@@ -15,7 +15,7 @@
   }
   var CAT = { incident: "Incidents", vuln: "Patches and advisories", report: "Threat reports", policy: "Law and policy", enforcement: "Law enforcement", investment: "Investment and vendors", outage: "Outages" };
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = String(text); return n; }
-  var AI_BY = "CyberView AI (a Claude model)";
+  var AI_BY = "CyberView Tools AI";
   // one failing section must not blank the page: each one renders inside safe() and says so if it breaks
   function safe(name, fn, box) { try { fn(); } catch (e) { if (box) { box.hidden = false; box.appendChild(el("p", "note bad", "The " + name + " section could not be shown.")); } } }
   function str(v, n) { return typeof v === "string" ? v.slice(0, n).trim() : ""; }

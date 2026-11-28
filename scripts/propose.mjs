@@ -32,12 +32,12 @@ export function propose(job, root = ROOT) {
     for (const f of files) { mkdirSync(dirname(join(wt, f)), { recursive: true }); copyFileSync(join(root, f), join(wt, f)); }
     git(wt, "add", "--", ...files);
     if (git(wt, "diff", "--cached", "--quiet").status === 0) return { ok: true, msg: "already on main" };
-    const c = git(wt, "commit", "-q", "-m", `${job}: proposed change to ${files.join(", ")}\n\nMade by the ${job} job (CyberView AI, a Claude model) and proposed as a pull request; it merges once CI passes.`);
+    const c = git(wt, "commit", "-q", "-m", `${job}: proposed change to ${files.join(", ")}\n\nMade by the ${job} job (CyberView Tools AI) and proposed as a pull request; it merges once CI passes.`);
     if (c.status !== 0) return { ok: false, msg: `commit failed: ${c.stderr.trim()}` };
     const p = git(wt, "push", "-q", "origin", `HEAD:refs/heads/${branch}`);
     if (p.status !== 0) return { ok: false, msg: `push failed: ${p.stderr.trim().split("\n").pop()}` };
     const pr = gh("api", "-X", "POST", `repos/${repoSlug(root)}/pulls`, "-f", `title=${job}: ${files.join(", ")}`, "-f", `head=${branch}`, "-f", "base=main",
-      "-f", `body=Proposed by the scheduled ${job} job (CyberView AI, a Claude model). It changes only ${files.join(", ")}. It merges by itself once CI passes; close it to refuse the change.`);
+      "-f", `body=Proposed by the scheduled ${job} job (CyberView Tools AI). It changes only ${files.join(", ")}. It merges by itself once CI passes; close it to refuse the change.`);
     let url = "", node = "";
     try { const j = JSON.parse(pr.stdout); url = j.html_url || ""; node = j.node_id || ""; } catch { /* below */ }
     if (!url) return { ok: false, msg: `branch ${branch} pushed; opening the pull request failed: ${(pr.stderr || "").trim().split("\n").pop()}` };

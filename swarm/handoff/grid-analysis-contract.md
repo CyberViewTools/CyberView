@@ -1,7 +1,7 @@
 # Grid pipeline phase 2: keyed sources and analysis (contract)
 
 Builds on grid-contract.md and handoff/grid.md (read both). Same rules: scripts plan, agents judge, scripts verify; context,
-never called an attack unless an official source says so; AI text labelled "CyberView AI (a Claude model)".
+never called an attack unless an official source says so; AI text labelled "CyberView Tools AI".
 
 ## Keyed sources (switch on by themselves)
 Keys are never in code, config or the repo. The environment's network proxy adds them to requests for these hosts once the

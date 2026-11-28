@@ -152,7 +152,7 @@ function main() {
     const r = gh([`repos/${REPO}/issues/${n}`]);
     const labels = ((r && r.labels) || []).map((l) => String((l && l.name) || l));
     if (!r || r.pull_request || r.state !== "open" || !labels.includes("chat-report")) { console.error(`#${n} is not an open chat-report issue`); process.exit(1); }
-    comment(n, `Reviewed: ${note}\n\n_CyberView AI (a Claude model), moderator._`); close(n, "completed");
+    comment(n, `Reviewed: ${note}\n\n_CyberView Tools AI, moderator._`); close(n, "completed");
     console.log(`chat: report #${n} answered and closed`);
   } else { console.error(`unknown command "${cmd}"`); process.exit(1); }
 }

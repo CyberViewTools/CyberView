@@ -15,7 +15,7 @@ import { ROOT, DATA, readJson, writeJson, nowIso, dayAgo, readStatus } from "./l
 import { claim, readLeases, RUN_ID } from "./lib/lease.mjs";
 import { SOURCES } from "./grid.mjs";
 
-export const BY = "CyberView AI (a Claude model)";
+export const BY = "CyberView Tools AI";
 export const DECISIONS = ["weather", "equipment", "planned", "supply_shortfall", "wildfire_safety", "third_party", "cyber_official", "cyber_reported", "under_investigation", "unknown"];
 export const NOT_FINAL = new Set(["under_investigation", "unknown"]);
 export const DEPTHS = ["full", "summary", "secondary"];

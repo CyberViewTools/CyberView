@@ -210,7 +210,7 @@ ${fix.cisa_required_action ? row("CISA required action", esc(fix.cisa_required_a
 ${fix.advisory && safeHref(fix.advisory.url) ? row("Vendor advisory", link(fix.advisory.url, fix.advisory.name || fix.advisory.url)) : ""}
 ${refs.length ? row("References", `<ul>${refs.slice(0, 6).map((u) => `<li>${link(u)}</li>`).join("")}</ul>`) : ""}
 ${safeHref(fix.details) ? row("Details", link(fix.details, "CyberView's page for this CVE") + (fix.details_note ? `<br><span class="muted">${esc(fix.details_note)}</span>` : "")) : ""}
-${fix.analysis && safeHref(fix.analysis.url) ? row("Exploitation analysis", link(fix.analysis.url, "on CyberView") + ` <span class="muted">written by ${esc(fix.analysis.by || "CyberView AI (a Claude model)")}</span>`) : ""}
+${fix.analysis && safeHref(fix.analysis.url) ? row("Exploitation analysis", link(fix.analysis.url, "on CyberView") + ` <span class="muted">written by ${esc(fix.analysis.by || "CyberView Tools AI")}</span>`) : ""}
 </table></article>`;
 }
 

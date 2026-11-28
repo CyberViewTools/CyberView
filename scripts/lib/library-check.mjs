@@ -4,7 +4,7 @@ import { NOCODE, figuresIn } from "./validate.mjs";
 import { txt, clip } from "../orkl.mjs";
 import { COUNTRIES, AMBIGUOUS } from "./library-countries.mjs";
 
-export const BY = "CyberView AI (a Claude model)";
+export const BY = "CyberView Tools AI";
 export const KINDS = ["actor-campaign", "malware-analysis", "vulnerability", "incident", "overview", "not-a-threat-report"];
 export const SECTIONS = ["who", "targets", "methods", "operations", "takeaway"];
 export const QUOTE_MAX = 160;

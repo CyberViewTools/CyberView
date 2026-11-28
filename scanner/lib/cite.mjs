@@ -119,7 +119,7 @@ export function attachIncidents(findings, loaded) {
     if (!o) continue;
     f.incidents = { cited: o.cited, claimed_not_cited: o.claimed_not_cited, unreviewed_not_cited: o.unreviewed_not_cited,
       rule: "Cited only: confirmed or official events that passed CyberView's second review. Attackers' claims are never cited.",
-      by: "CyberView AI (a Claude model), second-reviewed" };
+      by: "CyberView Tools AI, second-reviewed" };
   }
   return findings;
 }

@@ -19,7 +19,7 @@
 - Evidence quotes: at most 160 characters each, stored in `data/orkl/cards/` only, never copied to `site/`.
 - Storage is additive: a sha1, actor id or subject key is updated in place, never dropped (`scripts/lib/repo.mjs` `protectDeletes`).
 - Every stored or rendered field goes through a `clean*()` function with a length limit (rule 1). No `innerHTML`; nodes and `textContent` only (rule 2). Each panel inside `safe()` (rule 3). No viewer state (rule 6).
-- Byline on every story and summary: `CyberView AI (a Claude model)` (rule 15).
+- Byline on every story and summary: `CyberView Tools AI` (rule 15).
 - ORKL data never becomes a lead or an event source.
 - The backfill launches a wave only when `canBuild()` (`scripts/lib/usage.mjs`) allows it.
 - Before any commit touching `site/`, `scripts/` or `.github/`: `node scripts/security-check.mjs`. Before the PR: `npm run ci`. Bump `BUILD.version` and `BUILD.date` in `site/app.js` (rule 8).
@@ -44,7 +44,7 @@
 **Interfaces:**
 - Consumes: `NOCODE`, `figuresIn` from `scripts/lib/validate.mjs`; `txt`, `clip` from `scripts/orkl.mjs`.
 - Produces:
-  - `export const BY = "CyberView AI (a Claude model)"`
+  - `export const BY = "CyberView Tools AI"`
   - `export const KINDS = ["actor-campaign","malware-analysis","vulnerability","incident","overview","not-a-threat-report"]`
   - `export const SECTIONS = ["who","targets","methods","operations","takeaway"]`
   - `export const QUOTE_MAX = 160`
@@ -429,7 +429,7 @@ test("siteCard: unread and no-text cards publish nothing", () => { /* null twice
 **Interfaces:**
 - Consumes: `data/orkl-index.json` (`k`, `st` flags), `data/library/cards/<xx>.json`, `data/library/stories/<key>.json`, `data/library/stories.json`.
 - Behaviour:
-  - **Report record:** when the row has `k`, fetch its shard and show "What this report says" (the summary), then Who, Targets, Tools and CVEs (CVEs linked as the event write-ups link them), the byline `CyberView AI (a Claude model)`, and "Read from part of the report" when `p`. Without `k`: the line "CyberView has not summarised this report." The ORKL and PDF links stay as they are.
+  - **Report record:** when the row has `k`, fetch its shard and show "What this report says" (the summary), then Who, Targets, Tools and CVEs (CVEs linked as the event write-ups link them), the byline `CyberView Tools AI`, and "Read from part of the report" when `p`. Without `k`: the line "CyberView has not summarised this report." The ORKL and PDF links stay as they are.
   - **Actor record:** when the actor has `st`, fetch and render the story above the existing aliases, tools and report list: headline, in-short, byline with "from N reports · reviewed <date>", each section under a plain heading (`who` "Who they are", `targets` "Who they go after", `methods` "How they work", `operations` "Notable operations", `takeaway` "What defenders should take from it"), each sentence followed by its numbered citations, and a numbered Sources list linking to the report's Library record (`#r=<sha1>`). A `catalogue` cite renders as "ORKL catalogue" linking to the actor's ORKL profile.
   - **Loose stories:** open from a report record ("Part of the story: <headline>") and from Featured reads, in the same story view; URL `#story=<key>`, which opens directly like `#r=` and `#ta=` do.
   - **Report an error:** every story ends with a "Report an error" link to the same destination `site/community.html` uses for it (line 73).

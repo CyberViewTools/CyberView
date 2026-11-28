@@ -253,7 +253,7 @@ export async function buildReport({ src, scope, scopeFile, scopeHash, allowPubli
     "Detection only: versions were read from what each service states about itself. A service can hide or misstate its version, and a Linux distribution's package can carry a backported fix under an old version number; confidence says which.",
     "Matching uses CyberView's known-exploited flaws (CISA's KEV catalog with NVD's affected-version ranges) and recent high-risk flaws; a flaw outside them is not reported. A clean result is not proof that a host has no vulnerabilities.",
     "The CyberView rating is the CVSS base score adjusted for exploitation evidence (CVSS v3.1 Exploit Code Maturity), the same calculation as the Vulnerabilities page; every point is listed with each finding.",
-    "Exploitation analyses and fix guides on the linked pages are written by CyberView AI (a Claude model) from vendor and government sources.",
+    "Exploitation analyses and fix guides on the linked pages are written by CyberView Tools AI from vendor and government sources.",
   ];
   if (cites && !cites.available && found.length) notes.push("--data-incidents was given, but the data source has no event archive (make the snapshot with: data --data-incidents); no incidents were cited.");
   if (rows.size < want.length) notes.push(`${want.length - rows.size} matched CVE(s) had no CVE lookup row in the data used; their rating is computed from the KEV entry alone (marked in each finding).`);

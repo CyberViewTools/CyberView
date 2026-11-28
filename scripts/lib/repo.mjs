@@ -27,6 +27,20 @@ export function trackDataBranch(root = ROOT) {
 }
 const run = (cwd, args, ms = 120000) => spawnSync("git", args, { cwd, encoding: "utf8", timeout: ms, maxBuffer: 64 * 1024 * 1024 });
 
+/** Automated commits are made as cyberview-bot, never as the AI assistant a cloud session is signed in as (owner,
+ *  2026-11-28: the code is his; no commit, patch or pull request is credited to Claude). When this checkout's own git
+ *  identity is unset or is an anthropic.com address, the bot identity is set for this process and every git it starts.
+ *  A person's own identity (any other address) is left alone. Returns true when it set the bot identity. */
+export const BOT = Object.freeze({ name: "cyberview-bot", email: "cyberview-bot@users.noreply.github.com" });
+export function isAssistantEmail(email) { return !String(email || "").trim() || /@anthropic\.com$/i.test(String(email).trim()); }
+export function useBotIdentity(cwd = ROOT, env = process.env) {
+  const email = (run(cwd, ["config", "user.email"]).stdout || "").trim();
+  if (!isAssistantEmail(email)) return false;
+  for (const k of ["AUTHOR", "COMMITTER"]) { env[`GIT_${k}_NAME`] = BOT.name; env[`GIT_${k}_EMAIL`] = BOT.email; }
+  return true;
+}
+useBotIdentity();
+
 /** "branch" when ROOT/data is its own git checkout of the data branch, else "main". */
 export function dataMode(root = ROOT) {
   const d = join(root, "data");

@@ -5,7 +5,7 @@ source links to a cyberattack. Scripts collect, track and verify; agents only ju
 Rules that do not change: CLAUDE.md rule 9 (context layers: neutral ink, dashed, "context, not a cyber event", parser with
 unit tests, `CTX_DEFS` entry, `cleanCtx` branch with a link host allowlist) and the data rule "Outages are category `outage`
 and are never called attacks unless an official source says so". Every AI-written text is labelled
-"CyberView AI (a Claude model)". Do not work around sites that block automated readers.
+"CyberView Tools AI". Do not work around sites that block automated readers.
 
 ## Pipeline (one cycle, inside the research loop `run-job.mjs flow`, and every 30 min from collect.yml as backup)
 ```
@@ -59,7 +59,7 @@ unknown|investigat and peak >= research_suspicious_customers), `grid_level` (lev
 `small`.
 
 `data/grid/research.json` (lane B writes, through apply only): `{ <incident id>: { decision, cause_summary (<=300),
-sources: [https urls], read_depth: "full"|"summary"|"secondary", checked_at, tries, by: "CyberView AI (a Claude model)",
+sources: [https urls], read_depth: "full"|"summary"|"secondary", checked_at, tries, by: "CyberView Tools AI",
 final (bool), next_at } }`.
 Decisions: `weather`, `equipment`, `planned`, `supply_shortfall`, `wildfire_safety`, `third_party`, `cyber_official`,
 `cyber_reported`, `under_investigation`, `unknown`. `under_investigation` and `unknown` are not final: retried after

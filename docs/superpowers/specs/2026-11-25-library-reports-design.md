@@ -143,7 +143,7 @@ Actor catalogue > TraderTraitor   (stories without an actor open the same way fr
 ┌────────────────────────────────────────────────────────────┐
 │ <headline>                                                 │
 │ <in short, one line>                                       │
-│ CyberView AI (a Claude model) · from 34 reports ·          │
+│ CyberView Tools AI · from 34 reports ·          │
 │ reviewed 2 Dec 2026                                        │
 │                                                            │
 │ Who they are ...................................... [1][4] │

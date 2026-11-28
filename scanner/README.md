@@ -430,7 +430,7 @@ Each finding shows the CVE, where it was seen (address, port, product, the versi
   confidence under its product, so you still see it as something to check — it just stays out of the headline counts.
 - **Fix**: the fixed versions (from NVD's ranges and the vendor's advisory), workarounds, CISA's required action, the
   vendor advisory's link, and the CVE's page on CyberView. Check steps, signs of compromise and detection resources are
-  linked there, not copied. Exploitation analyses and fix guides are written by CyberView AI (a Claude model) from vendor
+  linked there, not copied. Exploitation analyses and fix guides are written by CyberView Tools AI from vendor
   and government sources, and say so.
 - **Hunt**: links to publishers' detection files for the CVE (Sigma, YARA, STIX and so on), links only; their contents
   are never downloaded or copied.

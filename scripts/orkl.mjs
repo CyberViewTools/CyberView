@@ -225,7 +225,7 @@ export function libraryIndex(reports, actors, builtAt = "", links = {}) {
 
 /* ---------- Library output: reviewed stories and read fact cards (values only), written to site/data ---------- */
 // the one byline every Library story carries (the same constant as BY in scripts/lib/library-check.mjs, which a test pins)
-export const STORY_BY = "CyberView AI (a Claude model)";
+export const STORY_BY = "CyberView Tools AI";
 const SHA1 = /^[0-9a-f]{40}$/;
 const SKEY = /^[A-Za-z0-9-]{1,70}$/;
 const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);

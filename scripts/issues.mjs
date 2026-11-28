@@ -50,7 +50,7 @@ function main() {
     const i = issues.find((x) => x.number === n);
     if (!i || !kindOf(i)) { console.error(`#${num} is not an issue this desk handles (see: node scripts/issues.mjs list)`); process.exit(1); }
     if (!text) { console.error("a reply text is required"); process.exit(1); }
-    gh(["-X", "POST", `repos/${REPO}/issues/${n}/comments`, "--input", "-"], JSON.stringify({ body: `${text}\n\n_CyberView AI (a Claude model), verify desk._` }));
+    gh(["-X", "POST", `repos/${REPO}/issues/${n}/comments`, "--input", "-"], JSON.stringify({ body: `${text}\n\n_CyberView Tools AI, verify desk._` }));
     if (close) gh(["-X", "PATCH", `repos/${REPO}/issues/${n}`, "--input", "-"], JSON.stringify({ state: "closed", state_reason: "completed" }));
     console.log(`issues: replied on #${n}${close ? " and closed it" : ""}`);
     return;

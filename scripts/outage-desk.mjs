@@ -24,7 +24,7 @@ import { claim, readLeases, RUN_ID } from "./lib/lease.mjs";
 import { badSource, regDomain, OFFICIAL_HOST, newsCandidates, NATIONWIDE } from "./grid-desk.mjs";
 import { outageRecheck, outageSeen } from "./lib/gates.mjs";
 
-export const BY = "CyberView AI (a Claude model)";
+export const BY = "CyberView Tools AI";
 export const DECISIONS = ["confirmed", "not_confirmed", "cyber_lead"];
 export const KINDS = ["power", "internet", "service"];
 export const DEPTHS = ["full", "summary", "secondary"];

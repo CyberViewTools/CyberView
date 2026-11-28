@@ -108,7 +108,7 @@ export function findings(hosts, flaws, rows, { today = new Date().toISOString().
         fixed_in: [...fixed].sort(W.cmp).slice(-6), vendor_fixed: g ? g.fixed : [], workaround: g ? g.workaround : [], cisa_required_action: f.required,
         advisory: g ? g.advisory : null, references: f.refs, details: pageFor(f.cve),
         details_note: "Check steps, signs of compromise and detection resources are on CyberView's page for this CVE (linked, not copied).",
-        analysis: f.analysis ? { url: pageFor(f.cve), by: "CyberView AI (a Claude model)" } : null,
+        analysis: f.analysis ? { url: pageFor(f.cve), by: "CyberView Tools AI" } : null,
       },
     });
   }

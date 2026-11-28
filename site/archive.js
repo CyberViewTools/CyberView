@@ -90,7 +90,7 @@
     var g = c.group + "\u2019s leak-site claim" + (c.claimed ? " of " + fmt(c.claimed) : "");
     var t = { confirmed_by_victim: "confirmed by " + c.by + " \u2014 " + g, reported: "reported by publishers, not confirmed by the organisation \u2014 " + g,
       denied: "the organisation denies " + g, unconfirmed: "nothing beyond " + g + " was found; it will be checked again", not_found: "the organisation in " + g + " could not be identified" }[c.decision];
-    var p = el("p", "note ccheck", "Checked by CyberView AI (a Claude model): " + t + (c.summary ? ". " + c.summary : ""));
+    var p = el("p", "note ccheck", "Checked by CyberView Tools AI: " + t + (c.summary ? ". " + c.summary : ""));
     if (c.url) { p.appendChild(document.createTextNode(" ")); var a = el("a", null, "source"); a.href = safeUrl(c.url); a.target = "_blank"; a.rel = "noopener noreferrer"; p.appendChild(a); }
     if (c.at) { var w = ago(c.at); if (w) p.appendChild(document.createTextNode(" \u00b7 checked " + w)); }
     return p;
@@ -135,7 +135,7 @@
       box.appendChild(m);
     }
     if (e.summary) box.appendChild(el("p", full ? "arsum" : null, e.summary));
-    box.appendChild(el("p", "note", "Researched and written by CyberView AI (a Claude model) from the sources listed."));
+    box.appendChild(el("p", "note", "Researched and written by CyberView Tools AI from the sources listed."));
     var cc = cleanClaimCheck(e.claim_check); if (cc) box.appendChild(claimNode(cc));
     if (e.action) { var p = el("p", full ? "aract" : null); p.appendChild(el("strong", null, "What to do: ")); p.appendChild(document.createTextNode(e.action)); box.appendChild(p); }
     if (e.actor) box.appendChild(el("p", null, "Actor: " + e.actor));

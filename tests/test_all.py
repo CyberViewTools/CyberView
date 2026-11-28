@@ -122,7 +122,7 @@ async def main():
                 await pg.locator("#feed .card .head").nth(4).click()
                 await pg.wait_for_timeout(700)
                 ok(f"{th}: detail opens", await pg.is_visible("#detail") and not await pg.is_visible("#feed"))
-                ok(f"{th}: v1.37 an event says it was written by CyberView AI (a Claude model)", "CyberView AI (a Claude model)" in (await pg.inner_text("#dcard")))
+                ok(f"{th}: v1.37 an event says it was written by CyberView Tools AI", "CyberView Tools AI" in (await pg.inner_text("#dcard")))
                 t1 = await pg.inner_text("#dcard .ttl")
                 await pg.keyboard.press("j")
                 await pg.wait_for_timeout(600)
@@ -251,7 +251,7 @@ async def main():
             ok("archive: Recently filed shows no Show-all button for one item", await pg2.locator("#recentAll").is_hidden())
             await pg2.locator("#recentList .row button").first.click(); await pg2.wait_for_timeout(600)
             atx = await pg2.inner_text("#recentList .more-info")
-            ok("claims desk: the archive shows the check on the event it names", "Checked by CyberView AI (a Claude model): confirmed by Org A \u2014 Play<b id=pwnc2>\u2019s leak-site claim" in atx and await pg2.locator("#pwnc2").count() == 0
+            ok("claims desk: the archive shows the check on the event it names", "Checked by CyberView Tools AI: confirmed by Org A \u2014 Play<b id=pwnc2>\u2019s leak-site claim" in atx and await pg2.locator("#pwnc2").count() == 0
                and await pg2.eval_on_selector_all("#recentList .ccheck a", "as => as.map(a => a.getAttribute('href'))") == ["https://orga.example/notice/incident"], atx)
             await ctx2.close()
 
@@ -346,7 +346,7 @@ async def main():
             stages = await pg.eval_on_selector_all("#flow > li.fstage", "ls => ls.map(l => [l.dataset.stage, l.querySelector('.fnum').textContent])")
             ok("status flow: 7+ stages in order, each with a number", len(stages) >= 7 and [k for k, _ in stages] == ["sources", "leads", "stories", "rule", "ai", "published", "review", "map"] and all(any(ch.isdigit() for ch in n) for _, n in stages), stages)
             ok("status flow: arrows are decorative, every stage is a list item with readable text", await pg.locator("#flow .farrow").count() == len(stages) - 1 and await pg.locator("#flow .farrow:not([aria-hidden=true])").count() == 0 and await pg.evaluate("document.getElementById('flow').tagName") == "OL")
-            ok("status flow: the AI stage names the model and the rule stage its reasons", "CyberView AI (a Claude model)" in await pg.text_content("#flow li[data-stage=ai]") and await pg.locator("#flow li[data-stage=rule] .freasons li").count() >= 1)
+            ok("status flow: the AI stage names the model and the rule stage its reasons", "CyberView Tools AI" in await pg.text_content("#flow li[data-stage=ai]") and await pg.locator("#flow li[data-stage=rule] .freasons li").count() >= 1)
             ok("status flow: says unchecked reports stay off the globe", "being checked" in await pg.text_content("#secFlow"))
             ok("status sources: tier, collector, region, language and publishers, one-colour bars with counts", await pg.locator("#from [data-from]").count() == 5 and len(set(await pg.eval_on_selector_all("#from .hfill", "fs => fs.map(f => getComputedStyle(f).backgroundColor)"))) == 1
                and await pg.locator("#from [data-from=publishers] .hrow").count() >= 1 and all(any(ch.isdigit() for ch in v) for v in await pg.eval_on_selector_all("#from .hval", "vs => vs.map(v => v.textContent)")))
@@ -580,7 +580,7 @@ async def main():
             ok("layers: disruptions shade the country", await pg.locator("path.country.dis").count() == 1)
             # v1.61: the outage desk's check shown on the disruption it checked; an unknown decision dropped; the rest unchecked
             ltxt = await pg.inner_text("#layers")
-            ok("outage desk: an IODA country shows the AI check, confirmed by whom", "Checked by CyberView AI (a Claude model): confirmed by Orange<img src=x id=pwn9>" in ltxt and "fibre cut" in ltxt and "someone else" not in ltxt and await pg.locator("#pwn9").count() == 0, ltxt[-500:])
+            ok("outage desk: an IODA country shows the AI check, confirmed by whom", "Checked by CyberView Tools AI: confirmed by Orange<img src=x id=pwn9>" in ltxt and "fibre cut" in ltxt and "someone else" not in ltxt and await pg.locator("#pwn9").count() == 0, ltxt[-500:])
             ok("outage desk: an unknown decision is dropped and the signal stays unchecked", "hacked" not in ltxt and "A measurement, not checked by CyberView." in ltxt)
             lh = await pg.eval_on_selector_all("#layers .ocheck a", "as => as.map(a => a.getAttribute('href'))")
             ok("outage desk: the check links the confirming page", lh == ["https://newsroom.orange.com/fibre-incident-2026/"], lh)
@@ -749,7 +749,7 @@ async def main():
             ok("grid: layer toggle shows and is on", await chip.count() == 1 and await chip.get_attribute("aria-pressed") == "true")
             txt = await pg.inner_text("#layers")
             ok("grid: list renders the biggest incident with customers and cause as reported", "Hydro-Québec: 152,300 customers without power" in txt and "152K customers without power" in txt and "cause as reported: Vegetation" in txt, txt[-600:])
-            ok("grid: the cause check is labelled as AI-written", "Cause checked by CyberView AI (a Claude model): weather" in txt and "someone else" not in txt)
+            ok("grid: the cause check is labelled as AI-written", "Cause checked by CyberView Tools AI: weather" in txt and "someone else" not in txt)
             ok("grid: an unknown decision is dropped", "hacked" not in txt)
             ok("grid: says it is context", "Context, not cyber events" in txt)
             ok("grid: names are text, injected markup stays text", "<img src=x id=pwn>Eskom" in txt and await pg.locator("#pwn").count() == 0 and await pg.locator("#layers img").count() == 0)
@@ -801,7 +801,7 @@ async def main():
             ok("grid view: biggest first", names[:2] == ["Hydro-Québec: 152,300 customers without power", "UK Power Networks: 9,000 customers without power"] and names[5:] == ["BC Hydro: 1,399 customers without power (planned work)", "Hydro-Québec: 158 customers without power"], names)
             first = await pg.inner_text("#gRows li >> nth=0")
             ok("grid view: a row has operator, place, customers, started, cause as reported", all(t in first for t in ["Hydro-Québec", "Quebec, Canada", "152,300 customers without power", "started 3 h ago", "Cause as reported: Vegetation"]), first)
-            ok("grid view: the cause check is labelled as AI-written", "Cause checked by CyberView AI (a Claude model): weather" in first and "someone else" not in gtxt)
+            ok("grid view: the cause check is labelled as AI-written", "Cause checked by CyberView Tools AI: weather" in first and "someone else" not in gtxt)
             ok("grid view: analysis notes on the row", "seen also by: internet measurements (IODA) · news reports (2)" in first and "unusual for this hour of the week" in first, first)
             _pl = [t for t in await pg.locator("#gRows li").all_text_contents() if "planned work" in t.lower()]
             ok("grid view: planned work labelled once per row", len(_pl) == 1 and _pl[0].lower().count("planned work") == 1, _pl)
@@ -832,9 +832,9 @@ async def main():
             nrows = await pg.locator("#gNews li.gn").all_text_contents()
             ok("grid news: a 'Reported in the news, not checked' section with one row per reported outage, broken items dropped", "Reported in the news, not checked" in ntxt and len(nrows) == 3 and "Nowhere" not in ntxt, nrows)
             ok("grid news: every row the outage desk has not checked says it is not checked by CyberView", all("Not checked by CyberView" in r for r in nrows if "Toronto" not in r), nrows)
-            ok("outage desk: a checked report says who confirmed it, labelled as AI-written", "Checked by CyberView AI (a Claude model): confirmed by Toronto Hydro" in nrows[1] and "Not checked by CyberView" not in nrows[1] and "checked 1 h ago" in nrows[1], nrows[1])
+            ok("outage desk: a checked report says who confirmed it, labelled as AI-written", "Checked by CyberView Tools AI: confirmed by Toronto Hydro" in nrows[1] and "Not checked by CyberView" not in nrows[1] and "checked 1 h ago" in nrows[1], nrows[1])
             ok("outage desk: an unknown decision is dropped (the report stays unchecked)", "hacked" not in nrows[2] and "Checked by" not in nrows[2], nrows[2])
-            ok("outage desk: the news count says how many were checked", "1 checked by CyberView AI (a Claude model)" in await pg.inner_text("#gNewsCount"))
+            ok("outage desk: the news count says how many were checked", "1 checked by CyberView Tools AI" in await pg.inner_text("#gNewsCount"))
             ok("grid news: strongest first (most publishers)", "Kyiv" in nrows[0] and "Toronto" in nrows[1] and "Glasgow" in nrows[2], nrows)
             ok("grid news: the figure with its unit as reported, a bare number says so", "120,000 customers without power, as reported" in nrows[1] and "3,400 without power, as reported (the report does not say customers, homes or people)" in nrows[2], nrows)
             ok("grid news: publishers named; cause words as reported, not confirmed; unknown words dropped", "Reported by: <img src=x id=pwn5>Kyiv Post, Ukrainska Pravda, Suspilne" in nrows[0] and "Words in the reports: attack, drone (as reported, not confirmed)" in nrows[0] and "<b>bad</b>" not in ntxt, nrows[0])
@@ -854,7 +854,7 @@ async def main():
             await pg.locator("#gNews li.gn", has_text="Toronto").click(); await pg.wait_for_timeout(1100)
             ok("grid news: a row turns the globe to it with its tooltip", "Reported in the news: Toronto" in (await pg.text_content("#tip") or "") and await pg.locator("#svg g.gnews.gsel").count() == 1 and await pg.locator("#gNews li.on").count() == 1)
             ttip = await pg.text_content("#tip") or ""
-            ok("outage desk: the ring's tooltip carries the check, still context", "Checked by CyberView AI (a Claude model): confirmed by Toronto Hydro" in ttip and "not checked by CyberView" not in ttip and "context, not a cyber event" in ttip, ttip)
+            ok("outage desk: the ring's tooltip carries the check, still context", "Checked by CyberView Tools AI: confirmed by Toronto Hydro" in ttip and "not checked by CyberView" not in ttip and "context, not a cyber event" in ttip, ttip)
             await pg.click("#gseg [data-gf=unplanned]"); await pg.wait_for_timeout(150)
             un = await pg.locator("#gRows li .gname").all_text_contents()
             ok("grid view: Unplanned only drops planned work, on the globe too", len(un) == 6 and not any("planned work" in n for n in un) and await pg.locator("#svg g.gridm.out").count() == 1, un)
@@ -914,8 +914,8 @@ async def main():
             ok("grid sources: not connected is neutral, not a fault", ncb and all("neutral" in c.split() and "warn" not in c.split() and "bad" not in c.split() for c in ncb), ncb)
             ok("grid sources: a failing public source is a fault with its error", any(r.startswith("Not loading") and "UK Power Networks" in r and "HTTP 503" in r for r in src) and sum(1 for r in src if r.startswith("Working")) == 4, src)
             ok("grid sources: injected markup stays out", await pg.locator("#pwn3").count() == 0)
-            ok("outage desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Outage desk (CyberView AI (a Claude model)): 3 outage reports waiting for a check; 5 checked in 24 h (2 confirmed, 1 cyber lead passed to research)" in r and "last run" in r for r in rows), rows)
-            ok("claims desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Claims desk (CyberView AI (a Claude model)): 40 leak-site claims waiting for a check; 9 checked in 24 h (2 confirmed by the organisation, 3 reported, 1 denied)" in r and "last run" in r for r in rows), rows)
+            ok("outage desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Outage desk (CyberView Tools AI): 3 outage reports waiting for a check; 5 checked in 24 h (2 confirmed, 1 cyber lead passed to research)" in r and "last run" in r for r in rows), rows)
+            ok("claims desk: status page row with the queue and the day's checks", any(r.startswith("OK") and "Claims desk (CyberView Tools AI): 40 leak-site claims waiting for a check; 9 checked in 24 h (2 confirmed by the organisation, 3 reported, 1 denied)" in r and "last run" in r for r in rows), rows)
             ok("grid: status page without script errors", not errs, errs)
             await pg.context.close()
             pg, errs = await open_page(browser, url.replace("index.html", "trends.html"), wait=1000)
@@ -930,7 +930,7 @@ async def main():
             ok("grid trends: caveats underneath", "operator-reported" in cav and "six operators only" in cav and "not cyber events" in cav and await pg.evaluate("(() => { const b = document.getElementById('gridBars'), c = document.querySelector('#grid .gcav'); return !!(b.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING); })()"), cav)
             gtxt = await pg.inner_text("#grid")
             ok("grid trends: incidents opened and the largest shown", "4 incidents opened" in gtxt and "largest: Hydro-Québec: 152,300 customers without power" in gtxt and "this week 700K, week before 112K" in gtxt, gtxt[:600])
-            ok("grid trends: AI-checked cause labelled", "checked by CyberView AI (a Claude model): weather" in gtxt)
+            ok("grid trends: AI-checked cause labelled", "checked by CyberView Tools AI: weather" in gtxt)
             ok("grid trends: injected markup stays text", "<img src=x id=pwn4>London" in gtxt and await pg.locator("#pwn4").count() == 0 and await pg.locator("#grid img").count() == 0)
             tt = await pg.locator("#gridBars .gbar").first.get_attribute("title")
             ok("grid trends: causes mix in the tooltip", "Causes as reported: Vegetation (120K), Equipment failure (30K)" in tt, tt)
@@ -1017,7 +1017,7 @@ async def main():
             top = min(acc, key=lambda s: s["priority"])
             ok("access: ask-first starts with priority 1", top["operator"] in await pg.locator("#askFirst li").first.inner_text())
             ok("access: says it never sends anything", "never sends anything" in await pg.inner_text("#request"))
-            ok("access: AI-compiled list labelled", "CyberView AI (a Claude model)" in await pg.inner_text("main"))
+            ok("access: AI-compiled list labelled", "CyberView Tools AI" in await pg.inner_text("main"))
             await pg.select_option("#fWhy", "robots")
             n_rob = sum(1 for s in acc if s["why_not"] == "robots")
             ok("access: reason filter", await pg.locator("#sources tr[data-why]:visible").count() == n_rob and f"Showing {n_rob} of" in await pg.inner_text("#fCount"))
@@ -1321,12 +1321,12 @@ async def main():
             # v1.63: the claims desk's check, labelled as written by CyberView AI, text only, never a leak-site link
             await pg.evaluate(f"location.hash='e={dst['id']}'"); await pg.wait_for_timeout(1200)
             ct = await pg.inner_text("#dcard")
-            ok("claims desk: a confirmed claim says who confirmed it and whose claim it was, labelled as AI-written", "Checked by CyberView AI (a Claude model): confirmed by Riverside General Hospital" in ct
+            ok("claims desk: a confirmed claim says who confirmed it and whose claim it was, labelled as AI-written", "Checked by CyberView Tools AI: confirmed by Riverside General Hospital" in ct
                and "Akira<img src=x id=pwnc1>\u2019s leak-site claim of" in ct and "someone else" not in ct and "checked 2 h ago" in ct and await pg.locator("#pwnc1").count() == 0, ct[-700:])
             ok("claims desk: the check links the confirming page", await pg.eval_on_selector_all("#dcard .ccheck a", "as => as.map(a => a.getAttribute('href'))") == ["https://www.riversidegeneral.org/notice/cyber-incident"])
             await pg.evaluate(f"location.hash='e={clv['id']}'"); await pg.wait_for_timeout(1200)
             ct2 = await pg.inner_text("#dcard")
-            ok("claims desk: a claimed event shows the check; a leak site or claim tracker is never linked", "Checked by CyberView AI (a Claude model): reported by publishers, not confirmed by the organisation" in ct2
+            ok("claims desk: a claimed event shows the check; a leak site or claim tracker is never linked", "Checked by CyberView Tools AI: reported by publishers, not confirmed by the organisation" in ct2
                and "Qilin\u2019s leak-site claim" in ct2 and await pg.locator("#dcard .ccheck a").count() == 0 and await pg.locator("#dcard a[href*='ransomware.live']").count() == 0, ct2[-700:])
             await pg.evaluate(f"location.hash='e={unk['id']}'"); await pg.wait_for_timeout(1200)
             ok("claims desk: an unknown decision shows no check", await pg.locator("#dcard .ccheck").count() == 0 and "stolen" not in await pg.inner_text("#dcard"))
@@ -2053,14 +2053,14 @@ async def main():
                     "by": "someone else <i>", "reviewed_at": "2026-11-24T10:00:00Z", "n": 2, "stale": True,
                     "src": [{"sha1": sh(10), "title": "Report 10", "authors": ["A. Writer"], "year": "2024"}, {"sha1": sh(20), "title": "Report 20", "authors": [], "year": "2023"}]}
         story_loose = {"key": "loose-one", "kind": "subject", "name": "Loader family", "headline": "The loader family nobody named", "in_short": "A loader seen in three reports.",
-                       "sections": [{"h": "methods", "sentences": [sent("It arrives by email.", sh(15))]}], "by": "CyberView AI (a Claude model)",
+                       "sections": [{"h": "methods", "sentences": [sent("It arrives by email.", sh(15))]}], "by": "CyberView Tools AI",
                        "reviewed_at": "2026-11-25T09:00:00Z", "n": 1, "src": [{"sha1": sh(15), "title": "Report 15", "authors": [], "year": "2024"}]}
         story_evil = {"key": "evil-one", "kind": "subject", "name": "Evil", "headline": "<img src=x id=pwnS onerror=alert(1)>", "in_short": "<b>bold</b>",
-                      "sections": [{"h": "who", "sentences": [sent("<img src=x id=pwnT onerror=alert(2)> text", sh(16))]}], "by": "CyberView AI (a Claude model)",
+                      "sections": [{"h": "who", "sentences": [sent("<img src=x id=pwnT onerror=alert(2)> text", sh(16))]}], "by": "CyberView Tools AI",
                       "reviewed_at": "2026-11-22T09:00:00Z", "n": 1, "src": [{"sha1": sh(16), "title": "<script>x</script>", "authors": [], "year": "2024"}]}
         story_pp = {"key": "plain-panda", "kind": "actor", "name": "Plain Panda", "headline": "Plain Panda in the catalogue", "in_short": "A catalogue-only profile.",
                     "sections": [{"h": "takeaway", "sentences": [sent("Watch for its tools.", sh(20))]}, {"h": "who", "sentences": [sent("Plain Panda is listed in the catalogue.", "catalogue")]}],
-                    "by": "CyberView AI (a Claude model)", "reviewed_at": "2026-11-20T09:00:00Z", "n": 1, "src": [{"sha1": sh(20), "title": "Report 20", "authors": [], "year": "2023"}]}
+                    "by": "CyberView Tools AI", "reviewed_at": "2026-11-20T09:00:00Z", "n": 1, "src": [{"sha1": sh(20), "title": "Report 20", "authors": [], "year": "2023"}]}
         lib_dir = os.path.join(site_lib, "data", "library"); os.makedirs(os.path.join(lib_dir, "cards"), exist_ok=True); os.makedirs(os.path.join(lib_dir, "stories"), exist_ok=True)
         json.dump(cards, open(os.path.join(lib_dir, "cards", "00.json"), "w"))
         for st in (story_fb, story_loose, story_evil, story_pp): json.dump(st, open(os.path.join(lib_dir, "stories", st["key"] + ".json"), "w"))
@@ -2101,7 +2101,7 @@ async def main():
             # Task 8: summaries, stories, Featured reads
             pg, errs = await open_page(browser, url.replace("index.html", "library.html#r=" + sh(7)), wait=1200)
             det = await pg.inner_text("#det")
-            ok("library: a read report shows its summary and the AI byline", "What this report says" in det and "Fixture Bear <b>used</b> a loader" in det and "CyberView AI (a Claude model)" in det
+            ok("library: a read report shows its summary and the AI byline", "What this report says" in det and "Fixture Bear <b>used</b> a loader" in det and "CyberView Tools AI" in det
                and "Read from part of the report" in det and "ToolOne" in det and "Canada" in det and await pg.locator("#det b").count() == 0
                and await pg.locator("#det a[href='https://nvd.nist.gov/vuln/detail/CVE-2026-1111']").count() == 1 and "not-a-cve" not in det, det[:500])
             ok("library: a summary has the same Report an error link a story has", await pg.locator("#det .rcard a.reporterr[href^='https://github.com/xanderhutch/CyberView/issues/new?template=event-report.yml'][href*='Library%20summary%20" + sh(7) + "']").count() == 1)
@@ -2207,14 +2207,14 @@ async def main():
             pg, errs = await open_page(browser, url + "#e=" + ev_s["id"], wait=1800)
             card = await pg.inner_text("#dcard")
             ok("classify: an event's own sectors show with their basis", "Healthcare and public health · stated by the source" in card, card[-400:])
-            ok("classify: an event's own surface shows as inferred by CyberView AI", "Internet-facing appliance (VPN, firewall, gateway) · inferred by CyberView AI (a Claude model)" in card)
+            ok("classify: an event's own surface shows as inferred by CyberView AI", "Internet-facing appliance (VPN, firewall, gateway) · inferred by CyberView Tools AI" in card)
             await pg.evaluate("id => { location.hash = 'e=' + id; }", ev_k["id"]); await pg.wait_for_timeout(700)
             card = await pg.inner_text("#dcard")
             ok("classify: without the fields, the keyword placement is labelled keyword-assigned", "Network edge · keyword-assigned, can be wrong" in card and "Government · keyword-assigned, can be wrong" in card, card[-400:])
             await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
             await pg.click("[data-view=time]"); await pg.wait_for_timeout(900)
             note = await pg.locator("#viz p.basis[data-basis=layer]").all_inner_texts()
-            ok("classify: the swimlanes count stated, inferred and keyword-assigned placements", len(note) == 1 and "stated by the source" in note[0] and "inferred by CyberView AI (a Claude model)" in note[0] and "keyword-assigned" in note[0], note)
+            ok("classify: the swimlanes count stated, inferred and keyword-assigned placements", len(note) == 1 and "stated by the source" in note[0] and "inferred by CyberView Tools AI" in note[0] and "keyword-assigned" in note[0], note)
             await pg.click("[data-view=graph]"); await pg.wait_for_timeout(900)
             cav = " ".join(await pg.locator("#viz .cav").all_inner_texts())
             ok("classify: the correlation view's flow and matrix say where rows came from", "Rows: Attack surface:" in cav and "keyword-assigned from the wording" in cav and "assigned from wording" not in cav, cav[-300:])

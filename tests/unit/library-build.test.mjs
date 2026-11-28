@@ -8,7 +8,7 @@ import { BY as CHECK_BY } from "../../scripts/lib/library-check.mjs";
 import { siteCard, siteStory, storyIndex, libraryIndex, siteData, writeLibrarySite, publishLibrary, STORY_BY } from "../../scripts/orkl.mjs";
 
 const h = (c) => c.repeat(40);
-const BY = "CyberView AI (a Claude model)";
+const BY = "CyberView Tools AI";
 const rep = (c, extra = {}) => ({ id: "0000000" + c + "-0000-0000-0000-000000000000", sha1: h(c), title: "Report " + c, authors: ["Jane"], lang: "en", created: "2024-0" + (c === "a" ? 1 : 2) + "-01", file_date: "2023-05-01", sources: ["Malpedia"], actors: ["TT Group"], url: "https://orkl.eu/libraryEntry/0000000" + c + "-0000-0000-0000-000000000000", ...extra });
 const R = [rep("a"), rep("b")];
 const card = (c, extra = {}) => ({ sha1: h(c), status: "read", partial: false, read_at: "2026-11-01T00:00:00Z", model: "haiku", summary: "A summary", kind: "actor-campaign",

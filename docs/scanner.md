@@ -260,7 +260,7 @@ The same rules hold for every fingerprint source (the packs above and the path r
 Each finding carries the fixed versions (the ends of NVD's ranges and the guide's `fixed` list), the guide's workarounds,
 CISA's required action, the vendor advisory link and the CVE's CyberView page. A guide's check steps, signs of
 compromise and hunt resources, and exploitation analyses, are linked, never copied (indicators of compromise stay on the
-page that cites them). AI-written material is labelled "CyberView AI (a Claude model)".
+page that cites them). AI-written material is labelled "CyberView Tools AI".
 
 **Hunt links.** Every finding also lists the publishers' detection files for its CVE (Sigma, YARA, STIX and so on; at
 most 12, https only, CSAF/CVRF/VEX left out), from the guide and workbench data the scanner already loads. They are links
@@ -337,7 +337,7 @@ the state it returned (`affected`, `check`, `clear`, `none`), each with the back
 A CVE the catalog does not hold is reported as absent, with why (the catalog is CISA's known-exploited flaws plus recent
 high-risk ones, not every CVE), plus the CVE lookup row if the snapshot happens to have it. Nothing is invented for it.
 Rule 11 and rule 15 hold: the exploitation analysis, check steps and signs of compromise stay on CyberView's page,
-linked and never copied, and the guide and analysis are labelled as written by CyberView AI (a Claude model).
+linked and never copied, and the guide and analysis are labelled as written by CyberView Tools AI.
 
 ### Matching a list you already hold (`match`, no network)
 

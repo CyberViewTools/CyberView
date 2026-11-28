@@ -234,7 +234,7 @@ const gridNews = (() => {
   const research = existsSync(join(DATA, "grid", "research.json")) ? readJson(join(DATA, "grid", "research.json")) || {} : {};
   const DEC = ["weather", "equipment", "planned", "supply_shortfall", "wildfire_safety", "third_party", "cyber_official", "cyber_reported", "under_investigation", "unknown"];
   const checked = (id) => { const r = research && typeof research === "object" ? research[`grid-news-${id}`] : null;
-    return r && DEC.includes(r.decision) ? { decision: r.decision, summary: String(r.cause_summary || "").slice(0, 300), by: "CyberView AI (a Claude model)" } : null; };
+    return r && DEC.includes(r.decision) ? { decision: r.decision, summary: String(r.cause_summary || "").slice(0, 300), by: "CyberView Tools AI" } : null; };
   return { updated_at: String(d.updated_at || "").slice(0, 30), items: d.items.filter((x) => x && typeof x === "object" && !Array.isArray(x) && Array.isArray(x.publishers)).slice(0, 300)
     .map((x) => { const c = checked(x.id), v = outageDesk ? outageDesk.siteCheck(outageChecks[`pw-${x.id}`]) : null; return { ...x, ...(c ? { checked: c } : {}), ...(v ? { verified: v } : {}) }; }) };
 })();
@@ -563,7 +563,7 @@ const picks = live.filter((e) => e.status !== "claimed" && (e.severity === 3 || 
   .sort((a, b) => (when(a) < when(b) ? 1 : -1)).slice(0, 60);
 const text = (e) => [e.summary, e.action ? `What to do: ${e.action}` : "", (e.cves || []).length ? `CVEs: ${e.cves.join(", ")}` : ""].filter(Boolean).join("\n\n");
 const xml = (v) => String(v == null ? "" : v).replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" }[c])).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
-const AI_BY = "CyberView AI (a Claude model)";   // who writes every summary: the site's AI agents, which are Claude models
+const AI_BY = "CyberView Tools AI";   // who writes every summary: the site's AI agents
 const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>

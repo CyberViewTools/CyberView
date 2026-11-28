@@ -8,12 +8,12 @@
 //
 // It PRINTS nothing it has not read. Exploitation analyses, hunt guidance and indicators of compromise stay on
 // CyberView's own page, linked and never copied (CLAUDE.md rule 11), and anything CyberView wrote is labelled as
-// written by CyberView AI, a Claude model (rule 15).
+// written by CyberView Tools AI (rule 15).
 import { cleanFlaws, rowFor, pageFor } from "./match.mjs";
 import { fingerprintProducts } from "./kev-coverage.mjs";
 import { W, D } from "./shared.mjs";
 
-export const AI_BY = "CyberView AI (a Claude model)";
+export const AI_BY = "CyberView Tools AI";
 const isCve = (s) => /^CVE-\d{4}-\d{4,7}$/i.test(String(s || "").trim());
 
 /** The CVE id as the data files spell it, or "" when it is not a CVE number. */

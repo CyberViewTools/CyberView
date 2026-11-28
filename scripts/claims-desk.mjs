@@ -31,7 +31,7 @@ import { badSource, regDomain, OFFICIAL_HOST } from "./grid-desk.mjs";
 import { norm, hasName } from "./triage.mjs";
 import { claimRecheck } from "./lib/gates.mjs";
 
-export const BY = "CyberView AI (a Claude model)";
+export const BY = "CyberView Tools AI";
 export const DECISIONS = ["confirmed_by_victim", "reported", "denied", "unconfirmed", "not_found"];
 export const FINAL = new Set(["confirmed_by_victim", "reported", "denied", "not_found"]);
 export const DEPTHS = ["full", "summary", "secondary"];

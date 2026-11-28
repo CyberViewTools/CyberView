@@ -11,6 +11,7 @@ import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import "./lib/repo.mjs";   // sets the cyberview-bot commit identity in a cloud session
 
 import { existsSync } from "node:fs";
 // Code and data live on separate branches (scripts/lib/repo.mjs). In a checkout whose ./data is the data branch, this

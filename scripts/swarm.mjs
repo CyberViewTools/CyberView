@@ -15,7 +15,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { ROOT, DATA, readJson, writeJson, listDir, nowIso } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, writeJson, listDir, nowIso, runDays } from "./lib/store.mjs";
 import { build, isOpen } from "./fuse.mjs";
 import { backlog } from "./backlog.mjs";
 import { measure } from "./lib/latency.mjs";
@@ -165,7 +165,7 @@ function board() {
   const paused = readJson(join(SW, "paused.json"), {});
   console.log(`  paused     ${paused.restored_at || !(paused.triggers || []).length ? "none" : (paused.triggers || []).map((t) => t.name).join(", ")}`);
   const runs = join(DATA, "runs"), last = {};
-  if (existsSync(runs)) for (const day of readdirSync(runs).sort().slice(-2)) {
+  for (const day of runDays(runs).slice(-2)) {
     const f = join(runs, day, "jobruns.jsonl"); if (!existsSync(f)) continue;
     for (const l of readFileSync(f, "utf8").split("\n").filter(Boolean)) { try { const r = JSON.parse(l); last[r.job] = r; } catch {} }
   }

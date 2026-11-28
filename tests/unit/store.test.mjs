@@ -28,3 +28,18 @@ test("straysFor: tolerates an empty or missing path list", () => {
   assert.deepEqual(straysFor("x-2026-11", "data/events/2026-11/x-2026-11.json", []), []);
   assert.deepEqual(straysFor("x-2026-11", "data/events/2026-11/x-2026-11.json", undefined), []);
 });
+
+test("runDays lists only day folders: a stray file or folder in data/runs never breaks a reader", async () => {
+  const { runDays, dayAgo } = await import("../../scripts/lib/store.mjs");
+  const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const dir = mkdtempSync(join(tmpdir(), "runs-"));
+  const today = dayAgo(0), old = "2020-01-01";
+  for (const d of [today, old, "notes"]) mkdirSync(join(dir, d));
+  writeFileSync(join(dir, "fix-r1.mjs"), "// a worker's scratch script");
+  writeFileSync(join(dir, "2099-01-01"), "a file named like a day");
+  assert.deepEqual(runDays(dir), [old, today]);
+  assert.deepEqual(runDays(dir, 7), [today]);
+  assert.deepEqual(runDays(join(dir, "missing")), []);
+});

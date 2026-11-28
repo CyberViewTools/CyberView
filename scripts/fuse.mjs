@@ -12,7 +12,7 @@ import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync, rmSyn
 import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, readJson, writeJson, listEventFiles, dayAgo, nowIso, forEachSkipped, readStatus } from "./lib/store.mjs";
+import { DATA, readJson, writeJson, listEventFiles, dayAgo, nowIso, forEachSkipped, readStatus, runDays } from "./lib/store.mjs";
 import { tokens, matchEvent, NOT_EVENT } from "./triage.mjs";
 
 // words too common in this field to tell two stories apart
@@ -207,7 +207,7 @@ function main() {
   if (cmd === "compact") {
     // fold the old one-file-per-closure logs (<HHMM>-stories*.json) into each day's closures.jsonl; nothing is lost
     let files = 0, lines = 0;
-    for (const d of readdirSync(join(DATA, "runs"))) {
+    for (const d of runDays(join(DATA, "runs"))) {
       const dir = join(DATA, "runs", d), old = readdirSync(dir).filter((f) => /^\d{4}-stories(-\d+)?\.json$/.test(f)).sort(); if (!old.length) continue;
       const out = [];
       for (const f of old) { const r = readJson(join(dir, f), {}), sk = r.skipped || []; if (!sk.length) { rmSync(join(dir, f)); files++; continue; }

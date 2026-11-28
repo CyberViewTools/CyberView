@@ -1,0 +1,171 @@
+{
+  "live": null,
+  "next": {
+    "key": "a-a6c351ea-01f1-4c9b-af75-cfbb3b269ed3",
+    "kind": "actor",
+    "name": "Kinsing",
+    "headline": "Kinsing: a Monero-mining campaign that hunts exposed cloud services",
+    "in_short": "Kinsing has been active since 2019. It breaks into misconfigured or unpatched cloud-native services, then runs a Monero miner. Researchers disagree on what Kinsing is, and they name no sponsor.",
+    "sections": [
+      {
+        "h": "who",
+        "sentences": [
+          {
+            "t": "The catalogue lists Money Libra as another name for Kinsing.",
+            "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "Aqua Nautilus says Kinsing first surfaced as a threat in 2019. It says its own Docker API honeypot took the first known attack on December 15, 2019.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "Aqua Nautilus says TrustedSec was first to report on Kinsing, on January 15, 2020. Alibaba Cloud's security team followed a day later and called it h2Miner. Aqua says it named the malware Kinsing in April 2020.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "Aqua Nautilus says it found no single answer on whether Kinsing is one threat actor, a malware name or leaked source code.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "Aqua says infrastructure choices may suggest a link to Russian-speaking countries, which could imply Russian origins. It presents this as a possibility, not a finding.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
+          {
+            "t": "Aqua Nautilus says the campaign targets 75 different applications. It reports that 91% are open source and 67% are runtime applications. It also lists CI/CD tools such as Jenkins.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "Aqua says its Shodan search found 2.5 million instances of the applications Kinsing targets.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "Sysdig describes Kinsing going after misconfigured cloud-native environments and exposed Docker engines.",
+            "cites": [
+              "c59a9712231310a14b27efe4a03041ca31f67049"
+            ]
+          },
+          {
+            "t": "Trend Micro's Redis honeypot captures included Kinsing. They show how Redis instances left open without authentication can be abused for remote code execution.",
+            "cites": [
+              "00dcdb65370a0b56b2e7890e259ec8fb303d6924"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "methods",
+        "sentences": [
+          {
+            "t": "Aqua Nautilus says Kinsing typically exploits vulnerable or misconfigured applications and runs an infection script. It then runs a Monero cryptominer, often hidden by a rootkit.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "According to Aqua, the scripts stop and delete security tools such as SELinux, Aegis and AppArmor. Its analysis found the first script type mainly aims at eliminating competition.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "Sysdig reports that Kinsing's miner, called kdevtmpfsi, ran in the /tmp directory of its honeypot. Kinsing contacted command-and-control servers, downloaded more scripts and spread using SSH keys.",
+            "cites": [
+              "c59a9712231310a14b27efe4a03041ca31f67049"
+            ]
+          },
+          {
+            "t": "Trend Micro reports the Redis sample installed the XMRig Monero miner under the name kdevtmpfsi. It also reports persistence through cron.",
+            "cites": [
+              "00dcdb65370a0b56b2e7890e259ec8fb303d6924"
+            ]
+          },
+          {
+            "t": "Sysdig says a security researcher reported that Kinsing is written in Golang.",
+            "cites": [
+              "c59a9712231310a14b27efe4a03041ca31f67049"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "operations",
+        "sentences": [
+          {
+            "t": "Aqua Nautilus says Kinsing adds new vulnerabilities soon after their release. Its list includes CVE-2019-19781 (Citrix NetScaler), CVE-2020-7961 (Liferay), CVE-2021-44228 (Log4Shell) and CVE-2022-26134 (Confluence).",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "A 2020 round-up of Go malware reports that Alibaba Cloud researchers first reported Kinsing in January 2020. It also says Kinsing was seen exploiting CVE-2020-11651 in May of that year.",
+            "cites": [
+              "349099020900d3186c5c28f63a46351b6f9639b8"
+            ]
+          },
+          {
+            "t": "Aqua says its honeypots were targeted by Kinsing eight times a day on average.",
+            "cites": [
+              "19fa8e4dfc650a5bcfcb504a8f38920f6061c863"
+            ]
+          },
+          {
+            "t": "In a post dated September 14, 2022, Trend Micro described Kinsing being deployed through the older Oracle WebLogic flaw CVE-2020-14882. A crafted request led to a script that disabled security features and removed rival miners.",
+            "cites": [
+              "78ccec1251c3e760af649e5f64e4bd6e0f3301be"
+            ]
+          },
+          {
+            "t": "FortiGuard Labs reported on November 28, 2023 that Kinsing was among several malware families delivered through the Apache ActiveMQ flaw CVE-2023-46604. The report names no attacker group.",
+            "cites": [
+              "15124cd241e97aea5ae626b15070f6ca8fe9d6a7"
+            ]
+          },
+          {
+            "t": "A December 2022 vendor report on a Linux cryptojacking attack says the original routine terminated competing malware such as Kinsing.",
+            "cites": [
+              "00e4140ee83e4a98fd9cf2f4df2a4ee1082fadb7"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "takeaway",
+        "sentences": [
+          {
+            "t": "Patch internet-facing services quickly. Keep Docker, Redis and similar services behind authentication and off the open internet.",
+            "cites": []
+          }
+        ]
+      }
+    ],
+    "status": "rejected",
+    "based_on": "ed97b33050a65e5549ae61106822a564defc83b2",
+    "tries": 1,
+    "by": "CyberView AI (a Claude model)",
+    "written_at": "2026-11-28T00:04:35Z",
+    "writer_model": "sonnet",
+    "reasons": [
+      "unbacked"
+    ],
+    "written_run": "6a322c50"
+  }
+}

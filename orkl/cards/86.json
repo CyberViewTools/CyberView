@@ -335,26 +335,116 @@
   },
   "86386937e41bf38b9841e7283909aa36d152dc14": {
     "sha1": "86386937e41bf38b9841e7283909aa36d152dc14",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:21Z",
+    "read_at": "2026-11-28T00:06:01Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "ESET and CERT-UA analyse an April 2022 attack on a Ukrainian energy provider. Attackers tried to deploy Industroyer2, a new variant of the ICS-capable Industroyer malware, against high-voltage substations, alongside CaddyWiper and Linux/Solaris wipers. ESET assesses with high confidence that Sandworm is responsible. The initial compromise and the move from IT to ICS network are unknown.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "actors": [
+        {
+          "v": "Sandworm",
+          "q": "We assess with high confidence that the APT group Sandworm is responsible for this",
+          "by": "ESET"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "energy",
+          "q": "This ICS-capable malware targets a Ukrainian energy company."
+        },
+        {
+          "v": "bank",
+          "q": "We first discovered CaddyWiper on 2022-03-14 when it was used against a Ukrainian bank"
+        }
+      ],
+      "countries": [
+        {
+          "v": "Ukraine",
+          "q": "The Sandworm attackers made an attempt to deploy the Industroyer2 malware against high-"
+        }
+      ],
+      "dates": [
+        {
+          "v": "2022-04-08",
+          "q": "The destructive actions were scheduled for 2022-04-08",
+          "what": "Scheduled date of the destructive actions against the energy provider"
+        },
+        {
+          "v": "2022-03-14",
+          "q": "2022-03-14: Deployment of CaddyWiper against a Ukrainian bank",
+          "what": "First CaddyWiper deployment"
+        },
+        {
+          "v": "2022-03-23",
+          "q": "It was compiled on 2022-",
+          "what": "Industroyer2 compile date"
+        }
+      ],
+      "tools": [
+        {
+          "v": "Industroyer2",
+          "q": "which we together with CERT-UA named Industroyer2"
+        },
+        {
+          "v": "CaddyWiper",
+          "q": "Sandworm used several destructive malware families including CaddyWiper, ORCSHRED, SOLOSHRED and AWFULSHRED."
+        },
+        {
+          "v": "ARGUEPATCH",
+          "q": "a new loader, named ARGUEPATCH by CERT-UA"
+        },
+        {
+          "v": "ORCSHRED",
+          "q": "CaddyWiper, ORCSHRED, SOLOSHRED and AWFULSHRED."
+        },
+        {
+          "v": "SOLOSHRED",
+          "q": "CaddyWiper, ORCSHRED, SOLOSHRED and AWFULSHRED."
+        },
+        {
+          "v": "AWFULSHRED",
+          "q": "CaddyWiper, ORCSHRED, SOLOSHRED and AWFULSHRED."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "scheduled task",
+          "q": "Sandworm operator creates the scheduled task to launch"
+        },
+        {
+          "v": "Group Policy Object",
+          "q": "It was deployed via Group Policy Object (GPO)"
+        },
+        {
+          "v": "trojanized legitimate software",
+          "q": "ARGUEPATCH is a patched version of a legitimate component of Hex-Rays IDA Pro software"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "8 different IP addresses",
+          "q": "the analyzed sample contains 8 different IP addresses of devices"
+        },
+        {
+          "v": "six officers",
+          "q": "six officers of the Russian Military Unit 74455"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-too-long, value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Industroyer2"
+    },
+    "hedges": [
+      "We assess with high confidence that the APT group Sandworm is responsible for this new attack",
+      "We assess with high confidence that the new variant was built using the same source code.",
+      "At this point, we don’t know how attackers compromised the victim nor how they moved",
+      "The analysis is still on-going in order to determine what are the exact actions taken for each",
+      "We believe that attackers deployed CaddyWiper via a GPO and used the script to check the"
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:54Z",
@@ -368,7 +458,7 @@
     "sha1": "86fa5c6b040131cf4345d0904ab05251cc387246",
     "status": "unread",
     "partial": false,
-    "read_at": "2026-11-27T22:19:47Z",
+    "read_at": "2026-11-28T00:06:12Z",
     "model": "sonnet",
     "summary": "",
     "kind": "",
@@ -384,8 +474,8 @@
     },
     "subject": null,
     "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "reason": "value-not-in-quote, quote-not-in-text",
+    "tries": 2,
     "audit_history": [
       {
         "at": "2026-11-27T16:12:54Z",
@@ -397,26 +487,74 @@
   },
   "86b8c909afd63ec436249037400dd59428798f1d": {
     "sha1": "86b8c909afd63ec436249037400dd59428798f1d",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:46Z",
+    "read_at": "2026-11-28T00:06:11Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "Sucuri describes a large spike in WordPress infections where attackers append encrypted code to legitimate .js files. The code sets a cookie and injects an invisible iframe for first-time visitors, pointing to attacker-registered domains hosted on Digital Ocean. The report covers identifying features, domain registration details, an earlier variant, and why sites are repeatedly reinfected.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Vasunya",
+          "q": "WHOIS records show that they all had been registered by “Vasunya”",
+          "by": "Sucuri report (based on WHOIS records)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
+      "dates": [
+        {
+          "v": "Dec 22, 2015",
+          "q": "poln1uewt1aniwki[.]ws – created on Dec 22, 2015",
+          "what": "Creation of a malicious domain"
+        },
+        {
+          "v": "Jan 8, 2016",
+          "q": "findyourwaytotr[.]net – created on Jan 8, 2016",
+          "what": "Creation of a malicious domain"
+        },
+        {
+          "v": "December 23, 2015",
+          "q": "This domain was registered by the same “Vasunya” on December 23, 2015.",
+          "what": "Registration of a domain used in the previous version of the attack"
+        }
+      ],
       "tools": [],
-      "techniques": [],
+      "techniques": [
+        {
+          "v": "domain shadowing",
+          "q": "The use of the third level domains is typical for “domain shadowing.”"
+        },
+        {
+          "v": "cross-site contamination",
+          "q": "all of them will be infected via a concept known as cross-site contamination"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "er2vdr5gdc3ds",
+          "q": "it sets thea d-cookie cookie (er2vdr5gdc3ds)"
+        },
+        {
+          "v": "24 hours",
+          "q": "that expires in 24 hours and injects an invisible iframe."
+        },
+        {
+          "v": "AS202109",
+          "q": "known dangerous site on the AS202109"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "Admedia/Adverting iFrame Infection"
+    },
+    "hedges": [
+      "The 32 hex digit comment is 'Most likely an MD5 hash based on the domain name.'",
+      "The fourth domain was created Feb 1st 'probably to work around blacklisting of the other domains.'"
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:54Z",

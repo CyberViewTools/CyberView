@@ -135,26 +135,107 @@
   },
   "144ff3f73f70ab2e208db4560e9e6562a6ca1ada": {
     "sha1": "144ff3f73f70ab2e208db4560e9e6562a6ca1ada",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:35Z",
+    "read_at": "2026-11-28T00:06:03Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "Analysis of the DDG.Mining.Botnet Monero-mining botnet, which targets Redis and SSH services. It covers version 3011 (new wallet, cloud config, scan-traffic surge on Redis and SSH ports, Crontab persistence) and later updates: 3011 x86_64 sample, new miner builds, and version 3012 released 12 June 2018 with a new main C2. Wallet payouts on two mining pools are reported.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "数据库服务器",
+          "q": "我们详细分析了一个瞄准数据库服务器的挖矿僵尸网络 DDG.Mining.Botnet"
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "6.12",
+          "q": "6.12 日，我们监测到 DDG.Mining.Botnet 又发布了新版本，最新版本为 v3012",
+          "what": "Version v3012 of the botnet observed"
+        },
+        {
+          "v": "5.31",
+          "q": "5.31 日，我们监测到 DDG.Mining.Botnet 又有了新动态，发布了新的关键更新",
+          "what": "Key update released with new miner, ddgs v3011 x86_64 sample, new C2 list and i.sh"
+        },
+        {
+          "v": "今年 2 月 1 日",
+          "q": "今年 2 月 1 日，我们详细分析了一个瞄准数据库服务器的挖矿僵尸网络 DDG.Mining.Botnet",
+          "what": "Earlier detailed analysis of the botnet published"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig2.6.2",
+          "q": "最新的矿机程序 qW3xT 和 qW3xT.1，由 XMRig2.6.2 编译而来"
+        },
+        {
+          "v": "i.sh",
+          "q": "相同的持久驻留机制：将 i.sh 脚本写入到 Crontab 中定期更新、运行。"
+        },
+        {
+          "v": "ddgs.i686",
+          "q": "ddgs.i686 样本中内置了一个 ip:port 的 List"
+        },
+        {
+          "v": "Go1.10",
+          "q": "样本的编写语言由旧的 Go1.9.2 换成了 Go1.10"
+        },
+        {
+          "v": "msgPack",
+          "q": "如果 C2 正常工作，则会返回一串用 msgPack 序列化编码后的配置文件数据："
+        }
+      ],
+      "techniques": [
+        {
+          "v": "Crontab",
+          "q": "相同的持久驻留机制：将 i.sh 脚本写入到 Crontab 中定期更新、运行。"
+        },
+        {
+          "v": "SSH Pub Key",
+          "q": "然后，ddgs.i686 会尝试在当前肉鸡的 ~/.ssh/authorized_keys 中注入以下 SSH Pub Key："
+        },
+        {
+          "v": "扫描",
+          "q": "近期，我们的 ScanMon 系统显示 Redis 服务相关端口的扫描流量骤增，如下："
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "1,419 枚 XMR",
+          "q": "其在 2 个矿池里累计收益已经超过 1,419 枚 XMR"
+        },
+        {
+          "v": "177.5497873784 XMR",
+          "q": "TotalPaid 为 177.5497873784 XMR"
+        },
+        {
+          "v": "6.057345747571",
+          "q": "在矿池 nanopool.org 中 TotalPaid 为 6.057345747571"
+        },
+        {
+          "v": "7 个",
+          "q": "上图中，与该扫描相关的关联端口共计 7 个，分别是 ："
+        },
+        {
+          "v": "1268.5880545439 XMR",
+          "q": "nanopool.org 中TotalPaid: 1268.5880545439 XMR"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote, quote-not-in-text",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "DDG.Mining.Botnet"
+    },
+    "hedges": [
+      "Version 3011 may be in a testing stage or just a transitional version (later updated: it became a working version once the x86_64 sample appeared).",
+      "The config data could not be decoded perfectly; the shown structure is an approximate reconstruction.",
+      "Low shared scan-source counts between Redis and SSH ports may be due to honeypot deployment and network configuration."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:33Z",

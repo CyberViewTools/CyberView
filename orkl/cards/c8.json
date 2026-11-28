@@ -605,26 +605,99 @@
   },
   "c8939694e238bdf6f51ada44d90f0e4018836ef3": {
     "sha1": "c8939694e238bdf6f51ada44d90f0e4018836ef3",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:15Z",
+    "read_at": "2026-11-28T00:05:59Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "A CUJO AI researcher analyzes the Linux version of the Prometei botnet, which originally was a modular Windows Monero-mining botnet. The report covers file traits, install in user and system mode, systemd and cron persistence, masquerading, C2 check-in, supported commands, TOR/I2P proxy modules and XMRig mining. It concludes this is likely an early development version.",
+    "kind": "malware-analysis",
     "facts": {
       "actors": [],
       "sectors": [],
-      "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "countries": [
+        {
+          "v": "DE",
+          "q": "5.189.171[.]187 | DE"
+        },
+        {
+          "v": "IR",
+          "q": "178.21.164[.]68 | IR"
+        }
+      ],
+      "dates": [
+        {
+          "v": "December 2020",
+          "q": "which first made headlines in December 2020",
+          "what": "Prometei malware first made headlines"
+        },
+        {
+          "v": "March 10, 2021",
+          "q": "March 10, 2021",
+          "what": "Publication date of the report"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XMRig",
+          "q": "Prometei can also deploy a cryptocurrency miner in the form of the application XMRig."
+        },
+        {
+          "v": "msdtc",
+          "q": "msdtc – Proxy client"
+        },
+        {
+          "v": "smcard",
+          "q": "smcard – TOR relay"
+        },
+        {
+          "v": "updatecheckerd",
+          "q": "The process is usually named updatecheckerd."
+        },
+        {
+          "v": "uplugplay",
+          "q": "/usr/sbin/uplugplay"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "systemd service persistence",
+          "q": "It places a service file under"
+        },
+        {
+          "v": "cron job persistence",
+          "q": "Execution will continue by setting up a scheduled cron job."
+        },
+        {
+          "v": "masquerading",
+          "q": "the malware masquerades itself by copying the binary"
+        },
+        {
+          "v": "TOR or I2P traffic routing",
+          "q": "traffic can be routed through TOR or I2P"
+        },
+        {
+          "v": "cryptocurrency mining",
+          "q": "starts the Monero cryptocurrency miner"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "16 byte",
+          "q": "which has a 16 byte string inside, made up of numbers and capital English letters"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text, value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Prometei"
+    },
+    "hedges": [
+      "It's possible that the original developer(s) were unhappy with the spread of their malware and wanted to take advantage of other platforms.",
+      "Another theory is that this new Linux variant is the work of a completely different group.",
+      "this is most likely an early development version of the malware",
+      "It is also unclear whether the same group that developed the malware for Windows is behind the Linux version"
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:13:16Z",

@@ -1,0 +1,172 @@
+{
+  "live": null,
+  "next": {
+    "key": "a-28e5aef7-0628-4d43-b284-e96fe0b4ef24",
+    "kind": "actor",
+    "name": "NICKEL JUNIPER",
+    "headline": "NICKEL JUNIPER (Konni): a long-running espionage actor that North Korea-linked reporting ties to Russia and South Korea",
+    "in_short": "Secureworks tracks NICKEL JUNIPER, also called Konni. Researchers tie its Konni remote access tool to North Korea-linked actors, but disagree on how it relates to APT37 and Kimsuky.",
+    "sections": [
+      {
+        "h": "who",
+        "sentences": [
+          {
+            "t": "Secureworks tracks this actor as NICKEL JUNIPER. It is also known as Konni, OSMIUM and Opal Sleet.",
+            "cites": [
+              "catalogue"
+            ]
+          },
+          {
+            "t": "DCSO CyTec says the actor is usually called Konni Group because it uses the Konni tool so heavily. DCSO says it is also tracked as TA406.",
+            "cites": [
+              "aaf315d67acbcdbec9f30cb18eb9d494b3c6a66f"
+            ]
+          },
+          {
+            "t": "According to DCSO, the Konni malware has generally been used by actors in the North Korean (DPRK) nexus, including APT37. DCSO also says Konni Group is generally understood to fall under the Kimsuky cluster of DPRK Reconnaissance General Bureau-linked actors.",
+            "cites": [
+              "aaf315d67acbcdbec9f30cb18eb9d494b3c6a66f"
+            ]
+          },
+          {
+            "t": "Fortinet FortiGuard Labs ties the Konni RAT to APT 37. Fortinet says the group has been known to align its targeting and objectives with those of the DPRK government.",
+            "cites": [
+              "92c37a8def1ad20659b82eba04c2aaec4efc9cca"
+            ]
+          },
+          {
+            "t": "Doron Karmi describes Konni as potentially linked to APT37. Karmi says Konni has been seen in the wild since early 2014.",
+            "cites": [
+              "e82d84cd510e127ea76cb153a175d44ad12d761f"
+            ]
+          },
+          {
+            "t": "The picture is not settled. Genians says some researchers class KONNI, Kimsuky and APT37 as one group, because their targets and infrastructure overlap. Genians cites the MSMT report as assessing Kimsuky and KONNI as distinct groups tied to the 63 Research Center.",
+            "cites": [
+              "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "targets",
+        "sentences": [
+          {
+            "t": "Karmi writes that 2019 lure documents potentially targeted political organizations and politically motivated victims in Russia and South Korea.",
+            "cites": [
+              "e82d84cd510e127ea76cb153a175d44ad12d761f"
+            ]
+          },
+          {
+            "t": "DCSO believes a backdoored installer carrying a KONNI variant is part of North Korea-linked activity aimed at the Russian Ministry of Foreign Affairs. DCSO says the specific targeting remains unclear.",
+            "cites": [
+              "aaf315d67acbcdbec9f30cb18eb9d494b3c6a66f"
+            ]
+          },
+          {
+            "t": "DCSO, citing Microsoft, says Opal Sleet (OSMIUM/Konni Group) purportedly targeted Russian diplomatic entities by phishing in March 2023.",
+            "cites": [
+              "aaf315d67acbcdbec9f30cb18eb9d494b3c6a66f"
+            ]
+          },
+          {
+            "t": "Fortinet saw a 2022 phishing email that spoofed a Russian consulate address in Shenyang, China. The email was sent to another Russian government address.",
+            "cites": [
+              "92c37a8def1ad20659b82eba04c2aaec4efc9cca"
+            ]
+          },
+          {
+            "t": "In a campaign Genians reports, attackers posed as psychological counselors and North Korean human rights activists. They sent malware over South Korea's KakaoTalk messenger.",
+            "cites": [
+              "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "methods",
+        "sentences": [
+          {
+            "t": "In 2019, Karmi saw Word lure documents with macros. The macros used the built-in certutil tool to fetch more files.",
+            "cites": [
+              "e82d84cd510e127ea76cb153a175d44ad12d761f"
+            ]
+          },
+          {
+            "t": "Later stages in those campaigns bypassed Windows User Account Control and set up persistence as a service DLL of COMSysApp. They sent stolen data out through a free FTP service.",
+            "cites": [
+              "e82d84cd510e127ea76cb153a175d44ad12d761f"
+            ]
+          },
+          {
+            "t": "Fortinet describes a Russian-language phishing email with a Zip archive. It held a decoy PowerPoint file and a macro add-in. The macro created a scheduled task that ran a script every five minutes.",
+            "cites": [
+              "92c37a8def1ad20659b82eba04c2aaec4efc9cca"
+            ]
+          },
+          {
+            "t": "Genians reports AutoIt-based scripts that delivered RemcosRAT, QuasarRAT and RftRAT. Genians assesses that the actor repeatedly abused WordPress-based web servers, which are more likely to have security weaknesses.",
+            "cites": [
+              "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "operations",
+        "sentences": [
+          {
+            "t": "Karmi observed three distinct Konni campaigns between January and late September 2019.",
+            "cites": [
+              "e82d84cd510e127ea76cb153a175d44ad12d761f"
+            ]
+          },
+          {
+            "t": "The Fortinet phishing email was written up in September 2022. Its command server was not responding, so Fortinet could not obtain the RAT itself.",
+            "cites": [
+              "92c37a8def1ad20659b82eba04c2aaec4efc9cca"
+            ]
+          },
+          {
+            "t": "DCSO analysed a backdoored Russian-language installer called Statistika KZU, first uploaded to VirusTotal in mid-January 2024. DCSO could not confirm whether the installer itself is legitimate.",
+            "cites": [
+              "aaf315d67acbcdbec9f30cb18eb9d494b3c6a66f"
+            ]
+          },
+          {
+            "t": "Genians reported activity in 2025 in which stolen Google accounts were used to abuse Find Hub. The attackers located victims' Android phones and tablets and remotely wiped them. Genians says a compromised KakaoTalk account was then used to spread malicious files further.",
+            "cites": [
+              "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
+            ]
+          }
+        ]
+      },
+      {
+        "h": "takeaway",
+        "sentences": [
+          {
+            "t": "Treat unexpected attachments that ask you to enable macros or run an installer with suspicion, even when they seem to come from someone you know.",
+            "cites": []
+          },
+          {
+            "t": "Genians recommends behaviour-based endpoint detection and stronger verification for Find Hub.",
+            "cites": [
+              "d0a0a5f2b671b004318874f8d2683e3ce5bd42f3"
+            ]
+          }
+        ]
+      }
+    ],
+    "status": "rejected",
+    "based_on": "cc180d519971a5d814ff0b3e75093e3a7c41a90a",
+    "tries": 1,
+    "by": "CyberView AI (a Claude model)",
+    "written_at": "2026-11-28T00:05:46Z",
+    "writer_model": "sonnet",
+    "reasons": [
+      "unbacked",
+      "bare-attribution"
+    ],
+    "written_run": "ed6d4bb2"
+  }
+}

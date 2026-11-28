@@ -101,26 +101,110 @@
   },
   "20676725f96ecb865989fb60464f45ba38147dde": {
     "sha1": "20676725f96ecb865989fb60464f45ba38147dde",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:48Z",
+    "read_at": "2026-11-28T00:06:13Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "FireEye describes an SSH brute-force campaign from an address block registered to Hee Thai Limited, running from November 2014. It targets root accounts on servers and network devices to install XOR.DDoS, a Linux DDoS bot with a rootkit. An on-demand build system compiles tailored malware per victim kernel, defeating hash-based detection. The report describes two variants, persistence behaviour and defensive advice.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
+      "actors": [
+        {
+          "v": "Hee Thai Limited",
+          "q": "an address block that was registered to “Hee Thai Limited” only a few weeks prior",
+          "by": "FireEye (the report itself)"
+        }
+      ],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "Nov. 15, 2014",
+          "q": "Our story begins on Nov. 15, 2014.",
+          "what": "First sighting of the SSH brute-force campaign"
+        },
+        {
+          "v": "Dec. 22, 2014",
+          "q": "First seen Dec. 22, 2014",
+          "what": "Variant 2 of XOR.DDoS first seen"
+        },
+        {
+          "v": "Jan. 20, 2015",
+          "q": "All in-the-wild, pre-compiled copies of Variant 2 were replaced on Jan. 20, 2015, with a new set of binaries.",
+          "what": "Variant 2 pre-compiled binaries replaced with a new set"
+        },
+        {
+          "v": "September 2014",
+          "q": "they briefly outlined its characteristics in a blog post in September 2014",
+          "what": "Malware Must Die! first outlined the XOR.DDoS family in a blog post"
+        }
+      ],
+      "tools": [
+        {
+          "v": "XOR.DDoS",
+          "q": "distributes a new family of Linux rootkit malware named “XOR.DDoS.”"
+        },
+        {
+          "v": "RockYou",
+          "q": "a modified version of the RockYou password list"
+        },
+        {
+          "v": "fail2ban",
+          "q": "install the open source fail2ban utility, which works with iptables to detect and block brute force attacks."
+        }
+      ],
+      "techniques": [
+        {
+          "v": "SSH brute forcing",
+          "q": "This is the tale of an ongoing SSH brute forcing campaign"
+        },
+        {
+          "v": "Linux rootkit",
+          "q": "incorporates multiple persistence mechanisms including a rare Linux rootkit"
+        },
+        {
+          "v": "SSH remote command",
+          "q": "This commonly used feature of OpenSSH, interestingly enough, evades standard Linux logging facilities."
+        },
+        {
+          "v": "XOR encryption",
+          "q": "XOR.DDoS gets its name from frequent use of XOR encryption within the code and in its network communications."
+        },
+        {
+          "v": "on-demand compilation",
+          "q": "deliver customized malware that may be compiled on-demand"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "20,000 SSH login attempts",
+          "q": "we had observed well over 20,000 SSH login attempts, per server"
+        },
+        {
+          "v": "63%",
+          "q": "traffic from 103.41.124.0/24 accounted for 63% of all observed port 22 traffic"
+        },
+        {
+          "v": "41 unique re-compiled binaries",
+          "q": "the Hee Thai campaign has delivered 41 unique re-compiled binaries from four distribution domains"
+        },
+        {
+          "v": "255 addresses",
+          "q": "Hee Thai Limited’s bucket of 255 addresses"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote, quote-not-in-text",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "XOR.DDoS"
+    },
+    "hedges": [
+      "XOR.DDoS is described as ostensibly a DDoS bot",
+      "XOR.DDoS appears to be killing other malware, judging from the contents of the files",
+      "Removal may not be feasible if a version containing the rootkit has compromised the system",
+      "Variant 1 distribution servers remain active, but may have fallen out of favor"
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:33Z",

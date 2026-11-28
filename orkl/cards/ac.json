@@ -885,26 +885,89 @@
   },
   "ac19a28a330a89059e1e48bc2ec6f768c0ac1723": {
     "sha1": "ac19a28a330a89059e1e48bc2ec6f768c0ac1723",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:47Z",
+    "read_at": "2026-11-28T00:06:11Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "Aqua Security researcher describes a months-long campaign abusing misconfigured open Docker Daemon API ports to launch an Ubuntu container that downloads the Kinsing Golang Linux malware. Kinsing disables security tooling, kills rival miners, persists via cron, spreads over SSH using harvested credentials, and finally runs a cryptominer called kdevtmpfsi. The report lists IOCs and defensive recommendations.",
+    "kind": "actor-campaign",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "April 03, 2020",
+          "q": "April 03, 2020",
+          "what": "Publication date of the Aqua threat alert"
+        }
+      ],
+      "tools": [
+        {
+          "v": "kinsing",
+          "q": "run an Ubuntu container with the kinsing malicious malware"
+        },
+        {
+          "v": "kdevtmpfsi",
+          "q": "At the last stage of the attack the malware runs a cryptominer called kdevtmpfsi."
+        },
+        {
+          "v": "go-resty",
+          "q": "go-resty – an HTTP and REST client library, used to communicate with a Command"
+        },
+        {
+          "v": "gopsutil",
+          "q": "gopsutil – a process utility library, used for system and processes monitoring."
+        },
+        {
+          "v": "spre.sh",
+          "q": "The spre.sh shell script that the malware downloads is used to laterally spread the malware"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "misconfigured open Docker Daemon API ports",
+          "q": "targets misconfigured open Docker Daemon API ports"
+        },
+        {
+          "v": "Uses crontab to download and run the shell script every minute",
+          "q": "Uses crontab to download and run the shell script every minute"
+        },
+        {
+          "v": "Kills running rival malicious Docker containers",
+          "q": "Kills running rival malicious Docker containers and deletes their image."
+        },
+        {
+          "v": "SSH",
+          "q": "using every possible user and key combination through SSH"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "thousands of attempts",
+          "q": "with thousands of attempts taking place nearly on a daily basis"
+        },
+        {
+          "v": "more than 600 lines",
+          "q": "contains more than 600 lines"
+        },
+        {
+          "v": "3 IP addresses",
+          "q": "We witnessed 3 IP addresses used in total"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "malware",
+      "name": "Kinsing"
+    },
+    "hedges": [
+      "The report says it believes the attacks are directed by actors with sufficient resources and infrastructure; no named actor is given.",
+      "The authors are not certain why the script deletes all cron jobs, including its own.",
+      "The sleep comment in the script is only said to possibly indicate an attempt at evasion.",
+      "The spre.sh name is presumed to stand for spread."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:54Z",

@@ -418,26 +418,93 @@
   },
   "81e2940328c14c5b89412bb6a133c50179880ef9": {
     "sha1": "81e2940328c14c5b89412bb6a133c50179880ef9",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:32Z",
+    "read_at": "2026-11-28T00:05:59Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "Aqua Team Nautilus describes Autom, a cryptomining campaign seen on its honeypots over three years. Attackers abuse misconfigured Docker APIs to run the alpine:latest image with a command that downloads a shell script, create a backdoor user, and mine cryptocurrency. Defense evasion evolved from none in 2019 to disabling security features in 2020 and an obfuscated script in 2021. The report lists defensive advice and file hashes.",
+    "kind": "actor-campaign",
     "facts": {
       "actors": [],
       "sectors": [],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "2019",
+          "q": "We first observed the attack in 2019, when a malicious command was executed during the run of a vanilla image alpine:latest",
+          "what": "First observation of the Autom attack"
+        },
+        {
+          "v": "2020",
+          "q": "In 2020, the attackers were evading defense by bypassing security features",
+          "what": "Attackers disabled security mechanisms such as ufw and NMI"
+        },
+        {
+          "v": "2021",
+          "q": "In 2021, the adversaries added a new technique.",
+          "what": "Attackers began using an obfuscated shell script to hide mining"
+        }
+      ],
+      "tools": [
+        {
+          "v": "autom.sh",
+          "q": "which downloaded the autom.sh shell script"
+        },
+        {
+          "v": "alpine:latest",
+          "q": "The adversaries are running the vanilla image alpine:latest with a malicious command"
+        },
+        {
+          "v": "log_rotate.bin",
+          "q": "This involves downloading the log_rotate.bin script, which launches the cryptomining activity"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "misconfigured Docker APIs",
+          "q": "exploit misconfigured Docker APIs"
+        },
+        {
+          "v": "base64",
+          "q": "They encoded the script in base64 five times"
+        },
+        {
+          "v": "cron job",
+          "q": "creating a new cron job that will initiate mining every 55 minutes"
+        },
+        {
+          "v": "disabled ufw",
+          "q": "At first, they disabled ufw (Uncomplicated Firewall)"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "84 attacks",
+          "q": "Since the first attack, we’ve seen 84 attacks using the same shell script."
+        },
+        {
+          "v": "125 attacks",
+          "q": "During Q3 2021, we observed 125 attacks in the wild"
+        },
+        {
+          "v": "five servers",
+          "q": "Throughout the years, the shell script was downloaded from five servers:"
+        },
+        {
+          "v": "every 55 minutes",
+          "q": "initiate mining every 55 minutes on the compromised host"
+        }
+      ]
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "quote-not-in-text",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "Autom"
+    },
+    "hedges": [
+      "The drop in honeypot attacks in 2021 \"might imply\" attackers identified the honeypots and reduced attack volume.",
+      "\"It seems that\" the group behind the attack has developed their skills to expand the attack surface."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:54Z",

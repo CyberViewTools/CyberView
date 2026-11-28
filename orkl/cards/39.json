@@ -303,26 +303,80 @@
   },
   "398a6fe21e83f09c3d32e8655c319efc4fd75bb0": {
     "sha1": "398a6fe21e83f09c3d32e8655c319efc4fd75bb0",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:46Z",
+    "read_at": "2026-11-28T00:06:10Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "NSA threat hunting guidance for Citrix ADC appliances targeted by APT5. It describes file integrity checks, log-based behavioral checks, YARA detections for malware used in the campaign, and mitigations such as placing ADCs behind authenticated access, isolating affected appliances and restoring a known good state.",
+    "kind": "actor-campaign",
     "facts": {
-      "actors": [],
-      "sectors": [],
+      "actors": [
+        {
+          "v": "APT5",
+          "q": "This activity has been attributed to APT5, also known as UNC2630 and MANGANESE.",
+          "by": "NSA (the report itself)"
+        },
+        {
+          "v": "UNC2630",
+          "q": "This activity has been attributed to APT5, also known as UNC2630 and MANGANESE.",
+          "by": "NSA (the report itself)"
+        },
+        {
+          "v": "MANGANESE",
+          "q": "This activity has been attributed to APT5, also known as UNC2630 and MANGANESE.",
+          "by": "NSA (the report itself)"
+        }
+      ],
+      "sectors": [
+        {
+          "v": "Defense Industrial Base",
+          "q": "improve the overall security posture of the Defense Industrial Base, DoD, and USG."
+        }
+      ],
       "countries": [],
-      "dates": [],
-      "tools": [],
-      "techniques": [],
+      "dates": [
+        {
+          "v": "DEC 2022",
+          "q": "U/OO/231762-22 | PP-22-1969 | DEC 2022 Ver. 1.0",
+          "what": "Publication of the guidance, version 1.0"
+        }
+      ],
+      "tools": [
+        {
+          "v": "pb_policy",
+          "q": "The actors have been seen leveraging tools that run 'pb_policy' twice."
+        },
+        {
+          "v": "tricklancer_a",
+          "q": "rule tricklancer_a {"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "bypassing normal authentication controls",
+          "q": "can facilitate illegitimate access to targeted organizations by bypassing normal authentication controls"
+        },
+        {
+          "v": "modification to legitimate binaries",
+          "q": "A malicious actor enabling continued access will likely require modification to legitimate"
+        },
+        {
+          "v": "Unauthorized modifications to the crontab file",
+          "q": "Unauthorized modifications to the crontab file and/or existence of suspicious"
+        }
+      ],
       "cves": [],
       "figures": []
     },
-    "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "subject": {
+      "type": "campaign",
+      "name": "APT5 Citrix ADC targeting"
+    },
+    "hedges": [
+      "This guidance does not represent all techniques, tactics, or procedures (TTPs) the actors may use when targeting these environments.",
+      "Artifacts may vary based on the environment and the stage of that activity.",
+      "Files associated with this activity have not been discovered in all environments."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:12:42Z",

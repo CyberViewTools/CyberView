@@ -741,26 +741,88 @@
   },
   "b76743a97db3664476bc8d8a49b64aecb30e6d28": {
     "sha1": "b76743a97db3664476bc8d8a49b64aecb30e6d28",
-    "status": "unread",
+    "status": "read",
     "partial": false,
-    "read_at": "2026-11-27T22:19:16Z",
+    "read_at": "2026-11-28T00:06:00Z",
     "model": "sonnet",
-    "summary": "",
-    "kind": "",
+    "summary": "A research paper by Digital Bond authors showing that Ethernet cards in industrial field devices (PLCs, PACs, RTUs) accept firmware uploads without authentication. The authors reverse-engineered the upload process on a Rockwell 1756 ENBT and a Koyo H4-ECOM100 module and loaded modified firmware as a proof of concept. They discuss possible attack classes, weak web, FTP and SNMP services, and recommend signed firmware or disabling network uploads.",
+    "kind": "vulnerability",
     "facts": {
       "actors": [],
-      "sectors": [],
+      "sectors": [
+        {
+          "v": "SCADA",
+          "q": "Field devices essential for the monitoring and control in DCS and SCADA"
+        },
+        {
+          "v": "critical infrastructure",
+          "q": "bring down part of the critical infrastructure or a particular organization he"
+        }
+      ],
       "countries": [],
       "dates": [],
-      "tools": [],
-      "techniques": [],
+      "tools": [
+        {
+          "v": "ControlFlash",
+          "q": "upload it with the ControlFlash program"
+        },
+        {
+          "v": "Wireshark",
+          "q": "commonly used packet capture utility, Wireshark"
+        },
+        {
+          "v": "IDA PRO",
+          "q": "We have loaded the file into the IDA PRO disassembler and debugger program"
+        },
+        {
+          "v": "deezee",
+          "q": "Using a tool developed by Matasano named deezee"
+        },
+        {
+          "v": "netedit",
+          "q": "the upgrade program, netedit, seems to work over UDP broadcast protocol"
+        }
+      ],
+      "techniques": [
+        {
+          "v": "malicious firmware upload",
+          "q": "Unauthenticated Firmware Upload"
+        },
+        {
+          "v": "field device worm",
+          "q": "A Field Device Worm"
+        },
+        {
+          "v": "cross site scripting",
+          "q": "Several different forms of cross site scripting (XSS) were found on the sample field devices."
+        },
+        {
+          "v": "delayed attack",
+          "q": "2.3.1 Delayed Attack"
+        }
+      ],
       "cves": [],
-      "figures": []
+      "figures": [
+        {
+          "v": "1756 ENBT",
+          "q": "the Rockwell 1756 ENBT Ethernet module and"
+        },
+        {
+          "v": "H4-ECOM100",
+          "q": "the Koyo H4-ECOM100 Ethernet module, see Figure 1."
+        },
+        {
+          "v": "TCP/44818",
+          "q": "typically use the EtherNet/IP protocol on TCP/44818"
+        }
+      ]
     },
     "subject": null,
-    "hedges": [],
-    "reason": "value-not-in-quote",
-    "tries": 1,
+    "hedges": [
+      "The authors say the attack scenarios (delayed attack, random failures, worm) are imagined illustrations, not observed attacks.",
+      "The paper says operating system vulnerabilities are beyond its scope.",
+      "The authors tested only devices in their own lab and describe the web, FTP and SNMP findings as a small sample of field devices."
+    ],
     "audit_history": [
       {
         "at": "2026-11-27T16:13:07Z",

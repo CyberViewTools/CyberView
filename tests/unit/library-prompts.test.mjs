@@ -81,3 +81,13 @@ test("readerPrompt: tells the model to keep links, domain names and email addres
   const rules = readerPrompt({ title: "T", sha1: "a".repeat(40) }, "x").split("THE REPORT")[0];
   assert.match(rules, /Never put a link, a domain name or an email address in the summary or in a fact value/);
 });
+
+// 2026-11-27: 28 of the first 36 Sonnet reads were refused, mostly value-not-in-quote (a value tidied into another form of the
+// name or figure than the quote has) and quote-not-in-text; four had no summary or kind
+test("readerPrompt: the value is copied from inside its quote as written, a quote is one unbroken span, summary and kind are never empty", () => {
+  const p = readerPrompt({ title: "t" }, "text");
+  assert.match(p, /copied from inside its own quote, exactly as the report writes it/);
+  assert.match(p, /\$1\.5 million/);
+  assert.match(p, /one unbroken span of the text/);
+  assert.match(p, /Always fill "summary" and "kind"/);
+});

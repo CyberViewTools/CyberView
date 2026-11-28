@@ -1,0 +1,20 @@
+{
+ "job": "report review",
+ "started_at": "2026-11-28T13:18:28Z",
+ "finished_at": "2026-11-28T13:25:00Z",
+ "model": "claude-sonnet-5-5",
+ "searches": ["SOCRadar WeaveLotus RedOps blog", "CISA joint advisory November 2026"],
+ "pages_read": [
+  {"url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/", "title": "SOCRadar RedOps/WeaveLotus", "used_in": "socradar-redops-weavelotus-thailand-philippines-2026-11"}
+ ],
+ "added": [],
+ "updated": ["socradar-redops-weavelotus-thailand-philippines-2026-11"],
+ "skipped": [],
+ "open_leads": [
+  {"title": "StormWall Kairos botnet original report", "url": "https://www.cnews.ru/news/line/2026-11-26_eksperty_stormwall_obnaruzhili", "note": "event is secondary via CNews; StormWall's own report not yet found", "priority": "medium"},
+  {"title": "weavelotus-redops-southeast-asia-espionage-socradar-2026-11 (The Hacker News based)", "url": "https://thehackernews.com/2026/11/suspected-vietnam-linked-hackers-target.html", "note": "likely the same event as the SOCRadar one; consider duplicate_of", "priority": "medium"},
+  {"title": "CISA/FBI industrial refrigeration controllers advisory (about 9-11 Nov)", "url": "", "note": "older than 4 days; not checked against stored events", "priority": "low"}
+ ],
+ "failed_sites": [],
+ "notes": "node scripts/fuse.mjs list crashed (ENOTDIR on data/runs/fix-r1.mjs, a stray file in data/runs), so the stories list was unavailable. Only one document was reviewed in this run. The SOCRadar event now has a full report object, two CVEs named in the post, and validate.mjs and review.mjs flags both pass. build.mjs was not run."
+}

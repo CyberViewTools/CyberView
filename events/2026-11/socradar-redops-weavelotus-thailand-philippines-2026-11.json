@@ -15,11 +15,14 @@
   "espionage",
   "data-breach"
  ],
- "cves": [],
+ "cves": [
+  "CVE-2024-36401",
+  "CVE-2021-42235"
+ ],
  "cve_meta": [],
  "products": [],
  "first_seen": "2026-11-27T08:01:13Z",
- "updated_at": "2026-11-27T08:14:00Z",
+ "updated_at": "2026-11-28T13:19:30Z",
  "category": "report",
  "status": "confirmed",
  "attack": [],
@@ -75,5 +78,28 @@
   "note": "title, date, five confirmed intrusions, Aug-Sep, attribution confidence and sponsorship caveat, action checked against SOCRadar and Cyber Security News",
   "flags": []
  },
- "qa_checked_at": "2026-11-27T08:11:17Z"
+ "qa_checked_at": "2026-11-27T08:11:17Z",
+ "report": {
+  "publisher": "SOCRadar",
+  "publisher_type": "vendor",
+  "doc_id": "",
+  "published": "2026-11-26",
+  "key_findings": [
+   "SOCRadar attributes the RedOps campaign, active August to September 2026, with moderate confidence to WeaveLotus, targeting government, military and legislative bodies.",
+   "SOCRadar reports five confirmed intrusions in Thailand and the Philippines, and reconnaissance of more than 30 Indonesian government organisations with no intrusion following.",
+   "SOCRadar says it saw collection of about 19 GB of documents from a Thai legislative organisation, roughly 31,400 files from a Thai military organisation and about 349,800 records from a Thai government application.",
+   "Entry was through exposed open-source web applications: GeoServer, JasperReports with default credentials, osTicket and a Laravel app with debug mode on.",
+   "Intrusions were chained: access in one environment led to a third-party document system and administrator credentials for another agency."
+  ],
+  "recommendations": [
+   "Patch internet-facing open-source applications, starting with GeoServer and osTicket.",
+   "Remove default credentials, such as those on JasperReports.",
+   "Disable debug mode on production Laravel applications.",
+   "Monitor for unusual authentication activity, password spraying and ROPC token requests.",
+   "Block or alert on outbound SSH over port 443, SOCKS proxies and bulk data transfers."
+  ],
+  "iocs_available": true,
+  "read_depth": "full",
+  "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/"
+ }
 }

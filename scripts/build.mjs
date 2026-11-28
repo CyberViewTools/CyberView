@@ -22,7 +22,7 @@ import { buildPages } from "./pages.mjs";
 import { writeFileSync, mkdirSync, existsSync, rmSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
-import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, listEventFiles, listDir, monthOf, dayAgo, runDays } from "./lib/store.mjs";
 import { load as pipelineMetrics, RETIRED_COLLECTORS } from "./metrics.mjs";
 import { measure as speedOf } from "./lib/latency.mjs";
 import { dataCommit } from "./lib/data-commit-id.mjs";
@@ -516,7 +516,7 @@ try {
   const st = docs["meta/status"] || {};
   const routines = reg.routines.map((r) => ({ ...r, last_at: (r.status_key && st[r.status_key]) || null }));
   const runsDir = join(DATA, "runs"), runs = [];
-  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).filter((d) => d >= dayAgo(7)).sort().reverse())
+  for (const d of runDays(runsDir, 7).reverse())
     for (const f of readdirSync(join(runsDir, d)).filter((f) => f.endsWith(".json")).sort().reverse()) {
       if (runs.length >= 40) break;
       if (/-tmp\.json$/.test(f)) continue;   // a worker's unfinished scratch file, not a run log

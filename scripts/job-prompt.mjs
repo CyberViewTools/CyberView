@@ -10,7 +10,7 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { ROOT, DATA, readJson, listEventFiles } from "./lib/store.mjs";
+import { ROOT, DATA, readJson, listEventFiles, runDays } from "./lib/store.mjs";
 
 const HEADINGS = {
   "sweep": "Sweep", "verify": "Verify", "report-review": "Report review", "analysis": "Analysis",
@@ -166,7 +166,7 @@ if (job === "researcher") {
     if (ranked.length) { const r = ranked[(slot + n - 1) % Math.min(3, ranked.length)]; f = r.x; why = ` (chosen from the data: ${r.leads} lead(s) from its region in 3 days, ${r.events} event(s) on the map from its countries)`; }
   }
   const since = Date.now() - 12 * 36e5, searched = [], runsDir = join(DATA, "runs");
-  if (existsSync(runsDir)) for (const d of readdirSync(runsDir).sort().slice(-2)) for (const fn of readdirSync(join(runsDir, d)).filter((x) => /sweep-gap/.test(x))) {
+  for (const d of runDays(runsDir).slice(-2)) for (const fn of readdirSync(join(runsDir, d)).filter((x) => /sweep-gap/.test(x))) {
     const r = readJson(join(runsDir, d, fn), {}); if (Date.parse(r.started_at || r.finished_at || 0) < since) continue;
     (r.searches || []).forEach((q) => searched.push(String(typeof q === "string" ? q : (q && (q.query || q.q)) || "").slice(0, 90)));
   }

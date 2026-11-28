@@ -109,11 +109,20 @@ export function migrateFlatEvents() {
   return n;
 }
 
+/** The day folders (YYYY-MM-DD) in a runs directory, oldest first; with `days`, only those of the last `days` days.
+ *  Anything else in the directory (a worker's stray script, a file named like a day) is ignored, so it can never make a
+ *  reader throw ENOTDIR and stop the build or the deploy (2026-11-28: data/runs/fix-r1.mjs did). */
+export function runDays(dir = join(DATA, "runs"), days = 0) {
+  if (!existsSync(dir)) return [];
+  const from = days > 0 ? dayAgo(days) : "";
+  return readdirSync(dir).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d) && d >= from && statSync(join(dir, d)).isDirectory()).sort();
+}
+
 /** Every lead URL a run log or a story closure has ruled out in the last `days` days. Run logs are <HHMM>-<job>.json with a
  *  "skipped" list; story closures are lines in each day's closures.jsonl ({story, reason, urls}). Calls fn(url, reason). */
 export function forEachSkipped(days, fn) {
-  const dir = join(DATA, "runs"); if (!existsSync(dir)) return;
-  for (const d of readdirSync(dir).filter((d) => d >= dayAgo(days)))
+  const dir = join(DATA, "runs");
+  for (const d of runDays(dir, days))
     for (const f of readdirSync(join(dir, d))) {
       if (f.endsWith(".jsonl")) { for (const line of readFileSync(join(dir, d, f), "utf8").split("\n")) { if (!line) continue; try { const c = JSON.parse(line); (c.urls || []).forEach((u) => fn(u, c.reason || "")); } catch {} } }
       else if (f.endsWith(".json")) (readJson(join(dir, d, f), {}).skipped || []).forEach((l) => l && l.url && fn(l.url, l.reason || ""));

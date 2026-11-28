@@ -11,7 +11,7 @@
 import { existsSync, readdirSync, readFileSync, appendFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, writeJson, nowIso, dayAgo, listEventFiles } from "./lib/store.mjs";
+import { DATA, writeJson, nowIso, dayAgo, listEventFiles, runDays } from "./lib/store.mjs";
 import { matchEvent } from "./triage.mjs";
 import { leased } from "./lib/lease.mjs";
 import { deepEvent } from "./lib/routing.mjs";
@@ -75,7 +75,7 @@ export function handledFrom(records, now = Date.now()) {
 }
 function handledUrls(days = 7) {
   const recs = [], runs = join(DATA, "runs");
-  if (existsSync(runs)) for (const d of readdirSync(runs).filter((d) => d >= dayAgo(days))) {
+  for (const d of runDays(runs, days)) {
     const f = join(runs, d, "followups.jsonl"); if (!existsSync(f)) continue;
     for (const line of readFileSync(f, "utf8").split("\n")) { try { recs.push(JSON.parse(line)); } catch {} }
   }
@@ -95,7 +95,7 @@ export function current(opts = {}) {
  *  scripts/fuse.mjs and backlog.mjs auto), for the on-file gate: { <event id>: { at, reason } }. Read only. */
 export function onFileClosures(days = 7) {
   const out = {}, runs = join(DATA, "runs");
-  if (existsSync(runs)) for (const d of readdirSync(runs).filter((d) => d >= dayAgo(days))) {
+  for (const d of runDays(runs, days)) {
     const f = join(runs, d, "closures.jsonl"); if (!existsSync(f)) continue;
     for (const line of readFileSync(f, "utf8").split("\n")) { try { const c = JSON.parse(line), id = onFileSlug(c.reason); if (id && String(c.at || "") > String((out[id] || {}).at || "")) out[id] = { at: c.at, reason: c.reason }; } catch {} }
   }

@@ -1,0 +1,11 @@
+import fs from "fs";
+const D="2026-11-28T00:12:00Z";
+let p="data/events/2026-11/qubes-xen-xsa-535-hap-tlb-flush-2026-11.json",e=JSON.parse(fs.readFileSync(p));
+e.tags=[];e.updated_at=D;fs.writeFileSync(p,JSON.stringify(e,null,1)+"\n");
+p="data/events/2026-11/pacific-blue-cross-cyber-incident-2026-11.json";e=JSON.parse(fs.readFileSync(p));
+e.impact="One claimant told Vista Radio they had to pay cash for prescriptions because the system was shut down, according to My Prince George Now";
+e.plain="Pacific Blue Cross says a cyber incident has taken its systems and website offline. It is working with external specialists to restore services securely, the report says.";
+e.exec="A cyber incident has disabled Pacific Blue Cross systems and website; the report gives no restoration time.";
+e.action="Pacific Blue Cross asks people to keep their receipts and any plan administrative requests, which can be submitted and will be processed once the outage is resolved.";
+e.place="Canada";e.pin_type="country";e.lat=56.1;e.lng=-106.3;e.geo_basis="The page read does not state a city; placed at country level (Canada)";
+e.updated_at=D;fs.writeFileSync(p,JSON.stringify(e,null,1)+"\n");

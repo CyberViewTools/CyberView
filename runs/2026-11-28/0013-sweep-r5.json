@@ -1,0 +1,85 @@
+{
+  "job": "sweep-r5",
+  "started_at": "2026-11-28T00:13:07Z",
+  "finished_at": "2026-11-28T00:13:07Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-137979",
+      "title": "CVE-2026-137979",
+      "used_in": "closed"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-137906",
+      "title": "CVE-2026-137906",
+      "used_in": "closed"
+    },
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-136511",
+      "title": "CVE-2026-136511",
+      "used_in": "closed"
+    },
+    {
+      "url": "https://www.kristv.com/science-and-tech/data-privacy-and-cybersecurity/air-force-cloud-breach-may-have-exposed-sensitive-military-information",
+      "title": "Air Force cloud breach",
+      "used_in": "already on file"
+    },
+    {
+      "url": "https://euronews.al/shqetesim-per-valen-e-sulmeve-kibernetike-ne-vendet-perendimore/",
+      "title": "Euronews Albania roundup",
+      "used_in": "closed"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "CVE-2026-137979 Nmap before 7.992 Heap Address Disclosure via Predictable NSE Lua Seed",
+      "url": "",
+      "reason": "not an event: CVSS 5.3, fixed in Nmap 7.992, page states no exploitation or public exploit"
+    },
+    {
+      "title": "CVE-2026-136511 | PostgreSQL psqlODBC SSLmode information disclosure",
+      "url": "",
+      "reason": "not an event: medium (CVSS 6.8), no exploitation or public exploit stated"
+    },
+    {
+      "title": "CVE-2026-137906 | FFmpeg IMF demuxer null pointer dereference",
+      "url": "",
+      "reason": "not an event: medium (CVSS 6.8), fixed in 8.1.3, no exploitation or public exploit stated"
+    },
+    {
+      "title": "-CVE-2021-41962",
+      "url": "",
+      "reason": "not an event: GitHub PoC repository listing for a 2021 CVE; no advisory or exploitation read"
+    },
+    {
+      "title": "CVE-2018-14716",
+      "url": "",
+      "reason": "not an event: GitHub PoC repository listing for a 2018 CVE"
+    },
+    {
+      "title": "Shqetesim per valen e sulmeve kibernetike ne vendet perendimore",
+      "url": "",
+      "reason": "not an event: Euronews Albania roundup; incidents already on file (dwp-cyber-incident-services-offline-2026-11, fincen-cybersecurity-incident-unauthorized-access-2026-11, fifa-data-breach-limited-info-2026-11)"
+    },
+    {
+      "title": "Air Force cloud breach may have exposed sensitive military information",
+      "url": "",
+      "reason": "already on file: usaf-cloud-one-breach-reuters-2026-11 (corroborated)"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "CVE-2023-51385 (story 9b2da48c)",
+      "url": "",
+      "note": "not examined: fuse.mjs show/done crash on stray file data/runs/fix-r1.mjs; old OpenSSH CVE, no exploitation read",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [],
+  "notes": "fuse.mjs done crashes because data/runs/fix-r1.mjs is a file, not a directory; closures were appended to closures.jsonl by hand. The dispatcher should remove or move that file.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

@@ -1,0 +1,67 @@
+{
+  "job": "researcher",
+  "started_at": "2026-11-28T00:10:21Z",
+  "finished_at": "2026-11-28T00:20:00Z",
+  "model": "claude-sonnet-5-5",
+  "searches": [],
+  "pages_read": [
+    {
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-137715",
+      "title": "CVE-2026-137715 Webmin",
+      "used_in": "none (not written)"
+    }
+  ],
+  "added": [],
+  "updated": [],
+  "skipped": [
+    {
+      "title": "ab504b85 British government takes services offline",
+      "url": "https://therecord.media/uk-department-work-pensions-cyber-incident",
+      "reason": "already on file: dwp-cyber-incident-services-offline-2026-11 (confirmed, corroborated)"
+    },
+    {
+      "title": "eff5d956 Webmin CVE-2026-134326 / 134438 / 134630",
+      "url": "https://vuldb.com/vuln/443571",
+      "reason": "database rows only; no exploitation, public exploit or vendor advisory read; vuldb 403"
+    },
+    {
+      "title": "f69570f6 CVE-2026-137715 Webmin",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-137715",
+      "reason": "database row; cvefeed says exploitation status not stated; no vendor advisory read"
+    },
+    {
+      "title": "00e0a7e1 CVE-2026-115835 sequoia-openpgp",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-115835",
+      "reason": "database row, minor resource-allocation flaw, no exploitation"
+    },
+    {
+      "title": "030a5dd4 CVE-2026-135844 moby/sys/user",
+      "url": "https://cvefeed.io/vuln/detail/CVE-2026-135844",
+      "reason": "database row, minor DoS, no exploitation"
+    },
+    {
+      "title": "55450350 CVE-2024-23897",
+      "url": "https://sploitus.com/exploit?id=KITPLOIT:TOOLS-GITHUB-JATHULYA-CVE-2024-23897",
+      "reason": "GitHub PoC repo for an old CVE; not a new event"
+    },
+    {
+      "title": "e1687cec CVE-2023-23397",
+      "url": "https://sploitus.com/exploit?id=KITPLOIT:TOOLS-GITHUB-KA7ANA-CVE-2023-23397",
+      "reason": "GitHub PoC repo for an old CVE; not a new event"
+    }
+  ],
+  "open_leads": [
+    {
+      "title": "c04f4fb5 Exploit for CVE-2026-73968",
+      "url": "",
+      "note": "not examined: fuse.mjs show crashed",
+      "priority": "low"
+    }
+  ],
+  "failed_sites": [
+    "vuldb.com 403"
+  ],
+  "notes": "fuse.mjs crashes (ENOTDIR) on stray file data/runs/fix-r1.mjs, created 00:11 by another worker; I did not delete it. As a result NO story could be closed with fuse.mjs done; closures above are recorded here only and the dispatcher should close them. The fix-r1.mjs file should be moved out of data/runs.",
+  "worker_role": "researcher-deep",
+  "worker_model": "sonnet"
+}

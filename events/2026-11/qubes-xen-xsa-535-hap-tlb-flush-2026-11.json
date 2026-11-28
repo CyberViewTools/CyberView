@@ -1,0 +1,39 @@
+{
+  "title": "Xen flaw (XSA-535) could let a compromised qube attack others on Intel Qubes OS systems, Qubes bulletin says",
+  "category": "vuln",
+  "status": "confirmed",
+  "severity": 2,
+  "date": "2026-11-26",
+  "date_note": "The Qubes bulletin QSB-125 is dated 2026-11-26 (published 2026-11-27); the Xen Project advisory XSA-535 was published 2026-11-26 per the Qubes page.",
+  "time_basis": "published",
+  "org": "Qubes OS / Xen Project",
+  "sector": "Technology",
+  "country": "Global",
+  "place": "Global",
+  "pin_type": "country",
+  "geo_basis": "no place stated; software used worldwide",
+  "lat": 20,
+  "lng": 0,
+  "attack": [],
+  "products": ["Qubes OS", "Xen"],
+  "cves": ["CVE-2026-119781", "CVE-2026-119782", "CVE-2026-119783"],
+  "tags": ["cloud"],
+  "summary": "Qubes bulletin QSB-125 describes XSA-535: the page is freed and can be reused while stale TLB entries still allow the guest to access it. The bulletin says all supported Qubes OS releases are affected and only Intel systems are. A compromised PVH or HVM qube could try to exploit it to attack other qubes, including dom0. The bulletin says fixed Xen packages are in security-testing; dom0 must be restarted.",
+  "plain": "Qubes OS says a flaw in the Xen hypervisor could let a compromised virtual machine on an Intel computer try to attack other virtual machines. Fixed packages exist but are still in testing.",
+  "exec": "Qubes says a hypervisor flaw affects all supported releases on Intel systems; fixed packages are in security-testing and a dom0 restart is needed.",
+  "action": "Qubes advises updating normally through Qubes Update, installing the Xen packages for Qubes 4.3 in dom0, restarting dom0, and resealing the passphrase if you use Anti Evil Maid.",
+  "sources": [
+    {"name": "Qubes OS QSB-125 (XSA-535)", "url": "https://www.qubes-os.org/news/2026/11/27/qsb-125/", "published": "2026-11-27", "read_depth": "full"},
+    {"name": "How-To Geek", "url": "https://www.howtogeek.com/xen-bug-lets-malware-escape-qubes-os-vms-on-intel-pc/", "published": "2026-11-27", "read_depth": "full"}
+  ],
+  "validation": {
+    "state": "primary",
+    "checked_at": "2026-11-28T00:00:18Z",
+    "note": "The Qubes OS security bulletin (vendor) is the primary source; How-To Geek relays it. The Xen Project's own advisory was not opened."
+  },
+  "source_tier": "primary",
+  "sectors": {"values": ["cross-sector"], "basis": "inferred"},
+  "surface": {"value": "endpoint", "basis": "inferred"},
+  "first_seen": "2026-11-28T00:00:18Z",
+  "updated_at": "2026-11-28T00:00:18Z"
+}

@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-11-28T04:59:28Z",
+  "date": "2026-11-28",
+  "headline": "CISA lists ten exploited flaws, mostly Mitel MiCollab, with federal deadlines today",
+  "plain_summary": "CISA added ten exploited flaws to its catalogue; eight have federal deadlines on 28 November. Accenture Apex Labs says the Mitel flaws were used in a suspected extortion campaign. The UK DWP took some online services offline after a cyber incident; no evidence of customer data loss so far. SAP confirmed suspicious activity but has found no evidence customer business data was accessed. Organisations using the listed products or the tampered installers should act.",
+  "items": [
+    {
+      "title": "CISA adds ten exploited flaws: Mitel MiCollab, Xen Orchestra, Juniper, Danfoss",
+      "why": "Eight of the ten have federal due dates of 28 November; Accenture Apex Labs says the Mitel flaws were exploited as zero-days in a suspected extortion campaign.",
+      "action": "Apply vendor mitigations as BOD 26-04 requires, or stop using the product if none exist; Mitel advises its fixed MiCollab release and restricting external access to the conferencing component.",
+      "event_id": "cisa-kev-ten-additions-2026-11-25"
+    },
+    {
+      "title": "Q-Dir and DesktopOK installers on official site tampered with to install a RAT",
+      "why": "AhnLab says installers on the official SoftwareOK site install a Python remote access trojan; the cause has not been identified.",
+      "action": "Check SHA-256 hashes against the official page, reinstall the latest version, and check for suspicious Python environments, scheduled tasks and external traffic; reinstalling alone may not remove the RAT.",
+      "event_id": "softwareok-q-dir-desktopok-installers-tampered-2026-11"
+    },
+    {
+      "title": "Linux kernel NFS server flaw NFS2ROOT (CVE-2026-99362) could give remote root",
+      "why": "BleepingComputer reports it is reachable over the network when nfsd is exposed; no exploitation in the wild is reported and fixes exist.",
+      "action": "Apply your distribution's kernel update and reboot; if you cannot, restrict access to the NFS port to trusted clients, or disable nfs-server if not needed.",
+      "event_id": "linux-nfs2root-nfsd-cve-2026-99362-2026-11"
+    },
+    {
+      "title": "UK DWP takes some online services offline after a cyber incident",
+      "why": "The NCSC is investigating, the cause is not yet known, and there is no evidence of customer data loss; regular payments are not affected.",
+      "action": "If you cannot reach a DWP service, try again later; the DWP will never message to ask for bank details or to click on links.",
+      "event_id": "dwp-cyber-incident-services-offline-2026-11"
+    },
+    {
+      "title": "SAP confirms suspicious activity; reports say GitHub tokens were stolen",
+      "why": "SAP has found no evidence of unauthorized access to customer business data so far; Der Spiegel reports employee tokens allowed source code to be copied and modified.",
+      "action": "No action needed; for awareness. SAP says it has found no evidence of unauthorized access to customer business data so far.",
+      "event_id": "sap-suspicious-activity-spiegel-report-2026-11"
+    },
+    {
+      "title": "South Korea's privacy commission starts emergency response to rising breaches",
+      "why": "1,019 breach reports were filed from January to October 2026, against 447 in all of last year.",
+      "action": "Follow the PIPC's 20 security measures for public agencies and companies and its December-to-February inspection support.",
+      "event_id": "korea-pipc-emergency-response-breach-reports-2026-11"
+    }
+  ]
+}

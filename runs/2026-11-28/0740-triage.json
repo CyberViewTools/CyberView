@@ -1,0 +1,14 @@
+{
+  "job": "triage",
+  "started_at": "2026-11-28T07:39:00Z",
+  "finished_at": "2026-11-28T07:40:30Z",
+  "model": "claude-haiku-5-5",
+  "searches": [],
+  "pages_read": [],
+  "added": [],
+  "updated": [],
+  "skipped": [],
+  "open_leads": [],
+  "failed_sites": [],
+  "notes": "BLOCKED, nothing triaged. `node scripts/fuse.mjs list --limit 80` and `list --claims --limit 40` both crash before printing anything: scripts/lib/store.mjs:117 (forEachSkipped) calls readdirSync on every entry of data/runs that sorts after the day cutoff, and data/runs/fix-r1.mjs is a plain file at the runs root, not a dated directory. The same crash hits q.mjs (runs, line 36) and so `q.mjs leads` too, and fuse.mjs done would crash in the same build. The file is a one-off patch script (sets tags/impact/plain/exec/action/place/geo on data/events/2026-11/qubes-xen-xsa-535-hap-tlb-flush-2026-11.json and data/events/2026-11/pacific-blue-cross-cyber-incident-2026-11.json, stamped 2026-11-28T00:12:00Z). It was not run by this worker and was not moved or deleted, because it is not this job's file and removing it changes the data branch. Two fixes that need a human: (1) move or delete data/runs/fix-r1.mjs after checking whether its edits were already applied; (2) guard forEachSkipped with a directory check (statSync(...).isDirectory()) in scripts/lib/store.mjs, via a PR to main, so one stray file cannot break every reader. No stories were closed and no status.json timestamp was written by this worker. The triage queue is unchanged and still needs a run after the fix. Recommended to re-run triage first, since the queue will have grown across the blocked hours."
+}

@@ -15,6 +15,10 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | scan-no-fp | 31 catalog rows with no public fingerprint | Parked | Discovery | kept as gaps; revisit if a public fingerprint appears |
 | tk-matchers | Toolkit: offline matchers — SBOM (CycloneDX/SPDX) / nmap-XML / CVE-lookup, no network, reuse the site matching engine | Review | — | **Complete.** SBOM and package-list matching in #120 (`import`); the `match` command, nmap `-oX`, CPE/purl vendors and `--assume-exposed` in #140 (`scanner/lib/inputs.mjs`, decision 23); the offline `lookup <CVE>` reader in #140 (`scanner/lib/lookup.mjs`). Nothing of the [handoff](handoff/tk-matchers.md) remains open — close the row when #140 merges |
 | tk-diff (watch) | Scheduled re-scan + alert, the "watch" half of tk-diff (the compare half shipped in #114) | Discovery | Discovery | brief: state model, alerts tie-in |
+| match-every-cve | **My software against every CVE**, by product and version, 99% proven: back end builds the product dictionary and ranges (CVE record, CISA, NVD, CSAF, OSV; AI only on the back end on public data, with a second check), the browser looks the client's list up; AI never touches client data | Design | Owner | owner reviews [design](../superpowers/specs/2026-11-27-website-software-matching-design.md) and [match schema](../superpowers/specs/2026-11-27-match-schema.md) with Fable (2026-11-28); open: second check on Sonnet (recommended) or Haiku; API credit for the backfill (est. $100–250; ledger shows ~$149 billed in Nov 2026); then the plan |
+| map-pins | Globe pin fixes from the 2026-11-27 test of 1,000 events: 38 events pinned at 0,0 (drawn off West Africa; `clean()` accepts 0,0, nothing validates it, the job prompt never says null), country codes (`JP`, `KR`...) that break shading and click-to-filter, off-list `pin_type` values, country-level pins labelled agency/hq | Discovery | — | owner decisions: a more detailed world map for Hong Kong and Singapore, and country pins for events with a country but no pin |
+| cve-snapshot | Dated, immutable copy of the CVE corpus as GitHub releases (draft, attach, publish); the single `cve-corpus` release from 2026-11-19 never got its file and the corpus has lived only in the Actions cache since | Discovery | Owner | owner: what the copy is for (backup, download, engine, record), which sets how often and how many are kept |
+| desktop-engine-drift | Seven engine patches in cyberview-scanner-desktop (`engine-patches/0001`–`0007`) are not on main; all apply cleanly in order and 250 scanner tests pass | Discovery | — | with match-every-cve only the website parts come over (0003's `W.cmp` fix in workbench-lib.js, 0004's range cap in scripts/lib/cve.mjs); the rest stays with the desktop app |
 
 ## Parked (owner decision pending)
 
@@ -30,6 +34,7 @@ Every build item, its stage and the next action. Stages: **Discovery → Design 
 | gdacs-history | GDACS Part 2: browsable disaster history (SEARCH backfill) | owner: deferred after the live layer |
 | xleads-p2 | x-leads (#72) Phase 2: official X API + budget caps | needs the pay-per-use route decision |
 | subs | Subscriptions / monetization (freemium, open-core) | long-term (see the roadmap doc) |
+| intel-engine | One index joining events, actors, the Library, KEV, CVEs and products (Whiteboard "CyberView matching engine map", 2026-11-27: only CVEs join cleanly today; actor names, products and techniques do not) | owner, 2026-11-27: parked while match-every-cve comes first |
 
 ## Done: scanner, wave 3 (2026-11-22)
 

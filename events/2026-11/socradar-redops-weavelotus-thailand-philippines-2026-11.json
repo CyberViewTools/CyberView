@@ -1,105 +1,110 @@
 {
- "actor": "WeaveLotus (per SOCRadar)",
- "attribution": {
-  "by": "SOCRadar",
-  "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/",
-  "note": "moderate confidence; SOCRadar says it does not conclusively establish state sponsorship",
-  "actor": "WeaveLotus",
-  "origin_country": "Vietnam",
-  "lat": 21.03,
-  "lng": 105.85,
-  "by_type": "investigator"
- },
- "impact": "",
- "tags": [
-  "espionage",
-  "data-breach"
- ],
- "cves": [
-  "CVE-2024-36401",
-  "CVE-2021-42235"
- ],
- "cve_meta": [],
- "products": [],
- "first_seen": "2026-11-27T08:01:13Z",
- "updated_at": "2026-11-28T13:19:30Z",
- "category": "report",
- "status": "confirmed",
- "attack": [],
- "time_basis": "published",
- "geo_basis": "country",
- "date": "2026-11-26",
- "date_note": "SOCRadar's post of 26 November; the campaign it describes ran August to September 2026.",
- "title": "SOCRadar: RedOps campaign hit Thai and Philippine government and military-affiliated networks",
- "org": "Thai and Philippine government organisations",
- "sector": "Government",
- "country": "Thailand",
- "place": "Thailand",
- "lat": 15.87,
- "lng": 100.99,
- "pin_type": "country",
- "severity": 2,
- "source_tier": "primary",
- "summary": "SOCRadar says its RedOps campaign, active August to September 2026, had five confirmed intrusions in Thailand and the Philippines, including a military-affiliated organisation and a legislative organisation in Thailand. SOCRadar links it to WeaveLotus with moderate confidence and to OceanLotus (APT32) with low confidence, and says this does not conclusively establish state sponsorship.",
- "plain": "SOCRadar says a campaign it calls RedOps made five confirmed intrusions into Thai and Philippine government-linked networks in August and September 2026. It links the campaign to WeaveLotus with moderate confidence.",
- "exec": "SOCRadar reports five confirmed intrusions at government and military-affiliated bodies in Thailand and the Philippines.",
- "action": "SOCRadar advises patching internet-facing open-source applications, prioritising GeoServer and osTicket, and removing default credentials such as those on JasperReports.",
- "sources": [
-  {
-   "name": "SOCRadar",
-   "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/",
-   "published": "2026-11-26"
+  "actor": "WeaveLotus (per SOCRadar)",
+  "attribution": {
+    "by": "SOCRadar",
+    "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/",
+    "note": "moderate confidence; SOCRadar says it does not conclusively establish state sponsorship",
+    "actor": "WeaveLotus",
+    "origin_country": "Vietnam",
+    "lat": 21.03,
+    "lng": 105.85,
+    "by_type": "investigator"
   },
-  {
-   "name": "Cyber Security News",
-   "url": "https://cybersecuritynews.com/military-and-government-networks/",
-   "published": "2026-11-27"
+  "impact": "",
+  "tags": [
+    "espionage",
+    "data-breach"
+  ],
+  "cves": [
+    "CVE-2024-36401",
+    "CVE-2021-42235"
+  ],
+  "cve_meta": [],
+  "products": [],
+  "first_seen": "2026-11-27T08:01:13Z",
+  "updated_at": "2026-11-28T13:39:53Z",
+  "category": "report",
+  "status": "confirmed",
+  "attack": [],
+  "time_basis": "published",
+  "geo_basis": "country",
+  "date": "2026-11-26",
+  "date_note": "SOCRadar's post of 26 November; the campaign it describes ran August to September 2026.",
+  "title": "SOCRadar: RedOps campaign hit Thai and Philippine government and military-affiliated networks",
+  "org": "Thai and Philippine government organisations",
+  "sector": "Government",
+  "country": "Thailand",
+  "place": "Thailand",
+  "lat": 15.87,
+  "lng": 100.99,
+  "pin_type": "country",
+  "severity": 2,
+  "source_tier": "primary",
+  "summary": "SOCRadar says its RedOps campaign, active August to September 2026, had five confirmed intrusions in Thailand and the Philippines, including a military-affiliated organisation and a legislative organisation in Thailand. SOCRadar links it to WeaveLotus with moderate confidence and to OceanLotus (APT32) with low confidence, and says this does not conclusively establish state sponsorship.",
+  "plain": "SOCRadar says a campaign it calls RedOps made five confirmed intrusions into Thai and Philippine government-linked networks in August and September 2026. It links the campaign to WeaveLotus with moderate confidence.",
+  "exec": "SOCRadar reports five confirmed intrusions at government and military-affiliated bodies in Thailand and the Philippines.",
+  "action": "SOCRadar advises patching internet-facing open-source applications, prioritising GeoServer and osTicket, and removing default credentials such as those on JasperReports.",
+  "sources": [
+    {
+      "name": "SOCRadar",
+      "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/",
+      "published": "2026-11-26"
+    },
+    {
+      "name": "Cyber Security News",
+      "url": "https://cybersecuritynews.com/military-and-government-networks/",
+      "published": "2026-11-27"
+    }
+  ],
+  "validation": {
+    "state": "corroborated",
+    "checked_at": "2026-11-27T08:01:13Z",
+    "note": "SOCRadar (the investigating firm, primary source) and Cyber Security News both report the campaign; Cyber Security News relays SOCRadar's research."
+  },
+  "sectors": {
+    "values": [
+      "government-facilities"
+    ],
+    "basis": "stated"
+  },
+  "surface": {
+    "value": "web-app",
+    "basis": "inferred"
+  },
+  "review": {
+    "state": "corrected",
+    "at": "2026-11-28T13:40:07Z",
+    "first_at": "2026-11-27T08:11:17Z",
+    "note": "figure: key_findings counts set to the source's exact 31,418 files and 349,782 records; title, date, five intrusions, confidence levels, caveat and action checked against SOCRadar and Cyber Security News",
+    "flags": [
+      "no-cve-meta"
+    ],
+    "categories": [
+      "figure"
+    ]
+  },
+  "qa_checked_at": "2026-11-28T13:40:07Z",
+  "report": {
+    "publisher": "SOCRadar",
+    "publisher_type": "vendor",
+    "doc_id": "",
+    "published": "2026-11-26",
+    "key_findings": [
+      "SOCRadar attributes the RedOps campaign, active August to September 2026, with moderate confidence to WeaveLotus, targeting government, military and legislative bodies.",
+      "SOCRadar reports five confirmed intrusions in Thailand and the Philippines, and reconnaissance of more than 30 Indonesian government organisations with no intrusion following.",
+      "SOCRadar says it saw collection of about 19 GB of documents from a Thai legislative organisation, 31,418 files from a Thai military organisation and 349,782 records from a Thai government application.",
+      "Entry was through exposed open-source web applications: GeoServer, JasperReports with default credentials, osTicket and a Laravel app with debug mode on.",
+      "Intrusions were chained: access in one environment led to a third-party document system and administrator credentials for another agency."
+    ],
+    "recommendations": [
+      "Patch internet-facing open-source applications, starting with GeoServer and osTicket.",
+      "Remove default credentials, such as those on JasperReports.",
+      "Disable debug mode on production Laravel applications.",
+      "Monitor for unusual authentication activity, password spraying and ROPC token requests.",
+      "Block or alert on outbound SSH over port 443, SOCKS proxies and bulk data transfers."
+    ],
+    "iocs_available": true,
+    "read_depth": "full",
+    "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/"
   }
- ],
- "validation": {
-  "state": "corroborated",
-  "checked_at": "2026-11-27T08:01:13Z",
-  "note": "SOCRadar (the investigating firm, primary source) and Cyber Security News both report the campaign; Cyber Security News relays SOCRadar's research."
- },
- "sectors": {
-  "values": [
-   "government-facilities"
-  ],
-  "basis": "stated"
- },
- "surface": {
-  "value": "web-app",
-  "basis": "inferred"
- },
- "review": {
-  "state": "passed",
-  "at": "2026-11-27T08:11:17Z",
-  "first_at": "2026-11-27T08:11:17Z",
-  "note": "title, date, five confirmed intrusions, Aug-Sep, attribution confidence and sponsorship caveat, action checked against SOCRadar and Cyber Security News",
-  "flags": []
- },
- "qa_checked_at": "2026-11-27T08:11:17Z",
- "report": {
-  "publisher": "SOCRadar",
-  "publisher_type": "vendor",
-  "doc_id": "",
-  "published": "2026-11-26",
-  "key_findings": [
-   "SOCRadar attributes the RedOps campaign, active August to September 2026, with moderate confidence to WeaveLotus, targeting government, military and legislative bodies.",
-   "SOCRadar reports five confirmed intrusions in Thailand and the Philippines, and reconnaissance of more than 30 Indonesian government organisations with no intrusion following.",
-   "SOCRadar says it saw collection of about 19 GB of documents from a Thai legislative organisation, roughly 31,400 files from a Thai military organisation and about 349,800 records from a Thai government application.",
-   "Entry was through exposed open-source web applications: GeoServer, JasperReports with default credentials, osTicket and a Laravel app with debug mode on.",
-   "Intrusions were chained: access in one environment led to a third-party document system and administrator credentials for another agency."
-  ],
-  "recommendations": [
-   "Patch internet-facing open-source applications, starting with GeoServer and osTicket.",
-   "Remove default credentials, such as those on JasperReports.",
-   "Disable debug mode on production Laravel applications.",
-   "Monitor for unusual authentication activity, password spraying and ROPC token requests.",
-   "Block or alert on outbound SSH over port 443, SOCKS proxies and bulk data transfers."
-  ],
-  "iocs_available": true,
-  "read_depth": "full",
-  "url": "https://socradar.io/blog/redops-weavelotus-southeast-asian-governments/"
- }
 }
